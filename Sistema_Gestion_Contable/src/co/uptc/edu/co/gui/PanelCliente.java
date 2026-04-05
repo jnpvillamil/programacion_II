@@ -75,6 +75,7 @@ public class PanelCliente extends JPanel {
     	
     	setLayout(new BorderLayout(10,10));
     	setBackground(Color.WHITE);
+    	setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     	
     	etiquetaTitulo.setFont(new Font("Arial",Font.BOLD,22));
     	
@@ -90,6 +91,10 @@ public class PanelCliente extends JPanel {
     	panelInferior.setLayout(new FlowLayout(FlowLayout.LEFT));
     	panelInferior.setBackground(Color.WHITE);
     	
+    	tablaClientes.setRowHeight(25);
+        tablaClientes.getTableHeader().setReorderingAllowed(false);
+        tablaClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    
     	
     }
     private void agregarComponentes(){
@@ -111,6 +116,12 @@ public class PanelCliente extends JPanel {
     	panelCabecera.add(etiquetaTitulo, BorderLayout.NORTH);
         panelCabecera.add(panelBotones, BorderLayout.CENTER);
     	panelCabecera.add(panelFiltros, BorderLayout.SOUTH);
+    	
+    	 // Colores botones
+    	 botonNuevo.setBackground(Color.WHITE);
+    	 botonEditar.setBackground(Color.WHITE);
+    	 botonInactivar.setBackground(Color.WHITE);
+    	 botonHistorial.setBackground(Color.WHITE);
 
     	panelSuperior.add(panelCabecera, BorderLayout.CENTER);
 

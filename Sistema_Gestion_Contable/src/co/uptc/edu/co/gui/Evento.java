@@ -45,6 +45,9 @@ public class Evento implements ActionListener {
             case "Reportes":
                 ventana.mostrarPanel(new PanelReportes());
                 break;
+                
+            case "Consultas":
+            	ventana.mostrarPanel(new PanelConsultas());
         }
     }
 }

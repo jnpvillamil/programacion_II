@@ -59,6 +59,7 @@ public class PanelProveedor extends JPanel {
     	
     	modeloTabla = new DefaultTableModel(columnas,0);
     	tablaProveedores = new JTable(modeloTabla);
+    	setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     	
     	panelSuperior = new JPanel();
     	panelBotones = new JPanel();
@@ -85,6 +86,9 @@ public class PanelProveedor extends JPanel {
     	panelInferior.setLayout(new FlowLayout(FlowLayout.LEFT));
     	panelInferior.setBackground(Color.WHITE);
     	
+    	tablaProveedores.setRowHeight(25);
+        tablaProveedores.getTableHeader().setReorderingAllowed(false);
+        tablaProveedores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     	
     }
     private void agregarComponentes(){
@@ -105,7 +109,13 @@ public class PanelProveedor extends JPanel {
     	panelCabecera.add(etiquetaTitulo, BorderLayout.NORTH);
         panelCabecera.add(panelBotones, BorderLayout.CENTER);
     	panelCabecera.add(panelFiltros, BorderLayout.SOUTH);
-
+    	
+    	//Colores Botones
+    	botonNuevo.setBackground(Color.WHITE);
+    	botonEditar.setBackground(Color.WHITE);
+        botonInactivar.setBackground(Color.WHITE);
+        botonRegistrarCompra.setBackground(Color.WHITE);
+    	 
     	panelSuperior.add(panelCabecera, BorderLayout.CENTER);
 
         JScrollPane scroll = new JScrollPane(tablaProveedores);

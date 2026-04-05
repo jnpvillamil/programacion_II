@@ -15,6 +15,8 @@ public class VentanaPrincipal extends JFrame {
    private JButton botonCompras;
    private JButton botonContabilidad;
    private JButton botonReportes;
+   private JButton botonConsultas;
+   
    
    public VentanaPrincipal() {
 	   inicializarComponentes();
@@ -36,6 +38,7 @@ public class VentanaPrincipal extends JFrame {
 	   botonCompras = new JButton("Compras");
 	   botonContabilidad = new JButton("Contabilidad");
 	   botonReportes = new JButton("Reportes");
+	   botonConsultas = new JButton("Consultas del Sistema");
    }
    
    private void configurarVentana(){
@@ -49,7 +52,7 @@ public class VentanaPrincipal extends JFrame {
    
    private void agregarComponentes(){
 	   
-	   panelEncabezado.setLayout(new FlowLayout(FlowLayout.CENTER,25,15));
+	   panelEncabezado.setLayout(new FlowLayout(FlowLayout.CENTER,20,20));
 	   panelEncabezado.setBackground(new Color(20,45,75));
 	   
 	   // Color de letra botones
@@ -60,6 +63,7 @@ public class VentanaPrincipal extends JFrame {
 	   botonCompras.setForeground(Color.WHITE);
 	   botonContabilidad.setForeground(Color.WHITE);
 	   botonReportes.setForeground(Color.WHITE);
+	   botonConsultas.setForeground(Color.WHITE);
 	   
 	   // Color del relleno del boton
 	   botonProductos.setBackground(new Color(30,60,100));
@@ -69,6 +73,7 @@ public class VentanaPrincipal extends JFrame {
 	   botonCompras.setBackground(new Color(30,60,100));
 	   botonContabilidad.setBackground(new Color(30,60,100));
 	   botonReportes.setBackground(new Color(30,60,100));
+	   botonConsultas.setBackground(new Color(30,60,100));
 	   
 	   // Agregar botones al panel 
 	   panelEncabezado.add(botonProductos);
@@ -78,6 +83,7 @@ public class VentanaPrincipal extends JFrame {
 	   panelEncabezado.add(botonCompras);
 	   panelEncabezado.add(botonContabilidad);
 	   panelEncabezado.add(botonReportes);
+	   panelEncabezado.add(botonConsultas);
 	   
 	   panelContenido.setBackground(Color.WHITE);
 	   panelContenido.setLayout(new BorderLayout());
@@ -110,6 +116,9 @@ public class VentanaPrincipal extends JFrame {
 	   
 	   botonReportes.setActionCommand("Reportes");
 	   botonReportes.addActionListener(evento);
+	   
+	   botonConsultas.setActionCommand("Consultas");
+	   botonConsultas.addActionListener(evento);
    }
    
    // metodo cambio de pantalla

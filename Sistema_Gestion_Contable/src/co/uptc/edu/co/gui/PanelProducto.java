@@ -41,7 +41,7 @@ public class PanelProducto extends JPanel {
     	
     	etiquetaTitulo = new JLabel("Gestión de Productos");
     	etiquetaTotal = new JLabel("Total de productos: 0");
-    	
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     	
     	botonNuevo = new JButton("Nuevo");
     	botonEditar = new JButton("Editar");
@@ -79,6 +79,7 @@ public class PanelProducto extends JPanel {
     	
     	setLayout(new BorderLayout(10,10));
     	setBackground(Color.WHITE);
+    	 setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     	
     	etiquetaTitulo.setFont(new Font("Arial",Font.BOLD,22));
     	
@@ -93,6 +94,10 @@ public class PanelProducto extends JPanel {
     	
     	panelInferior.setLayout(new FlowLayout(FlowLayout.LEFT));
     	panelInferior.setBackground(Color.WHITE);
+    	
+    	tablaProductos.setRowHeight(25);
+        tablaProductos.getTableHeader().setReorderingAllowed(false);
+        tablaProductos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     	
     	
     }
@@ -117,7 +122,14 @@ public class PanelProducto extends JPanel {
     	panelCabecera.add(etiquetaTitulo, BorderLayout.NORTH);
         panelCabecera.add(panelBotones, BorderLayout.CENTER);
     	panelCabecera.add(panelFiltros, BorderLayout.SOUTH);
-
+    	
+    	  // Colores botones
+    	botonNuevo.setBackground(Color.WHITE);
+    	botonEditar.setBackground(Color.WHITE);
+    	botonInactivar.setBackground(Color.WHITE);
+    	botonActualizarPrecio.setBackground(Color.WHITE);
+    	botonMovimientoInventario.setBackground(Color.WHITE);
+    	 
     	panelSuperior.add(panelCabecera, BorderLayout.CENTER);
 
         JScrollPane scroll = new JScrollPane(tablaProductos);
