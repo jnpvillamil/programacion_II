@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class VentanaPrincipal extends JFrame {
-	
+	//Hola mundo
    private JPanel panelEncabezado;
    private JPanel panelContenido;
    
