@@ -12,9 +12,10 @@ public class Evento implements ActionListener {
 	public static final String CMD_PRODUCTOS = "Productos";
 	public static final String CMD_NUEVO_PRODUCTO = "NuevoProducto";
 	public static final String CMD_CONFIRMAR_PRODUCTO = "ConfirmarProducto";
-	public static final String CMD_EDITAR_PRODUCTO = "EditarProducto";
+	public static final String CMD_CONFIRMAR_EDICION_PRODUCTO = "ConfirmarEdicionProducto";
 	public static final String CMD_INACTIVAR_PRODUCTO = "InactivarProducto";
 	public static final String CMD_ACTUALIZAR_PRECIO_PRODUCTO = "ActualizarPrecioProducto";
+	public static final String CMD_EDITAR_PRODUCTO = "EditarProducto";
 	public static final String CMD_MOVIMIENTO_INVENTARIO = "MovimientoInventarioProducto";
 	public static final String CMD_PROVEEDORES = "Proveedores";
 	public static final String CMD_VENTAS = "Ventas";
@@ -22,6 +23,8 @@ public class Evento implements ActionListener {
 	public static final String CMD_CONTABILIDAD = "Contabilidad";
 	public static final String CMD_REPORTES = "Reportes";
 	public static final String CMD_CONSULTAS = "Consultas";
+	public static final String CMD_CONFIRMAR_ACTUALIZAR_PRECIO_PRODUCTO = "ConfirmarActualizarPrecioProducto";
+	public static final String CMD_CONFIRMAR_INACTIVACION_PRODUCTO = "ConfirmarInactivacionProducto";
 
 	private VentanaPrincipal ventana;
 
@@ -55,8 +58,30 @@ public class Evento implements ActionListener {
 			SwingUtilities.getWindowAncestor(componente).dispose();
 			break;
 		case CMD_EDITAR_PRODUCTO:
+			DialogEditarProducto dialogEditarProducto = new DialogEditarProducto(ventana, this);
+			dialogEditarProducto.setVisible(true);
+			break;
+		case CMD_CONFIRMAR_EDICION_PRODUCTO:
+			JOptionPane.showMessageDialog(ventana, "Producto editado exitoso");
+			cerrarVentanaDeEvento(e);
+			break;
 		case CMD_INACTIVAR_PRODUCTO:
+			DialogInactivarProducto dialogInactivarProducto = new DialogInactivarProducto(ventana, this);
+			dialogInactivarProducto.setVisible(true);
+			break;
+		case CMD_CONFIRMAR_INACTIVACION_PRODUCTO:
+			JOptionPane.showMessageDialog(ventana, "Inactivacion de producto exitosas .");
+			cerrarVentanaDeEvento(e);
+			break;
 		case CMD_ACTUALIZAR_PRECIO_PRODUCTO:
+			DialogActualizarPrecio dialogActualizarPrecio = new DialogActualizarPrecio(ventana, this);
+			dialogActualizarPrecio.setVisible(true);
+			break;
+		case CMD_CONFIRMAR_ACTUALIZAR_PRECIO_PRODUCTO:
+			JOptionPane.showMessageDialog(ventana, "Actualizacion de precio existosas");
+			cerrarVentanaDeEvento(e);
+			break;
+
 		case CMD_MOVIMIENTO_INVENTARIO:
 			JOptionPane.showMessageDialog(ventana, "En procesos");
 			break;
@@ -83,5 +108,12 @@ public class Evento implements ActionListener {
 		case CMD_CONSULTAS:
 			ventana.mostrarPanel(new PanelConsultas());
 		}
+	}
+
+	private void cerrarVentanaDeEvento(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Component componente = (Component) e.getSource();
+		SwingUtilities.getWindowAncestor(componente).dispose();
+
 	}
 }
