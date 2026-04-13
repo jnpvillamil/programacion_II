@@ -153,7 +153,7 @@ public class GestionCompras extends JFrame {
         return panel;
     }
 
-    // ================= RESUMEN =================
+  
     private JPanel crearPanelResumen() {
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -225,7 +225,7 @@ public class GestionCompras extends JFrame {
         return panel;
     }
 
-    // ================= CALCULOS =================
+   
     private void calcularTotales(){
 
         double subtotal = 0;
