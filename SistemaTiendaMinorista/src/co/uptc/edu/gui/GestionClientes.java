@@ -44,7 +44,7 @@ public class GestionClientes extends JFrame {
 
         JPanel formulario = new JPanel(new GridLayout(4,4,15,10));
 
-        // 🔥 INICIALIZAR CAMPOS
+        //  INICIALIZAR CAMPOS
         txtCodigo = new JTextField();
         txtNombre = new JTextField();
         txtNumero = new JTextField();
@@ -81,7 +81,7 @@ public class GestionClientes extends JFrame {
 
         panel.add(formulario, BorderLayout.CENTER);
 
-        // 🔥 BOTONES
+        //  BOTONES
         JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         JButton btnNuevo = new JButton("Nuevo");
@@ -96,7 +96,7 @@ public class GestionClientes extends JFrame {
         botones.add(btnInactivar);
         botones.add(btnHistorial);
 
-        // 🔥 EVENTO REGISTRAR
+        //  EVENTO REGISTRAR
         btnRegistrar.addActionListener(e -> {
 
             if(txtCodigo.getText().isEmpty() || txtNombre.getText().isEmpty()){
