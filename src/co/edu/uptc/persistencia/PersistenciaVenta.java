@@ -20,7 +20,7 @@ public class PersistenciaVenta {
 
     public Venta buscarPorFactura(String numeroFactura) {
         for (Venta venta : listaVentas) {
-            // Asumiendo que Venta hereda getNumeroFactura() de Transaccion
+            
             if (venta.getNumeroFactura().equals(numeroFactura)) {
                 return venta;
             }

@@ -20,7 +20,7 @@ public class VentanaLogin extends JFrame {
 
         JLabel lblTitulo = new JLabel("Bienvenido", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 28));
-        lblTitulo.setForeground(new Color(44, 62, 80)); // Pizarra oscuro (Alto contraste)
+        lblTitulo.setForeground(new Color(44, 62, 80)); // Panel oscuro
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
         add(lblTitulo, BorderLayout.NORTH);
 
@@ -51,7 +51,7 @@ public class VentanaLogin extends JFrame {
         btnIniciar.setBackground(new Color(52, 152, 219)); // Azul
         btnIniciar.setForeground(Color.WHITE); // Letra blanca
         
-        // 🔴 LA SOLUCIÓN MÁGICA PARA MAC/WINDOWS EN SWING 🔴
+        // Visualización MAC/WINDOWS en SWING
         btnIniciar.setOpaque(true);
         btnIniciar.setBorderPainted(false);
         

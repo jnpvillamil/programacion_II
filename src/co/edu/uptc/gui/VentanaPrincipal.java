@@ -27,7 +27,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void iniciarComponentes() {
-        // --- MENÚ LATERAL ---
+        //MENU LATERAL
         panelMenu = new JPanel(new GridLayout(9, 1, 0, 5));
         panelMenu.setBackground(new Color(44, 62, 80)); 
         panelMenu.setPreferredSize(new Dimension(220, 0));
@@ -42,12 +42,12 @@ public class VentanaPrincipal extends JFrame {
         
         add(panelMenu, BorderLayout.WEST);
 
-        // --- CONTENIDO CENTRAL (CardLayout) ---
+        //CONTENIDO CENTRAL (CardLayout)
         layoutPaneles = new CardLayout();
         panelContenido = new JPanel(layoutPaneles);
         panelContenido.setBackground(new Color(244, 246, 249));
 
-        // Aquí integramos los paneles con el SistemaGestion
+        // Integra los paneles con el SistemaGestion
         panelContenido.add(new PanelProductos(sistemaGestion), "PANEL_PRODUCTOS");
         panelContenido.add(new PanelCompras(sistemaGestion), "PANEL_COMPRAS");
         panelContenido.add(new PanelVentas(sistemaGestion), "PANEL_VENTAS");
@@ -71,21 +71,21 @@ public class VentanaPrincipal extends JFrame {
         layoutPaneles.show(panelContenido, nombrePanel);
     }
 
-    // MÉTODO MAIN INTEGRADO (Punto de arranque del sistema)
+    // METODO MAIN
     public static void main(String[] args) {
-        // Configurar el aspecto visual de las ventanas (Look & Feel)
+        
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Ejecutar en el hilo de eventos de Swing
+     
         SwingUtilities.invokeLater(() -> {
-            // 1. Inicializar toda la capa de negocio y persistencia
+            // Inicializar toda la capa de negocio y persistencia
             SistemaGestion sistema = new SistemaGestion();
             
-            // 2. Abrir primero el Login (o cambiar a new VentanaPrincipal(...) para omitir login en pruebas)
+            // Abrir primero el Login
             VentanaLogin login = new VentanaLogin(sistema);
             login.setVisible(true);
         });

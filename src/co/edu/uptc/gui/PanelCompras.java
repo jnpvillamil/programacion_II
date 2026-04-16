@@ -36,8 +36,8 @@ public class PanelCompras extends JPanel {
         JButton btnAgregar = new JButton("Agregar Producto");
         btnAgregar.setBackground(new Color(52, 152, 219)); 
         btnAgregar.setForeground(Color.WHITE);
-        btnAgregar.setOpaque(true); // <--- FIX MAC
-        btnAgregar.setBorderPainted(false); // <--- FIX MAC
+        btnAgregar.setOpaque(true); //FIX MAC
+        btnAgregar.setBorderPainted(false); //FIX MAC
 
         panelNorte.add(crearLabel("N° Factura Prov:")); panelNorte.add(txtFactura);
         panelNorte.add(crearLabel("Proveedor:")); panelNorte.add(cbProveedores);
@@ -65,8 +65,8 @@ public class PanelCompras extends JPanel {
         JButton btnRegistrarCompra = new JButton("Registrar Compra");
         btnRegistrarCompra.setBackground(new Color(46, 204, 113));
         btnRegistrarCompra.setForeground(Color.WHITE);
-        btnRegistrarCompra.setOpaque(true); // <--- FIX MAC
-        btnRegistrarCompra.setBorderPainted(false); // <--- FIX MAC
+        btnRegistrarCompra.setOpaque(true); // FIX MAC
+        btnRegistrarCompra.setBorderPainted(false); //FIX MAC
         
         panelSur.add(lblTotal);
         panelSur.add(btnRegistrarCompra);

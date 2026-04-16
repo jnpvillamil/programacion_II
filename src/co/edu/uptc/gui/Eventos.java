@@ -24,7 +24,7 @@ public class Eventos implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
         
-        // Lógica de navegación del CardLayout
+        // Navegación del CardLayout
         switch (comando) {
             case CMD_VER_PRODUCTOS: ventana.mostrarPanel("PANEL_PRODUCTOS"); break;
             case CMD_VER_CLIENTES: ventana.mostrarPanel("PANEL_CLIENTES"); break;

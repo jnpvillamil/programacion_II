@@ -13,11 +13,11 @@ public class GestorProducto {
     }
 
     public void registrarProducto(Producto p) throws Exception {
-        // Aquí podrías agregar validaciones extra de negocio antes de guardar
+        // Agregar validaciones extra de negocio antes de guardar
         persistenciaProducto.crear(p);
     }
 
-    // Este es el método que le faltaba a PanelProductos
+ 
     public List<Producto> obtenerProductos() {
         return persistenciaProducto.leerTodos();
     }

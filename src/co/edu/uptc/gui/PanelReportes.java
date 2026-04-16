@@ -46,11 +46,11 @@ public class PanelReportes extends JPanel {
 
         btnGenerar.addActionListener(e -> {
             String seleccionado = cbTipoReporte.getSelectedItem().toString();
-            areaReporte.setText("============================================\n");
+            areaReporte.setText("--------------------------------------------\n");
             areaReporte.append("       REPORTE: " + seleccionado.toUpperCase() + "\n");
-            areaReporte.append("============================================\n\n");
+            areaReporte.append("---------------------------------------------\n\n");
             areaReporte.append("Generando datos desde el sistema...\n");
-            // Aquí llamarías a los métodos de generación de reportes de SistemaGestion
+            // falta los métodos de generación de reportes de SistemaGestion
         });
     }
 }

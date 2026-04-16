@@ -11,7 +11,7 @@ public class Producto {
 		// TODO Auto-generated constructor stub
 	}
 
-	// ... Constructor y Getters ...
+	
     public String getNombreProducto() { return nombreProducto; }
     
     public void actualizarStock(int cantidad) { this.stockActual += cantidad; }

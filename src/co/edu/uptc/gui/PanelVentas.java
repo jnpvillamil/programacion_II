@@ -75,7 +75,7 @@ public class PanelVentas extends JPanel {
         // Eventos
         btnAgregar.addActionListener(e -> {
             // Lógica similar a PanelCompras: validar, instanciar DetalleTransaccion, agregarlo a VentaTemporal
-            // y hacer modeloDetalles.addRow(...)
+            
         });
 
         btnRegistrar.addActionListener(e -> {

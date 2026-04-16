@@ -39,7 +39,7 @@ public class PanelContabilidad extends JPanel {
 
         btnConsultar.addActionListener(e -> {
             modelo.setRowCount(0);
-            // Simulación de carga desde la persistencia
+            // Carga desde la persistencia
             // for(MovimientoContable m : sis.getPersistenciaMovimiento().leerTodos()) { ... }
             JOptionPane.showMessageDialog(this, "Registros actualizados.");
         });

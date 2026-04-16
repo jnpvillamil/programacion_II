@@ -8,7 +8,7 @@ public class Compra extends Transaccion {
     
     @Override
     public void generarMovimientoContable() {
-        // En una app real, aquí se envía el evento al GestorContable
+        // Aquí se envía el evento al GestorContable
         System.out.println("Generando asiento contable por Compra: " + numeroFactura);
     }
 

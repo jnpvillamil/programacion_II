@@ -14,18 +14,18 @@ public class GestorCompra {
             throw new Exception("La compra no tiene productos.");
         }
 
-        // 1. Calcular el total
+        //Calcular el total
         c.calcularTotal();
 
-        // 2. Afectar Inventario (Suma el stock de cada producto comprado)
+        //Suma el stock de cada producto comprado
         for(DetalleTransaccion dt : c.getDetalles()) {
             dt.getProducto().actualizarStock(dt.getCantidad()); 
         }
 
-        // 3. Generar el movimiento contable (Polimorfismo)
+        //Generar el movimiento contable
         c.generarMovimientoContable();
 
-        // 4. Guardar en la "base de datos" (Persistencia)
+        //Guardar en la "base de datos" (Persistencia)
         persistenciaCompra.guardar(c);
     }
 }

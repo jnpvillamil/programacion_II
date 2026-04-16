@@ -47,8 +47,8 @@ public class PanelProductos extends JPanel {
         btnGuardar.setBackground(new Color(46, 204, 113)); 
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btnGuardar.setOpaque(true); // <--- CORRECCIÓN DE RENDERIZADO
-        btnGuardar.setBorderPainted(false); // <--- CORRECCIÓN DE RENDERIZADO
+        btnGuardar.setOpaque(true); //CORRECCIÓN DE RENDERIZADO
+        btnGuardar.setBorderPainted(false); //CORRECCIÓN DE RENDERIZADO
         
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelBotones.setOpaque(false);

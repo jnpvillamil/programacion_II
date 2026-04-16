@@ -20,7 +20,7 @@ public class PersistenciaCliente {
 
     public void actualizar(String codigo, Cliente clienteActualizado) {
         for (int i = 0; i < listaClientes.size(); i++) {
-            // Asumiendo que Cliente hereda getCodigo() de Persona
+        
             if (listaClientes.get(i).getCodigo().equals(codigo)) {
                 listaClientes.set(i, clienteActualizado);
                 break;

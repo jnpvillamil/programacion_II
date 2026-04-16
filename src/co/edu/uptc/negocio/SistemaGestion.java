@@ -1,16 +1,15 @@
 package co.edu.uptc.negocio;
 
-// Importamos todas las clases de persistencia
 import co.edu.uptc.persistencia.*; 
 
 public class SistemaGestion {
     
-    // 1. Capa de Persistencia (Simulación de BD)
+    // Capa de Persistencia (Simulación de Base Datos)
     private PersistenciaProducto persistenciaProducto;
     private PersistenciaProveedor persistenciaProveedor;
     private PersistenciaCompra persistenciaCompra;
     
-    // 2. Capa de Gestores (Lógica de Negocio)
+    // Capa de Lógica de Negocio
     private GestorProducto gestorProducto;
     private GestorCompra gestorCompra;
 
@@ -28,7 +27,7 @@ public class SistemaGestion {
     }
 
     private void cargarDatosDePrueba() {
-        // Así no tendrás que crear todo desde cero cada vez que ejecutes para probar
+     
         persistenciaProducto.crear(new Producto("P01", "Arroz Diana 1kg", "Abarrotes", 3000, 4000, 50, 10));
         persistenciaProducto.crear(new Producto("P02", "Leche Alquería", "Lácteos", 4000, 4500, 20, 5));
         persistenciaProveedor.crear(new Proveedor("PR01", "Distribuidora Mayorista SAS", "900.123.456-7", "ventas@mayorista.com"));
@@ -40,20 +39,19 @@ public class SistemaGestion {
         String userLimpio = usuario.trim();
         String passLimpio = contrasena.trim();
 
-        // AQUÍ ESTÁN LAS CREDENCIALES: "admin" y "123"
+        // CREDENCIALES: "admin" y "123"
         if(userLimpio.equals("admin") && passLimpio.equals("123")) {
             return new Administrador("A01", "Super Admin", userLimpio, passLimpio);
         }
         
-        // Si quieres agregar un usuario para Cajero, lo harías así:
+        // CREDENCIALES: "cajero" y "123"
         if(userLimpio.equals("cajero") && passLimpio.equals("123")) {
             return new Cajero("C01", "Cajero 1", userLimpio, passLimpio, 1);
         }
 
-        return null; // Retorna null si no coincide nada (Credenciales incorrectas)
+        return null; // Retorna null si Credenciales incorrectas
     }
 
-    // --- GETTERS PARA QUE LA GUI PUEDA ACCEDER ---
     
     public GestorProducto getGestorProducto() {
         return gestorProducto;
