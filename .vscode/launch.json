@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Panel_principal",
+            "request": "launch",
+            "mainClass": "co.edu.uptc.gui.Panel_principal",
+            "projectName": "Sistema_Tienda_Mnorista"
+        },
+        {
+            "type": "java",
+            "name": "Panel_principal",
+            "request": "launch",
+            "mainClass": "Sistema_Tienda_Mnorista/co.edu.uptc.gui.Panel_principal",
+            "projectName": "Sistema_Tienda_Mnorista"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Iniciar Chrome para localhost",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}
