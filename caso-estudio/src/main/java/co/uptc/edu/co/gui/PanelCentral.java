@@ -1,6 +1,8 @@
 package co.uptc.edu.co.gui;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
@@ -118,6 +120,11 @@ public abstract class PanelCentral extends JPanel {
         }
         return modeloTabla.getValueAt(filaSeleccionada, columna);
     }
+    
+    public String obtenerTextoSeleccionado(int columna) {
+        Object valor = obtenerValorSeleccionado(columna);
+        return valor == null ? null : valor.toString();
+    }
 
     public void limpiarSeleccion() {
         tabla.clearSelection();
@@ -125,6 +132,54 @@ public abstract class PanelCentral extends JPanel {
 
     protected void actualizarTextoTotal(String textoBase, int total) {
         etiquetaTotal.setText(textoBase + total);
+    }
+    
+    protected void configurarBotonBase(JButton boton) {
+        boton.setBackground(Color.WHITE);
+    }
+
+    protected void agregarFiltro(String texto, JComponent componente) {
+        panelFiltros.add(new JLabel(texto));
+        panelFiltros.add(componente);
+    }
+
+    protected void asignarFiltroTexto(JTextField campo, Runnable accion) {
+        campo.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                accion.run();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                accion.run();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                accion.run();
+            }
+        });
+    }
+
+    protected void asignarFiltroCombo(JComboBox<?> combo, Runnable accion) {
+        combo.addActionListener(e -> accion.run());
+    }
+
+    protected void actualizarColumnas(Object[] columnas) {
+        modeloTabla.setColumnIdentifiers(columnas);
+    }
+
+    protected void mostrarComponentes(JComponent... componentes) {
+        for (JComponent componente : componentes) {
+            componente.setVisible(true);
+        }
+    }
+
+    protected void ocultarComponentes(JComponent... componentes) {
+        for (JComponent componente : componentes) {
+            componente.setVisible(false);
+        }
     }
 
     protected abstract String obtenerTituloPanel();

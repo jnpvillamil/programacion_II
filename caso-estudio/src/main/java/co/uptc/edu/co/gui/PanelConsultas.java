@@ -1,9 +1,13 @@
 package co.uptc.edu.co.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.text.MaskFormatter;
 import java.text.ParseException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 public class PanelConsultas extends PanelCentral {
 
@@ -109,8 +113,8 @@ public class PanelConsultas extends PanelCentral {
     }
 
     private void configurarPanelConsultas() {
-        botonConsultar.setBackground(Color.WHITE);
-        comboTipoConsulta.addActionListener(e -> actualizarFiltros());
+    	 configurarBotonBase(botonConsultar);
+         asignarFiltroCombo(comboTipoConsulta, this::actualizarFiltros);
     }
 
     private void agregarComponentesConsultas() {
@@ -167,60 +171,53 @@ public class PanelConsultas extends PanelCentral {
     }
 
     private void configurarVentasPorFecha() {
-        etiquetaFecha.setVisible(true);
-        campoFecha.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_VENTAS_FECHA);
+    	  mostrarComponentes(etiquetaFecha, campoFecha);
+          actualizarColumnas(COLUMNAS_VENTAS_FECHA);
     }
 
     private void configurarComprasPorProveedor() {
-        etiquetaProveedor.setVisible(true);
-        campoProveedor.setVisible(true);
-        etiquetaFechaInicio.setVisible(true);
-        campoFechaInicio.setVisible(true);
-        etiquetaFechaFin.setVisible(true);
-        campoFechaFin.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_COMPRAS_PROVEEDOR);
+    	mostrarComponentes(
+                etiquetaProveedor,
+                campoProveedor,
+                etiquetaFechaInicio,
+                campoFechaInicio,
+                etiquetaFechaFin,
+                campoFechaFin
+        );
+    	  actualizarColumnas(COLUMNAS_COMPRAS_PROVEEDOR);
     }
 
     private void configurarStockBajoMinimo() {
-        modeloTabla.setColumnIdentifiers(COLUMNAS_STOCK_BAJO);
+    	 actualizarColumnas(COLUMNAS_STOCK_BAJO);
     }
 
     private void configurarHistorialCliente() {
-        etiquetaCliente.setVisible(true);
-        campoCliente.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_HISTORIAL_CLIENTE);
+    	 mostrarComponentes(etiquetaCliente, campoCliente);
+         actualizarColumnas(COLUMNAS_HISTORIAL_CLIENTE);
     }
 
     private void configurarMovimientosContables() {
-        etiquetaCuenta.setVisible(true);
-        campoCuenta.setVisible(true);
-        etiquetaFechaInicio.setVisible(true);
-        campoFechaInicio.setVisible(true);
-        etiquetaFechaFin.setVisible(true);
-        campoFechaFin.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_MOVIMIENTOS_CONTABLES);
+    	 mostrarComponentes(
+                 etiquetaCuenta,
+                 campoCuenta,
+                 etiquetaFechaInicio,
+                 campoFechaInicio,
+                 etiquetaFechaFin,
+                 campoFechaFin
+         );
+    	  actualizarColumnas(COLUMNAS_MOVIMIENTOS_CONTABLES);
     }
 
     private void ocultarFiltros() {
-        etiquetaFecha.setVisible(false);
-        campoFecha.setVisible(false);
-
-        etiquetaProveedor.setVisible(false);
-        campoProveedor.setVisible(false);
-
-        etiquetaCliente.setVisible(false);
-        campoCliente.setVisible(false);
-
-        etiquetaCuenta.setVisible(false);
-        campoCuenta.setVisible(false);
-
-        etiquetaFechaInicio.setVisible(false);
-        campoFechaInicio.setVisible(false);
-
-        etiquetaFechaFin.setVisible(false);
-        campoFechaFin.setVisible(false);
-    }
+    	 ocultarComponentes(
+                 etiquetaFecha, campoFecha,
+                 etiquetaProveedor, campoProveedor,
+                 etiquetaCliente, campoCliente,
+                 etiquetaCuenta, campoCuenta,
+                 etiquetaFechaInicio, campoFechaInicio,
+                 etiquetaFechaFin, campoFechaFin
+         );
+     }
 
     private JFormattedTextField crearCampoFecha() {
         try {

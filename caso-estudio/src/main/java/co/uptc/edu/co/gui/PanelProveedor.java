@@ -1,7 +1,7 @@
 package co.uptc.edu.co.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JTextField;
 
 public class PanelProveedor extends PanelCentral {
 
@@ -24,7 +24,6 @@ public class PanelProveedor extends PanelCentral {
     private JButton botonNuevo;
     private JButton botonEditar;
     private JButton botonCambiarEstado;
-    private JButton botonRegistrarCompra;
 
     private JTextField campoBuscar;
 
@@ -51,29 +50,25 @@ public class PanelProveedor extends PanelCentral {
     }
 
     private void inicializarComponentesProveedor() {
-        botonNuevo = new JButton("Nuevo");
+    	botonNuevo = new JButton("Nuevo");
         botonEditar = new JButton("Editar");
         botonCambiarEstado = new JButton(TEXTO_BOTON_CAMBIAR_ESTADO);
-        botonRegistrarCompra = new JButton("Registrar Compra");
 
         campoBuscar = new JTextField(20);
     }
 
     private void configurarPanelProveedor() {
-        botonNuevo.setBackground(Color.WHITE);
-        botonEditar.setBackground(Color.WHITE);
-        botonCambiarEstado.setBackground(Color.WHITE);
-        botonRegistrarCompra.setBackground(Color.WHITE);
+    	 configurarBotonBase(botonNuevo);
+         configurarBotonBase(botonEditar);
+         configurarBotonBase(botonCambiarEstado);
     }
 
     private void agregarComponentesProveedor() {
         panelBotones.add(botonNuevo);
         panelBotones.add(botonEditar);
         panelBotones.add(botonCambiarEstado);
-        panelBotones.add(botonRegistrarCompra);
-
-        panelFiltros.add(new JLabel("Buscar:"));
-        panelFiltros.add(campoBuscar);
+       
+        agregarFiltro("Buscar:", campoBuscar);
     }
 
     public void inicializarEventos(Evento evento) {
@@ -86,8 +81,6 @@ public class PanelProveedor extends PanelCentral {
         botonCambiarEstado.setActionCommand(Evento.CMD_ESTADO_PROVEEDOR);
         botonCambiarEstado.addActionListener(evento);
 
-        botonRegistrarCompra.setActionCommand(Evento.CMD_REGISTRAR_COMPRA_PROVEEDOR);
-        botonRegistrarCompra.addActionListener(evento);
     }
 
     public void actualizarTotalProveedores(int total) {

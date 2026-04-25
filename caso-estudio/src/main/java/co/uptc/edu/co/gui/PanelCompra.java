@@ -16,13 +16,12 @@ public class PanelCompra extends PanelCentral {
             "Fecha",
             "Proveedor",
             "Subtotal",
-            "IVA",
+            "Impuestos",
             "Total",
             "Estado"
     };
 
     private JButton botonNuevaCompra;
-    private JButton botonEditar;
     private JButton botonAnular;
     private JButton botonDetalle;
 
@@ -53,7 +52,6 @@ public class PanelCompra extends PanelCentral {
 
     private void inicializarComponentesCompra() {
         botonNuevaCompra = new JButton("Nueva Compra");
-        botonEditar = new JButton("Editar");
         botonAnular = new JButton("Anular");
         botonDetalle = new JButton("Ver Detalle");
 
@@ -61,27 +59,24 @@ public class PanelCompra extends PanelCentral {
 
         comboProveedor = new JComboBox<>();
         comboProveedor.addItem(OPCION_TODOS);
-        comboProveedor.addItem("Proveedor 1");
-        comboProveedor.addItem("Proveedor 2");
+     
     }
 
     private void configurarPanelCompra() {
-        botonNuevaCompra.setBackground(Color.WHITE);
-        botonEditar.setBackground(Color.WHITE);
-        botonAnular.setBackground(Color.WHITE);
-        botonDetalle.setBackground(Color.WHITE);
+    	 configurarBotonBase(botonNuevaCompra);
+         configurarBotonBase(botonAnular);
+         configurarBotonBase(botonDetalle);
+
     }
 
     private void agregarComponentesCompra() {
         panelBotones.add(botonNuevaCompra);
-        panelBotones.add(botonEditar);
         panelBotones.add(botonAnular);
         panelBotones.add(botonDetalle);
 
-        panelFiltros.add(new JLabel("Buscar Factura:"));
-        panelFiltros.add(campoBuscar);
-        panelFiltros.add(new JLabel("Proveedor:"));
-        panelFiltros.add(comboProveedor);
+        agregarFiltro("Buscar Factura:", campoBuscar);
+        agregarFiltro("Proveedor:", comboProveedor);
+
     }
 
     public void inicializarEventos(Evento evento) {

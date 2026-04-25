@@ -1,22 +1,19 @@
 package co.uptc.edu.co.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.text.MaskFormatter;
 import java.text.ParseException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 public class PanelReportes extends PanelCentral {
 
     private static final String TITULO_PANEL = "Gestión de Reportes";
     private static final String TEXTO_TOTAL_INICIAL = "Registros del reporte: 0";
     private static final String TEXTO_TOTAL = "Registros del reporte: ";
-
-    private static final String TEXTO_LABEL_TIPO_REPORTE = "Tipo de reporte:";
-    private static final String TEXTO_LABEL_FECHA = "Fecha:";
-    private static final String TEXTO_LABEL_MES = "Mes:";
-    private static final String TEXTO_LABEL_ANIO = "Año:";
-    private static final String TEXTO_LABEL_FECHA_INICIO = "Desde:";
-    private static final String TEXTO_LABEL_FECHA_FIN = "Hasta:";
 
     private static final String TEXTO_BOTON_GENERAR = "Generar";
 
@@ -100,12 +97,12 @@ public class PanelReportes extends PanelCentral {
     }
 
     private void inicializarComponentesReportes() {
-        etiquetaTipoReporte = new JLabel(TEXTO_LABEL_TIPO_REPORTE);
-        etiquetaFecha = new JLabel(TEXTO_LABEL_FECHA);
-        etiquetaMes = new JLabel(TEXTO_LABEL_MES);
-        etiquetaAnio = new JLabel(TEXTO_LABEL_ANIO);
-        etiquetaFechaInicio = new JLabel(TEXTO_LABEL_FECHA_INICIO);
-        etiquetaFechaFin = new JLabel(TEXTO_LABEL_FECHA_FIN);
+    	etiquetaTipoReporte = new JLabel("Tipo de reporte:");
+        etiquetaFecha = new JLabel("Fecha:");
+        etiquetaMes = new JLabel("Mes:");
+        etiquetaAnio = new JLabel("Año:");
+        etiquetaFechaInicio = new JLabel("Desde:");
+        etiquetaFechaFin = new JLabel("Hasta:");
 
         botonGenerar = new JButton(TEXTO_BOTON_GENERAR);
 
@@ -136,8 +133,8 @@ public class PanelReportes extends PanelCentral {
     }
 
     private void configurarPanelReportes() {
-        botonGenerar.setBackground(Color.WHITE);
-        comboTipoReporte.addActionListener(e -> actualizarFiltros());
+    	 configurarBotonBase(botonGenerar);
+         asignarFiltroCombo(comboTipoReporte, this::actualizarFiltros);
     }
 
     private void agregarComponentesReportes() {
@@ -195,90 +192,60 @@ public class PanelReportes extends PanelCentral {
     }
 
     public void inicializarEventos(Evento evento) {
-        // Cuando definas el comando en Evento, lo conectas aquí.
-        // botonGenerar.setActionCommand(Evento.CMD_GENERAR_REPORTE);
-        // botonGenerar.addActionListener(evento);
+       // por hacer
     }
 
     private void configurarVentasDiarias() {
-        etiquetaFecha.setVisible(true);
-        campoFecha.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_VENTAS_DIARIAS);
+    	 mostrarComponentes(etiquetaFecha, campoFecha);
+         actualizarColumnas(COLUMNAS_VENTAS_DIARIAS);
     }
 
     private void configurarVentasMensuales() {
-        etiquetaMes.setVisible(true);
-        campoMes.setVisible(true);
-        etiquetaAnio.setVisible(true);
-        campoAnio.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_VENTAS_MENSUALES);
+    	 mostrarComponentes(etiquetaMes, campoMes, etiquetaAnio, campoAnio);
+         actualizarColumnas(COLUMNAS_VENTAS_MENSUALES);
     }
 
     private void configurarVentasAnuales() {
-        etiquetaAnio.setVisible(true);
-        campoAnio.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_VENTAS_ANUALES);
+    	  mostrarComponentes(etiquetaAnio, campoAnio);
+          actualizarColumnas(COLUMNAS_VENTAS_ANUALES);
     }
 
     private void configurarUtilidadBruta() {
-        etiquetaFechaInicio.setVisible(true);
-        campoFechaInicio.setVisible(true);
-        etiquetaFechaFin.setVisible(true);
-        campoFechaFin.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_UTILIDAD_BRUTA);
+    	mostrarComponentes(etiquetaFechaInicio, campoFechaInicio, etiquetaFechaFin, campoFechaFin);
+        actualizarColumnas(COLUMNAS_UTILIDAD_BRUTA);
     }
 
     private void configurarProductosMasVendidos() {
-        etiquetaFechaInicio.setVisible(true);
-        campoFechaInicio.setVisible(true);
-        etiquetaFechaFin.setVisible(true);
-        campoFechaFin.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_PRODUCTOS_MAS_VENDIDOS);
+    	 mostrarComponentes(etiquetaFechaInicio, campoFechaInicio, etiquetaFechaFin, campoFechaFin);
+         actualizarColumnas(COLUMNAS_PRODUCTOS_MAS_VENDIDOS);
     }
-
     private void configurarClientesMayorCompra() {
-        etiquetaFechaInicio.setVisible(true);
-        campoFechaInicio.setVisible(true);
-        etiquetaFechaFin.setVisible(true);
-        campoFechaFin.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_CLIENTES_MAYOR_COMPRA);
+    	mostrarComponentes(etiquetaFechaInicio, campoFechaInicio, etiquetaFechaFin, campoFechaFin);
+        actualizarColumnas(COLUMNAS_CLIENTES_MAYOR_COMPRA);
     }
 
     private void configurarVentasPorFormaPago() {
-        etiquetaFechaInicio.setVisible(true);
-        campoFechaInicio.setVisible(true);
-        etiquetaFechaFin.setVisible(true);
-        campoFechaFin.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_VENTAS_FORMA_PAGO);
+    	 mostrarComponentes(etiquetaFechaInicio, campoFechaInicio, etiquetaFechaFin, campoFechaFin);
+         actualizarColumnas(COLUMNAS_VENTAS_FORMA_PAGO);
     }
 
     private void configurarInventarioValorizado() {
-        modeloTabla.setColumnIdentifiers(COLUMNAS_INVENTARIO_VALORIZADO);
+    	 actualizarColumnas(COLUMNAS_INVENTARIO_VALORIZADO);
     }
 
     private void configurarResumenContable() {
-        etiquetaFechaInicio.setVisible(true);
-        campoFechaInicio.setVisible(true);
-        etiquetaFechaFin.setVisible(true);
-        campoFechaFin.setVisible(true);
-        modeloTabla.setColumnIdentifiers(COLUMNAS_RESUMEN_CONTABLE);
+    	mostrarComponentes(etiquetaFechaInicio, campoFechaInicio, etiquetaFechaFin, campoFechaFin);
+        actualizarColumnas(COLUMNAS_RESUMEN_CONTABLE);
     }
 
     private void ocultarFiltros() {
-        etiquetaFecha.setVisible(false);
-        campoFecha.setVisible(false);
-
-        etiquetaMes.setVisible(false);
-        campoMes.setVisible(false);
-
-        etiquetaAnio.setVisible(false);
-        campoAnio.setVisible(false);
-
-        etiquetaFechaInicio.setVisible(false);
-        campoFechaInicio.setVisible(false);
-
-        etiquetaFechaFin.setVisible(false);
-        campoFechaFin.setVisible(false);
+    	  ocultarComponentes(
+                  etiquetaFecha, campoFecha,
+                  etiquetaMes, campoMes,
+                  etiquetaAnio, campoAnio,
+                  etiquetaFechaInicio, campoFechaInicio,
+                  etiquetaFechaFin, campoFechaFin
+          );
     }
 
     private JFormattedTextField crearCampoFecha() {

@@ -1,16 +1,14 @@
 package co.uptc.edu.co.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.modelo.enums.TipoClienteEnum;
-
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PanelCliente extends PanelCentral {
 
@@ -93,10 +91,10 @@ public class PanelCliente extends PanelCentral {
             }
         });
 
-        botonNuevo.setBackground(Color.WHITE);
-        botonEditar.setBackground(Color.WHITE);
-        botonCambiarEstado.setBackground(Color.WHITE);
-        botonHistorial.setBackground(Color.WHITE);
+        configurarBotonBase(botonNuevo);
+        configurarBotonBase(botonEditar);
+        configurarBotonBase(botonCambiarEstado);
+        configurarBotonBase(botonHistorial);
     }
 
     private void agregarComponentesCliente() {
@@ -105,10 +103,13 @@ public class PanelCliente extends PanelCentral {
         panelBotones.add(botonCambiarEstado);
         panelBotones.add(botonHistorial);
 
-        panelFiltros.add(new JLabel("Buscar:"));
-        panelFiltros.add(campoBuscar);
-        panelFiltros.add(new JLabel("Tipo:"));
-        panelFiltros.add(comboTipo);
+        agregarFiltro("Buscar:", campoBuscar);
+        agregarFiltro("Tipo:", comboTipo);
+    }
+    
+    private void inicializarFiltros() {
+        asignarFiltroTexto(campoBuscar, this::aplicarFiltros);
+        asignarFiltroCombo(comboTipo, this::aplicarFiltros);
     }
 
     public void inicializarEventos(Evento evento) {
@@ -169,35 +170,14 @@ public class PanelCliente extends PanelCentral {
         actualizarTextoTotal(TEXTO_TOTAL, totalFiltrados);
     }
 
-    private void inicializarFiltros() {
-        campoBuscar.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                aplicarFiltros();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                aplicarFiltros();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                aplicarFiltros();
-            }
-        });
-
-        comboTipo.addActionListener(e -> aplicarFiltros());
-    }
-
+    
     private void actualizarTextoBotonSegunSeleccion() {
         String estado = obtenerEstadoSeleccionado();
         actualizarTextoBotonEstado(estado);
     }
 
     public String obtenerEstadoSeleccionado() {
-        Object valor = obtenerValorSeleccionado(COLUMNA_ESTADO);
-        return valor == null ? null : valor.toString();
+    	return obtenerTextoSeleccionado(COLUMNA_ESTADO);
     }
 
     public void actualizarTextoBotonEstado(String estado) {
@@ -218,7 +198,6 @@ public class PanelCliente extends PanelCentral {
     }
 
     public String obtenerCodigoSeleccionado() {
-        Object valor = obtenerValorSeleccionado(COLUMNA_CODIGO);
-        return valor == null ? null : valor.toString();
+    	  return obtenerTextoSeleccionado(COLUMNA_CODIGO);
     }
 }

@@ -1,7 +1,9 @@
 package co.uptc.edu.co.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
+
 
 public class PanelContabilidad extends PanelCentral {
 
@@ -21,10 +23,7 @@ public class PanelContabilidad extends PanelCentral {
             "Descripción"
     };
 
-    private JButton botonNuevoMovimiento;
     private JButton botonVerDetalle;
-    private JButton botonFiltrar;
-
     private JTextField campoBuscar;
 
     private JComboBox<String> comboTipoMovimiento;
@@ -53,10 +52,8 @@ public class PanelContabilidad extends PanelCentral {
     }
 
     private void inicializarComponentesContabilidad() {
-        botonNuevoMovimiento = new JButton("Nuevo Movimiento");
         botonVerDetalle = new JButton("Ver Detalle");
-        botonFiltrar = new JButton("Filtrar");
-
+       
         campoBuscar = new JTextField(20);
 
         comboTipoMovimiento = new JComboBox<>();
@@ -76,26 +73,21 @@ public class PanelContabilidad extends PanelCentral {
     }
 
     private void configurarPanelContabilidad() {
-        botonNuevoMovimiento.setBackground(Color.WHITE);
-        botonVerDetalle.setBackground(Color.WHITE);
-        botonFiltrar.setBackground(Color.WHITE);
+    	 configurarBotonBase(botonVerDetalle);
     }
 
     private void agregarComponentesContabilidad() {
-        panelBotones.add(botonNuevoMovimiento);
-        panelBotones.add(botonVerDetalle);
-        panelBotones.add(botonFiltrar);
+    	  panelBotones.add(botonVerDetalle);
 
-        panelFiltros.add(new JLabel("Buscar:"));
-        panelFiltros.add(campoBuscar);
-        panelFiltros.add(new JLabel("Tipo:"));
-        panelFiltros.add(comboTipoMovimiento);
-        panelFiltros.add(new JLabel("Cuenta:"));
-        panelFiltros.add(comboCuenta);
+          agregarFiltro("Buscar:", campoBuscar);
+          agregarFiltro("Tipo:", comboTipoMovimiento);
+          agregarFiltro("Cuenta:", comboCuenta);
     }
 
     public void inicializarEventos(Evento evento) {
-        // por hacer
+    	// terminar de hacer
+    	//  botonVerDetalle.setActionCommand(Evento.CMD_VER_DETALLE_CONTABLE);
+          botonVerDetalle.addActionListener(evento);
     }
 
     public void actualizarTotalMovimientos(int total) {

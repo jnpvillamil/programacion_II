@@ -1,7 +1,8 @@
 package co.uptc.edu.co.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
 
 public class PanelVenta extends PanelCentral {
 
@@ -12,26 +13,27 @@ public class PanelVenta extends PanelCentral {
     private static final String OPCION_TODOS = "Todos";
 
     private static final String[] COLUMNAS = {
-            "Factura",
+            "N° Factura",
             "Fecha",
             "Hora",
             "Cliente",
             "Forma de Pago",
-            "Medio de Pago",
-            "IVA",
-            "Retenciones",
+            "Impuestos",
             "Total",
             "Estado"
     };
 
     private JButton botonNuevaVenta;
     private JButton botonAnularVenta;
+    private JButton botonRegistrarDevolucion;
     private JButton botonVerDetalle;
     private JButton botonFactura;
 
-    private JTextField campoBuscar;
+    private JTextField campoBuscarFactura;
+    
     private JComboBox<String> comboCliente;
-    private JComboBox<String> comboPago;
+    private JComboBox<String> comboFormaPago;
+    private JComboBox<String> comboEstado;
 
     public PanelVenta() {
         super();
@@ -58,51 +60,59 @@ public class PanelVenta extends PanelCentral {
     private void inicializarComponentesVenta() {
         botonNuevaVenta = new JButton("Nueva Venta");
         botonAnularVenta = new JButton("Anular");
+        botonRegistrarDevolucion = new JButton("Devolución");
         botonVerDetalle = new JButton("Ver Detalle");
         botonFactura = new JButton("Factura");
 
-        campoBuscar = new JTextField(20);
+        campoBuscarFactura = new JTextField(20);
 
         comboCliente = new JComboBox<>();
         comboCliente.addItem(OPCION_TODOS);
-        comboCliente.addItem("Cliente 1");
-        comboCliente.addItem("Cliente 2");
 
-        comboPago = new JComboBox<>();
-        comboPago.addItem(OPCION_TODOS);
-        comboPago.addItem("Efectivo");
-        comboPago.addItem("Tarjeta");
-        comboPago.addItem("Transferencia");
+        comboFormaPago = new JComboBox<>();
+        comboFormaPago.addItem(OPCION_TODOS);
+        comboFormaPago.addItem("Efectivo");
+        comboFormaPago.addItem("Tarjeta");
+        comboFormaPago.addItem("Transferencia");
+        comboFormaPago.addItem("Crédito");
+        
+        comboEstado = new JComboBox<>();
+        comboEstado.addItem(OPCION_TODOS);
+        comboEstado.addItem("ACTIVA");
+        comboEstado.addItem("ANULADA");
+        comboEstado.addItem("DEVUELTA");
     }
 
     private void configurarPanelVenta() {
-        botonNuevaVenta.setBackground(Color.WHITE);
-        botonAnularVenta.setBackground(Color.WHITE);
-        botonVerDetalle.setBackground(Color.WHITE);
-        botonFactura.setBackground(Color.WHITE);
+    	 configurarBotonBase(botonNuevaVenta);
+         configurarBotonBase(botonAnularVenta);
+         configurarBotonBase(botonRegistrarDevolucion);
+         configurarBotonBase(botonVerDetalle);
+         configurarBotonBase(botonFactura);
+         
     }
 
     private void agregarComponentesVenta() {
         panelBotones.add(botonNuevaVenta);
         panelBotones.add(botonAnularVenta);
+        panelBotones.add(botonRegistrarDevolucion);
         panelBotones.add(botonVerDetalle);
         panelBotones.add(botonFactura);
-
-        panelFiltros.add(new JLabel("Buscar Factura:"));
-        panelFiltros.add(campoBuscar);
-
-        panelFiltros.add(new JLabel("Cliente:"));
-        panelFiltros.add(comboCliente);
-
-        panelFiltros.add(new JLabel("Pago:"));
-        panelFiltros.add(comboPago);
+        
+        agregarFiltro("Buscar Factura:", campoBuscarFactura);
+        agregarFiltro("Cliente:", comboCliente);
+        agregarFiltro("Pago:", comboFormaPago);
+        agregarFiltro("Estado:", comboEstado);
+       
     }
 
     public void inicializarEventos(Evento evento) {
-        // por hacer
+    // por hacer
     }
 
     public void actualizarTotalVentas(int total) {
         actualizarTextoTotal(TEXTO_TOTAL, total);
     }
+    
+    
 }
