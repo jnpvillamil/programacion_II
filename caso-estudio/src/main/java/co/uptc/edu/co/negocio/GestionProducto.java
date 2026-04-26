@@ -215,18 +215,7 @@ public class GestionProducto implements IGestionProducto {
             producto.setStockActual(producto.getStockActual() - cantidad);
         }
 
-      /*  String codigoMovimiento = "MOV" + (movimientos.size() + 1);
-
-        MovimientoInventario movimiento = new MovimientoInventario(
-                codigoMovimiento,
-                codigo,
-                movimientoEnum.name(),
-                cantidad,
-                LocalDate.now(),
-                "Movimiento registrado"
-        );
-
-        movimientos.add(movimiento);*/
+      
         MovimientoInventario movimiento = new MovimientoInventario(
                 codigo,
                 movimientoEnum,
