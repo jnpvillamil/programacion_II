@@ -33,8 +33,13 @@ public class PanelClientes extends PanelCrudAbstracto {
 		modeloTabla.addColumn("Nombre / Razón Social");
 		modeloTabla.addColumn("Tipo ID");
 		modeloTabla.addColumn("Número ID");
+		modeloTabla.addColumn("Tipo Persona");
+		modeloTabla.addColumn("Ciudad");
 		modeloTabla.addColumn("Teléfono");
+		modeloTabla.addColumn("Correo");
 		modeloTabla.addColumn("Tipo Cliente");
+		modeloTabla.addColumn("Resp. Fiscal");
+		modeloTabla.addColumn("Resp. Tributaria");
 		modeloTabla.addColumn("Estado");
 	}
 
@@ -46,10 +51,15 @@ public class PanelClientes extends PanelCrudAbstracto {
 			Object[] fila = {
 				cliente.getCodigoCliente(),
 				cliente.getNombreCompletoORazonSocial(),
-				cliente.getTipoIdentificacion() != null ? cliente.getTipoIdentificacion().name() : "",
+				cliente.getTipoIdentificacion(),
 				cliente.getNumeroIdentificacion(),
+				cliente.getTipoPersona(),
+				cliente.getCiudad(),
 				cliente.getTelefono(),
-				cliente.getTipoCliente() != null ? cliente.getTipoCliente() : "",
+				cliente.getCorreoElectronico(),
+				cliente.getTipoCliente(),
+				cliente.getResponsabilidadFiscal(),
+				cliente.getResponsabilidadTributaria(),
 				cliente.isActivo() ? "Activo" : "Inactivo"
 			};
 			modeloTabla.addRow(fila);

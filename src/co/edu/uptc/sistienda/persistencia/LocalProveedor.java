@@ -21,16 +21,24 @@ public class LocalProveedor implements IGestionProveedor {
 		prov1.setRazonSocial("Alimentos del Valle S.A.S");
 		prov1.setNit("800234567-2");
 		prov1.setDireccion("Zona Industrial Calle 80 # 30-10");
+		prov1.setCiudad("Bogotá, D.C.");
 		prov1.setTelefono("6014567890");
 		prov1.setCorreoElectronico("ventas@alimentosdelvalle.com");
+		prov1.setResponsabilidadFiscal("R-99-PN");
+		prov1.setResponsabilidadTributaria("No aplica");
+		prov1.setActividadEcocomica("4761");
 
 		Proveedor prov2 = new Proveedor();
 		prov2.setCodigoProveedor("PR002");
 		prov2.setRazonSocial("Papelería Central Ltda");
 		prov2.setNit("900876543-1");
 		prov2.setDireccion("Cra 15 # 22-40, Bogotá");
+		prov2.setCiudad("Bogotá, D.C.");
 		prov2.setTelefono("3012345678");
 		prov2.setCorreoElectronico("info@papeleriacentral.com");
+		prov2.setResponsabilidadFiscal("R-99-PN");
+		prov2.setResponsabilidadTributaria("No aplica");
+		prov2.setActividadEcocomica("4761");
 
 		listaProveedores.add(prov1);
 		listaProveedores.add(prov2);
@@ -48,8 +56,12 @@ public class LocalProveedor implements IGestionProveedor {
 			existente.setRazonSocial(proveedorActualizado.getRazonSocial());
 			existente.setNit(proveedorActualizado.getNit());
 			existente.setDireccion(proveedorActualizado.getDireccion());
+			existente.setCiudad(proveedorActualizado.getCiudad());
 			existente.setTelefono(proveedorActualizado.getTelefono());
 			existente.setCorreoElectronico(proveedorActualizado.getCorreoElectronico());
+			existente.setResponsabilidadFiscal(proveedorActualizado.getResponsabilidadFiscal());
+			existente.setResponsabilidadTributaria(proveedorActualizado.getResponsabilidadTributaria());
+			existente.setActividadEcocomica(proveedorActualizado.getActividadEconomica());
 		}
 	}
 

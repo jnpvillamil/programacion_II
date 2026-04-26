@@ -36,6 +36,7 @@ public class PanelProductos extends PanelCrudAbstracto {
 		modeloTabla.addColumn("Código");
 		modeloTabla.addColumn("Nombre");
 		modeloTabla.addColumn("Categoría");
+		modeloTabla.addColumn("Tipo Impuesto");
 		modeloTabla.addColumn("P. Compra");
 		modeloTabla.addColumn("P. Venta");
 		modeloTabla.addColumn("Stock Act.");
@@ -55,6 +56,7 @@ public class PanelProductos extends PanelCrudAbstracto {
 				producto.getCodigoInterno(),
 				producto.getNombreProducto(),
 				producto.getCategoria(),
+				producto.getTipoImpuesto(),
 				"$" + String.format("%,.0f", producto.getPrecioCompra()),
 				"$" + String.format("%,.0f", producto.getPrecioVenta()),
 				producto.getStockActual(),

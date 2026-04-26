@@ -6,9 +6,16 @@ public class Proveedor {
 	private String razonSocial;
 	private String nit;
 	private String direccion;
+	private String ciudad; 
 	private String telefono;
 	private String correoElectronico;
 	private boolean activo;
+	
+	private String responsabilidadFiscal; 
+	
+	private String responsabilidadTributaria; 
+	
+	private String actividadEconomica; 
 
 	public Proveedor() {
 		this.activo = true;
@@ -45,6 +52,14 @@ public class Proveedor {
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
+	
+	public String getCiudad() {
+		return ciudad; 
+	}
+	
+	public void setCiudad(String ciudad){
+		this.ciudad = ciudad; 
+	}
 
 	public String getTelefono() {
 		return telefono;
@@ -68,5 +83,29 @@ public class Proveedor {
 
 	public void setActivo(boolean activo) {
 		this.activo = activo;
+	}
+	
+	public String getResponsabilidadFiscal(){
+		return responsabilidadFiscal; 
+	}
+	
+	public void setResponsabilidadFiscal(String responsabilidadFiscal){
+		this.responsabilidadFiscal = responsabilidadFiscal;
+	}
+	
+	public String getResponsabilidadTributaria() {
+		return responsabilidadTributaria; 
+	}
+	
+	public void setResponsabilidadTributaria(String responsabilidadTributaria){
+		this.responsabilidadTributaria = responsabilidadTributaria; 
+	}
+	
+	public String getActividadEconomica(){
+		return actividadEconomica;
+	}
+	
+	public void setActividadEcocomica(String actividadEconomica){
+		this.actividadEconomica = actividadEconomica;
 	}
 }

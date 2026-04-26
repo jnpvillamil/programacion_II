@@ -1,6 +1,7 @@
 package co.edu.uptc.sistienda.modelo;
 
 import co.edu.uptc.sistienda.modelo.enums.CategoriaProductoEnum;
+import co.edu.uptc.sistienda.modelo.enums.TipoImpuestoEnum;
 
 public class Producto {
 
@@ -12,9 +13,12 @@ public class Producto {
 	private int stockActual;
 	private int stockMinimo;
 	private boolean activo;
+	
+	private TipoImpuestoEnum tipoImpuesto; 
 
 	public Producto() {
 		this.activo = true;
+		this.tipoImpuesto =TipoImpuestoEnum.IVA;
 	}
 
 	public Producto(String codigoInterno, String nombreProducto, CategoriaProductoEnum categoria,
@@ -27,6 +31,7 @@ public class Producto {
 		this.stockActual = stockActual;
 		this.stockMinimo = stockMinimo;
 		this.activo = true;
+		this.tipoImpuesto = TipoImpuestoEnum.IVA;
 	}
 
 	public String getCodigoInterno() {
@@ -91,6 +96,14 @@ public class Producto {
 
 	public void setActivo(boolean activo) {
 		this.activo = activo;
+	}
+	
+	public TipoImpuestoEnum getTipoImpuesto() {
+		return tipoImpuesto; 
+	}
+	
+	public void setTipoImpuesto(TipoImpuestoEnum tipoImpuesto) {
+		this.tipoImpuesto = tipoImpuesto; 
 	}
 
 	public boolean tieneStockBajoMinimo() {

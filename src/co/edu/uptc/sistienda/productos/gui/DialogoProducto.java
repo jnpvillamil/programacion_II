@@ -9,6 +9,7 @@ import co.edu.uptc.sistienda.comun.gui.DialogoCrudAbstracto;
 import co.edu.uptc.sistienda.gui.Evento;
 import co.edu.uptc.sistienda.modelo.Producto;
 import co.edu.uptc.sistienda.modelo.enums.CategoriaProductoEnum;
+import co.edu.uptc.sistienda.modelo.enums.TipoImpuestoEnum;
 
  //Diálogo concreto para Crear o Editar un Producto
  //Hereda el algoritmo de DialogoCrudAbstracto
@@ -22,6 +23,7 @@ public class DialogoProducto extends DialogoCrudAbstracto {
 	private JTextField          campoPrecioVenta;
 	private JTextField          campoStockActual;
 	private JTextField          campoStockMinimo;
+	private JComboBox<TipoImpuestoEnum>  comboTipoImpuesto; 
 
 	public DialogoProducto(Evento evento, boolean esCreacion) {
 		super(evento, esCreacion ? "Nuevo Producto" : "Editar Producto", esCreacion);
@@ -37,6 +39,7 @@ public class DialogoProducto extends DialogoCrudAbstracto {
 		campoPrecioVenta  = new JTextField();
 		campoStockActual  = new JTextField();
 		campoStockMinimo  = new JTextField();
+		comboTipoImpuesto = new JComboBox<>(TipoImpuestoEnum.values());
 
 		// En modo edición, el código no se puede cambiar
 		campoCodigo.setEditable(esCreacion);
@@ -47,6 +50,8 @@ public class DialogoProducto extends DialogoCrudAbstracto {
 		panelCampos.add(campoNombre);
 		panelCampos.add(new JLabel("Categoría:"));
 		panelCampos.add(comboCategorias);
+		panelCampos.add(new JLabel("Tipo de impuesto:"));
+		panelCampos.add(comboTipoImpuesto);
 		panelCampos.add(new JLabel("Precio compra:"));
 		panelCampos.add(campoPrecioCompra);
 		panelCampos.add(new JLabel("Precio venta:"));
@@ -71,6 +76,7 @@ public class DialogoProducto extends DialogoCrudAbstracto {
 		campoCodigo.setText(producto.getCodigoInterno());
 		campoNombre.setText(producto.getNombreProducto());
 		comboCategorias.setSelectedItem(producto.getCategoria());
+		comboTipoImpuesto.setSelectedItem(producto.getTipoImpuesto() !=null ? producto.getTipoImpuesto() : TipoImpuestoEnum.IVA);
 		campoPrecioCompra.setText(String.valueOf(producto.getPrecioCompra()));
 		campoPrecioVenta.setText(String.valueOf(producto.getPrecioVenta()));
 		campoStockActual.setText(String.valueOf(producto.getStockActual()));
@@ -88,6 +94,7 @@ public class DialogoProducto extends DialogoCrudAbstracto {
 		producto.setCodigoInterno(campoCodigo.getText().trim());
 		producto.setNombreProducto(campoNombre.getText().trim());
 		producto.setCategoria((CategoriaProductoEnum) comboCategorias.getSelectedItem());
+		producto.setTipoImpuesto((TipoImpuestoEnum)comboTipoImpuesto.getSelectedItem());
 		producto.setPrecioCompra(Double.parseDouble(campoPrecioCompra.getText().trim()));
 		producto.setPrecioVenta(Double.parseDouble(campoPrecioVenta.getText().trim()));
 		producto.setStockActual(Integer.parseInt(campoStockActual.getText().trim()));

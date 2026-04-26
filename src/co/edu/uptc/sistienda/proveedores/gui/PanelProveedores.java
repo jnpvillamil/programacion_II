@@ -32,8 +32,12 @@ public class PanelProveedores extends PanelCrudAbstracto {
 		modeloTabla.addColumn("Código");
 		modeloTabla.addColumn("Razón Social");
 		modeloTabla.addColumn("NIT");
+		modeloTabla.addColumn("Ciudad");
 		modeloTabla.addColumn("Teléfono");
 		modeloTabla.addColumn("Correo");
+		modeloTabla.addColumn("Resp. Fiscal");
+		modeloTabla.addColumn("Resp. Tributaria");
+		modeloTabla.addColumn("Act. Económica");
 		modeloTabla.addColumn("Estado");
 	}
 
@@ -46,8 +50,12 @@ public class PanelProveedores extends PanelCrudAbstracto {
 				proveedor.getCodigoProveedor(),
 				proveedor.getRazonSocial(),
 				proveedor.getNit(),
+				proveedor.getCiudad(),
 				proveedor.getTelefono(),
 				proveedor.getCorreoElectronico(),
+				proveedor.getResponsabilidadFiscal(),
+				proveedor.getResponsabilidadTributaria(),
+				proveedor.getActividadEconomica(),
 				proveedor.isActivo() ? "Activo" : "Inactivo"
 			};
 			modeloTabla.addRow(fila);
