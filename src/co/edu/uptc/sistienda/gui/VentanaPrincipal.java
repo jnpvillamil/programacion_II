@@ -103,12 +103,7 @@ public class VentanaPrincipal extends JFrame {
 		JPanel raiz = new JPanel(new BorderLayout());
 
 		// Barra superior con botón Salir
-		JPanel barraSuperior = new JPanel(new BorderLayout());
-		barraSuperior.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
-		JButton botonSalir = new JButton("Salir");
-		botonSalir.setActionCommand(Evento.SALIR);
-		botonSalir.addActionListener(evento);
-		barraSuperior.add(botonSalir, BorderLayout.EAST);
+		JPanel barraSuperior = construirBarraSuperior();
 		raiz.add(barraSuperior, BorderLayout.NORTH);
 
 		// Mensaje centrado en pantalla
@@ -125,14 +120,7 @@ public class VentanaPrincipal extends JFrame {
 		JPanel raiz = new JPanel(new BorderLayout());
 
 		// Barra superior
-		JPanel barraSuperior = new JPanel(new BorderLayout());
-		barraSuperior.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
-		barraSuperior.add(new JLabel(TITULO_SISTEMA), BorderLayout.WEST);
-
-		JButton botonSalir = new JButton("Salir");
-		botonSalir.setActionCommand(Evento.SALIR);
-		botonSalir.addActionListener(evento);
-		barraSuperior.add(botonSalir, BorderLayout.EAST);
+		JPanel barraSuperior = construirBarraSuperior();
 		raiz.add(barraSuperior, BorderLayout.NORTH);
 
 		// Menú lateral
@@ -155,6 +143,17 @@ public class VentanaPrincipal extends JFrame {
 
 		raiz.add(panelContenidoCentral, BorderLayout.CENTER);
 		return raiz;
+	}
+	
+	private JPanel construirBarraSuperior() {
+		JPanel barraSuperior = new JPanel(new BorderLayout());
+		barraSuperior.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
+		barraSuperior.add(new JLabel(TITULO_SISTEMA), BorderLayout.WEST);
+		JButton botonCerrarSesion = new JButton("Salir");
+		botonCerrarSesion.setActionCommand(Evento.SALIR);
+		botonCerrarSesion.addActionListener(evento);
+		barraSuperior.add(botonCerrarSesion, BorderLayout.EAST);
+		return barraSuperior; 
 	}
 
 	private JPanel construirMenuLateral() {
