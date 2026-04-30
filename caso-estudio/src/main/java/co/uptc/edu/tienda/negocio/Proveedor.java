@@ -1,0 +1,58 @@
+package co.uptc.edu.tienda.negocio;
+
+public class Proveedor {
+	
+	public static int contadorProveedor = 100;
+	
+	private int codigoProveedor;
+	private String razonSocial;
+	private String nit;
+	private String direccionP;
+	private long telefonoP;
+	private String correoP;
+	
+	public Proveedor() {
+		this.codigoProveedor = contadorProveedor++;
+	}
+	
+	public Proveedor(int codigoProveedor) {
+		this.codigoProveedor = codigoProveedor;
+	}
+	
+	public String getRazonSocial() {
+		return razonSocial;
+	}
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
+	}
+	public String getNit() {
+		return nit;
+	}
+	public void setNit(String nit) {
+		this.nit = nit;
+	}
+	public String getDireccionP() {
+		return direccionP;
+	}
+	public void setDireccionP(String direccionP) {
+		this.direccionP = direccionP;
+	}
+	public long getTelefonoP() {
+		return telefonoP;
+	}
+	public void setTelefonoP(long telefonoP) {
+		this.telefonoP = telefonoP;
+	}
+	public String getCorreoP() {
+		return correoP;
+	}
+	public void setCorreoP(String correoP) {
+		this.correoP = correoP;
+	}
+	public int getCodigoProveedor() {
+		return codigoProveedor;
+	}
+	
+	
+
+}
