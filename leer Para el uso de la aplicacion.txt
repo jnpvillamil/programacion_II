@@ -1,0 +1,5 @@
+Para el funcionamiento correcto 
+pararse en VENTANA LOGIN click derecho Run As 1 java aplication
+
+usuario: administrador
+contraseña: 0000
