@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-<<<<<<<< HEAD:TiendaMinoristaA/.project
 	<name>TiendaMinoristaA</name>
-========
-	<name>caso-estudio</name>
->>>>>>>> b9fd119786cffc4c26b651ab712fbce36668e7cd:caso-estudio/.project
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,14 +10,8 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.m2e.core.maven2Builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
 </projectDescription>
