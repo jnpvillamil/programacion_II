@@ -8,7 +8,7 @@ import co.uptc.edu.tienda.negocio.Proveedor;
 
 
 public interface IGestionProveedor {
-	public void guardar(Proveedor proveedor);
+	public void guardar(List<Proveedor> proveedores, String rutaArchivo);
 	
 	public void actualizar(Proveedor proveedor);
 	
@@ -17,7 +17,7 @@ public interface IGestionProveedor {
 	public Proveedor buscar(int codigoProveedor);
 
 	
-	public List<Proveedor> listar();
+	public List<Proveedor> leerProveedores(String rutaArchivo);
 
 	
 	

@@ -16,8 +16,13 @@ public class Proveedor {
 	}
 	
 	public Proveedor(int codigoProveedor) {
-		this.codigoProveedor = codigoProveedor;
+        this.codigoProveedor = codigoProveedor;
+    }
+	
+	public static void setContador(int ultimoId) {
+		contadorProveedor = ultimoId + 1;
 	}
+	
 	
 	public String getRazonSocial() {
 		return razonSocial;
@@ -52,6 +57,12 @@ public class Proveedor {
 	public int getCodigoProveedor() {
 		return codigoProveedor;
 	}
+	
+	public void setCodigoProveedor(int codigoProveedor) {
+        this.codigoProveedor = codigoProveedor;
+    }
+	
+
 	
 	
 

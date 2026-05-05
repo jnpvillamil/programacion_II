@@ -48,6 +48,7 @@ public class VentanaPrincipal extends JFrame {
 			if(validar!=null && seguridad.validarLogueo(validar)) {
 				pLogin.setVisible(false);
 				add(pCentral, BorderLayout.CENTER);
+				pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
 				pCentral.setVisible(true);
 				this.setSize(800,500);
 			}else {
@@ -76,7 +77,7 @@ public class VentanaPrincipal extends JFrame {
 	public void crearProveedor() {	
 		proveedorConfig.getGestProveedor().agregarProveedor(nuevoProveedor.capturarDatos()); 
 		cerrarDialogoProveedor();
-		pCentral.poblarTabla(proveedorConfig.getGestProveedor().listar());
+		pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
 	}
 	
 	public void lanzarDialogoModificarProveedor() {
@@ -92,10 +93,10 @@ public class VentanaPrincipal extends JFrame {
 	public void modificarProveedor() {
 	    int codigo = pCentral.getItemSeleccionado();
 	    Proveedor p = nuevoProveedor.capturarDatos();
-	    // necesitas setear el mismo código para que actualizar lo encuentre
+	   
 	    proveedorConfig.getGestProveedor().modificarProveedor(p);
 	    cerrarDialogoProveedor();
-	    pCentral.poblarTabla(proveedorConfig.getGestProveedor().listar());
+	    pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
 	}
 	
 
@@ -118,7 +119,7 @@ public class VentanaPrincipal extends JFrame {
 	        proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
 	        
 	        // Refrescar la tabla para mostrar los cambios
-	        pCentral.poblarTabla(proveedorConfig.getGestProveedor().listar());
+	        pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
 	        
 	        JOptionPane.showMessageDialog(this, "Proveedor eliminado exitosamente.");
 	    }
