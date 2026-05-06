@@ -99,7 +99,7 @@ public class Eventos implements ActionListener {
         if (vPrincipal != null) vPrincipal.setVisible(true);
     }
 
-    // ── Clientes ──────────────────────────────────────────────────────
+    // Clientes 
     private void registrarCliente() {
         try {
             clienteDto c = clientesActivo.getDatosCliente();
@@ -151,7 +151,7 @@ public class Eventos implements ActionListener {
         clientesActivo.poblarTabla(gClientes.listar());
     }
 
-    // ── Productos ──────────────────────────────────────────────────────
+    //  Productos 
     private void registrarProducto() {
         try {
             productoDto p = productosActivo.getDatosProducto();
@@ -203,7 +203,7 @@ public class Eventos implements ActionListener {
         productosActivo.poblarTabla(gProductos.listar());
     }
 
-    // ── Proveedores ────────────────────────────────────────────────────
+    //  Proveedores 
     private void registrarProveedor() {
         try {
             proveedorDto p = proveedorActivo.getDatosProveedor();
@@ -255,7 +255,7 @@ public class Eventos implements ActionListener {
         proveedorActivo.poblarTabla(gProveedor.listar());
     }
 
-    // ── Ventas ─────────────────────────────────────────────────────────
+    //  Ventas 
     private void registrarVenta() {
         try {
             ventaDto v = ventasActivo.getDatosVenta();
@@ -286,7 +286,7 @@ public class Eventos implements ActionListener {
         } catch (Exception e) { JOptionPane.showMessageDialog(vPrincipal, e.getMessage()); }
     }
 
-    // ── Abrir paneles ──────────────────────────────────────────────────
+    //  Abrir paneles 
     public void abrirClientes() {
         if (vPrincipal != null) vPrincipal.setVisible(false);
         clientesActivo = new panelClientes(this);
