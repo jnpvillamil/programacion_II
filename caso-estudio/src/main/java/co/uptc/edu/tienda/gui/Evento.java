@@ -26,42 +26,85 @@ public class Evento implements ActionListener{
 	public final static String GUARDAR_PR = "Guardar_PR";
 	public final static String EDITAR_PR = "Editar_PR";
 
+	// 🔥 PRODUCTO
+	public final static String CREAR_PRD = "Nuevo_PRD";
+	public final static String ACTUALIZAR_PRD = "Actualizar_PRD";
+	public final static String ELIMINAR_PRD = "Eliminar_PRD";
+	public final static String GUARDAR_PRD = "Guardar_PRD";
+	public final static String EDITAR_PRD = "Editar_PRD";
+	public final static String CANCELAR_PRD = "Cancelar_PRD";
 
+	// 🔥 NUEVOS BOTONES PRODUCTO
+	public final static String BUSCAR_PRD = "Buscar_PRD";
+	public final static String LIMPIAR_PRD = "Limpiar_PRD";
+	public final static String VER_PRD = "Ver_PRD";
 
-	
 	public final static String GUARDAR = "Guardar";
 	public final static String EDITAR = "Editar";
-
-
-
-
-
 
 	private VentanaPrincipal ventana;
 	
 	Evento(VentanaPrincipal v){
-		ventana=v;
+		ventana = v;
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+
 		String evento = e.getActionCommand();
+
 		if(evento.equals(CANCELAR)) {
-			JOptionPane.showMessageDialog(null,"Hasta Luego" );
+			JOptionPane.showMessageDialog(null,"Hasta Luego");
+
 		}else if(evento.equals(LOGIN)){
 			ventana.loguear();
+
+		// 🔹 PROVEEDOR
 		}else if(evento.equals(CREAR_PR)) {
 			ventana.lanzarDialogoProveedor();	
+
 		}else if(evento.equals(CANCELAR_PR)) {
 			ventana.cerrarDialogoProveedor();
+
 		}else if(evento.equals(GUARDAR_PR)){
 			ventana.crearProveedor();
+
 		}else if(evento.equals(ACTUALIZAR_PR)){
 		    ventana.lanzarDialogoModificarProveedor();
+
 		}else if(evento.equals(EDITAR_PR)){
 		    ventana.modificarProveedor();
+
 		}else if(evento.equals(ELIMINAR_PR)){
 		    ventana.eliminarProveedor();
+
+		// 🔥 PRODUCTO
+		}else if(evento.equals(CREAR_PRD)) {
+			ventana.lanzarDialogoProducto();
+
+		}else if(evento.equals(CANCELAR_PRD)) {
+			ventana.cerrarDialogoProducto();
+
+		}else if(evento.equals(GUARDAR_PRD)) {
+			ventana.crearProducto();
+
+		}else if(evento.equals(ACTUALIZAR_PRD)) {
+			ventana.lanzarDialogoModificarProducto();
+
+		}else if(evento.equals(EDITAR_PRD)) {
+			ventana.modificarProducto();
+
+		}else if(evento.equals(ELIMINAR_PRD)) {
+			ventana.eliminarProducto();
+
+		}else if(evento.equals(BUSCAR_PRD)) {
+			ventana.buscarProducto();
+
+		}else if(evento.equals(LIMPIAR_PRD)) {
+			ventana.limpiarProducto();
+
+		}else if(evento.equals(VER_PRD)) {
+			ventana.verProducto();
 		}
 	}
 }

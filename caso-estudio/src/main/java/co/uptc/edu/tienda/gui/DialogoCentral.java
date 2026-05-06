@@ -1,64 +1,101 @@
 package co.uptc.edu.tienda.gui;
+
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class DialogoCentral extends JDialog{
+public abstract class DialogoCentral extends JDialog {
 
-	protected boolean isCrear;
-	protected String tituloDialogo;
-	protected JTextField txRazonSocial,txNit,txDireccion,txTelefono,txCorreo;
-	protected JButton btnGuardar;
-	protected JButton btnCerrar;
+    protected boolean isCrear;
+    protected String tituloDialogo;
 
-	public DialogoCentral(Evento evento, String tituloDialogo, boolean isCrear) {
-	    this.isCrear = isCrear;
-	    setSize(250, 250);
-	    setTitle(tituloDialogo);
-	    setLayout(new BorderLayout());
+    // 🔹 PROVEEDOR (NO TOCAR)
+    protected JTextField txRazonSocial, txNit, txDireccion, txTelefono, txCorreo;
 
-	    txRazonSocial = new JTextField();
-	    txNit = new JTextField();
-	    txDireccion = new JTextField();
-	    txTelefono = new JTextField();
-	    txCorreo = new JTextField();
+    // 🔹 PRODUCTO (NUEVO)
+    protected JTextField txNombre, txCategoria, txPrecioCompra, txPrecioVenta, txStockActual, txStockMinimo;
 
-	    JPanel pProveedorPadre = new JPanel();
-	    JPanel pProveedor = new JPanel();
+    protected JButton btnGuardar;
+    protected JButton btnCerrar;
 
-	    pProveedor.setLayout(new GridLayout(5, 2));
-	    pProveedor.add(new JLabel("Razón Social"));
-	    pProveedor.add(txRazonSocial);
-	    pProveedor.add(new JLabel("NIT"));
-	    pProveedor.add(txNit);
-	    pProveedor.add(new JLabel("Dirección"));
-	    pProveedor.add(txDireccion);
-	    pProveedor.add(new JLabel("Teléfono"));
-	    pProveedor.add(txTelefono);
-	    pProveedor.add(new JLabel("Correo"));
-	    pProveedor.add(txCorreo);
-	    
-	    pProveedorPadre.add(pProveedor);
-	    
-	    if(isCrear) {
-	    	btnGuardar = new JButton(Evento.GUARDAR);
-	    }else {
-	    	btnGuardar = new JButton(Evento.EDITAR);
-	    }
-	    btnCerrar = new JButton(Evento.CANCELAR);
+    public DialogoCentral(Evento evento, String tituloDialogo, boolean isCrear) {
+        this.isCrear = isCrear;
+        setSize(300, 350);
+        setTitle(tituloDialogo);
+        setLayout(new BorderLayout());
 
-	    btnGuardar.addActionListener(evento);
-	    btnCerrar.addActionListener(evento);
-	    btnCerrar.setActionCommand(Evento.CANCELAR_PR);
+        JPanel panelCentral = new JPanel();
 
-	    JPanel pBotones = new JPanel();
-	    pBotones.add(btnCerrar);
-	    pBotones.add(btnGuardar);
+        // 🔥 DECIDE QUÉ MOSTRAR
+        if (tituloDialogo.contains("Proveedor")) {
 
-	    add(pProveedorPadre, BorderLayout.CENTER);
-	    add(pBotones, BorderLayout.SOUTH);
+            // ===== PROVEEDOR =====
+            txRazonSocial = new JTextField();
+            txNit = new JTextField();
+            txDireccion = new JTextField();
+            txTelefono = new JTextField();
+            txCorreo = new JTextField();
 
-	    asignarComandoBotones();
-	}
-	
-	public abstract void asignarComandoBotones();
+            panelCentral.setLayout(new GridLayout(5, 2));
+
+            panelCentral.add(new JLabel("Razón Social"));
+            panelCentral.add(txRazonSocial);
+            panelCentral.add(new JLabel("NIT"));
+            panelCentral.add(txNit);
+            panelCentral.add(new JLabel("Dirección"));
+            panelCentral.add(txDireccion);
+            panelCentral.add(new JLabel("Teléfono"));
+            panelCentral.add(txTelefono);
+            panelCentral.add(new JLabel("Correo"));
+            panelCentral.add(txCorreo);
+
+        } else {
+
+            // ===== PRODUCTO =====
+            txNombre = new JTextField();
+            txCategoria = new JTextField();
+            txPrecioCompra = new JTextField();
+            txPrecioVenta = new JTextField();
+            txStockActual = new JTextField();
+            txStockMinimo = new JTextField();
+
+            panelCentral.setLayout(new GridLayout(6, 2));
+
+            panelCentral.add(new JLabel("Nombre"));
+            panelCentral.add(txNombre);
+            panelCentral.add(new JLabel("Categoría"));
+            panelCentral.add(txCategoria);
+            panelCentral.add(new JLabel("Precio Compra"));
+            panelCentral.add(txPrecioCompra);
+            panelCentral.add(new JLabel("Precio Venta"));
+            panelCentral.add(txPrecioVenta);
+            panelCentral.add(new JLabel("Stock Actual"));
+            panelCentral.add(txStockActual);
+            panelCentral.add(new JLabel("Stock Mínimo"));
+            panelCentral.add(txStockMinimo);
+        }
+
+        // 🔹 BOTONES (IGUAL PARA AMBOS)
+        if (isCrear) {
+            btnGuardar = new JButton(Evento.GUARDAR);
+        } else {
+            btnGuardar = new JButton(Evento.EDITAR);
+        }
+
+        btnCerrar = new JButton(Evento.CANCELAR);
+
+        btnGuardar.addActionListener(evento);
+        btnCerrar.addActionListener(evento);
+        btnCerrar.setActionCommand(Evento.CANCELAR_PR);
+
+        JPanel pBotones = new JPanel();
+        pBotones.add(btnCerrar);
+        pBotones.add(btnGuardar);
+
+        add(panelCentral, BorderLayout.CENTER);
+        add(pBotones, BorderLayout.SOUTH);
+
+        asignarComandoBotones();
+    }
+
+    public abstract void asignarComandoBotones();
 }
