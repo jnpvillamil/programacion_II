@@ -1,40 +1,38 @@
 package co.edu.uptc.caso.estudio;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import co.edu.uptc.caso.estudio.dao.ClienteDAOImpl;
+import co.edu.uptc.negocio.dto.clienteDto;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-	static String bd = "caso_estudio";
-	   static String login = "root";
-	   static String password = "";
-	   static String url = "jdbc:mariadb://localhost/"+bd;
+public class App {
+    public static void main(String[] args) {
+        
+        String ruta = "clientes.json";
+        ClienteDAOImpl dao = new ClienteDAOImpl();
 
-	   static Connection conn = null;
+        // Crear lista de clientes
+        List<clienteDto> clientes = new ArrayList<>();
+        
+        clienteDto c1 = new clienteDto();
+        c1.setNombre("Juan Perez");
+        c1.setTelefono(3101234567L);
+        c1.setDireccion("Calle 10 #5-20");
+        
+        clienteDto c2 = new clienteDto();
+        c2.setNombre("Maria Lopez");
+        c2.setTelefono(3209876543L);
+        c2.setDireccion("Carrera 7 #15-30");
 
-    public static void main( String[] args )
-    {
-    	 try{
-             //obtenemos el driver de para mysql
-             Class.forName("org.mariadb.jdbc.Driver");
-             //obtenemos la conexión
-             conn = DriverManager.getConnection(url,login,password);
+        clientes.add(c1);
+        clientes.add(c2);
 
-             if (conn!=null){
-                System.out.println("Conección a base de datos "+bd+" OK");
-             }
-          }
-          catch(SQLException e){
-             System.out.println(e);
-          }catch(ClassNotFoundException e){
-             System.out.println(e);
-          }catch(Exception e){
-             System.out.println(e);
-          }
+        // Guardar en JSON
+        dao.guardarClientes(clientes, ruta);
+
+        // Leer del JSON
+        List<clienteDto> leidos = dao.leerClientes(ruta);
+        System.out.println("\nClientes leídos del JSON:");
+        leidos.forEach(System.out::println);
     }
 }
