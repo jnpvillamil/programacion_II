@@ -14,8 +14,6 @@ public class panelVentas extends JPanel {
     public JButton bAnular;
     public JButton bBuscar;
     public JButton bVolver;
-    public JButton bAgregarProducto;
-    public JButton bQuitarProducto;
 
     private JLabel lFechaHora;
     private JLabel lCliente;
@@ -32,10 +30,10 @@ public class panelVentas extends JPanel {
     public JTextField tTotalFinal;
 
     public JComboBox<String> cbFormaPago;
-    public JCheckBox         chkIva;
+    public JCheckBox chkIva;
 
     public DefaultTableModel modeloProductos;
-    public JTable             tablaProductos;
+    public JTable tablaProductos;
 
     private Eventos evento;
 
@@ -83,27 +81,16 @@ public class panelVentas extends JPanel {
         Campos.add(lRetencion);  Campos.add(tRetencion);
         Campos.add(lTotalFinal); Campos.add(tTotalFinal);
 
-        String[] columnas = {"Codigo", "Descripcion", "Cant", "Precio Unit.", "Subtotal"};
+        String[] columnas = {"Factura", "Fecha", "Cliente", "Forma Pago", "Total"};
         modeloProductos = new DefaultTableModel(columnas, 0) {
-            @Override public boolean isCellEditable(int row, int col) { return col != 4; }
+            @Override public boolean isCellEditable(int row, int col) { return false; }
         };
         tablaProductos = new JTable(modeloProductos);
         tablaProductos.setRowHeight(22);
 
         JScrollPane scroll = new JScrollPane(tablaProductos);
-        scroll.setBorder(BorderFactory.createTitledBorder("Productos de la venta"));
+        scroll.setBorder(BorderFactory.createTitledBorder("Lista de ventas"));
         scroll.setPreferredSize(new Dimension(480, 150));
-
-        bAgregarProducto = new JButton("Agregar fila");
-        bQuitarProducto  = new JButton("Quitar fila");
-
-        JPanel filaBtnsTabla = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        filaBtnsTabla.add(bAgregarProducto);
-        filaBtnsTabla.add(bQuitarProducto);
-
-        JPanel panelTablaBtn = new JPanel(new BorderLayout(5, 5));
-        panelTablaBtn.add(scroll,        BorderLayout.CENTER);
-        panelTablaBtn.add(filaBtnsTabla, BorderLayout.SOUTH);
 
         bRegistrar = new JButton(Eventos.vREGISTRAR);
         bAnular    = new JButton(Eventos.vANULAR);
@@ -123,52 +110,58 @@ public class panelVentas extends JPanel {
         sur.add(botones,     BorderLayout.NORTH);
         sur.add(panelVolver, BorderLayout.SOUTH);
 
-        add(Campos,        BorderLayout.NORTH);
-        add(panelTablaBtn, BorderLayout.CENTER);
-        add(sur,           BorderLayout.SOUTH);
+        add(Campos,  BorderLayout.NORTH);
+        add(scroll,  BorderLayout.CENTER);
+        add(sur,     BorderLayout.SOUTH);
 
         bRegistrar.addActionListener(evento);
         bAnular.addActionListener(evento);
         bBuscar.addActionListener(evento);
         bVolver.addActionListener(evento);
 
-        bAgregarProducto.addActionListener(e ->
-            modeloProductos.addRow(new Object[]{"", "", "1", "0.0", "0.0"})
-        );
-        bQuitarProducto.addActionListener(e -> {
-            int fila = tablaProductos.getSelectedRow();
-            if (fila >= 0) modeloProductos.removeRow(fila);
-            recalcularTotales();
-        });
-
-        modeloProductos.addTableModelListener(e -> recalcularTotales());
         chkIva.addActionListener(e -> recalcularTotales());
         tRetencion.addKeyListener(new KeyAdapter() {
+            @Override public void keyReleased(KeyEvent e) { recalcularTotales(); }
+        });
+        tTotal.addKeyListener(new KeyAdapter() {
             @Override public void keyReleased(KeyEvent e) { recalcularTotales(); }
         });
     }
 
     private void recalcularTotales() {
-        double subtotal = 0;
-        for (int i = 0; i < modeloProductos.getRowCount(); i++) {
-            try {
-                double cant   = Double.parseDouble(modeloProductos.getValueAt(i, 2).toString());
-                double precio = Double.parseDouble(modeloProductos.getValueAt(i, 3).toString());
-                double sub    = cant * precio;
-                modeloProductos.setValueAt(String.format("%.2f", sub), i, 4);
-                subtotal += sub;
-            } catch (NumberFormatException ex) {
-                modeloProductos.setValueAt("0.0", i, 4);
-            }
+        try {
+            double subtotal = Double.parseDouble(tTotal.getText().replace(",", "."));
+            double iva = chkIva.isSelected() ? subtotal * 0.19 : 0;
+            double total = subtotal + iva;
+            double pctRet = 0;
+            try { pctRet = Double.parseDouble(tRetencion.getText()); } catch (NumberFormatException ex) {}
+            double retencion  = total * (pctRet / 100.0);
+            double totalFinal = total - retencion;
+            tTotalFinal.setText(String.format("%.2f", totalFinal));
+        } catch (NumberFormatException ex) {
+            tTotalFinal.setText("0.00");
         }
-        double iva = chkIva.isSelected() ? subtotal * 0.19 : 0;
-        double total = subtotal + iva;
-        double pctRet = 0;
-        try { pctRet = Double.parseDouble(tRetencion.getText()); } catch (NumberFormatException ex) {}
-        double retencion  = total * (pctRet / 100.0);
-        double totalFinal = total - retencion;
-        tTotal.setText(String.format("%.2f", total));
-        tTotalFinal.setText(String.format("%.2f", totalFinal));
+    }
+
+    public void poblarTabla(List<ventaDto> ventas) {
+        modeloProductos.setRowCount(0);
+        for (ventaDto v : ventas) {
+            modeloProductos.addRow(new Object[]{
+                v.getNumeroFactura(),
+                v.getFechaHora(),
+                v.getCliente(),
+                v.getFormaPago(),
+                v.getTotal()
+            });
+        }
+    }
+
+    public void limpiarCampos() {
+        tFechaHora.setText("");
+        tCliente.setText("");
+        tTotal.setText("");
+        tRetencion.setText("0");
+        tTotalFinal.setText("");
     }
 
     public ventaDto getDatosVenta() {
@@ -183,7 +176,8 @@ public class panelVentas extends JPanel {
         venta.setFormaPago((String) cbFormaPago.getSelectedItem());
         venta.setAplicarIva(chkIva.isSelected());
         try {
-            venta.setTotal(Double.parseDouble(tTotalFinal.getText()));
+            String totalTexto = tTotalFinal.getText().replace(",", ".");
+            venta.setTotal(Double.parseDouble(totalTexto));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El total debe ser numerico");
             return null;
@@ -192,9 +186,9 @@ public class panelVentas extends JPanel {
     }
 
     public int getNumeroFactura() {
-        // Retorna el numero de la fila seleccionada o -1
-        // Para anular/buscar se maneja desde Eventos con un campo de busqueda simple
-        JOptionPane.showMessageDialog(this, "Seleccione la venta desde la tabla o use Buscar");
+        int fila = tablaProductos.getSelectedRow();
+        if (fila >= 0) return (int) modeloProductos.getValueAt(fila, 0);
+        JOptionPane.showMessageDialog(this, "Seleccione una venta de la tabla");
         return -1;
     }
 }

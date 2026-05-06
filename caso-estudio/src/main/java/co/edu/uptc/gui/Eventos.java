@@ -261,6 +261,8 @@ public class Eventos implements ActionListener {
             ventaDto v = ventasActivo.getDatosVenta();
             if (v == null) return;
             gVentas.registrar(v);
+            ventasActivo.poblarTabla(gVentas.listar());
+            ventasActivo.limpiarCampos();
             JOptionPane.showMessageDialog(vPrincipal, "Venta registrada. Factura N°: " + v.getNumeroFactura());
         } catch (Exception e) { JOptionPane.showMessageDialog(vPrincipal, e.getMessage()); }
     }
@@ -270,6 +272,7 @@ public class Eventos implements ActionListener {
             String input = JOptionPane.showInputDialog(vPrincipal, "Ingrese el numero de factura a anular:");
             if (input == null || input.isBlank()) return;
             gVentas.anular(Integer.parseInt(input));
+            ventasActivo.poblarTabla(gVentas.listar());
             JOptionPane.showMessageDialog(vPrincipal, "Venta anulada correctamente");
         } catch (Exception e) { JOptionPane.showMessageDialog(vPrincipal, e.getMessage()); }
     }
@@ -308,6 +311,7 @@ public class Eventos implements ActionListener {
     public void abrirVentas() {
         if (vPrincipal != null) vPrincipal.setVisible(false);
         ventasActivo = new panelVentas(this);
+        ventasActivo.poblarTabla(gVentas.listar());
         abrirVentana("Ventas", ventasActivo);
     }
 
