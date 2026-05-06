@@ -9,14 +9,24 @@ import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.modelo.enums.TipoMovimientoInventarioEnum;
+import co.uptc.edu.co.interfaces.ProductoDAO;
+import co.uptc.edu.co.persistencia.ProductoJSONDAO;
 
 public class GestionProducto implements IGestionProducto {
 
     private List<Producto> productos;
     private List<MovimientoInventario> movimientos;
+    private ProductoDAO productoDAO;
 
     public GestionProducto() {
-        productos = new ArrayList<>();
+    	productoDAO = new ProductoJSONDAO();
+
+        try {
+            productos = productoDAO.leerProductos();
+        } catch (Exception e) {
+            productos = new ArrayList<>();
+        }
+
         movimientos = new ArrayList<>();
     }
 
@@ -50,6 +60,7 @@ public class GestionProducto implements IGestionProducto {
 
         producto.setEstado(EstadoEnum.ACTIVO);
         productos.add(producto);
+        productoDAO.guardarProductos(productos);
     }
 
     @Override
@@ -69,6 +80,8 @@ public class GestionProducto implements IGestionProducto {
         productoExistente.setStockActual(productoActualizado.getStockActual());
         productoExistente.setStockMinimo(productoActualizado.getStockMinimo());
         productoExistente.setStockMaximo(productoActualizado.getStockMaximo());
+        
+        productoDAO.guardarProductos(productos);
     }
 
     @Override
@@ -84,6 +97,7 @@ public class GestionProducto implements IGestionProducto {
         } else {
             producto.setEstado(EstadoEnum.ACTIVO);
         }
+        productoDAO.guardarProductos(productos);
     }
 
     private void validarProducto(Producto producto) throws Exception {
@@ -177,6 +191,8 @@ public class GestionProducto implements IGestionProducto {
         if (producto.getPrecioVenta() < producto.getPrecioCompra()) {
             throw new Exception("El precio de venta no puede ser menor al precio de compra.");
         }
+        
+        productoDAO.guardarProductos(productos);
     }
 
     @Override
@@ -225,5 +241,6 @@ public class GestionProducto implements IGestionProducto {
             );
 
             movimientos.add(movimiento);
+            productoDAO.guardarProductos(productos);
     }
 }

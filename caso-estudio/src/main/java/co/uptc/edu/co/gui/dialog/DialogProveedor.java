@@ -1,4 +1,6 @@
 package co.uptc.edu.co.gui.dialog;
+import co.uptc.edu.co.modelo.Proveedor;
+import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -30,7 +32,8 @@ public class DialogProveedor extends JDialog {
     private JButton botonCancelar;
 
     private boolean modoEdicion;
-
+    private EstadoEnum estadoActual;
+    
     public DialogProveedor(Frame propietario) {
         this(propietario, null);
     }
@@ -38,6 +41,7 @@ public class DialogProveedor extends JDialog {
     public DialogProveedor(Frame propietario, Evento evento) {
         super(propietario, "Registrar Proveedor", true);
         modoEdicion = false;
+        estadoActual = EstadoEnum.ACTIVO;
         inicializarComponentes();
         configurarDialogo();
         agregarComponentes();
@@ -154,4 +158,55 @@ public class DialogProveedor extends JDialog {
         botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_EDICION_PROVEEDOR);
         campoCodigo.setEditable(false);
     }
+    public Proveedor obtenerProveedor() throws Exception {
+        validarCampos();
+
+        EstadoEnum estado = modoEdicion ? estadoActual : EstadoEnum.ACTIVO;
+
+        return new Proveedor(
+                campoCodigo.getText().trim(),
+                campoRazonSocial.getText().trim(),
+                campoNit.getText().trim(),
+                campoDireccion.getText().trim(),
+                campoTelefono.getText().trim(),
+                campoCorreoElectronico.getText().trim(),
+                estado
+        );
+    }
+
+public void cargarProveedor(Proveedor proveedor) {
+    campoCodigo.setText(proveedor.getCodigoProveedor());
+    campoRazonSocial.setText(proveedor.getRazonSocial());
+    campoNit.setText(proveedor.getNit());
+    campoDireccion.setText(proveedor.getDireccion());
+    campoTelefono.setText(proveedor.getTelefono());
+    campoCorreoElectronico.setText(proveedor.getCorreoElectronico());
+    estadoActual = proveedor.getEstado();
+}
+
+private void validarCampos() throws Exception {
+    if (campoCodigo.getText().trim().isEmpty()) {
+        throw new Exception("El código es obligatorio.");
+    }
+
+    if (campoRazonSocial.getText().trim().isEmpty()) {
+        throw new Exception("La razón social es obligatoria.");
+    }
+
+    if (campoNit.getText().trim().isEmpty()) {
+        throw new Exception("El NIT es obligatorio.");
+    }
+
+    if (campoDireccion.getText().trim().isEmpty()) {
+        throw new Exception("La dirección es obligatoria.");
+    }
+
+    if (campoTelefono.getText().trim().isEmpty()) {
+        throw new Exception("El teléfono es obligatorio.");
+    }
+
+    if (campoCorreoElectronico.getText().trim().isEmpty()) {
+        throw new Exception("El correo electrónico es obligatorio.");
+    }
+}
 }

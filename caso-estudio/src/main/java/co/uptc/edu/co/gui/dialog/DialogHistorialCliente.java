@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,22 +15,27 @@ import javax.swing.table.DefaultTableModel;
 
 public class DialogHistorialCliente extends JDialog {
 
-    private JLabel etiquetaCodigoCliente;
-    private JLabel etiquetaNombreCliente;
+    private JLabel lblCodigoCliente;
+    private JLabel lblNombreCliente;
 
     private JTable tablaHistorial;
     private DefaultTableModel modeloTabla;
 
+    private JButton btnCerrar;
+
     public DialogHistorialCliente(Frame propietario) {
         super(propietario, "Historial de Compras del Cliente", true);
+        setLayout(new BorderLayout());
+
         inicializarComponentes();
         configurarDialogo();
         agregarComponentes();
+        agregarEventos();
     }
 
     private void inicializarComponentes() {
-        etiquetaCodigoCliente = new JLabel("Código: ");
-        etiquetaNombreCliente = new JLabel("Cliente: ");
+        lblCodigoCliente = new JLabel("Código: ");
+        lblNombreCliente = new JLabel("Cliente: ");
 
         modeloTabla = new DefaultTableModel(
                 new String[] { "Factura", "Fecha", "Forma de Pago", "Impuestos", "Total", "Estado" }, 0) {
@@ -40,12 +46,13 @@ public class DialogHistorialCliente extends JDialog {
         };
 
         tablaHistorial = new JTable(modeloTabla);
+        btnCerrar = new JButton("Cerrar");
     }
 
     private void configurarDialogo() {
-        setSize(700, 400);
+        setSize(750, 420);
         setLocationRelativeTo(getOwner());
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
 
         tablaHistorial.setRowHeight(25);
@@ -53,22 +60,40 @@ public class DialogHistorialCliente extends JDialog {
     }
 
     private void agregarComponentes() {
+        add(crearPanelSuperior(), BorderLayout.NORTH);
+        add(crearScrollTabla(), BorderLayout.CENTER);
+        add(crearPanelBotones(), BorderLayout.SOUTH);
+    }
+
+    private JPanel crearPanelSuperior() {
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        panelSuperior.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        panelSuperior.setBorder(BorderFactory.createTitledBorder("Datos del Cliente"));
 
-        panelSuperior.add(etiquetaCodigoCliente);
-        panelSuperior.add(etiquetaNombreCliente);
+        panelSuperior.add(lblCodigoCliente);
+        panelSuperior.add(lblNombreCliente);
 
-        JScrollPane scroll = new JScrollPane(tablaHistorial);
-        scroll.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        return panelSuperior;
+    }
 
-        add(panelSuperior, BorderLayout.NORTH);
-        add(scroll, BorderLayout.CENTER);
+    private JScrollPane crearScrollTabla() {
+        JScrollPane scrollPane = new JScrollPane(tablaHistorial);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Historial de Compras"));
+        return scrollPane;
+    }
+
+    private JPanel crearPanelBotones() {
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        panelBotones.add(btnCerrar);
+        return panelBotones;
+    }
+
+    private void agregarEventos() {
+        btnCerrar.addActionListener(e -> dispose());
     }
 
     public void cargarCliente(String codigo, String nombre) {
-        etiquetaCodigoCliente.setText("Código: " + codigo);
-        etiquetaNombreCliente.setText("Cliente: " + nombre);
+        lblCodigoCliente.setText("Código: " + codigo);
+        lblNombreCliente.setText("Cliente: " + nombre);
     }
 
     public void agregarFilaHistorial(Object[] fila) {
@@ -77,5 +102,17 @@ public class DialogHistorialCliente extends JDialog {
 
     public void limpiarTabla() {
         modeloTabla.setRowCount(0);
+    }
+
+    public JTable getTablaHistorial() {
+        return tablaHistorial;
+    }
+
+    public DefaultTableModel getModeloTabla() {
+        return modeloTabla;
+    }
+
+    public JButton getBtnCerrar() {
+        return btnCerrar;
     }
 }

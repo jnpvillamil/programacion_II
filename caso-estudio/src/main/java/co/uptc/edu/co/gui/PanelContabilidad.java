@@ -85,9 +85,9 @@ public class PanelContabilidad extends PanelCentral {
     }
 
     public void inicializarEventos(Evento evento) {
-    	// terminar de hacer
-    	//  botonVerDetalle.setActionCommand(Evento.CMD_VER_DETALLE_CONTABLE);
-          botonVerDetalle.addActionListener(evento);
+    	botonVerDetalle.setActionCommand(Evento.CMD_VER_DETALLE_CONTABLE);
+ 	    botonVerDetalle.addActionListener(evento);
+
     }
 
     public void actualizarTotalMovimientos(int total) {

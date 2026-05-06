@@ -14,7 +14,8 @@ public class GestionCliente implements IGestionCliente {
     public GestionCliente() {
         clientes = new ArrayList<>();
     }
-
+    
+    @Override
     public Cliente buscarClientePorCodigo(String codigo) {
         for (Cliente cliente : clientes) {
             if (cliente.getCodigo().equalsIgnoreCase(codigo)) {
@@ -23,11 +24,11 @@ public class GestionCliente implements IGestionCliente {
         }
         return null;
     }
-
+    @Override
     public List<Cliente> obtenerClientes() {
         return new ArrayList<>(clientes);
     }
-
+    @Override
     public void registrarCliente(Cliente cliente) throws Exception {
         validarCliente(cliente);
 
@@ -40,7 +41,7 @@ public class GestionCliente implements IGestionCliente {
         cliente.setEstado(EstadoEnum.ACTIVO);
         clientes.add(cliente);
     }
-
+    
     private void validarCliente(Cliente cliente) throws Exception {
         if (cliente == null) {
             throw new Exception("El cliente no puede ser nulo.");
@@ -74,7 +75,7 @@ public class GestionCliente implements IGestionCliente {
             throw new Exception("El tipo de cliente es obligatorio.");
         }
     }
-
+    @Override
     public void actualizarCliente(Cliente clienteActualizado) throws Exception {
         validarCliente(clienteActualizado);
 
@@ -91,7 +92,7 @@ public class GestionCliente implements IGestionCliente {
         clienteExistente.setTelefono(clienteActualizado.getTelefono());
         clienteExistente.setTipoCliente(clienteActualizado.getTipoCliente());
     }
-
+    @Override
     public void cambiarEstadoCliente(String codigo) throws Exception {
         Cliente cliente = buscarClientePorCodigo(codigo);
 

@@ -107,7 +107,21 @@ public class PanelVenta extends PanelCentral {
     }
 
     public void inicializarEventos(Evento evento) {
-    // por hacer
+    	botonNuevaVenta.setActionCommand(Evento.CMD_NUEVA_VENTA);
+        botonNuevaVenta.addActionListener(evento);
+
+        botonAnularVenta.setActionCommand(Evento.CMD_ANULAR_VENTA);
+        botonAnularVenta.addActionListener(evento);
+
+        botonRegistrarDevolucion.setActionCommand(Evento.CMD_DEVOLUCION_VENTA);
+        botonRegistrarDevolucion.addActionListener(evento);
+
+        botonVerDetalle.setActionCommand(Evento.CMD_VER_DETALLE_VENTA);
+        botonVerDetalle.addActionListener(evento);
+
+        botonFactura.setActionCommand(Evento.CMD_FACTURA_VENTA);
+        botonFactura.addActionListener(evento);
+
     }
 
     public void actualizarTotalVentas(int total) {
