@@ -10,6 +10,7 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,25 +20,29 @@ import javax.swing.JTextField;
 
 import co.uptc.edu.co.gui.Evento;
 
-public class DialogAnularVenta extends JDialog {
+public class DialogDevolucionVenta extends JDialog {
 
     private JTextField campoNumeroFactura;
     private JTextField campoCliente;
     private JTextField campoFecha;
-    private JTextField campoTotal;
+    private JTextField campoTotalVenta;
     private JTextField campoEstado;
+    private JTextField campoCantidadDevolucion;
+    private JTextField campoValorDevolucion;
 
-    private JTextArea areaMotivoAnulacion;
+    private JComboBox<String> comboProducto;
 
-    private JButton botonConfirmarAnulacion;
+    private JTextArea areaMotivoDevolucion;
+
+    private JButton botonConfirmarDevolucion;
     private JButton botonCancelar;
 
-    public DialogAnularVenta(Frame propietario) {
+    public DialogDevolucionVenta(Frame propietario) {
         this(propietario, null);
     }
 
-    public DialogAnularVenta(Frame propietario, Evento evento) {
-        super(propietario, "Anular Venta", true);
+    public DialogDevolucionVenta(Frame propietario, Evento evento) {
+        super(propietario, "Registrar Devolución", true);
         inicializarComponentes();
         configurarDialogo();
         agregarComponentes();
@@ -48,30 +53,36 @@ public class DialogAnularVenta extends JDialog {
         campoNumeroFactura = new JTextField(20);
         campoCliente = new JTextField(20);
         campoFecha = new JTextField(20);
-        campoTotal = new JTextField(20);
+        campoTotalVenta = new JTextField(20);
         campoEstado = new JTextField(20);
+        campoCantidadDevolucion = new JTextField(20);
+        campoValorDevolucion = new JTextField(20);
 
-        areaMotivoAnulacion = new JTextArea(4, 20);
-        areaMotivoAnulacion.setLineWrap(true);
-        areaMotivoAnulacion.setWrapStyleWord(true);
+        comboProducto = new JComboBox<>();
+        comboProducto.addItem("Seleccione producto");
 
-        botonConfirmarAnulacion = new JButton("Confirmar Anulación");
+        areaMotivoDevolucion = new JTextArea(4, 20);
+        areaMotivoDevolucion.setLineWrap(true);
+        areaMotivoDevolucion.setWrapStyleWord(true);
+
+        botonConfirmarDevolucion = new JButton("Confirmar Devolución");
         botonCancelar = new JButton("Cancelar");
 
-        botonConfirmarAnulacion.setBackground(new Color(198, 40, 40));
-        botonConfirmarAnulacion.setForeground(Color.WHITE);
+        botonConfirmarDevolucion.setBackground(new Color(30, 60, 100));
+        botonConfirmarDevolucion.setForeground(Color.WHITE);
 
         botonCancelar.setBackground(new Color(220, 220, 220));
 
         campoNumeroFactura.setEditable(false);
         campoCliente.setEditable(false);
         campoFecha.setEditable(false);
-        campoTotal.setEditable(false);
+        campoTotalVenta.setEditable(false);
         campoEstado.setEditable(false);
+        campoValorDevolucion.setEditable(false);
     }
 
     private void configurarDialogo() {
-        setSize(500, 420);
+        setSize(520, 480);
         setLocationRelativeTo(getOwner());
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -112,10 +123,10 @@ public class DialogAnularVenta extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 3;
-        panelDatos.add(new JLabel("Total:"), gbc);
+        panelDatos.add(new JLabel("Total Venta:"), gbc);
 
         gbc.gridx = 1;
-        panelDatos.add(campoTotal, gbc);
+        panelDatos.add(campoTotalVenta, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -124,25 +135,38 @@ public class DialogAnularVenta extends JDialog {
         gbc.gridx = 1;
         panelDatos.add(campoEstado, gbc);
 
-        JPanel panelMotivo = new JPanel(new BorderLayout(5, 5));
-        panelMotivo.setBorder(BorderFactory.createTitledBorder("Motivo de anulación"));
-        panelMotivo.add(new JScrollPane(areaMotivoAnulacion), BorderLayout.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panelDatos.add(new JLabel("Producto:"), gbc);
 
-        JLabel etiquetaConfirmacion = new JLabel("¿Está seguro de anular esta venta?");
-        JPanel panelPregunta = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelPregunta.add(etiquetaConfirmacion);
+        gbc.gridx = 1;
+        panelDatos.add(comboProducto, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        panelDatos.add(new JLabel("Cantidad a devolver:"), gbc);
+
+        gbc.gridx = 1;
+        panelDatos.add(campoCantidadDevolucion, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        panelDatos.add(new JLabel("Valor a devolver:"), gbc);
+
+        gbc.gridx = 1;
+        panelDatos.add(campoValorDevolucion, gbc);
+
+        JPanel panelMotivo = new JPanel(new BorderLayout(5, 5));
+        panelMotivo.setBorder(BorderFactory.createTitledBorder("Motivo de devolución"));
+        panelMotivo.add(new JScrollPane(areaMotivoDevolucion), BorderLayout.CENTER);
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        panelBotones.add(botonConfirmarAnulacion);
+        panelBotones.add(botonConfirmarDevolucion);
         panelBotones.add(botonCancelar);
-
-        JPanel panelInferior = new JPanel(new BorderLayout());
-        panelInferior.add(panelPregunta, BorderLayout.NORTH);
-        panelInferior.add(panelBotones, BorderLayout.SOUTH);
 
         panelPrincipal.add(panelDatos, BorderLayout.NORTH);
         panelPrincipal.add(panelMotivo, BorderLayout.CENTER);
-        panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
+        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
 
         add(panelPrincipal);
     }
@@ -151,24 +175,53 @@ public class DialogAnularVenta extends JDialog {
         botonCancelar.addActionListener(e -> dispose());
 
         if (evento != null) {
-            botonConfirmarAnulacion.setActionCommand(Evento.CMD_CONFIRMAR_ANULAR_VENTA);
-            botonConfirmarAnulacion.addActionListener(evento);
+            botonConfirmarDevolucion.setActionCommand(Evento.CMD_GUARDAR_DEVOLUCION_VENTA);
+            botonConfirmarDevolucion.addActionListener(evento);
         }
     }
 
-    public void cargarVenta(String numeroFactura, String cliente, String fecha, String total, String estado) {
+    public void cargarVenta(String numeroFactura, String cliente, String fecha, String totalVenta, String estado) {
         campoNumeroFactura.setText(numeroFactura);
         campoCliente.setText(cliente);
         campoFecha.setText(fecha);
-        campoTotal.setText(total);
+        campoTotalVenta.setText(totalVenta);
         campoEstado.setText(estado);
     }
 
-    public String obtenerMotivoAnulacion() {
-        return areaMotivoAnulacion.getText().trim();
+    public void cargarProductos(String[] productos) {
+        comboProducto.removeAllItems();
+        comboProducto.addItem("Seleccione producto");
+
+        if (productos != null) {
+            for (String producto : productos) {
+                comboProducto.addItem(producto);
+            }
+        }
     }
 
     public String obtenerNumeroFactura() {
         return campoNumeroFactura.getText().trim();
+    }
+
+    public String obtenerProductoSeleccionado() {
+        return comboProducto.getSelectedItem() != null
+                ? comboProducto.getSelectedItem().toString()
+                : "";
+    }
+
+    public String obtenerCantidad() {
+        return campoCantidadDevolucion.getText().trim();
+    }
+
+    public String obtenerMotivoDevolucion() {
+        return areaMotivoDevolucion.getText().trim();
+    }
+
+    public String obtenerValorDevolucion() {
+        return campoValorDevolucion.getText().trim();
+    }
+
+    public void setValorDevolucion(String valor) {
+        campoValorDevolucion.setText(valor);
     }
 }

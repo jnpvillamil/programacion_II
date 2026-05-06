@@ -34,7 +34,8 @@ public class DialogProducto extends JDialog {
 
     private JButton botonGuardar;
     private JButton botonCancelar;
-
+    
+    private EstadoEnum estadoActual;
     private boolean modoEdicion;
 
     public DialogProducto(Frame propietario) {
@@ -44,6 +45,7 @@ public class DialogProducto extends JDialog {
     public DialogProducto(Frame propietario, Evento evento) {
         super(propietario, "Registrar Producto", true);
         modoEdicion = false;
+        estadoActual = EstadoEnum.ACTIVO;
         inicializarComponentes();
         configurarDialogo();
         agregarComponentes();
@@ -215,7 +217,7 @@ public class DialogProducto extends JDialog {
         int stockMinimo = convertirEntero(textoStockMinimo, "El stock mínimo debe ser un número entero.");
         int stockMaximo = convertirEntero(textoStockMaximo, "El stock máximo debe ser un número entero.");
 
-        EstadoEnum estado = EstadoEnum.ACTIVO;
+        EstadoEnum estado = modoEdicion ? estadoActual : EstadoEnum.ACTIVO;
 
         return new Producto(
                 codigo,
@@ -294,5 +296,6 @@ public class DialogProducto extends JDialog {
         campoStockActual.setText(String.valueOf(producto.getStockActual()));
         campoStockMinimo.setText(String.valueOf(producto.getStockMinimo()));
         campoStockMaximo.setText(String.valueOf(producto.getStockMaximo()));
+        estadoActual = producto.getEstado();
     }
 }

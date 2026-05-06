@@ -34,7 +34,8 @@ public class DialogCliente extends JDialog {
 
     private JButton botonGuardar;
     private JButton botonCancelar;
-
+    
+    private EstadoEnum estadoActual;
     private boolean modoEdicion;
 
     public DialogCliente(Frame propietario) {
@@ -44,6 +45,7 @@ public class DialogCliente extends JDialog {
     public DialogCliente(Frame propietario, Evento evento) {
         super(propietario, "Registrar Cliente", true);
         modoEdicion = false;
+        estadoActual = EstadoEnum.ACTIVO;
         inicializarComponentes();
         configurarDialogo();
         agregarComponentes();
@@ -199,7 +201,7 @@ public class DialogCliente extends JDialog {
                 telefono
         );
 
-        EstadoEnum estado = EstadoEnum.ACTIVO;
+        EstadoEnum estado = modoEdicion ? estadoActual : EstadoEnum.ACTIVO;
 
         return new Cliente(
                 codigo,
@@ -250,5 +252,6 @@ public class DialogCliente extends JDialog {
         campoDireccion.setText(cliente.getDireccion());
         campoTelefono.setText(cliente.getTelefono());
         comboTipoCliente.setSelectedItem(cliente.getTipoCliente());
+        estadoActual = cliente.getEstado();
     }
 }

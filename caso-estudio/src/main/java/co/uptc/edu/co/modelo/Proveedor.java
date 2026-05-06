@@ -1,85 +1,93 @@
 package co.uptc.edu.co.modelo;
 
+import co.uptc.edu.co.modelo.enums.EstadoEnum;
+
 public class Proveedor {
-	private String nombreProveedor ;
-	private String codigoProveedor;
-	private String razonSocial ;
-	private String NIT ;
-	private String direccion ;
-	private String telefono ;
-	private String correoElectronico ;
-	
-	public Proveedor(String nombreProveedor, String codigoProveedor, String razonSocial, String nIT, String direccion,
-			String telefono, String correoElectronico) {
-		this.nombreProveedor = nombreProveedor;
-		this.codigoProveedor = codigoProveedor;
-		this.razonSocial = razonSocial;
-		NIT = nIT;
-		this.direccion = direccion;
-		this.telefono = telefono;
-		this.correoElectronico = correoElectronico;
-	}
 
-	public String getNombreProveedor() {
-		return nombreProveedor;
-	}
+    private String codigoProveedor;
+    private String razonSocial;
+    private String nit;
+    private String direccion;
+    private String telefono;
+    private String correoElectronico;
+    private EstadoEnum estado;
 
-	public void setNombreProveedor(String nombreProveedor) {
-		this.nombreProveedor = nombreProveedor;
-	}
+    public Proveedor() {
+    }
 
-	public String getCodigoProveedor() {
-		return codigoProveedor;
-	}
+    public Proveedor(String codigoProveedor, String razonSocial, String nit,
+            String direccion, String telefono, String correoElectronico, EstadoEnum estado) {
+        this.codigoProveedor = codigoProveedor;
+        this.razonSocial = razonSocial;
+        this.nit = nit;
+        this.direccion = direccion;
+        this.telefono = telefono;
+        this.correoElectronico = correoElectronico;
+        this.estado = estado;
+    }
 
-	public void setCodigoProveedor(String codigoProveedor) {
-		this.codigoProveedor = codigoProveedor;
-	}
+    public String getCodigoProveedor() {
+        return codigoProveedor;
+    }
 
-	public String getRazonSocial() {
-		return razonSocial;
-	}
+    public void setCodigoProveedor(String codigoProveedor) {
+        this.codigoProveedor = codigoProveedor;
+    }
 
-	public void setRazonSocial(String razonSocial) {
-		this.razonSocial = razonSocial;
-	}
+    public String getRazonSocial() {
+        return razonSocial;
+    }
 
-	public String getNIT() {
-		return NIT;
-	}
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
 
-	public void setNIT(String nIT) {
-		NIT = nIT;
-	}
+    public String getNit() {
+        return nit;
+    }
 
-	public String getDireccion() {
-		return direccion;
-	}
+    public void setNit(String nit) {
+        this.nit = nit;
+    }
 
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
+    public String getDireccion() {
+        return direccion;
+    }
 
-	public String getTelefono() {
-		return telefono;
-	}
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
+    public String getTelefono() {
+        return telefono;
+    }
 
-	public String getCorreoElectronico() {
-		return correoElectronico;
-	}
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
 
-	public void setCorreoElectronico(String correoElectronico) {
-		this.correoElectronico = correoElectronico;
-	}
+    public String getCorreoElectronico() {
+        return correoElectronico;
+    }
 
-	@Override
-	public String toString() {
-		return "Proveedor [nombreProveedor=" + nombreProveedor + ", codigoProveedor=" + codigoProveedor + "]";
-	}
+    public void setCorreoElectronico(String correoElectronico) {
+        this.correoElectronico = correoElectronico;
+    }
 
+    public EstadoEnum getEstado() {
+        return estado;
+    }
 
+    public void setEstado(EstadoEnum estado) {
+        this.estado = estado;
+    }
+
+    public boolean estaActivo() {
+        return estado == EstadoEnum.ACTIVO;
+    }
+
+    @Override
+    public String toString() {
+        return codigoProveedor + " - " + razonSocial;
+    }
 }

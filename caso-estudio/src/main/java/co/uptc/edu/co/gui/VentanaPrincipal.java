@@ -198,6 +198,10 @@ public class VentanaPrincipal extends JFrame {
     public PanelCliente getPanelCliente() {
         return panelCliente;
     }
+    
+    public PanelProveedor getPanelProveedor() {
+        return panelProveedor;
+    }
 
     public static void main(String[] args) {
         VentanaPrincipal ventana = new VentanaPrincipal();

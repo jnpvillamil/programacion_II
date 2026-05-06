@@ -80,7 +80,15 @@ public class PanelCompra extends PanelCentral {
     }
 
     public void inicializarEventos(Evento evento) {
-        // por hacer
+    	 botonNuevaCompra.setActionCommand(Evento.CMD_NUEVA_COMPRA);
+         botonNuevaCompra.addActionListener(evento);
+
+         botonDetalle.setActionCommand(Evento.CMD_VER_DETALLE_COMPRA);
+         botonDetalle.addActionListener(evento);
+
+         botonAnular.setActionCommand(Evento.CMD_ANULAR_COMPRA);
+         botonAnular.addActionListener(evento);
+
     }
 
     public void actualizarTotalCompras(int total) {
