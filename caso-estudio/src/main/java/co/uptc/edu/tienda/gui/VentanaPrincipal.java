@@ -118,7 +118,7 @@ public void cerrarDialogoProveedor() {
 public void crearProveedor() {    
     proveedorConfig.getGestProveedor().agregarProveedor(nuevoProveedor.capturarDatos()); 
     cerrarDialogoProveedor();
-    pCentral.poblarTabla(proveedorConfig.getGestProveedor().listar());
+    pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
 }
 
 public void lanzarDialogoModificarProveedor() {
@@ -138,7 +138,7 @@ public void modificarProveedor() {
     Proveedor p = nuevoProveedor.capturarDatos();
     proveedorConfig.getGestProveedor().modificarProveedor(p);
     cerrarDialogoProveedor();
-    pCentral.poblarTabla(proveedorConfig.getGestProveedor().listar());
+    pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
 }
 
 public void eliminarProveedor() {
@@ -154,7 +154,7 @@ public void eliminarProveedor() {
 
     if (respuesta == JOptionPane.YES_OPTION) {
         proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
-        pCentral.poblarTabla(proveedorConfig.getGestProveedor().listar());
+        pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
     }
 }
 
