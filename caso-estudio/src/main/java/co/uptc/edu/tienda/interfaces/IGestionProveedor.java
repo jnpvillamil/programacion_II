@@ -4,11 +4,11 @@ package co.uptc.edu.tienda.interfaces;
 
 import java.util.List;
 
-import co.uptc.edu.tienda.negocio.Proveedor;
+import co.uptc.edu.tienda.modelo.Proveedor;
 
 
 public interface IGestionProveedor {
-	public void guardar(List<Proveedor> proveedores, String rutaArchivo);
+	public void guardar(List<Proveedor> proveedores);
 	
 	public void actualizar(Proveedor proveedor);
 	
@@ -17,7 +17,7 @@ public interface IGestionProveedor {
 	public Proveedor buscar(int codigoProveedor);
 
 	
-	public List<Proveedor> leerProveedores(String rutaArchivo);
+	public List<Proveedor> leerProveedores();
 
 	
 	

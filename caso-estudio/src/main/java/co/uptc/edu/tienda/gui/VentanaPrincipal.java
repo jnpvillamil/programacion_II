@@ -2,10 +2,10 @@ package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
 
+import co.uptc.edu.tienda.modelo.Producto;
+import co.uptc.edu.tienda.modelo.Proveedor;
 import co.uptc.edu.tienda.negocio.GestionSeguridad;
-import co.uptc.edu.tienda.negocio.Proveedor;
 import co.uptc.edu.tienda.negocio.ProveedorConfig;
-import co.uptc.edu.tienda.negocio.Producto;
 import co.uptc.edu.tienda.negocio.dto.CredencialDto;
 
 import java.awt.*;

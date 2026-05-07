@@ -1,13 +1,14 @@
 package co.uptc.edu.tienda.negocio;
 
 import co.uptc.edu.tienda.interfaces.IGestionProveedor;
+import co.uptc.edu.tienda.modelo.Proveedor;
 
 import java.util.List;
 
 public class GestionProveedor {
 	
 	private final IGestionProveedor gestionP;
-	private final String RUTA = "proveedores.json";
+	
 	
 	
 
@@ -20,7 +21,7 @@ public class GestionProveedor {
 	
 	public void agregarProveedor(Proveedor nuevo) {
         // 1. Leer los que ya existen
-        List<Proveedor> actuales = gestionP.leerProveedores(RUTA);
+        List<Proveedor> actuales = gestionP.leerProveedores();
         
         int maxId = 99;
         if (actuales.size() > 0) {
@@ -43,7 +44,7 @@ public class GestionProveedor {
 
         // 4. Agregar y Guardar
         actuales.add(nuevo);
-        gestionP.guardar(actuales, RUTA);
+        gestionP.guardar(actuales);
     }
 	
 	public void modificarProveedor(Proveedor proveedor) {
@@ -55,7 +56,7 @@ public class GestionProveedor {
 	}
 	
 	public List<Proveedor> leerProveedores() {
-		return gestionP.leerProveedores(RUTA);
+		return gestionP.leerProveedores();
 	}
 	
 	public Proveedor buscarProveedorPorCodigo(int codigoProveedor) {

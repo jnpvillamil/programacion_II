@@ -2,7 +2,7 @@ package co.uptc.edu.tienda.gui;
 
 import java.util.List;
 
-import co.uptc.edu.tienda.negocio.Proveedor;
+import co.uptc.edu.tienda.modelo.Proveedor;
 
 public class PanelPadreProveedor extends PanelCentral {
 	

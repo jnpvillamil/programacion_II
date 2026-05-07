@@ -1,4 +1,4 @@
-package co.uptc.edu.tienda.negocio;
+package co.uptc.edu.tienda.modelo;
 
 public class Producto {
 

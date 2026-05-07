@@ -1,6 +1,6 @@
 package co.uptc.edu.tienda.gui;
 
-import co.uptc.edu.tienda.negocio.Proveedor;
+import co.uptc.edu.tienda.modelo.Proveedor;
 
 public class DialogoProveedor extends DialogoCentral {
 	private int codigoActual;

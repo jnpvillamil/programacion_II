@@ -1,4 +1,6 @@
-package co.uptc.edu.tienda.negocio;
+package co.uptc.edu.tienda.modelo;
+
+import co.uptc.edu.tienda.enums.EstadoEnum;
 
 public class Proveedor {
 	
@@ -10,6 +12,7 @@ public class Proveedor {
 	private String direccionP;
 	private long telefonoP;
 	private String correoP;
+	private EstadoEnum estado;
 	
 	public Proveedor() {
 		this.codigoProveedor = contadorProveedor++;

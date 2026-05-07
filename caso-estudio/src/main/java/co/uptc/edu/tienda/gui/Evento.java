@@ -16,6 +16,8 @@ public class Evento implements ActionListener{
 	public final static String BUSCAR = "Buscar";
 	public final static String LIMPIAR = "Limpiar";
 	
+	
+	// Proveedor
 	public final static String ELIMINAR_PR = "Eliminar_PR";
 	public final static String VER_PR = "Ver_PR";
 	public final static String ACTUALIZAR_PR = "Actualizar_PR";
@@ -41,6 +43,14 @@ public class Evento implements ActionListener{
 
 	public final static String GUARDAR = "Guardar";
 	public final static String EDITAR = "Editar";
+	
+	//CLIENTE
+	public final static String CREAR_CLI = "Nuevo_CLI";
+	public final static String ACTUALIZAR_CLI = "Actualizar_CLI";
+	public final static String ELIMINAR_CLI = "Eliminar_CLI";
+	public final static String GUARDAR_CLI = "Guardar_CLI";
+	public final static String EDITAR_CLI = "Editar_CLI";
+	public final static String CANCELAR_CLI = "Cancelar_CLI";
 
 	private VentanaPrincipal ventana;
 	

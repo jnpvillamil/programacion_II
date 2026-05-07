@@ -3,7 +3,7 @@ package co.uptc.edu.tienda.gui;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import co.uptc.edu.tienda.negocio.Producto;
+import co.uptc.edu.tienda.modelo.Producto;
 import co.uptc.edu.tienda.negocio.GestionProducto;
 
 import java.awt.*;

@@ -3,6 +3,7 @@ package co.uptc.edu.tienda.negocio;
 import java.util.List;
 
 import co.uptc.edu.tienda.interfaces.IGestionProducto;
+import co.uptc.edu.tienda.modelo.Producto;
 import co.uptc.edu.tienda.persistencia.LocalProducto;
 
 public class GestionProducto implements IGestionProducto {

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.tienda.interfaces.IGestionProducto;
-import co.uptc.edu.tienda.negocio.Producto;
+import co.uptc.edu.tienda.modelo.Producto;
 
 public class LocalProducto implements IGestionProducto {
 

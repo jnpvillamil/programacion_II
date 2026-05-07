@@ -1,7 +1,8 @@
 package co.uptc.edu.tienda.interfaces;
 
 import java.util.List;
-import co.uptc.edu.tienda.negocio.Producto;
+
+import co.uptc.edu.tienda.modelo.Producto;
 
 public interface IGestionProducto {
 

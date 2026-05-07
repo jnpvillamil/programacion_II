@@ -1,9 +1,10 @@
 package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
-import java.awt.*;
 
-import co.uptc.edu.tienda.negocio.Producto;
+import co.uptc.edu.tienda.modelo.Producto;
+
+import java.awt.*;
 
 public class DialogoProducto extends JDialog {
 

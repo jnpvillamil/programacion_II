@@ -1,6 +1,7 @@
 package co.uptc.edu.tienda.persistencia;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.*;
 import java.lang.reflect.Type;
@@ -10,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.tienda.interfaces.IGestionProveedor;
-import co.uptc.edu.tienda.negocio.Proveedor;
+import co.uptc.edu.tienda.modelo.Proveedor;
 
 public class LocalProveedor implements IGestionProveedor {
 
-	private List<Proveedor> listaProveedores;
-	private final Gson gson = new Gson();
+	
+	private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	private final String RUTA = "proveedores.json";
 	
 	
@@ -27,23 +28,22 @@ public class LocalProveedor implements IGestionProveedor {
 	}
 
 	@Override
-	public void guardar(List<Proveedor> proveedores, String rutaArchivo) {
-		try(FileWriter writer = new FileWriter(rutaArchivo)){
+	public void guardar(List<Proveedor> proveedores) {
+		try(FileWriter writer = new FileWriter(RUTA)){
 			gson.toJson(proveedores,writer);
 			System.out.println("Proveedores");
 		}catch(IOException e) {
-			System.out.println("Error al guardar proveedores");
+			System.out.println("Error al guardar en "+RUTA+":"+e.getMessage());
 			
 		}
 		// TODO Auto-generated method stub
-//		listaProveedores.add(proveedor);
 		
 	}
 
 	@Override
 	public void actualizar(Proveedor proveedor) {
 		// TODO Auto-generated method stub
-		List<Proveedor> lista = leerProveedores(RUTA);
+		List<Proveedor> lista = leerProveedores();
 	    
 	    // 2. Buscamos el proveedor por su ID y lo reemplazamos
 	    for (int i = 0; i < lista.size(); i++) {
@@ -53,14 +53,14 @@ public class LocalProveedor implements IGestionProveedor {
 	        }
 	    }
 	    
-	    guardar(lista,RUTA);
+	    guardar(lista);
 
 	}
 
 	@Override
 	public void eliminar(int codigoProveedor) {
 		// TODO Auto-generated method stub
-		List<Proveedor> lista = leerProveedores(RUTA);
+		List<Proveedor> lista = leerProveedores();
 	    
 	    // 2. Buscamos la posición del proveedor a borrar
 	    for (int i = 0; i < lista.size(); i++) {
@@ -71,13 +71,13 @@ public class LocalProveedor implements IGestionProveedor {
 	    }
 	    
 	    // 3. SOBRESCRIBIMOS el archivo con la lista ahora más corta
-	    guardar(lista, RUTA);
+	    guardar(lista);
 	}
 
 	@Override
-	public List<Proveedor> leerProveedores(String rutaArchivo) {
+	public List<Proveedor> leerProveedores() {
 		// TODO Auto-generated method stub
-		File archivo = new File(rutaArchivo);
+		File archivo = new File(RUTA);
 	    
 	    if (!archivo.exists()) {
 	        return new ArrayList<Proveedor>();
@@ -107,7 +107,7 @@ public class LocalProveedor implements IGestionProveedor {
 
 	@Override
     public Proveedor buscar(int codigoProveedor) {
-        List<Proveedor> lista = leerProveedores(RUTA);
+        List<Proveedor> lista = leerProveedores();
         if (lista != null) {
             for (Proveedor p : lista) {
                 if (p.getCodigoProveedor() == codigoProveedor) return p;
