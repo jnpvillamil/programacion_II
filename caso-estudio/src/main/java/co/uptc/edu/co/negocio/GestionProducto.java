@@ -10,7 +10,6 @@ import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.modelo.enums.TipoMovimientoInventarioEnum;
 import co.uptc.edu.co.interfaces.ProductoDAO;
-import co.uptc.edu.co.persistencia.ProductoJSONDAO;
 
 public class GestionProducto implements IGestionProducto {
 
@@ -18,13 +17,23 @@ public class GestionProducto implements IGestionProducto {
     private List<MovimientoInventario> movimientos;
     private ProductoDAO productoDAO;
 
-    public GestionProducto() {
-    	productoDAO = new ProductoJSONDAO();
+    public GestionProducto(ProductoDAO productoDAO) {
+
+        if (productoDAO == null) {
+            throw new IllegalArgumentException(
+                "El ProductoDAO no puede ser nulo."
+            );
+        }
+
+        this.productoDAO = productoDAO;
 
         try {
-            productos = productoDAO.leerProductos();
+            productos = productoDAO.listarProducto();
         } catch (Exception e) {
             productos = new ArrayList<>();
+            System.out.println(
+                "Error al cargar productos: " + e.getMessage()
+            );
         }
 
         movimientos = new ArrayList<>();
@@ -59,8 +68,8 @@ public class GestionProducto implements IGestionProducto {
         }
 
         producto.setEstado(EstadoEnum.ACTIVO);
+        productoDAO.guardarProducto(producto);
         productos.add(producto);
-        productoDAO.guardarProductos(productos);
     }
 
     @Override
@@ -81,7 +90,7 @@ public class GestionProducto implements IGestionProducto {
         productoExistente.setStockMinimo(productoActualizado.getStockMinimo());
         productoExistente.setStockMaximo(productoActualizado.getStockMaximo());
         
-        productoDAO.guardarProductos(productos);
+        productoDAO.actualizarProducto(productoExistente);
     }
 
     @Override
@@ -97,7 +106,7 @@ public class GestionProducto implements IGestionProducto {
         } else {
             producto.setEstado(EstadoEnum.ACTIVO);
         }
-        productoDAO.guardarProductos(productos);
+        productoDAO.actualizarProducto(producto);
     }
 
     private void validarProducto(Producto producto) throws Exception {
@@ -192,7 +201,7 @@ public class GestionProducto implements IGestionProducto {
             throw new Exception("El precio de venta no puede ser menor al precio de compra.");
         }
         
-        productoDAO.guardarProductos(productos);
+        productoDAO.actualizarProducto(producto);
     }
 
     @Override
@@ -241,6 +250,6 @@ public class GestionProducto implements IGestionProducto {
             );
 
             movimientos.add(movimiento);
-            productoDAO.guardarProductos(productos);
+            productoDAO.actualizarProducto(producto);
     }
 }

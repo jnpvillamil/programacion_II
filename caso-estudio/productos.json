@@ -1,35 +1,13 @@
 [
   {
-    "codigoProducto": "45TH",
+    "codigoProducto": "56YH",
     "nombreProducto": "Arroz diana",
     "categoria": "ALIMENTOS",
     "precioCompra": 2500.0,
     "precioVenta": 3000.0,
-    "stockActual": 60,
-    "stockMinimo": 15,
+    "stockActual": 30,
+    "stockMinimo": 10,
     "stockMaximo": 80,
-    "estado": "INACTIVO"
-  },
-  {
-    "codigoProducto": "46HY",
-    "nombreProducto": "Coca cola",
-    "categoria": "BEBIDAS",
-    "precioCompra": 2000.0,
-    "precioVenta": 3000.0,
-    "stockActual": 70,
-    "stockMinimo": 10,
-    "stockMaximo": 150,
     "estado": "ACTIVO"
-  },
-  {
-    "codigoProducto": "YJ34",
-    "nombreProducto": "Jabones",
-    "categoria": "ASEO",
-    "precioCompra": 2000.0,
-    "precioVenta": 3000.0,
-    "stockActual": 40,
-    "stockMinimo": 10,
-    "stockMaximo": 70,
-    "estado": "INACTIVO"
   }
 ]

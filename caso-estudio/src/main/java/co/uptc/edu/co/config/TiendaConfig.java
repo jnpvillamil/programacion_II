@@ -1,55 +1,65 @@
 package co.uptc.edu.co.config;
 
+import co.uptc.edu.co.interfaces.IGestionCliente;
+import co.uptc.edu.co.interfaces.IGestionProducto;
+import co.uptc.edu.co.interfaces.IGestionProveedor;
+import co.uptc.edu.co.interfaces.IGestionVenta;
+import co.uptc.edu.co.interfaces.IGestionCompra;
+
+import co.uptc.edu.co.interfaces.ProductoDAO;
+
 import co.uptc.edu.co.negocio.GestionCliente;
 import co.uptc.edu.co.negocio.GestionCompra;
 import co.uptc.edu.co.negocio.GestionProducto;
 import co.uptc.edu.co.negocio.GestionProveedor;
 import co.uptc.edu.co.negocio.GestionVenta;
 
+import co.uptc.edu.co.persistencia.ProductoJSONDAO;
 
 public class TiendaConfig {
-	
-	private GestionProducto gestionProducto;
-	private GestionCliente gestionCliente;
-	private GestionProveedor gestionProveedor;
-	private GestionVenta gestionVenta;
-	private GestionCompra gestionCompra;
-	
-  public TiendaConfig(){
-	  
-	  inicializarGestiones(); 
-  }
-  
-  private void inicializarGestiones(){
-	  
-	  gestionProducto = new GestionProducto();
-	  gestionCliente = new GestionCliente();
-	  gestionProveedor = new GestionProveedor();
-	  gestionVenta = new GestionVenta();
-	  gestionCompra = new GestionCompra();
-	  	  
-	  
-  }
-  
-  public GestionProducto getGestionProducto() {
-      return gestionProducto;
-  }
 
-  public GestionCliente getGestionCliente() {
-      return gestionCliente;
-  }
+    private IGestionProducto gestionProducto;
+    private IGestionCliente gestionCliente;
+    private IGestionProveedor gestionProveedor;
+    private IGestionVenta gestionVenta;
+    private IGestionCompra gestionCompra;
 
-  public GestionProveedor getGestionProveedor() {
-      return gestionProveedor;
-  }
+    public TiendaConfig() {
+        inicializarGestiones();
+    }
 
-  public GestionVenta getGestionVenta() {
-      return gestionVenta;
-  }
+    private void inicializarGestiones() {
 
-  public GestionCompra getGestionCompra() {
-      return gestionCompra;
-  }
-  
-  
+        ProductoDAO productoDAO = new ProductoJSONDAO();
+
+        gestionProducto = new GestionProducto(productoDAO);
+
+        gestionCliente = new GestionCliente();
+
+        gestionProveedor = new GestionProveedor();
+
+        gestionVenta = new GestionVenta();
+
+        gestionCompra = new GestionCompra();
+    }
+
+    public IGestionProducto getGestionProducto() {
+        return gestionProducto;
+    }
+
+    public IGestionCliente getGestionCliente() {
+        return gestionCliente;
+    }
+
+    public IGestionProveedor getGestionProveedor() {
+        return gestionProveedor;
+    }
+
+    public IGestionVenta getGestionVenta() {
+        return gestionVenta;
+    }
+
+    public IGestionCompra getGestionCompra() {
+        return gestionCompra;
+    }
 }

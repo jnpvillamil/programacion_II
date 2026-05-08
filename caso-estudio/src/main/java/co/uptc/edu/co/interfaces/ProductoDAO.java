@@ -5,8 +5,13 @@ import co.uptc.edu.co.modelo.Producto;
 
 public interface ProductoDAO {
 	
-	void guardarProductos(List<Producto> productos) throws Exception;
+    void guardarProducto(Producto producto) throws Exception;
 
-    List<Producto> leerProductos() throws Exception;
+    void actualizarProducto(Producto producto) throws Exception;
+
+    Producto buscarPorCodigo(String codigo) throws Exception;
+
+    List<Producto> listarProducto() throws Exception;
+
 
 }

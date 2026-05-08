@@ -27,9 +27,11 @@ import co.uptc.edu.co.gui.dialog.DialogFacturaVenta;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
-import co.uptc.edu.co.negocio.GestionProveedor;
-import co.uptc.edu.co.negocio.GestionCliente;
-import co.uptc.edu.co.negocio.GestionProducto;
+import co.uptc.edu.co.interfaces.IGestionProveedor;
+import co.uptc.edu.co.interfaces.IGestionCliente;
+import co.uptc.edu.co.interfaces.IGestionProducto;
+import co.uptc.edu.co.interfaces.IGestionVenta;
+import co.uptc.edu.co.interfaces.IGestionCompra;
 
 public class Evento implements ActionListener {
 
@@ -94,9 +96,11 @@ public class Evento implements ActionListener {
     // ATRIBUTOs
     private VentanaPrincipal ventana;
     private TiendaConfig config;
-    private GestionProducto gestionProducto;
-    private GestionCliente gestionCliente;
-    private GestionProveedor gestionProveedor;
+    private IGestionProducto gestionProducto;
+    private IGestionCliente gestionCliente;
+    private IGestionProveedor gestionProveedor;
+    private IGestionVenta gestionVenta;
+    private IGestionCompra gestionCompra;
 
     // CONSTRUCTOR
     public Evento(VentanaPrincipal ventana, TiendaConfig config) {
@@ -105,6 +109,9 @@ public class Evento implements ActionListener {
         this.gestionProducto = config.getGestionProducto();
         this.gestionCliente = config.getGestionCliente();
         this.gestionProveedor = config.getGestionProveedor();
+        this.gestionVenta = config.getGestionVenta();
+        this.gestionCompra = config.getGestionCompra();
+        
         
     }
 
