@@ -1,0 +1,24 @@
+[
+  {
+    "codigoProducto": 100,
+    "nombreProducto": "arroz",
+    "categoria": "vivere",
+    "precioCompra": 2600.0,
+    "precioVenta": 2900.0,
+    "stockActual": 56,
+    "stockMinimo": 5,
+    "stockMaximo": 70,
+    "activo": true
+  },
+  {
+    "codigoProducto": 101,
+    "nombreProducto": "panela",
+    "categoria": "vivere",
+    "precioCompra": 2200.0,
+    "precioVenta": 2500.0,
+    "stockActual": 90,
+    "stockMinimo": 10,
+    "stockMaximo": 120,
+    "activo": true
+  }
+]

@@ -200,21 +200,30 @@ public void modificarProducto() {
     pProducto.poblarTabla(pProducto.getGestionProducto().listar());
 }
 
-public void eliminarProducto() {
+public void inactivarProducto() {
+
     int codigo = pProducto.getItemSeleccionado();
+
     if(codigo == -1) return;
 
-    int respuesta = JOptionPane.showConfirmDialog(
-        this, 
-        "¿Está seguro de eliminar el producto " + codigo + "?", 
-        "Confirmar", 
-        JOptionPane.YES_NO_OPTION
-    );
+    pProducto.getGestionProducto().inactivar(codigo);
 
-    if (respuesta == JOptionPane.YES_OPTION) {
-        pProducto.getGestionProducto().eliminar(codigo);
-        pProducto.poblarTabla(pProducto.getGestionProducto().listar());
-    }
+    pProducto.poblarTabla(
+        pProducto.getGestionProducto().listar()
+    );
+}
+
+public void activarProducto() {
+
+    int codigo = pProducto.getItemSeleccionado();
+
+    if(codigo == -1) return;
+
+    pProducto.getGestionProducto().activar(codigo);
+
+    pProducto.poblarTabla(
+        pProducto.getGestionProducto().listar()
+    );
 }
 public void buscarProducto() {
  try {

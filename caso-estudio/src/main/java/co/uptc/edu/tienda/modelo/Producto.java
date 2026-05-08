@@ -9,11 +9,13 @@ public class Producto {
     private double precioVenta;
     private int stockActual;
     private int stockMinimo;
+    private int stockMaximo;
     private boolean activo;
 
     public Producto(int codigoProducto, String nombreProducto, String categoria,
                     double precioCompra, double precioVenta,
-                    int stockActual, int stockMinimo) {
+                    int stockActual, int stockMinimo, int stockMaximo) {
+
         this.codigoProducto = codigoProducto;
         this.nombreProducto = nombreProducto;
         this.categoria = categoria;
@@ -21,6 +23,7 @@ public class Producto {
         this.precioVenta = precioVenta;
         this.stockActual = stockActual;
         this.stockMinimo = stockMinimo;
+        this.stockMaximo = stockMaximo;
         this.activo = true;
     }
 
@@ -88,6 +91,14 @@ public class Producto {
 
     public void setStockMinimo(int stockMinimo) {
         this.stockMinimo = stockMinimo;
+    }
+
+    public int getStockMaximo() {
+        return stockMaximo;
+    }
+
+    public void setStockMaximo(int stockMaximo) {
+        this.stockMaximo = stockMaximo;
     }
 
     public boolean isActivo() {

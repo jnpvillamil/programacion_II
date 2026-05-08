@@ -6,13 +6,13 @@ import co.uptc.edu.tienda.modelo.Producto;
 
 public interface IGestionProducto {
 
-    void guardar(Producto producto);
+    public void guardar(List<Producto> productos);
 
-    void actualizar(Producto producto);
+    public void actualizar(Producto producto);
 
-    void eliminar(int codigoProducto);
+    public void eliminar(int codigoProducto);
 
-    Producto buscar(int codigoProducto);
+    public Producto buscar(int codigoProducto);
 
-    List<Producto> listar();
+    public List<Producto> listar();
 }

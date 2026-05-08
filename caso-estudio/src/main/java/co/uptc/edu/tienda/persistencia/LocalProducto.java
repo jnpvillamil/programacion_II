@@ -1,5 +1,11 @@
 package co.uptc.edu.tienda.persistencia;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,44 +14,124 @@ import co.uptc.edu.tienda.modelo.Producto;
 
 public class LocalProducto implements IGestionProducto {
 
-    private List<Producto> listaProductos;
+    private final Gson gson =
+            new GsonBuilder().setPrettyPrinting().create();
+
+    private final String RUTA = "productos.json";
 
     public LocalProducto() {
-        this.listaProductos = new ArrayList<>();
+        super();
     }
 
     @Override
-    public void guardar(Producto producto) {
-        listaProductos.add(producto);
+    public void guardar(List<Producto> productos) {
+
+        try (FileWriter writer = new FileWriter(RUTA)) {
+
+            gson.toJson(productos, writer);
+
+            System.out.println("Productos guardados");
+
+        } catch (IOException e) {
+
+            System.out.println(
+                    "Error al guardar en " + RUTA + ": " + e.getMessage());
+        }
     }
 
     @Override
     public void actualizar(Producto producto) {
-        for (int i = 0; i < listaProductos.size(); i++) {
-            if (listaProductos.get(i).getCodigoProducto() == producto.getCodigoProducto()) {
-                listaProductos.set(i, producto);
-                return;
+
+        List<Producto> lista = listar();
+
+        for (int i = 0; i < lista.size(); i++) {
+
+            if (lista.get(i).getCodigoProducto()
+                    == producto.getCodigoProducto()) {
+
+                lista.set(i, producto);
+
+                break;
             }
         }
+
+        guardar(lista);
     }
 
     @Override
     public void eliminar(int codigoProducto) {
-        listaProductos.removeIf(p -> p.getCodigoProducto() == codigoProducto);
+
+        List<Producto> lista = listar();
+
+        for (int i = 0; i < lista.size(); i++) {
+
+            if (lista.get(i).getCodigoProducto()
+                    == codigoProducto) {
+
+                lista.remove(i);
+
+                break;
+            }
+        }
+
+        guardar(lista);
     }
 
     @Override
     public Producto buscar(int codigoProducto) {
-        for (Producto p : listaProductos) {
-            if (p.getCodigoProducto() == codigoProducto) {
-                return p;
+
+        List<Producto> lista = listar();
+
+        if (lista != null) {
+
+            for (Producto p : lista) {
+
+                if (p.getCodigoProducto() == codigoProducto) {
+
+                    return p;
+                }
             }
         }
+
         return null;
     }
 
     @Override
     public List<Producto> listar() {
-        return listaProductos;
+
+        File archivo = new File(RUTA);
+
+        if (!archivo.exists()) {
+
+            return new ArrayList<Producto>();
+        }
+
+        try {
+
+            FileReader reader = new FileReader(archivo);
+
+            Type tipoLista =
+                    new TypeToken<List<Producto>>() {
+                    }.getType();
+
+            List<Producto> lista =
+                    gson.fromJson(reader, tipoLista);
+
+            reader.close();
+
+            if (lista == null) {
+
+                return new ArrayList<Producto>();
+            }
+
+            return lista;
+
+        } catch (IOException e) {
+
+            System.out.println(
+                    "Error al leer: " + e.getMessage());
+
+            return new ArrayList<Producto>();
+        }
     }
 }

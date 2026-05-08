@@ -4,47 +4,91 @@ import java.util.List;
 
 import co.uptc.edu.tienda.interfaces.IGestionProducto;
 import co.uptc.edu.tienda.modelo.Producto;
-import co.uptc.edu.tienda.persistencia.LocalProducto;
 
-public class GestionProducto implements IGestionProducto {
+public class GestionProducto {
 
-    private LocalProducto persistencia = new LocalProducto();
+    private final IGestionProducto gestionP;
 
-    @Override
-    public void guardar(Producto producto) {
+    public GestionProducto(IGestionProducto gestionP) {
+        super();
+        this.gestionP = gestionP;
+    }
 
-        if (producto.getNombreProducto().isEmpty()) {
+    public void guardar(Producto nuevo) {
+
+        if (nuevo.getNombreProducto().isEmpty()) {
             throw new IllegalArgumentException("Nombre obligatorio");
         }
 
-        if (producto.getPrecioCompra() <= 0 || producto.getPrecioVenta() <= 0) {
+        if (nuevo.getPrecioCompra() <= 0 || nuevo.getPrecioVenta() <= 0) {
             throw new IllegalArgumentException("Precios deben ser mayores a 0");
         }
 
-        if (producto.getStockActual() < 0) {
+        if (nuevo.getStockActual() < 0) {
             throw new IllegalArgumentException("Stock no puede ser negativo");
         }
 
-        persistencia.guardar(producto);
+        List<Producto> actuales = gestionP.listar();
+
+        int maxId = 99;
+
+        if (actuales.size() > 0) {
+
+            for (int i = 0; i < actuales.size(); i++) {
+
+                if (actuales.get(i).getCodigoProducto() > maxId) {
+
+                    maxId = actuales.get(i).getCodigoProducto();
+                }
+            }
+        }
+
+        int idReal = maxId + 1;
+
+        nuevo.setCodigoProducto(idReal);
+
+        actuales.add(nuevo);
+
+        gestionP.guardar(actuales);
     }
 
-    @Override
     public void actualizar(Producto producto) {
-        persistencia.actualizar(producto);
+        gestionP.actualizar(producto);
     }
 
-    @Override
     public void eliminar(int codigoProducto) {
-        persistencia.eliminar(codigoProducto);
+        gestionP.eliminar(codigoProducto);
     }
 
-    @Override
     public Producto buscar(int codigoProducto) {
-        return persistencia.buscar(codigoProducto);
+        return gestionP.buscar(codigoProducto);
     }
 
-    @Override
     public List<Producto> listar() {
-        return persistencia.listar();
+        return gestionP.listar();
+    }
+
+    public void inactivar(int codigoProducto) {
+
+        Producto p = buscar(codigoProducto);
+
+        if (p != null) {
+
+            p.setActivo(false);
+
+            actualizar(p);
+        }
+    }
+
+    public void activar(int codigoProducto) {
+
+        Producto p = buscar(codigoProducto);
+
+        if (p != null) {
+
+            p.setActivo(true);
+
+            actualizar(p);
+        }
     }
 }
