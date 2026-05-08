@@ -4,103 +4,124 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.IGestionProveedor;
+import co.uptc.edu.co.interfaces.ProveedorDAO;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
+import co.uptc.edu.co.persistencia.ProveedorJSONDAO;
 
 public class GestionProveedor implements IGestionProveedor {
 
-    private List<Proveedor> proveedores;
+	private List<Proveedor> proveedores;
+	private ProveedorDAO proveedorDAO;
 
-    public GestionProveedor() {
-        proveedores = new ArrayList<>();
-    }
+	public GestionProveedor(ProveedorDAO proveedorDAO) {
+		this.setProveedorDAO(proveedorDAO);
 
-    @Override
-    public Proveedor buscarProveedorPorCodigo(String codigo) {
-        for (Proveedor proveedor : proveedores) {
-            if (proveedor.getCodigoProveedor().equalsIgnoreCase(codigo)) {
-                return proveedor;
-            }
-        }
-        return null;
-    }
+		try {
+			proveedores = proveedorDAO.listarProveedor();
+		} catch (Exception e) {
+			proveedores = new ArrayList<>();
+		}
+	}
 
-    @Override
-    public List<Proveedor> obtenerProveedores() {
-        return new ArrayList<>(proveedores);
-    }
+	public GestionProveedor() {
+		this(new ProveedorJSONDAO());
+	}
 
-    @Override
-    public void registrarProveedor(Proveedor proveedor) throws Exception {
-        validarProveedor(proveedor);
+	public void setProveedorDAO(ProveedorDAO proveedorDAO) {
+		this.proveedorDAO = proveedorDAO;
+	}
 
-        if (buscarProveedorPorCodigo(proveedor.getCodigoProveedor()) != null) {
-            throw new Exception("Ya existe un proveedor con ese código.");
-        }
+	@Override
+	public Proveedor buscarProveedorPorCodigo(String codigo) {
+		for (Proveedor proveedor : proveedores) {
+			if (proveedor.getCodigoProveedor().equalsIgnoreCase(codigo)) {
+				return proveedor;
+			}
+		}
+		return null;
+	}
 
-        proveedor.setEstado(EstadoEnum.ACTIVO);
-        proveedores.add(proveedor);
-    }
+	@Override
+	public List<Proveedor> obtenerProveedores() {
+		return new ArrayList<>(proveedores);
+	}
 
-    @Override
-    public void actualizarProveedor(Proveedor proveedorActualizado) throws Exception {
-        validarProveedor(proveedorActualizado);
+	@Override
+	public void registrarProveedor(Proveedor proveedor) throws Exception {
+		validarProveedor(proveedor);
 
-        Proveedor proveedorExistente = buscarProveedorPorCodigo(proveedorActualizado.getCodigoProveedor());
+		if (buscarProveedorPorCodigo(proveedor.getCodigoProveedor()) != null) {
+			throw new Exception("Ya existe un proveedor con ese código.");
+		}
 
-        if (proveedorExistente == null) {
-            throw new Exception("No se encontró el proveedor a actualizar.");
-        }
+		proveedor.setEstado(EstadoEnum.ACTIVO);
+		proveedorDAO.guardarProveedor(proveedor);
+		proveedores.add(proveedor);
+	}
 
-        proveedorExistente.setRazonSocial(proveedorActualizado.getRazonSocial());
-        proveedorExistente.setNit(proveedorActualizado.getNit());
-        proveedorExistente.setDireccion(proveedorActualizado.getDireccion());
-        proveedorExistente.setTelefono(proveedorActualizado.getTelefono());
-        proveedorExistente.setCorreoElectronico(proveedorActualizado.getCorreoElectronico());
-    }
+	@Override
+	public void actualizarProveedor(Proveedor proveedorActualizado) throws Exception {
+		validarProveedor(proveedorActualizado);
 
-    @Override
-    public void cambiarEstadoProveedor(String codigo) throws Exception {
-        Proveedor proveedor = buscarProveedorPorCodigo(codigo);
+		Proveedor proveedorExistente = buscarProveedorPorCodigo(proveedorActualizado.getCodigoProveedor());
 
-        if (proveedor == null) {
-            throw new Exception("No se encontró el proveedor.");
-        }
+		if (proveedorExistente == null) {
+			throw new Exception("No se encontró el proveedor a actualizar.");
+		}
 
-        if (proveedor.getEstado() == EstadoEnum.ACTIVO) {
-            proveedor.setEstado(EstadoEnum.INACTIVO);
-        } else {
-            proveedor.setEstado(EstadoEnum.ACTIVO);
-        }
-    }
+		proveedorExistente.setRazonSocial(proveedorActualizado.getRazonSocial());
+		proveedorExistente.setNit(proveedorActualizado.getNit());
+		proveedorExistente.setDireccion(proveedorActualizado.getDireccion());
+		proveedorExistente.setTelefono(proveedorActualizado.getTelefono());
+		proveedorExistente.setCorreoElectronico(proveedorActualizado.getCorreoElectronico());
+		proveedorDAO.actualizarProveedor(proveedorExistente);
+	}
 
-    private void validarProveedor(Proveedor proveedor) throws Exception {
-        if (proveedor == null) {
-            throw new Exception("El proveedor no puede ser nulo.");
-        }
+	@Override
+	public void cambiarEstadoProveedor(String codigo) throws Exception {
+		Proveedor proveedor = buscarProveedorPorCodigo(codigo);
 
-        if (proveedor.getCodigoProveedor() == null || proveedor.getCodigoProveedor().trim().isEmpty()) {
-            throw new Exception("El código del proveedor es obligatorio.");
-        }
+		if (proveedor == null) {
+			throw new Exception("No se encontró el proveedor.");
+		}
 
-        if (proveedor.getRazonSocial() == null || proveedor.getRazonSocial().trim().isEmpty()) {
-            throw new Exception("La razón social es obligatoria.");
-        }
+		if (proveedor.getEstado() == EstadoEnum.ACTIVO) {
+			proveedor.setEstado(EstadoEnum.INACTIVO);
+		} else {
+			proveedor.setEstado(EstadoEnum.ACTIVO);
+		}
+		proveedorDAO.actualizarProveedor(proveedor);
+	}
 
-        if (proveedor.getNit() == null || proveedor.getNit().trim().isEmpty()) {
-            throw new Exception("El NIT es obligatorio.");
-        }
+	private void validarProveedor(Proveedor proveedor) throws Exception {
+		if (proveedor == null) {
+			throw new Exception("El proveedor no puede ser nulo.");
+		}
 
-        if (proveedor.getDireccion() == null || proveedor.getDireccion().trim().isEmpty()) {
-            throw new Exception("La dirección es obligatoria.");
-        }
+		if (proveedor.getCodigoProveedor() == null || proveedor.getCodigoProveedor().trim().isEmpty()) {
+			throw new Exception("El código del proveedor es obligatorio.");
+		}
 
-        if (proveedor.getTelefono() == null || proveedor.getTelefono().trim().isEmpty()) {
-            throw new Exception("El teléfono es obligatorio.");
-        }
+		if (proveedor.getRazonSocial() == null || proveedor.getRazonSocial().trim().isEmpty()) {
+			throw new Exception("La razón social es obligatoria.");
+		}
 
-        if (proveedor.getCorreoElectronico() == null || proveedor.getCorreoElectronico().trim().isEmpty()) {
-            throw new Exception("El correo electrónico es obligatorio.");
-        }
-    }
+		if (proveedor.getNit() == null || proveedor.getNit().trim().isEmpty()) {
+			throw new Exception("El NIT es obligatorio.");
+		}
+
+		if (proveedor.getDireccion() == null || proveedor.getDireccion().trim().isEmpty()) {
+			throw new Exception("La dirección es obligatoria.");
+		}
+
+		if (proveedor.getTelefono() == null || proveedor.getTelefono().trim().isEmpty()) {
+			throw new Exception("El teléfono es obligatorio.");
+		}
+
+		if (proveedor.getCorreoElectronico() == null || proveedor.getCorreoElectronico().trim().isEmpty()) {
+			throw new Exception("El correo electrónico es obligatorio.");
+		}
+	}
+
 }
