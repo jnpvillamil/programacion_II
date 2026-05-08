@@ -3,6 +3,8 @@ package co.edu.uptc.sistienda.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,19 +15,21 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import co.edu.uptc.sistienda.clientes.gui.DialogoCliente;
 import co.edu.uptc.sistienda.clientes.gui.PanelClientes;
 import co.edu.uptc.sistienda.modelo.Cliente;
+import co.edu.uptc.sistienda.modelo.DetalleVenta;
 import co.edu.uptc.sistienda.modelo.Producto;
 import co.edu.uptc.sistienda.modelo.Proveedor;
+import co.edu.uptc.sistienda.modelo.Venta;
 import co.edu.uptc.sistienda.negocio.config.SistiendaConfig;
 import co.edu.uptc.sistienda.negocio.dto.CredencialDto;
 import co.edu.uptc.sistienda.productos.gui.DialogoProducto;
 import co.edu.uptc.sistienda.productos.gui.PanelProductos;
 import co.edu.uptc.sistienda.proveedores.gui.DialogoProveedor;
 import co.edu.uptc.sistienda.proveedores.gui.PanelProveedores;
+import co.edu.uptc.sistienda.ventas.gui.DialogoSelectorProducto;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -35,7 +39,8 @@ public class VentanaPrincipal extends JFrame {
 	// Identificadores de tarjetas para CardLayout
 	private static final String TARJETA_LOGIN = "LOGIN";
 	private static final String TARJETA_PRINCIPAL = "PRINCIPAL";
-	private static final String TARJETA_BIENVENIDA = "BIENVENIDA"; 
+	private static final String TARJETA_CAJERO = "CAJERO";
+	private static final String TARJETA_BIENVENIDA = "BIENVENIDA";
 
 	// Capa de negocio
 	private SistiendaConfig configuracion;
@@ -48,6 +53,7 @@ public class VentanaPrincipal extends JFrame {
 	private PanelProductos panelProductos;
 	private PanelClientes panelClientes;
 	private PanelProveedores panelProveedores;
+	private PanelCajero panelCajero;
 
 	// Diálogos activos
 	private DialogoProducto dialogoProducto;
@@ -87,6 +93,13 @@ public class VentanaPrincipal extends JFrame {
 		// Solo la verá el Administrador
 		JPanel panelPrincipal = construirPanelPrincipal();
 		panelRaiz.add(panelPrincipal, TARJETA_PRINCIPAL);
+
+		// Tarjeta CAJERO
+		panelCajero = new PanelCajero(evento);
+		JPanel envCajero = new JPanel(new BorderLayout());
+		envCajero.add(construirBarraSuperior(), BorderLayout.NORTH);
+		envCajero.add(panelCajero, BorderLayout.CENTER);
+		panelRaiz.add(envCajero, TARJETA_CAJERO);
 
 		// Tarjeta BIENVENIDA
 		// La verán todos los roles que no sean Administrador
@@ -144,7 +157,7 @@ public class VentanaPrincipal extends JFrame {
 		raiz.add(panelContenidoCentral, BorderLayout.CENTER);
 		return raiz;
 	}
-	
+
 	private JPanel construirBarraSuperior() {
 		JPanel barraSuperior = new JPanel(new BorderLayout());
 		barraSuperior.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
@@ -153,7 +166,7 @@ public class VentanaPrincipal extends JFrame {
 		botonCerrarSesion.setActionCommand(Evento.SALIR);
 		botonCerrarSesion.addActionListener(evento);
 		barraSuperior.add(botonCerrarSesion, BorderLayout.EAST);
-		return barraSuperior; 
+		return barraSuperior;
 	}
 
 	private JPanel construirMenuLateral() {
@@ -211,6 +224,10 @@ public class VentanaPrincipal extends JFrame {
 			// Administrador: muestra la tarjeta con menú lateral y el dashboard
 			mostrarDashboard();
 			layoutPrincipal.show(panelRaiz, TARJETA_PRINCIPAL);
+		} else if ("Cajero".equals(rolActivo)) {
+			// Cajero: muestra la tarjeta del cajeero con el panel de ventas
+			mostrarPanelRegistrarVenta();
+			layoutPrincipal.show(panelRaiz, TARJETA_CAJERO);
 		} else {
 			// Cualquier otro rol: muestra solo la pantalla de bienvenida, sin menú
 			layoutPrincipal.show(panelRaiz, TARJETA_BIENVENIDA);
@@ -237,6 +254,92 @@ public class VentanaPrincipal extends JFrame {
 	public void mostrarPanelProveedores() {
 		refrescarTablaProveedores();
 		layoutContenido.show(panelContenidoCentral, Evento.MENU_PROVEEDORES);
+	}
+
+	// Navegación Cajero
+
+	public void mostrarPanelRegistrarVenta() {
+		String numeroFacturaNueva = configuracion.getGestionVenta().generarNumeroFactura();
+		String fechaHoraActual = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+		List<Cliente> clientesDisponibles = configuracion.getGestionCliente().obtenerListaClientes();
+		panelCajero.mostrarRegistrarVenta(numeroFacturaNueva, fechaHoraActual, clientesDisponibles);
+	}
+
+	public void mostrarPanelVentasRegistradas() {
+		panelCajero.mostrarVentasRegistradas(configuracion.getGestionVenta().obtenerListaVentas());
+	}
+
+
+	// Acciones Cajero
+
+	public void abrirSelectorProducto() {
+		List<Producto> productosDisponibles = configuracion.getGestionProducto().obtenerListaProductos();
+		DialogoSelectorProducto dialogoSelectorProducto = new DialogoSelectorProducto(productosDisponibles);
+		dialogoSelectorProducto.setVisible(true);
+		DetalleVenta itemSeleccionado = dialogoSelectorProducto.getItemResultado();
+		if (itemSeleccionado != null) {
+			panelCajero.agregarProductoALaVenta(itemSeleccionado);
+		}
+	}
+
+	public void registrarVenta() {
+	    try {
+	        String codigoClienteVenta = panelCajero.getCodigoClienteSeleccionado();
+	        if (codigoClienteVenta == null) {
+	            JOptionPane.showMessageDialog(this, "Seleccione un cliente", "Aviso", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+	        if (panelCajero.getProductosAgregados().isEmpty()) {
+	            JOptionPane.showMessageDialog(this, "Agregue al menos un producto", "Aviso",
+	                    JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+	        Cliente clienteDeVenta = configuracion.getGestionCliente().consultarClientePorCodigo(codigoClienteVenta);
+	        Venta nuevaVenta = new Venta(panelCajero.getNumeroFactura(), clienteDeVenta,
+	                panelCajero.getFormaPagoSeleccionada());
+	        for (DetalleVenta itemDeVenta : panelCajero.getProductosAgregados()) {
+	            nuevaVenta.agregarItem(itemDeVenta);
+	        }
+	        configuracion.getGestionVenta().resgistrarVenta(nuevaVenta);
+	        JOptionPane.showMessageDialog(this, "Venta Registrada correctamente");
+	        mostrarPanelRegistrarVenta();
+	    } catch (Exception ex) {
+	        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+	public void cancelarVenta() {
+		mostrarPanelRegistrarVenta();
+	}
+
+	public void anularVenta() {
+		String numeroFacturaAnular = panelCajero.obtenerNumeroFacturaSeleccionada();
+		if (numeroFacturaAnular == null) {
+			JOptionPane.showMessageDialog(this, "Seleccione una venta.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		int confirmacionAnulacion = JOptionPane.showConfirmDialog(this,
+				"¿Desea anular la venta " + numeroFacturaAnular + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+		if (confirmacionAnulacion == JOptionPane.YES_OPTION) {
+			try {
+				configuracion.getGestionVenta().anularVenta(numeroFacturaAnular);
+				mostrarPanelVentasRegistradas();
+				JOptionPane.showMessageDialog(this, "Venta anulada correctamente.");
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	public void consultarVentasPorFecha() {
+		java.time.LocalDate fechaConsulta = panelCajero.obtenerFechaBusqueda();
+		if (fechaConsulta == null)
+			return;
+		List<Venta> ventasEnFecha = configuracion.getGestionVenta().consultarVentasPorFecha(fechaConsulta);
+		panelCajero.poblarTablaVentas(ventasEnFecha);
+		if (ventasEnFecha.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "No hay ventas para esa fecha.", "Sin resultados",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
 	// CRUD Productos
@@ -336,6 +439,7 @@ public class VentanaPrincipal extends JFrame {
 			}
 		}
 	}
+
 	public void buscarProducto() {
 		String texto = panelProductos.obtenerTextoBusqueda().toLowerCase();
 		List<Producto> todos = configuracion.getGestionProducto().obtenerListaProductos();
@@ -425,6 +529,7 @@ public class VentanaPrincipal extends JFrame {
 			}
 		}
 	}
+
 	public void activarClienteSeleccionado() {
 		String codigo = panelClientes.obtenerCodigoFilaSeleccionada();
 		if (codigo == null) {
@@ -537,7 +642,7 @@ public class VentanaPrincipal extends JFrame {
 			}
 		}
 	}
-	
+
 	public void activarProveedorSeleccionado() {
 		String codigo = panelProveedores.obtenerCodigoFilaSeleccionada();
 		if (codigo == null) {

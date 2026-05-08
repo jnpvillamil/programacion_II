@@ -48,6 +48,16 @@ public class Evento implements ActionListener {
 	public static final String ACTUALIZAR_PROVEEDOR = "ACTUALIZAR_PROVEEDOR";
 	public static final String CANCELAR_PROVEEDOR = "CANCELAR_PROVEEDOR";
 
+	//Ventas (Cajero)
+	public static final String MENU_REGISTRAR_VENTA = "MENU_REGISTRAR_VENTA";
+	public static final String MENU_VENTAS_REGISTRADAS ="MENU_VENTAS_REGISTRADAS";
+	public static final String ABRIR_SELECTOR_PRODUCTO ="ABRIR_SELECTOR_PRODUCTO";
+	public static final String REGISTRAR_VENTA = "REGISTRAR_VENTA";
+	public static final String CANCELAR_VENTA = "CANCELAR_VENTA";
+	public static final String ANULAR_VENTA = "ANULAR_VENTA";
+	public static final String CONSULTAR_VENTAS_POR_FECHA = "CONSULTAR_VENTAS_POR_FECHA";
+	public static final String MOSTRAR_TODAS_VENTAS = "MOSTRAR_TODAS_VENTAS";
+	
 	private VentanaPrincipal ventana;
 
 	public Evento(VentanaPrincipal ventana) {
@@ -161,6 +171,29 @@ public class Evento implements ActionListener {
 		case CANCELAR_PROVEEDOR:
 			ventana.cerrarDialogoProveedor();
 			break;
+		//Ventas (Cajero)
+		case MENU_REGISTRAR_VENTA:
+			ventana.mostrarPanelRegistrarVenta();
+			break;
+		case MENU_VENTAS_REGISTRADAS:
+			ventana.mostrarPanelVentasRegistradas();
+			break;
+		case ABRIR_SELECTOR_PRODUCTO:
+			ventana.abrirSelectorProducto();
+			break; 
+		case REGISTRAR_VENTA: 
+			ventana.registrarVenta();
+			break; 
+		case CANCELAR_VENTA: 
+			ventana.cancelarVenta();
+			break; 
+		case ANULAR_VENTA: 
+			ventana.anularVenta();
+			break; 
+		case CONSULTAR_VENTAS_POR_FECHA:
+			ventana.consultarVentasPorFecha();		
+			break; 
+		
 		}
 	}
 }
