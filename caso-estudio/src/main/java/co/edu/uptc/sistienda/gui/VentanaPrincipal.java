@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 
 import co.edu.uptc.sistienda.clientes.gui.DialogoCliente;
 import co.edu.uptc.sistienda.clientes.gui.PanelClientes;
+import co.edu.uptc.sistienda.contabilidad.gui.PanelContabilidad;
 import co.edu.uptc.sistienda.modelo.Cliente;
 import co.edu.uptc.sistienda.modelo.DetalleVenta;
 import co.edu.uptc.sistienda.modelo.Producto;
@@ -54,6 +55,13 @@ public class VentanaPrincipal extends JFrame {
 	private PanelClientes panelClientes;
 	private PanelProveedores panelProveedores;
 	private PanelCajero panelCajero;
+	private PanelContabilidad panelContabilidad;
+	
+	// Botones del menú (para control de permisos)
+	private JButton btnProductos;
+	private JButton btnClientes;
+	private JButton btnProveedores;
+	private JButton btnContabilidad;
 
 	// Diálogos activos
 	private DialogoProducto dialogoProducto;
@@ -148,11 +156,13 @@ public class VentanaPrincipal extends JFrame {
 		panelProductos = new PanelProductos(evento);
 		panelClientes = new PanelClientes(evento);
 		panelProveedores = new PanelProveedores(evento);
-
+		panelContabilidad = new PanelContabilidad();
+		
 		panelContenidoCentral.add(panelDashboard, Evento.MENU_DASHBOARD);
 		panelContenidoCentral.add(panelProductos, Evento.MENU_PRODUCTOS);
 		panelContenidoCentral.add(panelClientes, Evento.MENU_CLIENTES);
 		panelContenidoCentral.add(panelProveedores, Evento.MENU_PROVEEDORES);
+		panelContenidoCentral.add(panelContabilidad, "CONTABILIDAD");
 
 		raiz.add(panelContenidoCentral, BorderLayout.CENTER);
 		return raiz;
@@ -178,9 +188,16 @@ public class VentanaPrincipal extends JFrame {
 		menu.add(crearSeparadorMenu("PRINCIPAL"));
 		menu.add(crearBotonMenu("Dashboard", Evento.MENU_DASHBOARD));
 		menu.add(crearSeparadorMenu("CATÁLOGOS"));
-		menu.add(crearBotonMenu("Productos", Evento.MENU_PRODUCTOS));
-		menu.add(crearBotonMenu("Clientes", Evento.MENU_CLIENTES));
-		menu.add(crearBotonMenu("Proveedores", Evento.MENU_PROVEEDORES));
+		btnProductos = crearBotonMenu("Productos", Evento.MENU_PRODUCTOS);
+	    btnClientes = crearBotonMenu("Clientes", Evento.MENU_CLIENTES);
+	    btnProveedores = crearBotonMenu("Proveedores", Evento.MENU_PROVEEDORES);
+		btnContabilidad = crearBotonMenu("Contabilidad", Evento.MENU_CONTABILIDAD);
+		
+		menu.add(btnProductos);
+	    menu.add(btnClientes);
+	    menu.add(btnProveedores);
+	    menu.add(btnContabilidad);
+		
 		return menu;
 	}
 
@@ -220,8 +237,9 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	public void mostrarPantallaInicial() {
-		if ("Administrador".equals(rolActivo)) {
+		if ("Administrador".equals(rolActivo) || "Contador".equals(rolActivo)) {
 			// Administrador: muestra la tarjeta con menú lateral y el dashboard
+			aplicarPermisos();
 			mostrarDashboard();
 			layoutPrincipal.show(panelRaiz, TARJETA_PRINCIPAL);
 		} else if ("Cajero".equals(rolActivo)) {
@@ -254,6 +272,17 @@ public class VentanaPrincipal extends JFrame {
 	public void mostrarPanelProveedores() {
 		refrescarTablaProveedores();
 		layoutContenido.show(panelContenidoCentral, Evento.MENU_PROVEEDORES);
+	}
+	public void mostrarPanelContabilidad() {
+
+	    List<Venta> ventas =
+	        configuracion.getGestionVenta().obtenerListaVentas();
+
+	    System.out.println("Ventas encontradas: " + ventas.size());
+
+	    panelContabilidad.cargarTotalVentas(ventas);
+
+	    layoutContenido.show(panelContenidoCentral, "CONTABILIDAD");
 	}
 
 	// Navegación Cajero
@@ -683,6 +712,14 @@ public class VentanaPrincipal extends JFrame {
 			dialogoProveedor.setVisible(false);
 			dialogoProveedor = null;
 		}
+	}
+	private void aplicarPermisos() {
+	    if ("Contador".equals(rolActivo)) {
+	        btnProductos.setVisible(false);
+	        btnClientes.setVisible(false);
+	        btnProveedores.setVisible(false);
+	        btnContabilidad.setVisible(true);
+	    }
 	}
 
 	// Cerrar sesión

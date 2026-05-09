@@ -13,6 +13,7 @@ public class Evento implements ActionListener {
 	public static final String MENU_PRODUCTOS = "MENU_PRODUCTOS";
 	public static final String MENU_CLIENTES = "MENU_CLIENTES";
 	public static final String MENU_PROVEEDORES = "MENU_PROVEEDORES";
+	public static final String MENU_CONTABILIDAD = "MENU_CONTABILIDAD";
 	public static final String SALIR = "SALIR";
 
 	// Productos
@@ -83,6 +84,9 @@ public class Evento implements ActionListener {
 		case MENU_PROVEEDORES:
 			ventana.mostrarPanelProveedores();
 			break;
+		case MENU_CONTABILIDAD:
+		    ventana.mostrarPanelContabilidad();
+		    break;
 		case SALIR:
 			ventana.cerrarSesion();
 			//System.exit(0);
