@@ -5,7 +5,7 @@
     "categoria": "ALIMENTOS",
     "precioCompra": 2500.0,
     "precioVenta": 3000.0,
-    "stockActual": 30,
+    "stockActual": 20,
     "stockMinimo": 10,
     "stockMaximo": 80,
     "estado": "ACTIVO"

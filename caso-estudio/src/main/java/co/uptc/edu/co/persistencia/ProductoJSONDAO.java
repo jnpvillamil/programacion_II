@@ -19,9 +19,7 @@ public class ProductoJSONDAO implements ProductoDAO {
     private final Gson gson;
 
     public ProductoJSONDAO() {
-        gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
+        gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @Override

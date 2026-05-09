@@ -15,14 +15,13 @@ public class GestionProducto implements IGestionProducto {
 
     private List<Producto> productos;
     private List<MovimientoInventario> movimientos;
-    private ProductoDAO productoDAO;
+    private final ProductoDAO productoDAO;
 
     public GestionProducto(ProductoDAO productoDAO) {
 
         if (productoDAO == null) {
-            throw new IllegalArgumentException(
-                "El ProductoDAO no puede ser nulo."
-            );
+            throw new IllegalArgumentException("El ProductoDAO no puede ser nulo.");
+                   
         }
 
         this.productoDAO = productoDAO;
