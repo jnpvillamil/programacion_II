@@ -94,7 +94,7 @@ public class ProductoGUI extends JFrame {
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Datos invalidos");
+            JOptionPane.showMessageDialog(null, "DATOS INVALIDOS");
         }
 
     }
