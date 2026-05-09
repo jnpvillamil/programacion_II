@@ -16,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import co.edu.uptc.enums.PoseeResponsabiliadTributaria;
 import co.edu.uptc.enums.TipoClienteEnum;
 import co.edu.uptc.enums.TipoDocumentoEnum;
 import co.edu.uptc.gui.modelo.Cliente;
@@ -30,6 +31,8 @@ public class ClienteGUI extends JFrame{
 	private JTextField txtDireccion;
 	private JTextField txtTelefono;
 	private JComboBox<TipoClienteEnum>cbTipoCliente;
+	private JTextField txtCorreoElectronico;
+	private JComboBox<PoseeResponsabiliadTributaria>cbRespTributaria;
 	
 	
 	private JButton btnRegistrar;
@@ -55,7 +58,7 @@ public class ClienteGUI extends JFrame{
     private void iniciarComponentes() {
     	JPanel panelBase= new JPanel(new BorderLayout());
     	panelBase.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JPanel panelFormulario = new JPanel(new GridLayout(8, 2, 8, 8));
+        JPanel panelFormulario = new JPanel(new GridLayout(10, 2, 4, 4));
         
 
         txtCodigo = new JTextField();
@@ -66,6 +69,8 @@ public class ClienteGUI extends JFrame{
         txtTelefono = new JTextField();
         txtDireccion = new JTextField();
         cbTipoCliente = new JComboBox<>(TipoClienteEnum.values());
+        txtCorreoElectronico= new JTextField();
+        cbRespTributaria= new JComboBox<>(PoseeResponsabiliadTributaria.values());
 
         panelFormulario.add(new JLabel("Código:"));
         panelFormulario.add(txtCodigo);
@@ -83,7 +88,10 @@ public class ClienteGUI extends JFrame{
         panelFormulario.add(txtDireccion);
         panelFormulario.add(new JLabel("Tipo cliente:"));
         panelFormulario.add(cbTipoCliente);
-
+        panelFormulario.add(new JLabel("Correo Electronico:"));
+        panelFormulario.add(txtCorreoElectronico);
+        panelFormulario.add(new JLabel("Responsable Tributariamente:"));
+        panelFormulario.add(cbRespTributaria);
         JPanel panelBotones = new JPanel();
 
         btnRegistrar = new JButton("Registrar");
@@ -105,7 +113,7 @@ public class ClienteGUI extends JFrame{
         panelBotones.add(btnLimpiar);
 
         modeloTabla = new DefaultTableModel(
-                new String[]{"Código", "Nombre", "Apellido", "Documento", "Teléfono", "Tipo"}, 0);
+                new String[]{"Código", "Nombre", "Apellido", "Documento", "Teléfono", "Tipo", "Correo", "Tributa"}, 0);
         tablaClientes = new JTable(modeloTabla);
            //tablaClientes. setPreferredSize(new Dimension(50,200));
         panelBase.add(panelFormulario, BorderLayout.NORTH);
@@ -126,6 +134,8 @@ public class ClienteGUI extends JFrame{
         cliente.setTelefono(txtTelefono.getText().trim());
         cliente.setDireccion(txtDireccion.getText().trim());
         cliente.setTipoCliente((TipoClienteEnum) cbTipoCliente.getSelectedItem());
+        cliente.setCorreoElectronico(txtCorreoElectronico.getText().trim());
+        cliente.setResponsableTributariamente((PoseeResponsabiliadTributaria)cbRespTributaria.getSelectedItem());
         cliente.setActivo(true);
         return cliente;
     }
@@ -143,6 +153,8 @@ public class ClienteGUI extends JFrame{
         txtTelefono.setText(cliente.getTelefono());
         txtDireccion.setText(cliente.getDireccion());
         cbTipoCliente.setSelectedItem(cliente.getTipoCliente());
+        txtCorreoElectronico.setText(cliente.getCorreoElectronico());
+        cbRespTributaria.setSelectedItem(cliente.getResponsableTributariamente());
     }
 
     public void cargarTabla(List<Cliente> clientes) {
@@ -154,7 +166,9 @@ public class ClienteGUI extends JFrame{
                 cliente.getApellido(),
                 cliente.getNumeroDocumento(),
                 cliente.getTelefono(),
-                cliente.getTipoCliente()
+                cliente.getTipoCliente(),
+                cliente.getCorreoElectronico(),
+                cliente.getResponsableTributariamente()
             });
         }
     }
@@ -166,8 +180,10 @@ public class ClienteGUI extends JFrame{
         txtNumeroDocumento.setText("");
         txtTelefono.setText("");
         txtDireccion.setText("");
+        txtCorreoElectronico.setText("");
         cbTipoDocumento.setSelectedIndex(0);
         cbTipoCliente.setSelectedIndex(0);
+        cbRespTributaria.setSelectedItem(0);
     }
 
     public void mostrarMensaje(String mensaje) {
