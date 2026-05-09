@@ -255,7 +255,7 @@ public class Eventos implements ActionListener {
         proveedorActivo.poblarTabla(gProveedor.listar());
     }
 
-    //  Ventas 
+    //  Ventas funciones
     private void registrarVenta() {
         try {
             ventaDto v = ventasActivo.getDatosVenta();
