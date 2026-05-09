@@ -1,10 +1,7 @@
-package co.edu.uptc.Tiendaminorista.Administrador.gui;
+package co.edu.uptc.gui;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-import co.edu.uptc.Tiendaminorista.Gui.Evento;
-import co.edu.uptc.Tiendaminorista.modelo.Cliente;
 
 public class PanelCliente extends JPanel {
 	private JTable tabla;
@@ -50,7 +47,7 @@ public class PanelCliente extends JPanel {
        
         add(Box.createVerticalStrut(20));
         
-        String[] columnas = {"Nombre", "Tipo de documento", "Número de documento", "Tipo de cliente", "Estado"};
+        String[] columnas = {"Nombre", "Apellido", "Número de documento", "Tipo de cliente", "Estado del cliente "};
         modelo = new DefaultTableModel(columnas, 0);
         tabla = new JTable(modelo);
         JScrollPane scrollPane = new JScrollPane(tabla);
@@ -60,16 +57,20 @@ public class PanelCliente extends JPanel {
         add(scrollPane);
     }
      
-    public void cargarClientes(java.util.List<Cliente> clientes) {
-        modelo.setRowCount(0);
-        for (Cliente cliente : clientes) {
-            modelo.addRow(new Object[]{
-                cliente.getNombre(),
-                cliente.getTipodoc() != null ? cliente.getTipodoc().name() : "",
-                cliente.getNumeroIdentificacion(),
-                cliente.getTipoCliente(),
-                cliente.isActivo() ? "ACTIVO" : "INACTIVO"
-            });
-        }
-    }
-}
+        public void cargarClientes(java.util.List<co.edu.uptc.Datos.Clientedt> lista) {
+
+            modelo.setRowCount(0);
+
+            for (co.edu.uptc.Datos.Clientedt c : lista) {
+
+                String estado = c.isActivo() ? "Activo" : "Inactivo"; // 👈 AQUÍ VA
+
+                modelo.addRow(new Object[]{
+                    c.getNombre(),
+                    c.getTipodocli(),
+                    c.getNumerodocli(),
+                    c.getTipocli(),
+                    estado
+                });
+            }
+        }}

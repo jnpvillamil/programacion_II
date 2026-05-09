@@ -1,10 +1,7 @@
-package co.edu.uptc.Tiendaminorista.Administrador.gui;
+package co.edu.uptc.gui;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-import co.edu.uptc.Tiendaminorista.Gui.Evento;
-import co.edu.uptc.Tiendaminorista.modelo.Proveedor;
 
 public class PanelProveedores extends JPanel {
 
@@ -52,7 +49,7 @@ public class PanelProveedores extends JPanel {
        
         add(Box.createVerticalStrut(20));
         
-        String[] columnas1 = {"Razon social", "NIT", "Direccion", "Telefono", "Correo", "Estado"};
+        String[] columnas1 = {"Razon social", "NIT", "Direccion", "Correo", "Estado"};
         modelo = new DefaultTableModel(columnas1, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -65,18 +62,25 @@ public class PanelProveedores extends JPanel {
         scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         add(scrollPane);
+        
+     
+       
     }
+    
+    public void cargarProveedores(java.util.List<co.edu.uptc.Datos.Proveedordt> lista) {
 
-    public void cargarProveedores(java.util.List<Proveedor> proveedores) {
         modelo.setRowCount(0);
-        for (Proveedor proveedor : proveedores) {
+
+        for (co.edu.uptc.Datos.Proveedordt p : lista) {
+
+            String estado = p.isActivo() ? "Activo" : "Inactivo";
+
             modelo.addRow(new Object[]{
-                proveedor.getNombre(),
-                proveedor.getNit(),
-                proveedor.getDireccion(),
-                proveedor.getTelefono(),
-                proveedor.getCorreo(),
-                proveedor.isActivo() ? "ACTIVO" : "INACTIVO"
+                p.getRazonSocial(),
+                p.getNit(),
+                p.getDireccion(),
+                p.getCorreo(),
+                estado
             });
         }
     }

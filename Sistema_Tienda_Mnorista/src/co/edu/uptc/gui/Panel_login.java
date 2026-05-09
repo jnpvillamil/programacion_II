@@ -1,16 +1,14 @@
-package co.edu.uptc.Tiendaminorista.Gui;
+package co.edu.uptc.gui;
 
 import java.awt.*;
 import javax.swing.*;
 
-import edu.uptc.edu.Tiendaminorista.negociodto.CredencialDto;
-
-public class PanelLogin extends JPanel {
+public class Panel_login extends JPanel {
 
     private JTextField txUsuario;
-    private JTextField contrasena;
+    private JTextField txnumerodoc;
 
-    public PanelLogin(Evento e) {
+    public Panel_login(Evento e) {
 
         setLayout(new GridBagLayout());
 
@@ -29,9 +27,9 @@ public class PanelLogin extends JPanel {
 
         plogin.add(Box.createVerticalStrut(10));
 
-        contrasena = new JTextField();
-        contrasena.setMaximumSize(new Dimension(200, 30));
-        plogin.add(contrasena);
+        txnumerodoc = new JTextField();
+        txnumerodoc.setMaximumSize(new Dimension(200, 30));
+        plogin.add(txnumerodoc);
 
         plogin.add(Box.createVerticalStrut(15));
 
@@ -48,21 +46,5 @@ public class PanelLogin extends JPanel {
         plogin.add(botones);
 
         add(plogin);
-    }
-    
-    public CredencialDto getCredencialusuario() {
-    	
-    	CredencialDto nuevo= new CredencialDto();
-    	String Usuario=txUsuario.getText();
-    	if (Usuario != null && !Usuario.isBlank()){
-    		nuevo.setUsuario(Usuario);
-    		
-    		nuevo.setPassword(contrasena.getText().getBytes());
-    		return nuevo;
-    	}else {
-    		JOptionPane.showMessageDialog(this,"el campo debe de ser diligenciado");
-    	}
-    			return null;
-    
     }
 }

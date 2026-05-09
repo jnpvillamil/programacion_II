@@ -1,13 +1,11 @@
-package co.edu.uptc.Tiendaminorista.Administrador.gui;
+package co.edu.uptc.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import co.edu.uptc.Tiendaminorista.Gui.Evento;
-
-public class PanelResgistroCli extends JPanel {
+public class panel_registrocli extends JPanel {
 
     private JTextField nombre;
     private JTextField Numerodoc;
@@ -16,7 +14,7 @@ public class PanelResgistroCli extends JPanel {
     private JComboBox<String> combo;
     private JComboBox<String> combot;
 
-    public PanelResgistroCli(Evento e) {
+    public panel_registrocli(Evento e) {
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 40));
@@ -38,7 +36,7 @@ public class PanelResgistroCli extends JPanel {
         nombre.setAlignmentX(Component.LEFT_ALIGNMENT);
 
     
-        String[] opciones = {"CC", "NIT", "CE", "PA"};
+        String[] opciones = {"CC", "NIT", "CE ","PA"};
         combo = new JComboBox<>(opciones);
         combo.setMaximumSize(new Dimension(200, 40));
         combo.setAlignmentX(Component.LEFT_ALIGNMENT);
