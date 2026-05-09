@@ -16,7 +16,7 @@ public class GestionProveedor implements IGestionProveedor {
 
 	private List<Proveedor> proveedores;
 
-	private ProveedorDAO proveedorDAO;
+	private final ProveedorDAO proveedorDAO;
 
 	public GestionProveedor(ProveedorDAO proveedorDAO) {
 
