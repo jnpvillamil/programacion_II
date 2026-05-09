@@ -63,7 +63,7 @@ public class ProductoController {
         }
     }
 
-    // READ
+    // Este es el read
     
     public List<Producto> listar() throws IOException {
         return dao.listarTodos();
