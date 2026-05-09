@@ -1,6 +1,9 @@
-package co.edu.uptc.gui;
+package co.edu.uptc.Tiendaminorista.Administrador.gui;
 
 import javax.swing.*;
+
+import co.edu.uptc.Tiendaminorista.Gui.Evento;
+
 import java.awt.*;
 
 public class PanelComprasPro extends JPanel {

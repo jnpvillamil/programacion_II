@@ -1,6 +1,6 @@
-package co.edu.uptc.Datos;
+package co.edu.uptc.Tiendaminorista.modelo;
 
-public class Productosdt {
+public class Producto {
 
 	private String codigo;
 	private String nombre;
@@ -10,17 +10,6 @@ public class Productosdt {
 	private int stockActual;
 	private int stockMinimo;
 	private boolean activo;
-
-	public Productosdt(String codigo, String nombre, String categoria, double precioCompra, double precioVenta, int stockActual, int stockMinimo) {
-		this.codigo = codigo;
-		this.nombre = nombre;
-		this.categoria = categoria;
-		this.precioCompra = precioCompra;
-		this.precioVenta = precioVenta;
-		this.stockActual = stockActual;
-		this.stockMinimo = stockMinimo;
-		this.activo = true;
-	}
 
 	public String getCodigo() {
 		return codigo;

@@ -1,13 +1,21 @@
-package co.edu.uptc.gui;
+package co.edu.uptc.Tiendaminorista.Administrador.gui;
 
-import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.Dimension;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class Panel_Actualizarpro extends JPanel {
+import co.edu.uptc.Tiendaminorista.Gui.Evento;
+
+public class PanelRegistrarProveedor extends JPanel {
   
-	public Panel_Actualizarpro (Evento e) {
+    private JTextField razonpro;
+    private JTextField Numeropro;
+    private JTextField direccionpro;
+    private JTextField telefonopro;
+    private JTextField correopro1;
+  
+	public PanelRegistrarProveedor (Evento e) {
 	
 		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		
@@ -26,30 +34,37 @@ public class Panel_Actualizarpro extends JPanel {
 		JLabel Razonpro = new JLabel ("Razon proveedores");
 		Razonpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		JTextField razonpro = new JTextField();
+		razonpro = new JTextField();
 		razonpro.setMaximumSize(new Dimension(300,40));
 		razonpro.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		JLabel numeropro =new JLabel("Numero del NIT");
+		numeropro.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		Numeropro = new JTextField();
+		Numeropro.setMaximumSize(new Dimension(300,40));
+		Numeropro.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		JLabel Direccionpro =new JLabel("Direccion de la residencia");
 		Direccionpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		JTextField direccionpro = new JTextField();
+		direccionpro = new JTextField();
 		direccionpro.setMaximumSize(new Dimension(300,40));
 		direccionpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		JLabel Telefonopro =new JLabel("numero de telefono");
 		Telefonopro.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		JTextField telefonopro = new JTextField();
+		telefonopro = new JTextField();
 		telefonopro.setMaximumSize(new Dimension(300,25));	
 		telefonopro.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		JLabel Correopro =new JLabel("Correo Electronico");
 		Correopro.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		JTextField Correopro1 = new JTextField();
-		Correopro1.setMaximumSize(new Dimension(300,25));	
-		Correopro1.setAlignmentX(Component.LEFT_ALIGNMENT);
+		correopro1 = new JTextField();
+		correopro1.setMaximumSize(new Dimension(300,25));	
+		correopro1.setAlignmentX(Component.LEFT_ALIGNMENT);
 	
 		
 		JPanel butones = new JPanel();
@@ -59,17 +74,19 @@ public class Panel_Actualizarpro extends JPanel {
 		JButton btncalcelarpro = new JButton(Evento.CANCELAR);
 		btncalcelarpro.addActionListener(e);
 		btncalcelarpro.setActionCommand(Evento.CANCELAR);
-		JButton btnRegistrarpro = new JButton(Evento.ACTUALIZARPRO1);
+		JButton btnRegistrarpro = new JButton(Evento.REGISTRARPROV);
 		btnRegistrarpro.addActionListener(e);
-		btnRegistrarpro.setActionCommand(Evento.ACTUALIZARPRO1);
-		JButton btndesactivarpro = new JButton(Evento.DESACTIVARCLI);
-		btndesactivarpro.addActionListener(e);
-		btndesactivarpro.setActionCommand(Evento.DESACTIVARCLI);
+		btnRegistrarpro.setActionCommand(Evento.REGISTRARPROV);
 		
 		informacion.add(Razonpro);
 		informacion.add(Box.createVerticalStrut(5));
 		informacion.add(razonpro);
 		informacion.add(Box.createVerticalStrut(10)); 
+
+		informacion.add(numeropro);
+		informacion.add(Box.createVerticalStrut(5));
+		informacion.add(Numeropro);
+		informacion.add(Box.createVerticalStrut(10));
 		
 		informacion.add(Direccionpro);
 		informacion.add(Box.createVerticalStrut(5));
@@ -83,14 +100,33 @@ public class Panel_Actualizarpro extends JPanel {
 		
 		informacion.add(Correopro);
 		informacion.add(Box.createVerticalStrut(5));
-		informacion.add(Correopro1);
+		informacion.add(correopro1);
 		informacion.add(Box.createVerticalStrut(10));
 		
 		butones.add(btncalcelarpro);
 		butones.add(btnRegistrarpro);
-		butones.add(btndesactivarpro);
 		
 		add(informacion);
 		add(butones);
+	}
+
+	public String getRazon() {
+		return razonpro.getText();
+	}
+
+	public String getNit() {
+		return Numeropro.getText();
+	}
+
+	public String getDireccion() {
+		return direccionpro.getText();
+	}
+
+	public String getTelefono() {
+		return telefonopro.getText();
+	}
+
+	public String getCorreo() {
+		return correopro1.getText();
 	}
 }
