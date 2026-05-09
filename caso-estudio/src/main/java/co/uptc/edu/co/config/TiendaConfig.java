@@ -19,50 +19,49 @@ import co.uptc.edu.co.persistencia.ProveedorJSONDAO;
 
 public class TiendaConfig {
 
-    private IGestionProducto gestionProducto;
-    private IGestionCliente gestionCliente;
-    private IGestionProveedor gestionProveedor;
-    private IGestionVenta gestionVenta;
-    private IGestionCompra gestionCompra;
+	private IGestionProducto gestionProducto;
+	private IGestionCliente gestionCliente;
+	private IGestionProveedor gestionProveedor;
+	private IGestionVenta gestionVenta;
+	private IGestionCompra gestionCompra;
 
-    public TiendaConfig() {
-        inicializarGestiones();
-    }
+	public TiendaConfig() {
+		inicializarGestiones();
+	}
 
-    private void inicializarGestiones() {
+	private void inicializarGestiones() {
 
-        ProductoDAO productoDAO = new ProductoJSONDAO();
+		ProductoDAO productoDAO = new ProductoJSONDAO();
 
-        gestionProducto = new GestionProducto(productoDAO);
+		gestionProducto = new GestionProducto(productoDAO);
 
-        gestionCliente = new GestionCliente();
-        
-        
-        ProveedorDAO proveedorDAO = new  ProveedorJSONDAO();
-        gestionProveedor = new GestionProveedor(proveedorDAO);
+		gestionCliente = new GestionCliente();
 
-        gestionVenta = new GestionVenta();
+		ProveedorDAO proveedorDAO = new ProveedorJSONDAO();
+		gestionProveedor = new GestionProveedor(proveedorDAO);
 
-        gestionCompra = new GestionCompra();
-    }
+		gestionVenta = new GestionVenta();
 
-    public IGestionProducto getGestionProducto() {
-        return gestionProducto;
-    }
+		gestionCompra = new GestionCompra();
+	}
 
-    public IGestionCliente getGestionCliente() {
-        return gestionCliente;
-    }
+	public IGestionProducto getGestionProducto() {
+		return gestionProducto;
+	}
 
-    public IGestionProveedor getGestionProveedor() {
-        return gestionProveedor;
-    }
+	public IGestionCliente getGestionCliente() {
+		return gestionCliente;
+	}
 
-    public IGestionVenta getGestionVenta() {
-        return gestionVenta;
-    }
+	public IGestionProveedor getGestionProveedor() {
+		return gestionProveedor;
+	}
 
-    public IGestionCompra getGestionCompra() {
-        return gestionCompra;
-    }
+	public IGestionVenta getGestionVenta() {
+		return gestionVenta;
+	}
+
+	public IGestionCompra getGestionCompra() {
+		return gestionCompra;
+	}
 }

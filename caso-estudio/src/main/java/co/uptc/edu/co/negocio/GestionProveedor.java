@@ -21,7 +21,7 @@ public class GestionProveedor implements IGestionProveedor {
 	public GestionProveedor(ProveedorDAO proveedorDAO) {
 
 		if (proveedorDAO == null) {
-			throw new IllegalArgumentException("El ProductoDAO no puede ser nulo.");
+			throw new IllegalArgumentException("El ProveedorDAO no puede ser nulo.");
 		}
 
 		this.proveedorDAO = proveedorDAO;
@@ -30,7 +30,7 @@ public class GestionProveedor implements IGestionProveedor {
 			proveedores = proveedorDAO.listarProveedor();
 		} catch (Exception e) {
 			proveedores = new ArrayList<>();
-			System.out.println("Error al cargar productos: " + e.getMessage());
+			System.out.println("Error al cargar proveedor: " + e.getMessage());
 		}
 
 	}
