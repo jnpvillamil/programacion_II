@@ -1,150 +1,93 @@
 package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
-
+import java.awt.*;
 import co.uptc.edu.tienda.modelo.Producto;
 
-public class DialogoProducto extends JDialog {
+public class DialogoProducto extends DialogoCentral {
 
-    private JTextField txtNombre;
-    private JTextField txtCategoria;
-    private JTextField txtPrecioCompra;
-    private JTextField txtPrecioVenta;
-    private JTextField txtStock;
-    private JTextField txtStockMinimo;
-    private JTextField txtStockMaximo;
-
-    private JButton btnGuardar;
-    private JButton btnCerrar;
-
-    private boolean isCrear;
+    private JTextField txtNombre, txtCategoria, txtPrecioCompra, txtPrecioVenta, txtStock, txtStockMinimo, txtStockMaximo;
     private int codigoActual;
-    private Evento evento;
 
     public DialogoProducto(Evento evento, String titulo, boolean isCrear) {
-
-        this.evento = evento;
-        this.isCrear = isCrear;
-
-        setTitle(titulo);
-        setModal(true);
-        setLayout(null);
-        setSize(400, 500);
-        setLocationRelativeTo(null);
-
-        iniciarComponentes();
+        super(evento, titulo, isCrear);
+        setSize(450, 500); // Un poco más ancho para que los campos luzcan bien
     }
 
-    private void iniciarComponentes() {
-
-        JLabel lblNombre = new JLabel("Nombre:");
-        lblNombre.setBounds(30, 30, 100, 25);
-        add(lblNombre);
+    @Override
+    public void iniciarComponentes() {
+        // Añadimos margen para que no se vea "feo" ni pegado a los bordes
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        
+        // Usamos GridLayout de 7 filas y 2 columnas con espacio entre ellas
+        panelCentral.setLayout(new GridLayout(7, 2, 10, 15));
 
         txtNombre = new JTextField();
-        txtNombre.setBounds(150, 30, 180, 25);
-        add(txtNombre);
-
-        JLabel lblCategoria = new JLabel("Categoría:");
-        lblCategoria.setBounds(30, 70, 100, 25);
-        add(lblCategoria);
-
         txtCategoria = new JTextField();
-        txtCategoria.setBounds(150, 70, 180, 25);
-        add(txtCategoria);
-
-        JLabel lblPrecioCompra = new JLabel("Precio Compra:");
-        lblPrecioCompra.setBounds(30, 110, 120, 25);
-        add(lblPrecioCompra);
-
         txtPrecioCompra = new JTextField();
-        txtPrecioCompra.setBounds(150, 110, 180, 25);
-        add(txtPrecioCompra);
-
-        JLabel lblPrecioVenta = new JLabel("Precio Venta:");
-        lblPrecioVenta.setBounds(30, 150, 120, 25);
-        add(lblPrecioVenta);
-
         txtPrecioVenta = new JTextField();
-        txtPrecioVenta.setBounds(150, 150, 180, 25);
-        add(txtPrecioVenta);
-
-        JLabel lblStock = new JLabel("Stock:");
-        lblStock.setBounds(30, 190, 100, 25);
-        add(lblStock);
-
         txtStock = new JTextField();
-        txtStock.setBounds(150, 190, 180, 25);
-        add(txtStock);
-
-        JLabel lblStockMinimo = new JLabel("Stock Mínimo:");
-        lblStockMinimo.setBounds(30, 230, 120, 25);
-        add(lblStockMinimo);
-
         txtStockMinimo = new JTextField();
-        txtStockMinimo.setBounds(150, 230, 180, 25);
-        add(txtStockMinimo);
-
-        JLabel lblStockMaximo = new JLabel("Stock Máximo:");
-        lblStockMaximo.setBounds(30, 270, 120, 25);
-        add(lblStockMaximo);
-
         txtStockMaximo = new JTextField();
-        txtStockMaximo.setBounds(150, 270, 180, 25);
-        add(txtStockMaximo);
 
-        btnGuardar = new JButton("Guardar");
-        btnGuardar.setBounds(80, 340, 100, 30);
-        add(btnGuardar);
-
-        btnCerrar = new JButton("Cancelar");
-        btnCerrar.setBounds(200, 340, 100, 30);
-        add(btnCerrar);
-
-        asignarEventos();
+        // Agregamos Labels y Fields
+        panelCentral.add(new JLabel("Nombre:", SwingConstants.RIGHT));
+        panelCentral.add(txtNombre);
+        
+        panelCentral.add(new JLabel("Categoría:", SwingConstants.RIGHT));
+        panelCentral.add(txtCategoria);
+        
+        panelCentral.add(new JLabel("Precio Compra:", SwingConstants.RIGHT));
+        panelCentral.add(txtPrecioCompra);
+        
+        panelCentral.add(new JLabel("Precio Venta:", SwingConstants.RIGHT));
+        panelCentral.add(txtPrecioVenta);
+        
+        panelCentral.add(new JLabel("Stock Actual:", SwingConstants.RIGHT));
+        panelCentral.add(txtStock);
+        
+        panelCentral.add(new JLabel("Stock Mínimo:", SwingConstants.RIGHT));
+        panelCentral.add(txtStockMinimo);
+        
+        panelCentral.add(new JLabel("Stock Máximo:", SwingConstants.RIGHT));
+        panelCentral.add(txtStockMaximo);
     }
 
-    private void asignarEventos() {
-
-        if (isCrear) {
-            btnGuardar.setActionCommand(Evento.GUARDAR_PRD);
-        } else {
-            btnGuardar.setActionCommand(Evento.EDITAR_PRD);
-        }
-
+    @Override
+    public void asignarComandos() {
+        // Los botones btnGuardar y btnCerrar vienen heredados de DialogoCentral
+        btnGuardar.setActionCommand(isCrear ? Evento.GUARDAR_PRD : Evento.EDITAR_PRD);
         btnCerrar.setActionCommand(Evento.CANCELAR_PRD);
-
-        btnGuardar.addActionListener(evento);
-        btnCerrar.addActionListener(evento);
     }
 
     public Producto capturarDatos() {
-
+        // Si es crear, podrías usar el random o dejar que la lógica lo maneje
         int codigo = isCrear ? (int)(Math.random() * 1000) : codigoActual;
 
         try {
+            // Validamos que no haya campos vacíos antes de parsear
+            if(txtNombre.getText().trim().isEmpty() || txtPrecioCompra.getText().trim().isEmpty()){
+                throw new Exception("Campos obligatorios vacíos.");
+            }
 
             return new Producto(
                 codigo,
-                txtNombre.getText(),
-                txtCategoria.getText(),
-                Double.parseDouble(txtPrecioCompra.getText()),
-                Double.parseDouble(txtPrecioVenta.getText()),
-                Integer.parseInt(txtStock.getText()),
-                Integer.parseInt(txtStockMinimo.getText()),
-                Integer.parseInt(txtStockMaximo.getText())
+                txtNombre.getText().trim(),
+                txtCategoria.getText().trim(),
+                Double.parseDouble(txtPrecioCompra.getText().trim()),
+                Double.parseDouble(txtPrecioVenta.getText().trim()),
+                Integer.parseInt(txtStock.getText().trim()),
+                Integer.parseInt(txtStockMinimo.getText().trim()),
+                Integer.parseInt(txtStockMaximo.getText().trim())
             );
 
         } catch (Exception e) {
-
-            throw new IllegalArgumentException("Datos inválidos: " + e.getMessage());
+            throw new IllegalArgumentException("Datos inválidos: Revise que los precios y stock sean números.");
         }
     }
 
     public void cargarDatos(Producto p) {
-
-        codigoActual = p.getCodigoProducto();
-
+        this.codigoActual = p.getCodigoProducto();
         txtNombre.setText(p.getNombreProducto());
         txtCategoria.setText(p.getCategoria());
         txtPrecioCompra.setText(String.valueOf(p.getPrecioCompra()));

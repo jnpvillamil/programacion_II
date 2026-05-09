@@ -19,8 +19,16 @@ public class GestionProveedor {
 	}
 
 	
-	public void agregarProveedor(Proveedor nuevo) {
+	public void agregarProveedor(Proveedor nuevo) throws Exception{
         // 1. Leer los que ya existen
+		
+		if(nuevo.getRazonSocial().trim().isEmpty()) {
+			throw new Exception("La razón social es obligatoria");
+		}
+		if(nuevo.getTelefonoP()<= 0) {
+			throw new Exception("El teléfono debe ser un número positivo");
+		}
+		
         List<Proveedor> actuales = gestionP.leerProveedores();
         
         int maxId = 99;

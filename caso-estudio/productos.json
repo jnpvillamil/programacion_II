@@ -20,5 +20,16 @@
     "stockMinimo": 10,
     "stockMaximo": 120,
     "activo": true
+  },
+  {
+    "codigoProducto": 102,
+    "nombreProducto": "121",
+    "categoria": "121",
+    "precioCompra": 121.0,
+    "precioVenta": 121.0,
+    "stockActual": 1,
+    "stockMinimo": 22,
+    "stockMaximo": 32,
+    "activo": true
   }
 ]

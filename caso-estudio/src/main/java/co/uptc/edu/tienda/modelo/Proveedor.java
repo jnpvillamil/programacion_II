@@ -16,10 +16,12 @@ public class Proveedor {
 	
 	public Proveedor() {
 		this.codigoProveedor = contadorProveedor++;
+		this.estado = EstadoEnum.ACTIVO;
 	}
 	
 	public Proveedor(int codigoProveedor) {
         this.codigoProveedor = codigoProveedor;
+		this.estado = EstadoEnum.ACTIVO;
     }
 	
 	public static void setContador(int ultimoId) {
@@ -64,6 +66,16 @@ public class Proveedor {
 	public void setCodigoProveedor(int codigoProveedor) {
         this.codigoProveedor = codigoProveedor;
     }
+
+	public EstadoEnum getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoEnum estado) {
+		this.estado = estado;
+	}
+	
+	
 	
 
 	

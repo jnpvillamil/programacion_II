@@ -3,11 +3,12 @@ package co.uptc.edu.tienda.gui;
 import java.util.List;
 
 import co.uptc.edu.tienda.modelo.Proveedor;
+import co.uptc.edu.tienda.negocio.GestionProveedor;
 
-public class PanelPadreProveedor extends PanelCentral {
-	
+public class PanelPadreProveedor extends PanelCentral<Proveedor> {
 	
 
+	
 	public PanelPadreProveedor(Evento evento) {
 		super(evento);
 		// TODO Auto-generated constructor stub
@@ -22,10 +23,10 @@ public class PanelPadreProveedor extends PanelCentral {
 	@Override
 	public void agregarIdentificadorComandoBoton() {
 		// TODO Auto-generated method stub
-		btnEliminar.setActionCommand(Evento.ELIMINAR_PR);
+		btnInactivar.setActionCommand(Evento.ELIMINAR_PR);
 		btnVer.setActionCommand(Evento.VER_PR);
 		btnActualizar.setActionCommand(Evento.ACTUALIZAR_PR);
-		btnCrear.setActionCommand(Evento.CREAR_PR);
+		btnRegistrar.setActionCommand(Evento.CREAR_PR);
 		btnLimpiar.setActionCommand(Evento.LIMPIAR_PR);
 		btnBuscar.setActionCommand(Evento.BUSCAR_PR);
 		
@@ -39,25 +40,45 @@ public class PanelPadreProveedor extends PanelCentral {
 		modelo.addColumn("Dirección");
 		modelo.addColumn("Teléfono");
 		modelo.addColumn("Correo");
-		tblProveedores.setModel(modelo);
+		modelo.addColumn("Estado");
+		tblGenerica.setModel(modelo);
 		
 	}
 
 	@Override
-	public void poblarTabla(List<?> listaProveedores) {
+	public void poblarTabla(List<Proveedor> listaProveedores) {
 		// TODO Auto-generated method stub
 		modelo.setRowCount(0);
-		List<Proveedor> proveedores =(List<Proveedor>) listaProveedores;
-		for(Proveedor p : proveedores) {
-			Object[] fila = {p.getCodigoProveedor(),p.getRazonSocial(), p.getNit(), p.getDireccionP(), p.getTelefonoP(), p.getCorreoP()};
-			modelo.addRow(fila);
+		for (Proveedor p : listaProveedores) {
+            Object[] fila = {
+                p.getCodigoProveedor(),
+                p.getRazonSocial(), 
+                p.getNit(), 
+                p.getDireccionP(), 
+                p.getTelefonoP(), 
+                p.getCorreoP(), 
+                p.getEstado()
+            };
+            modelo.addRow(fila);
 		}
 	}
 	
 	public int getItemSeleccionado() {
-		int fila = tblProveedores.getSelectedRow();
-		int var = Integer.parseInt(tblProveedores.getModel().getValueAt(fila, 0).toString());
-		return var;
+
+		try {
+	        int fila = tblGenerica.getSelectedRow();
+	        
+	        if (fila != -1) {
+	            // Retornamos directamente el valor convertido
+	            return Integer.parseInt(tblGenerica.getValueAt(fila, 0).toString());
+	        }
+	    } catch (Exception e) {
+	        // Log del error opcional: e.printStackTrace();
+	    }
+	    
+	    // Si llegó hasta aquí es porque: o no hay fila, o hubo un error.
+	    return -1;	
 	}
+	
 
 }

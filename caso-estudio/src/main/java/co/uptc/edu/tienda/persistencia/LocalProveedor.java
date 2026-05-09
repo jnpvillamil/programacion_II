@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.interfaces.IGestionProveedor;
 import co.uptc.edu.tienda.modelo.Proveedor;
 
@@ -64,8 +65,9 @@ public class LocalProveedor implements IGestionProveedor {
 	    
 	    // 2. Buscamos la posición del proveedor a borrar
 	    for (int i = 0; i < lista.size(); i++) {
-	        if (lista.get(i).getCodigoProveedor() == codigoProveedor) {
-	            lista.remove(i); // Elimina el elemento en esa posición
+	    	Proveedor p = lista.get(i);
+	        if (p.getCodigoProveedor() == codigoProveedor) {
+	            p.setEstado(EstadoEnum.INACTIVO); // Elimina el elemento en esa posición
 	            break; 
 	        }
 	    }

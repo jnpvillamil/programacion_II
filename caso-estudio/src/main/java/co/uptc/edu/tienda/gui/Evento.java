@@ -11,10 +11,11 @@ public class Evento implements ActionListener {
     public final static String LOGIN = "Iniciar Sesión";
     public final static String VER = "Ver";
     public final static String ACTUALIZAR = "Actualizar";
-    public final static String ELIMINAR = "Eliminar";
-    public final static String CREAR = "Crear";
+    public final static String ELIMINAR = "Inactivar";
+    public final static String CREAR = "Registrar";
     public final static String BUSCAR = "Buscar";
     public final static String LIMPIAR = "Limpiar";
+    public final static String ACTIVAR = "Activar";
 
     // PROVEEDOR
     public final static String ELIMINAR_PR = "Eliminar_PR";
@@ -67,6 +68,7 @@ public class Evento implements ActionListener {
         if(evento.equals(CANCELAR)) {
 
             JOptionPane.showMessageDialog(null,"Hasta Luego");
+            System.exit(0);
 
         } else if(evento.equals(LOGIN)) {
 
@@ -96,6 +98,12 @@ public class Evento implements ActionListener {
         } else if(evento.equals(ELIMINAR_PR)) {
 
             ventana.eliminarProveedor();
+        } else if(evento.equals(VER_PR)) {
+
+            ventana.verProveedor();
+        } else if(evento.equals(BUSCAR_PR)) {
+
+            ventana.buscarProveedor();
 
         // PRODUCTO
         } else if(evento.equals(CREAR_PRD)) {

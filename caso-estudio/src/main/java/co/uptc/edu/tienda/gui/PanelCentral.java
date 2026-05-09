@@ -4,21 +4,25 @@ import java.awt.*;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-public abstract class PanelCentral extends JPanel {
+import co.uptc.edu.tienda.modelo.Proveedor;
+
+public abstract class PanelCentral<T> extends JPanel {
 	
 	protected String tituloPanel;
-	protected JButton btnEliminar;
+	protected JButton btnActivar;
+	protected JButton btnInactivar;
 	protected JButton btnVer;
 	protected JButton btnActualizar;
-	protected JButton btnCrear;
+	protected JButton btnRegistrar;
 	protected JButton btnBuscar;
 	protected JButton btnLimpiar;
-	protected JTable tblProveedores;
+	protected JTable tblGenerica;
 	protected DefaultTableModel modelo;
 	
 
 
 	public PanelCentral(Evento evento) {
+		agregarTituloPanel();
 		JPanel pSuperior = new JPanel();
 		pSuperior.setLayout(new BorderLayout());
 		setLayout(new BorderLayout());
@@ -27,31 +31,32 @@ public abstract class PanelCentral extends JPanel {
 		pTitulo.add(new JLabel(tituloPanel));
 
 		JPanel pBtnFuncion = new JPanel();
-		btnEliminar = new JButton(Evento.ELIMINAR);
+		btnActivar = new JButton(Evento.ACTIVAR);
+		btnInactivar = new JButton(Evento.ELIMINAR);
 		btnVer = new JButton(Evento.VER);
 		btnActualizar = new JButton(Evento.ACTUALIZAR);
-		btnCrear = new JButton(Evento.CREAR);
-
-		btnEliminar.addActionListener(evento);
+		btnRegistrar = new JButton(Evento.CREAR);
+		
+        btnActivar.addActionListener(evento);
+		btnInactivar.addActionListener(evento);
 		btnVer.addActionListener(evento);
 		btnActualizar.addActionListener(evento);
-		btnCrear.addActionListener(evento);
+		btnRegistrar.addActionListener(evento);
 		
-		pBtnFuncion.add(btnEliminar);
+		pBtnFuncion.add(btnActivar);
+		pBtnFuncion.add(btnInactivar);
 		pBtnFuncion.add(btnVer);
 		pBtnFuncion.add(btnActualizar);
-		pBtnFuncion.add(btnCrear);
+		pBtnFuncion.add(btnRegistrar);
 
 		JPanel pFiltros = new JPanel();
-		JTextField txBuscar = new JTextField();
-		txBuscar.setPreferredSize(new Dimension(145, 30));
 		btnBuscar = new JButton(Evento.BUSCAR);
 		btnLimpiar = new JButton(Evento.LIMPIAR);
 
 		btnLimpiar.addActionListener(evento);
 		btnBuscar.addActionListener(evento);
 		
-		pFiltros.add(txBuscar);
+		
 		pFiltros.add(btnBuscar);
 		pFiltros.add(btnLimpiar);
 
@@ -60,10 +65,11 @@ public abstract class PanelCentral extends JPanel {
 		pSuperior.add(pFiltros, BorderLayout.SOUTH);
 
 		modelo = new DefaultTableModel();
-		tblProveedores = new JTable();
+		tblGenerica = new JTable(modelo);
+		
 		agregarCabeceraTabla();
 		
-		JScrollPane spTabla = new JScrollPane(tblProveedores);
+		JScrollPane spTabla = new JScrollPane(tblGenerica);
 
 		add(pSuperior, BorderLayout.NORTH);
 		add(spTabla, BorderLayout.CENTER);
@@ -74,5 +80,9 @@ public abstract class PanelCentral extends JPanel {
 
 	public abstract void agregarIdentificadorComandoBoton();
 	public abstract void agregarCabeceraTabla();
-	public abstract void poblarTabla(List<?> listaProveedores);
+
+	public void poblarTabla(List<T> lista) {
+		// TODO Auto-generated method stub	
+	}
 }
+

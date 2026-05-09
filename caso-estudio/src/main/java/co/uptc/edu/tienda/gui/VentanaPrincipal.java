@@ -5,6 +5,7 @@ import javax.swing.*;
 import co.uptc.edu.tienda.modelo.Producto;
 import co.uptc.edu.tienda.modelo.Proveedor;
 import co.uptc.edu.tienda.negocio.GestionSeguridad;
+import co.uptc.edu.tienda.negocio.ProductoConfig;
 import co.uptc.edu.tienda.negocio.ProveedorConfig;
 import co.uptc.edu.tienda.negocio.dto.CredencialDto;
 
@@ -13,7 +14,7 @@ import java.awt.*;
 public class VentanaPrincipal extends JFrame {
 	
 private PanelLogin pLogin;
-private PanelPadreProveedor pCentral;
+private PanelPadreProveedor pProveedor;
 private PanelPadreProducto pProducto;
 
 private JPanel contenedor;
@@ -25,6 +26,7 @@ private DialogoProducto nuevoProducto;
 
 private Evento evento;
 private ProveedorConfig proveedorConfig;
+private ProductoConfig productoConfig;
 
 public VentanaPrincipal() {
     setSize(400,300);
@@ -35,11 +37,12 @@ public VentanaPrincipal() {
     
     evento = new Evento(this);
     pLogin = new PanelLogin(evento);
-    pCentral = new PanelPadreProveedor(evento);
+    pProveedor = new PanelPadreProveedor(evento);
     pProducto = new PanelPadreProducto(evento);
 
     seguridad = new GestionSeguridad();
     proveedorConfig = new ProveedorConfig();
+    productoConfig = new ProductoConfig();
 
     add(pLogin, BorderLayout.CENTER);
 }
@@ -69,11 +72,14 @@ public void loguear() {
             contenedor = new JPanel(new BorderLayout());
             add(contenedor, BorderLayout.CENTER);
 
-            contenedor.add(pCentral);
+            contenedor.add(pProveedor);
+            pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+            pProducto.poblarTabla(productoConfig.getGestProducto().listar());
 
             btnProveedor.addActionListener(e -> {
                 contenedor.removeAll();
-                contenedor.add(pCentral);
+                contenedor.add(pProveedor);
+                pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
                 contenedor.repaint();
                 contenedor.revalidate();
             });
@@ -81,6 +87,7 @@ public void loguear() {
             btnProducto.addActionListener(e -> {
                 contenedor.removeAll();
                 contenedor.add(pProducto);
+                pProducto.poblarTabla(productoConfig.getGestProducto().listar());
                 contenedor.repaint();
                 contenedor.revalidate();
             });
@@ -115,14 +122,20 @@ public void cerrarDialogoProveedor() {
     }
 }
 
-public void crearProveedor() {    
-    proveedorConfig.getGestProveedor().agregarProveedor(nuevoProveedor.capturarDatos()); 
-    cerrarDialogoProveedor();
-    pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+public void crearProveedor() {
+	try {
+	    proveedorConfig.getGestProveedor().agregarProveedor(nuevoProveedor.capturarDatos()); 
+	    cerrarDialogoProveedor();
+	    pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+	}catch(Exception e) {
+		e.printStackTrace();
+        JOptionPane.showMessageDialog(this, e.getMessage());
+	}
+
 }
 
 public void lanzarDialogoModificarProveedor() {
-    int codigo = pCentral.getItemSeleccionado();
+    int codigo = pProveedor.getItemSeleccionado();
     if(codigo == -1) return;
 
     Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
@@ -135,28 +148,76 @@ public void lanzarDialogoModificarProveedor() {
 }
 
 public void modificarProveedor() {
-    Proveedor p = nuevoProveedor.capturarDatos();
-    proveedorConfig.getGestProveedor().modificarProveedor(p);
-    cerrarDialogoProveedor();
-    pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+	 int codigo = pProveedor.getItemSeleccionado();
+	    if(codigo == -1) return;
+	try {
+	    Proveedor p = nuevoProveedor.capturarDatos();
+	    proveedorConfig.getGestProveedor().modificarProveedor(p);
+	    cerrarDialogoProveedor();
+	    pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+		
+	}catch(Exception e) {
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(this, e.getMessage());
+	}
+
 }
 
 public void eliminarProveedor() {
-    int codigo = pCentral.getItemSeleccionado();
+    int codigo = pProveedor.getItemSeleccionado();
     if(codigo == -1) return;
 
     int respuesta = JOptionPane.showConfirmDialog(
         this, 
-        "¿Está seguro de eliminar el proveedor " + codigo + "?", 
+        "¿Está seguro de inactivar el proveedor " + codigo + "?", 
         "Confirmar", 
         JOptionPane.YES_NO_OPTION
     );
 
     if (respuesta == JOptionPane.YES_OPTION) {
         proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
-        pCentral.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+        pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
     }
 }
+
+public void verProveedor() {
+	 int codigo = pProveedor.getItemSeleccionado();
+	 if (codigo == -1) return;
+
+	 Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+
+	 if (p != null) {
+	     JOptionPane.showMessageDialog(this,
+	         "Código: " + p.getCodigoProveedor() +
+	         "\nRazón social: " + p.getRazonSocial() +
+	         "\nNIT: " + p.getNit() +
+	         "\nDirección: " + p.getDireccionP() +
+	         "\nTeléfono: " + p.getTelefonoP() +
+	         "\nCorreo electrónico: " + p.getCorreoP()
+	     );
+	 }
+}
+
+public void buscarProveedor() {
+	 try {
+	     String input = JOptionPane.showInputDialog(this, "Ingrese código del proveedor:");
+
+	     if (input == null || input.isEmpty()) return;
+
+	     int codigo = Integer.parseInt(input);
+
+	     Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+
+	     if (p != null) {
+	         pProveedor.poblarTabla(java.util.List.of(p)); 
+	     } else {
+	         JOptionPane.showMessageDialog(this, "Proveedor no encontrado");
+	     }
+
+	 } catch (Exception e) {
+	     JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+	 }
+	}
 
 // ===================== PRODUCTO =====================
 
@@ -175,16 +236,16 @@ public void cerrarDialogoProducto() {
 }
 
 public void crearProducto() {    
-    pProducto.getGestionProducto().guardar(nuevoProducto.capturarDatos()); 
+	productoConfig.getGestProducto().guardar(nuevoProducto.capturarDatos()); 
     cerrarDialogoProducto();
-    pProducto.poblarTabla(pProducto.getGestionProducto().listar());
+    pProducto.poblarTabla(productoConfig.getGestProducto().listar());
 }
 
 public void lanzarDialogoModificarProducto() {
     int codigo = pProducto.getItemSeleccionado();
     if(codigo == -1) return;
 
-    Producto p = pProducto.getGestionProducto().buscar(codigo);
+    Producto p = productoConfig.getGestProducto().buscar(codigo);
 
     nuevoProducto = new DialogoProducto(evento, "Modificar Producto", false);
     nuevoProducto.cargarDatos(p);
@@ -195,9 +256,9 @@ public void lanzarDialogoModificarProducto() {
 
 public void modificarProducto() {
     Producto p = nuevoProducto.capturarDatos();
-    pProducto.getGestionProducto().actualizar(p);
+    productoConfig.getGestProducto().actualizar(p);
     cerrarDialogoProducto();
-    pProducto.poblarTabla(pProducto.getGestionProducto().listar());
+    pProducto.poblarTabla(productoConfig.getGestProducto().listar());
 }
 
 public void inactivarProducto() {
@@ -206,10 +267,10 @@ public void inactivarProducto() {
 
     if(codigo == -1) return;
 
-    pProducto.getGestionProducto().inactivar(codigo);
+    productoConfig.getGestProducto().inactivar(codigo);
 
     pProducto.poblarTabla(
-        pProducto.getGestionProducto().listar()
+        productoConfig.getGestProducto().listar()
     );
 }
 
@@ -219,10 +280,10 @@ public void activarProducto() {
 
     if(codigo == -1) return;
 
-    pProducto.getGestionProducto().activar(codigo);
+    productoConfig.getGestProducto().activar(codigo);
 
     pProducto.poblarTabla(
-        pProducto.getGestionProducto().listar()
+        productoConfig.getGestProducto().listar()
     );
 }
 public void buscarProducto() {
@@ -233,7 +294,7 @@ public void buscarProducto() {
 
      int codigo = Integer.parseInt(input);
 
-     Producto p = pProducto.getGestionProducto().buscar(codigo);
+     Producto p = productoConfig.getGestProducto().buscar(codigo);
 
      if (p != null) {
          pProducto.poblarTabla(java.util.List.of(p)); 
@@ -247,14 +308,14 @@ public void buscarProducto() {
 }
 
 public void limpiarProducto() {
- pProducto.poblarTabla(pProducto.getGestionProducto().listar());
+ pProducto.poblarTabla(productoConfig.getGestProducto().listar());
 }
 
 public void verProducto() {
  int codigo = pProducto.getItemSeleccionado();
  if (codigo == -1) return;
 
- Producto p = pProducto.getGestionProducto().buscar(codigo);
+ Producto p = productoConfig.getGestProducto().buscar(codigo);
 
  if (p != null) {
      JOptionPane.showMessageDialog(this,
@@ -267,4 +328,6 @@ public void verProducto() {
      );
  }
 }
+
+
 }
