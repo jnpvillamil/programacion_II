@@ -98,12 +98,51 @@ public class Evento implements ActionListener {
         } else if(evento.equals(ELIMINAR_PR)) {
 
             ventana.eliminarProveedor();
+
         } else if(evento.equals(VER_PR)) {
 
             ventana.verProveedor();
+
         } else if(evento.equals(BUSCAR_PR)) {
 
             ventana.buscarProveedor();
+
+        // CLIENTE
+        } else if(evento.equals(CREAR_CLI)) {
+
+            ventana.lanzarDialogoCliente();
+
+        } else if(evento.equals(CANCELAR_CLI)) {
+
+            ventana.cerrarDialogoCliente();
+
+        } else if(evento.equals(GUARDAR_CLI)) {
+
+            ventana.crearCliente();
+
+        } else if(evento.equals(ACTUALIZAR_CLI)) {
+
+            ventana.lanzarDialogoModificarCliente();
+
+        } else if(evento.equals(EDITAR_CLI)) {
+
+            ventana.modificarCliente();
+
+        } else if(evento.equals(ELIMINAR_CLI)) {
+
+            ventana.eliminarCliente();
+
+        } else if(evento.equals(VER)) {
+
+            ventana.verCliente();
+
+        } else if(evento.equals(BUSCAR)) {
+
+            ventana.buscarCliente();
+
+        } else if(evento.equals(LIMPIAR)) {
+
+            ventana.limpiarCliente();
 
         // PRODUCTO
         } else if(evento.equals(CREAR_PRD)) {

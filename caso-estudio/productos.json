@@ -8,7 +8,7 @@
     "stockActual": 56,
     "stockMinimo": 5,
     "stockMaximo": 70,
-    "activo": true
+    "activo": false
   },
   {
     "codigoProducto": 101,
