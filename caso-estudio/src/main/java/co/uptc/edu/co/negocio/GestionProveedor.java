@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.IGestionProveedor;
+import co.uptc.edu.co.interfaces.ProductoDAO;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
+import co.uptc.edu.co.modelo.MovimientoInventario;
+import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.persistencia.ProveedorJSONDAO;
@@ -12,24 +15,24 @@ import co.uptc.edu.co.persistencia.ProveedorJSONDAO;
 public class GestionProveedor implements IGestionProveedor {
 
 	private List<Proveedor> proveedores;
+
 	private ProveedorDAO proveedorDAO;
 
 	public GestionProveedor(ProveedorDAO proveedorDAO) {
-		this.setProveedorDAO(proveedorDAO);
+
+		if (proveedorDAO == null) {
+			throw new IllegalArgumentException("El ProductoDAO no puede ser nulo.");
+		}
+
+		this.proveedorDAO = proveedorDAO;
 
 		try {
 			proveedores = proveedorDAO.listarProveedor();
 		} catch (Exception e) {
 			proveedores = new ArrayList<>();
+			System.out.println("Error al cargar productos: " + e.getMessage());
 		}
-	}
 
-	public GestionProveedor() {
-		this(new ProveedorJSONDAO());
-	}
-
-	public void setProveedorDAO(ProveedorDAO proveedorDAO) {
-		this.proveedorDAO = proveedorDAO;
 	}
 
 	@Override
