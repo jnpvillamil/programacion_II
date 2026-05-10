@@ -70,7 +70,6 @@ public class DialogoProveedor extends DialogoCentral {
         nuevo.setDireccionP(txDireccion.getText().trim());
         nuevo.setTelefonoP(telefono);
         nuevo.setCorreoP(txCorreo.getText().trim());
-        
         return nuevo;
     }
 

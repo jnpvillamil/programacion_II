@@ -1,5 +1,6 @@
 package co.uptc.edu.tienda.negocio;
 
+import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.interfaces.IGestionProveedor;
 import co.uptc.edu.tienda.modelo.Proveedor;
 
@@ -69,5 +70,21 @@ public class GestionProveedor {
 	
 	public Proveedor buscarProveedorPorCodigo(int codigoProveedor) {
 		return gestionP.buscar(codigoProveedor);
+	}
+	
+	public void activarProveedor(int codigo) throws Exception {
+	    // 1. Lógica de negocio: ¿Existe el proveedor?
+	    Proveedor p = gestionP.buscar(codigo);
+	    if (p == null) {
+	        throw new Exception("El proveedor no existe");
+	    }
+	    
+	    // 2. ¿Ya está activo? 
+	    if (p.getEstado() == EstadoEnum.ACTIVO) {
+	        throw new Exception("El proveedor ya se encuentra activo");
+	    }
+
+	    // 3. Mandar a guardar el cambio
+	    gestionP.cambiarEstado(codigo, EstadoEnum.ACTIVO);
 	}
 }

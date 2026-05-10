@@ -4,6 +4,7 @@ package co.uptc.edu.tienda.interfaces;
 
 import java.util.List;
 
+import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.modelo.Proveedor;
 
 
@@ -18,6 +19,8 @@ public interface IGestionProveedor {
 
 	
 	public List<Proveedor> leerProveedores();
+	
+	void cambiarEstado(int codigoProveedor, EstadoEnum nuevoEstado);
 
 	
 	

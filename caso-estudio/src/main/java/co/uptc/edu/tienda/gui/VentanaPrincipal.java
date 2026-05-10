@@ -2,6 +2,7 @@ package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
 
+import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.modelo.Cliente;
 import co.uptc.edu.tienda.modelo.Producto;
 import co.uptc.edu.tienda.modelo.Proveedor;
@@ -223,13 +224,17 @@ public class VentanaPrincipal extends JFrame {
                 e.getMessage()
             );
         }
+        JOptionPane.showMessageDialog(this, "Proveedor agregado exitosamente.");
     }
 
     public void lanzarDialogoModificarProveedor() {
 
         int codigo = pProveedor.getItemSeleccionado();
 
-        if(codigo == -1) return;
+        if(codigo == -1) {
+        	JOptionPane.showMessageDialog(this, "Por favor, seleccione un proveedor de la tabla.");
+        	return;
+        }
 
         Proveedor p = proveedorConfig
                 .getGestProveedor()
@@ -253,18 +258,19 @@ public class VentanaPrincipal extends JFrame {
         int codigo = pProveedor.getItemSeleccionado();
 
         if(codigo == -1) return;
-
+        
         try {
 
             Proveedor p = nuevoProveedor.capturarDatos();
 
             proveedorConfig.getGestProveedor().modificarProveedor(p);
 
-            cerrarDialogoProveedor();
 
             pProveedor.poblarTabla(
                 proveedorConfig.getGestProveedor().leerProveedores()
             );
+            JOptionPane.showMessageDialog(this, "Proveedor modificado exitosamente.");
+            cerrarDialogoProveedor();
 
         } catch(Exception e) {
 
@@ -275,36 +281,59 @@ public class VentanaPrincipal extends JFrame {
                 e.getMessage()
             );
         }
+        
     }
 
     public void eliminarProveedor() {
 
         int codigo = pProveedor.getItemSeleccionado();
 
-        if(codigo == -1) return;
-
-        int respuesta = JOptionPane.showConfirmDialog(
-            this,
-            "¿Está seguro de inactivar el proveedor " + codigo + "?",
-            "Confirmar",
-            JOptionPane.YES_NO_OPTION
-        );
-
-        if (respuesta == JOptionPane.YES_OPTION) {
-
-            proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
-
-            pProveedor.poblarTabla(
-                proveedorConfig.getGestProveedor().leerProveedores()
-            );
+        if(codigo == -1) {
+        	JOptionPane.showMessageDialog(this,"Por favor, seleccione un proveedor de la tabla.");
+        	return;
         }
+ try {
+            
+            Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+            
+            if (p != null && p.getEstado() == EstadoEnum.INACTIVO) {
+                JOptionPane.showMessageDialog(this, "El proveedor ya se encuentra inactivo.");
+                return; // 
+            }
+
+            
+            int respuesta = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Está seguro de inactivar el proveedor " + codigo + "?",
+                    "Confirmar",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (respuesta == JOptionPane.YES_OPTION) {
+
+                    proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
+
+                    pProveedor.poblarTabla(
+                        proveedorConfig.getGestProveedor().leerProveedores()
+                    );
+                }
+                JOptionPane.showMessageDialog(this, "Proveedor inactivado exitosamente.");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
     }
 
     public void verProveedor() {
 
         int codigo = pProveedor.getItemSeleccionado();
 
-        if (codigo == -1) return;
+        if (codigo == -1) {
+        	JOptionPane.showMessageDialog(this,"Por favor, seleccione un proveedor de la tabla.");
+        	return;
+        }
 
         Proveedor p = proveedorConfig
                 .getGestProveedor()
@@ -359,6 +388,56 @@ public class VentanaPrincipal extends JFrame {
                 this,
                 "Error: " + e.getMessage()
             );
+        }
+    }
+    
+    public void limpiarProveedor() {
+
+        pProveedor.poblarTabla(
+            proveedorConfig.getGestProveedor().leerProveedores()
+        );
+    }
+    
+    public void activarProveedor() {
+    	int codigo = pProveedor.getItemSeleccionado();
+
+        if (codigo == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un proveedor de la tabla");
+            return;
+        }
+
+        try {
+            
+            Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+            
+            if (p != null && p.getEstado() == EstadoEnum.ACTIVO) {
+                JOptionPane.showMessageDialog(this, "El proveedor ya se encuentra activo.");
+                return; // 
+            }
+            
+            int respuesta = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Está seguro de activar el proveedor " + codigo + "?",
+                    "Confirmar",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (respuesta == JOptionPane.YES_OPTION) {
+
+                    proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
+
+                    pProveedor.poblarTabla(
+                        proveedorConfig.getGestProveedor().leerProveedores()
+                    );
+                }
+                JOptionPane.showMessageDialog(this, "Proveedor activado exitosamente.");
+
+            
+           
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

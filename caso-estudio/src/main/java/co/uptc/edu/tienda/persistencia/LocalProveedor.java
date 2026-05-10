@@ -118,5 +118,19 @@ public class LocalProveedor implements IGestionProveedor {
         return null;
     }
 
+	@Override
+	public void cambiarEstado(int codigoProveedor, EstadoEnum nuevoEstado) {
+		// TODO Auto-generated method stub
+		List<Proveedor> lista = leerProveedores();
+	    for (Proveedor p : lista) {
+	        if (p.getCodigoProveedor() == codigoProveedor) {
+	            p.setEstado(nuevoEstado);
+	            break;
+	        }
+	    }
+	    guardar(lista);
+		
+	}
+
 
 }

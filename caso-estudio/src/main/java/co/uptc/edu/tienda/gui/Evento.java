@@ -27,6 +27,7 @@ public class Evento implements ActionListener {
     public final static String CANCELAR_PR = "Cancelar_PR";
     public final static String GUARDAR_PR = "Guardar_PR";
     public final static String EDITAR_PR = "Editar_PR";
+    public final static String ACTIVAR_PR = "Activar_PR";
 
     // PRODUCTO
     public final static String CREAR_PRD = "Nuevo_PRD";
@@ -106,6 +107,12 @@ public class Evento implements ActionListener {
         } else if(evento.equals(BUSCAR_PR)) {
 
             ventana.buscarProveedor();
+        } else if(evento.equals(LIMPIAR_PR)) {
+
+            ventana.limpiarProveedor();
+        } else if(evento.equals(ACTIVAR_PR)) {
+
+            ventana.activarProveedor();
 
         // CLIENTE
         } else if(evento.equals(CREAR_CLI)) {

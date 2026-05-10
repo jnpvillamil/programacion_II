@@ -29,6 +29,7 @@ public class PanelPadreProveedor extends PanelCentral<Proveedor> {
 		btnRegistrar.setActionCommand(Evento.CREAR_PR);
 		btnLimpiar.setActionCommand(Evento.LIMPIAR_PR);
 		btnBuscar.setActionCommand(Evento.BUSCAR_PR);
+		btnActivar.setActionCommand(Evento.ACTIVAR_PR);
 		
 	}
 

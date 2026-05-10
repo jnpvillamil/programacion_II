@@ -30,7 +30,7 @@
     "codigoProveedor": 103,
     "razonSocial": "1",
     "nit": "2",
-    "direccionP": "3",
+    "direccionP": "CALLE",
     "telefonoP": 4,
     "correoP": "5",
     "estado": "ACTIVO"
@@ -60,6 +60,15 @@
     "direccionP": "3",
     "telefonoP": 4,
     "correoP": "5",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 107,
+    "razonSocial": "1",
+    "nit": "2",
+    "direccionP": "3",
+    "telefonoP": 4,
+    "correoP": "22",
     "estado": "ACTIVO"
   }
 ]
