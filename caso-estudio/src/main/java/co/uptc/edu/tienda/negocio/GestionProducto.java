@@ -69,26 +69,13 @@ public class GestionProducto {
     }
 
     public void inactivar(int codigoProducto) {
+    	
+    	gestionP.eliminar(codigoProducto);
 
-        Producto p = buscar(codigoProducto);
-
-        if (p != null) {
-
-            p.setActivo(false);
-
-            actualizar(p);
-        }
     }
 
     public void activar(int codigoProducto) {
 
-        Producto p = buscar(codigoProducto);
-
-        if (p != null) {
-
-            p.setActivo(true);
-
-            actualizar(p);
-        }
+        gestionP.cambiarEstado(codigoProducto);
     }
 }

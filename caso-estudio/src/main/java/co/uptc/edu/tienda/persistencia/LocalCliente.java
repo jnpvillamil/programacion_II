@@ -1,6 +1,7 @@
 package co.uptc.edu.tienda.persistencia;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import co.uptc.edu.tienda.modelo.Cliente;
 
 public class LocalCliente implements IGestionCliente {
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private final String RUTA = "clientes.json";
 

@@ -70,5 +70,14 @@
     "telefonoP": 4,
     "correoP": "22",
     "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 108,
+    "razonSocial": "OLIMPICA S.A.S",
+    "nit": "989929-1",
+    "direccionP": "CARRERA 24 # 78-99",
+    "telefonoP": 3145552222,
+    "correoP": "OLIMPICA@GMAIL.COM",
+    "estado": "ACTIVO"
   }
 ]

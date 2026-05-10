@@ -424,7 +424,7 @@ public class VentanaPrincipal extends JFrame {
 
                 if (respuesta == JOptionPane.YES_OPTION) {
 
-                    proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
+                    proveedorConfig.getGestProveedor().activarProveedor(codigo);
 
                     pProveedor.poblarTabla(
                         proveedorConfig.getGestProveedor().leerProveedores()

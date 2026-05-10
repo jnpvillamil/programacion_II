@@ -15,4 +15,6 @@ public interface IGestionProducto {
     public Producto buscar(int codigoProducto);
 
     public List<Producto> listar();
+    
+    public void cambiarEstado(int codigoProducto);
 }

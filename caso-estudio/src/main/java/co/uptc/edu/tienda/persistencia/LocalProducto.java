@@ -134,4 +134,15 @@ public class LocalProducto implements IGestionProducto {
             return new ArrayList<Producto>();
         }
     }
+    
+    public void cambiarEstado(int codigoProducto) {
+    	Producto p = buscar(codigoProducto);
+
+        if (p != null) {
+
+            p.setActivo(true);
+
+            actualizar(p);
+        }
+    }
 }

@@ -1,1 +1,12 @@
-[{"idCliente":100,"direccionC":"CASA","telefonoC":318,"estado":"ACTIVO","nombreCompleto":"DIANA MARCELA","numeroDocumento":1049},{"idCliente":101,"direccionC":"CASA","telefonoC":318,"estado":"INACTIVO","nombreCompleto":"ANDREA","numeroDocumento":1051},{"idCliente":102,"direccionC":"CARRERA","telefonoC":12,"estado":"INACTIVO","nombreCompleto":"DIANA","numeroDocumento":123},{"idCliente":103,"direccionC":"calle","tipoCliente":"Minorista","telefonoC":321,"estado":"ACTIVO","nombreCompleto":"federico","tipoDocumento":"TI","numeroDocumento":1346}]
+[
+  {
+    "idCliente": 100,
+    "direccionC": "CALLE 50",
+    "tipoCliente": "Minorista",
+    "telefonoC": 3121214144,
+    "estado": "ACTIVO",
+    "nombreCompleto": "DIANA SUAREZ",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 1000432123
+  }
+]
