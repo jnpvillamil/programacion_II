@@ -15,10 +15,14 @@ public class GestionProveedores extends JFrame {
     private JComboBox<String> cbEstado;
     private JTable tabla;
     private DefaultTableModel modelo;
+    
 
     private co.uptc.edu.negocio.GestionProveedores gestion;
 
-    public GestionProveedores() {
+    public GestionProveedores(
+    		co.uptc.edu.negocio.GestionProveedores gestion) {
+
+    	this.gestion = gestion;
 
         gestion = new co.uptc.edu.negocio.GestionProveedores();
 
@@ -236,6 +240,8 @@ public class GestionProveedores extends JFrame {
     }
 
     public static void main(String[] args) {
-        new GestionProveedores().setVisible(true);
+    	  co.uptc.edu.negocio.GestionProveedores gestion =
+    	            new co.uptc.edu.negocio.GestionProveedores();
+        new GestionProveedores(gestion).setVisible(true);
     }
 }
