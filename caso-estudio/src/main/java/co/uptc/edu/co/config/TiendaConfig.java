@@ -8,6 +8,7 @@ import co.uptc.edu.co.interfaces.IGestionCompra;
 
 import co.uptc.edu.co.interfaces.ProductoDAO;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
+import co.uptc.edu.co.interfaces.ClienteDAO;
 import co.uptc.edu.co.negocio.GestionCliente;
 import co.uptc.edu.co.negocio.GestionCompra;
 import co.uptc.edu.co.negocio.GestionProducto;
@@ -16,6 +17,7 @@ import co.uptc.edu.co.negocio.GestionVenta;
 
 import co.uptc.edu.co.persistencia.ProductoJSONDAO;
 import co.uptc.edu.co.persistencia.ProveedorJSONDAO;
+import co.uptc.edu.co.persistencia.ClienteJSONDAO;
 
 public class TiendaConfig {
 
@@ -32,18 +34,18 @@ public class TiendaConfig {
 	private void inicializarGestiones() {
 
 		ProductoDAO productoDAO = new ProductoJSONDAO();
-
 		gestionProducto = new GestionProducto(productoDAO);
-
-		gestionCliente = new GestionCliente();
 
 		ProveedorDAO proveedorDAO = new ProveedorJSONDAO();
 		gestionProveedor = new GestionProveedor(proveedorDAO);
 
+		ClienteDAO clienteDAO = new ClienteJSONDAO();
+		gestionCliente = new GestionCliente(clienteDAO);
+
 		gestionVenta = new GestionVenta();
 
 		gestionCompra = new GestionCompra();
-	}
+	} 
 
 	public IGestionProducto getGestionProducto() {
 		return gestionProducto;
