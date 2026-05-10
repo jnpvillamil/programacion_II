@@ -36,7 +36,7 @@ public enum CategoriaProducto {
     SALSAS,
     CONDIMENTOS,
 
-    // Hogar y limpiezaa
+    // Hogar y limpieza
     ASEO,
     LIMPIEZA_HOGAR,
     PAPELERIA,
@@ -62,8 +62,6 @@ public enum CategoriaProducto {
     ROPA,
     FERRETERIA,
     OFICINA,
-    OTROS,
-    
+    OTROS
 }
-
 

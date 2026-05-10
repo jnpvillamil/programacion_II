@@ -1,0 +1,12 @@
+[
+  {
+    "codigo": "FB01",
+    "nombre": "Arroz de la Abuela",
+    "categoria": "GRANOS",
+    "precioCompra": 1500.0,
+    "precioVenta": 2000.0,
+    "stockActual": 20,
+    "stockMinimo": 1,
+    "activo": true
+  }
+]
