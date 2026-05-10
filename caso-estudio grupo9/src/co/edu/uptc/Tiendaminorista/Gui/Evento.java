@@ -3,7 +3,7 @@ package co.edu.uptc.Tiendaminorista.Gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
-import  co.edu.uptc.Tiendaminorista.Administrador.gui.*;
+import co.edu.uptc.Tiendaminorista.Administrador.gui.*;
 
 public class Evento implements ActionListener {
 
@@ -26,7 +26,10 @@ public class Evento implements ActionListener {
     public final static String ACTUALIZARPRO1 = "Actualizar Proveedor";
     public final static String DESACTIVARPRO = "Desactivar proveedor";
     public final static String ACTIVARPRO = "Activar proveedor";
-
+    public final static String CONTABILIDAD = "Contabilidad";
+    public final static String REGISTRAR_VENTA = "RegistrarVenta";
+    public final static String REGISTRAR_COMPRA = "RegistrarCompra";
+    
     private PanelPrincipal ventana;
     private PanelProductos panelProductos;
 
@@ -102,8 +105,14 @@ public class Evento implements ActionListener {
         } else if (evento.equals(CANCELARPRO)) {
 
             ventana.regresarAlInicial();
+            
+        } else if (evento.equals(COMPRASPRO)) {
+            ventana.mostrarComprasPro();
+            
+        } else if (evento.equals(REGISTRAR_VENTA)) {
+
+        } else if (evento.equals(REGISTRAR_COMPRA)) {
 
         }
-
     }
 }
