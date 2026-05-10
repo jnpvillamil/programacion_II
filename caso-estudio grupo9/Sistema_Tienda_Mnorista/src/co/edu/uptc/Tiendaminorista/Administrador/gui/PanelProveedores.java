@@ -1,8 +1,8 @@
 package co.edu.uptc.Tiendaminorista.Administrador.gui;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import co.edu.uptc.Tiendaminorista.Gui.Evento;
 import co.edu.uptc.Tiendaminorista.modelo.Proveedor;
 
@@ -15,10 +15,10 @@ public class PanelProveedores extends JPanel {
     	
     	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     	this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    	
         JLabel titulo = new JLabel("Gestión Proveedores");
-        setAlignmentX(CENTER_ALIGNMENT);
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(titulo);
-        
         
         JPanel BOTONES = new JPanel();
         add(BOTONES);
@@ -41,11 +41,9 @@ public class PanelProveedores extends JPanel {
         BOTONES.add(btnCompraspro);
         
         JPanel motor = new JPanel();
-       
         add(motor);
         JLabel motorcli = new JLabel("Motor de busqueda cliente");
         motor.setAlignmentX(RIGHT_ALIGNMENT);
-   
         motor.add(motorcli);
         JTextField Motolcli = new JTextField(20);
         motor.add(Motolcli);
@@ -60,6 +58,9 @@ public class PanelProveedores extends JPanel {
             }
         };        
         tabla = new JTable(modelo);
+        
+        tabla.getTableHeader().setReorderingAllowed(false);
+        
         JScrollPane scrollPane = new JScrollPane(tabla);
         scrollPane.setMaximumSize(new Dimension(700, 250));
         scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);

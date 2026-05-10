@@ -26,6 +26,9 @@ public class Producto {
 	public String getCategoria() {
 		return categoria;
 	}
+	public String toString() {
+	        return nombre + " (Stock: " + stockActual + ")";
+	}
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}

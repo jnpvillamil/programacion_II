@@ -26,14 +26,18 @@ public class PanelInicial extends JPanel {
     private PanelProveedores panelProveedores;
     private PanelRegistrarProveedor panelRegistrarProveedor;
     private PanelActualizarProveedor panelActualizarProveedor;
+    private PanelComprasPro panelComprasPro; // NUEVO
     private GestionCliente gestionCliente;
     private GestionProveedor gestionProveedor;
+    private GestionProducto gestionProducto; // NUEVO: guardar referencia
+    private PanelGestionContable panelGestionContable;
 
     public PanelInicial(Evento e, GestionProducto gestionProducto, GestionCliente gestionCliente, GestionProveedor gestionProveedor) {
 
         setLayout(new BorderLayout());
         this.gestionCliente = gestionCliente;
         this.gestionProveedor = gestionProveedor;
+        this.gestionProducto = gestionProducto; // NUEVO: guardar referencia
 
         panelesCliente(e);
         panelesProveedores(e);
@@ -46,6 +50,9 @@ public class PanelInicial extends JPanel {
         add(pestanas, BorderLayout.CENTER);
         cargarClientes(gestionCliente.listarClientes());
         cargarProveedores(gestionProveedor.listarProveedores());
+        
+        panelGestionContable = new PanelGestionContable();
+        pestanas.addTab("Contabilidad", panelGestionContable);
     }
 
     private void panelesCliente(Evento e) {
@@ -70,10 +77,14 @@ public class PanelInicial extends JPanel {
         panelProveedores = new PanelProveedores(e);
         panelRegistrarProveedor = new PanelRegistrarProveedor(e);
         panelActualizarProveedor = new PanelActualizarProveedor(e);
+        
+        // NUEVO: crear PanelComprasPro con los gestores
+        panelComprasPro = new PanelComprasPro(e, gestionProveedor, gestionProducto);
 
         proveedorCards.add(panelProveedores, "PROVEEDOR_LIST");
         proveedorCards.add(panelRegistrarProveedor, "PROVEEDOR_REGISTRAR");
         proveedorCards.add(panelActualizarProveedor, "PROVEEDOR_ACTUALIZAR");
+        proveedorCards.add(panelComprasPro, "PROVEEDOR_COMPRAS"); // NUEVO
 
         proveedorLayout.show(proveedorCards, "PROVEEDOR_LIST");
     }
@@ -111,6 +122,12 @@ public class PanelInicial extends JPanel {
         cargarProveedores(gestionProveedor.listarProveedores());
         proveedorLayout.show(proveedorCards, "PROVEEDOR_ACTUALIZAR");
     }
+    
+    // NUEVO: método para mostrar compras
+    public void mostrarComprasProveedor() {
+        pestanas.setSelectedIndex(2);
+        proveedorLayout.show(proveedorCards, "PROVEEDOR_COMPRAS");
+    }
 
     public void mostrarListaActual() {
         int indice = pestanas.getSelectedIndex();
@@ -144,7 +161,15 @@ public class PanelInicial extends JPanel {
     public PanelActualizarProveedor getPanelActualizarProveedor() {
         return panelActualizarProveedor;
     }
+    
+    public PanelComprasPro getPanelComprasPro() { // NUEVO
+        return panelComprasPro;
+    }
 
+    public PanelGestionContable getPanelGestionContable() {
+        return panelGestionContable;
+    }
+    
     public void cargarClientes(List<Cliente> clientes) {
         panelCliente.cargarClientes(clientes);
         panelActualizarCliente.setClientes(clientes);
