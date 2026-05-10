@@ -35,11 +35,13 @@ public class PanelPadreCliente extends PanelCentral<Cliente> {
 
         modelo.addColumn("Código");
         modelo.addColumn("Nombre");
+        modelo.addColumn("Tipo Doc");
         modelo.addColumn("Documento");
         modelo.addColumn("Dirección");
         modelo.addColumn("Teléfono");
         modelo.addColumn("Tipo Cliente");
         modelo.addColumn("Estado");
+        
 
         tblGenerica.setModel(modelo);
     }
@@ -55,6 +57,7 @@ public class PanelPadreCliente extends PanelCentral<Cliente> {
 
                 c.getIdCliente(),
                 c.getNombreCompleto(),
+                c.getTipoDocumento(),
                 c.getNumeroDocumento(),
                 c.getDireccionC(),
                 c.getTelefonoC(),

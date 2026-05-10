@@ -3,13 +3,15 @@ package co.uptc.edu.tienda.gui;
 import javax.swing.*;
 import java.awt.*;
 
+import co.uptc.edu.tienda.enums.TipoClienteEnum;
+import co.uptc.edu.tienda.enums.TipoDocEnum;
 import co.uptc.edu.tienda.modelo.Cliente;
 
 public class DialogoCliente extends DialogoCentral {
 
     private int codigoActual;
     private JTextField txNombre, txDocumento, txDireccion, txTelefono, txCorreo;
-
+    private JComboBox cbTipoCliente, cbTipoDocumento; 
     public DialogoCliente(Evento evento, String titulo, boolean isCrear) {
         super(evento, titulo, isCrear);
         setSize(400, 400);
@@ -23,19 +25,27 @@ public class DialogoCliente extends DialogoCentral {
         );
 
         panelCentral.setLayout(
-            new GridLayout(5, 2, 10, 15)
+            new GridLayout(7, 2, 10, 15)
         );
-
+        
         txNombre = new JTextField();
+        cbTipoDocumento = new JComboBox<>(TipoDocEnum.values());
         txDocumento = new JTextField();
         txDireccion = new JTextField();
         txTelefono = new JTextField();
         txCorreo = new JTextField();
+        cbTipoCliente = new JComboBox<>(TipoClienteEnum.values());
 
         panelCentral.add(
             new JLabel("  Nombre:", SwingConstants.RIGHT)
         );
         panelCentral.add(txNombre);
+        
+        panelCentral.add(
+                new JLabel("  Tipo de documento:", SwingConstants.RIGHT)
+            );
+            panelCentral.add (cbTipoDocumento); 
+        
 
         panelCentral.add(
             new JLabel("  Documento:", SwingConstants.RIGHT)
@@ -51,6 +61,12 @@ public class DialogoCliente extends DialogoCentral {
             new JLabel("  Teléfono:", SwingConstants.RIGHT)
         );
         panelCentral.add(txTelefono);
+        
+        panelCentral.add(
+                new JLabel("  Tipo de cliente:", SwingConstants.RIGHT)
+            );
+            panelCentral.add (cbTipoCliente); 
+        
 
         panelCentral.add(
             new JLabel("  Correo:", SwingConstants.RIGHT)
@@ -73,9 +89,11 @@ public class DialogoCliente extends DialogoCentral {
     public Cliente capturarDatos() throws Exception {
 
         if (txNombre.getText().trim().isEmpty()
+        		|| cbTipoCliente.getSelectedItem().toString().trim().isEmpty()
                 || txDocumento.getText().trim().isEmpty()
                 || txDireccion.getText().trim().isEmpty()
                 || txTelefono.getText().trim().isEmpty()
+                || cbTipoDocumento.getSelectedItem().toString().trim().isEmpty()
                 || txCorreo.getText().trim().isEmpty()) {
 
             throw new Exception(
@@ -112,6 +130,10 @@ public class DialogoCliente extends DialogoCentral {
         cliente.setNombreCompleto(
             txNombre.getText().trim()
         );
+        
+        cliente.setTipoCliente(
+        	    TipoClienteEnum.valueOf(cbTipoCliente.getSelectedItem().toString())
+        	);
 
         cliente.setNumeroDocumento(
             Long.parseLong(
@@ -124,6 +146,10 @@ public class DialogoCliente extends DialogoCentral {
         );
 
         cliente.setTelefonoC(telefono);
+        
+        cliente.setTipoDocumento(
+        	    TipoDocEnum.valueOf(cbTipoDocumento.getSelectedItem().toString())
+        	);
 
         return cliente;
     }
