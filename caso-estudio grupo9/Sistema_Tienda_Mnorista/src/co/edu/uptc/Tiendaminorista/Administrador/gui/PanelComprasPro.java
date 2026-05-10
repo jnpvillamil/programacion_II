@@ -162,11 +162,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         producto.setStockActual(producto.getStockActual() + cantidad);
         gestionProducto.actualizarProducto(producto);
 
-        PanelPrincipal ventana = (PanelPrincipal) SwingUtilities.getWindowAncestor(this);
-        if (ventana != null) {
-            ventana.registrarCompra(producto.getNombre(), totalCompra, proveedor.getNit());
-        }
-
         txtCantidad.setText("");
         actualizarListaProductos();
         
