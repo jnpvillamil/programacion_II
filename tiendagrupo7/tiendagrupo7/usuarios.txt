@@ -1,0 +1,2 @@
+Admin General;123456;Calle 1;555-0000;admin;admin123;ADMINISTRADOR
+Cajero Principal;654321;Calle 2;555-1111;cajero;cajero123;CAJERO

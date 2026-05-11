@@ -1,0 +1,1 @@
+PROD-001;Arroz Integral 1kg;VIVERES;4000.0;2000.0;45;9;400;false
