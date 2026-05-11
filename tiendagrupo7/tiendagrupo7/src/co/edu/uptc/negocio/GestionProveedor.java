@@ -7,15 +7,25 @@ import java.util.List;
 public class GestionProveedor {
     private PersistenciaProveedor repo;
 
-    public GestionProveedor() { this.repo = new PersistenciaProveedor(); }
+    public GestionProveedor() { 
+        this.repo = new PersistenciaProveedor(); 
+    }
 
     public boolean registrar(Proveedor p) {
-        if (repo.buscarPorId(p.getIdentificacion()) != null) return false;
+        if (repo.buscarPorId(p.getCodigoProveedor()) != null) return false;
         repo.guardar(p);
         return true;
     }
 
-    public List<Proveedor> listar() { return repo.listar(); }
+    public void actualizar(Proveedor p) {
+        repo.actualizar(p);
+    }
 
-    public Proveedor buscar(String criterio) { return repo.buscarPorId(criterio); }
+    public List<Proveedor> listar() { 
+        return repo.listar(); 
+    }
+
+    public Proveedor buscar(String criterio) { 
+        return repo.buscarPorId(criterio); 
+    }
 }

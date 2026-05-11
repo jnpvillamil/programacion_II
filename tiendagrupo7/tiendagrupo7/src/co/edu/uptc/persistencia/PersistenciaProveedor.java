@@ -45,6 +45,7 @@ public class PersistenciaProveedor implements Repositorio<Proveedor> {
         try (BufferedReader br = new BufferedReader(new FileReader(RUTA))) {
             String line;
             while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
                 String[] d = line.split(SEP);
                 lista.add(new Proveedor(d[0], d[1], d[2], d[3], d[4], d[5], Boolean.parseBoolean(d[6])));
             }
@@ -56,9 +57,9 @@ public class PersistenciaProveedor implements Repositorio<Proveedor> {
     public void actualizar(Proveedor objeto) {
         List<Proveedor> lista = listar();
         for (int i = 0; i < lista.size(); i++) {
+            // Se busca por el código único del proveedor para reemplazar los datos
             if (lista.get(i).getCodigoProveedor().equals(objeto.getCodigoProveedor())) {
                 lista.set(i, objeto);
-                break;
             }
         }
         escribir(lista);

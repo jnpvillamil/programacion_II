@@ -39,15 +39,15 @@ public class ControladorProveedor {
         if (negocio.registrar(p)) {
             actualizarTabla();
             limpiar();
-            JOptionPane.showMessageDialog(vista, "Proveedor registrado exitosamente.");
+            JOptionPane.showMessageDialog(vista, "Proveedor registrado con éxito.");
         } else {
-            JOptionPane.showMessageDialog(vista, "Error: El NIT o Código ya existe.");
+            JOptionPane.showMessageDialog(vista, "Error: El código de proveedor ya existe.");
         }
     }
 
     private void buscar() {
-        String criterio = vista.getTxtNit().getText();
-        Proveedor p = negocio.buscar(criterio);
+        String cod = vista.getTxtCodigo().getText();
+        Proveedor p = negocio.buscar(cod);
         if (p != null) {
             cargarEnForm(p);
         } else {
@@ -58,46 +58,53 @@ public class ControladorProveedor {
     private void editar() {
         if (!validar()) return;
         Proveedor p = crearDesdeForm();
-        // ERROR: Usaba registrar en lugar de actualizar, duplicando la línea en el archivo
-        negocio.registrar(p); 
+        // Se usa actualizar para sobreescribir los datos y evitar duplicados
+        negocio.actualizar(p); 
         actualizarTabla();
-        JOptionPane.showMessageDialog(vista, "Datos del proveedor actualizados.");
+        limpiar();
+        JOptionPane.showMessageDialog(vista, "Proveedor actualizado correctamente.");
     }
 
     private void inactivar() {
         String cod = vista.getTxtCodigo().getText();
         Proveedor p = negocio.buscar(cod);
         if (p != null) {
-            p.setActivo(false);
-            negocio.registrar(p); 
+            p.setActivo(false); // Inactivación lógica
+            negocio.actualizar(p);
             actualizarTabla();
             limpiar();
-            JOptionPane.showMessageDialog(vista, "Proveedor inactivado correctamente.");
+            JOptionPane.showMessageDialog(vista, "Proveedor inactivado.");
         }
     }
 
     private void actualizarTabla() {
-        vista.getModeloTabla().setRowCount(0);
+        DefaultTableModel modelo = vista.getModeloTabla();
+        modelo.setRowCount(0);
         List<Proveedor> lista = negocio.listar();
         for (Proveedor p : lista) {
-            // ERROR: No filtraba por estado activo, mostrando todo el historial del archivo
-            vista.getModeloTabla().addRow(new Object[]{
-                p.getCodigoProveedor(), p.getNombre(), p.getIdentificacion(),
-                p.getTelefono(), p.getCorreoElectronico(), p.isActivo() ? "Activo" : "Inactivo"
-            });
+            // Solo se agregan a la tabla los proveedores que estén activos
+            if (p.isActivo()) { 
+                modelo.addRow(new Object[]{
+                    p.getCodigoProveedor(), p.getNombre(), p.getIdentificacion(),
+                    p.getTelefono(), p.getCorreoElectronico(), "Activo"
+                });
+            }
         }
     }
 
     private void cargarDesdeTabla() {
         int fila = vista.getTablaProveedores().getSelectedRow();
-        String cod = vista.getModeloTabla().getValueAt(fila, 0).toString();
-        cargarEnForm(negocio.buscar(cod));
+        if (fila != -1) {
+            String cod = vista.getModeloTabla().getValueAt(fila, 0).toString();
+            Proveedor p = negocio.buscar(cod);
+            if (p != null) cargarEnForm(p);
+        }
     }
 
     private boolean validar() {
-        if (ValidadorEntradas.esVacio(vista.getTxtRazonSocial().getText()) || 
-            ValidadorEntradas.esVacio(vista.getTxtNit().getText())) {
-            JOptionPane.showMessageDialog(vista, "Razón Social y NIT son obligatorios.");
+        if (ValidadorEntradas.esVacio(vista.getTxtCodigo().getText()) || 
+            ValidadorEntradas.esVacio(vista.getTxtRazonSocial().getText())) {
+            JOptionPane.showMessageDialog(vista, "Código y Razón Social son obligatorios.");
             return false;
         }
         return true;
@@ -130,5 +137,6 @@ public class ControladorProveedor {
         vista.getTxtNit().setText(""); 
         vista.getTxtDireccion().setText("");
         vista.getTxtTelefono().setText(""); 
+        vista.getTxtCorreo().setText("");
     }
 }
