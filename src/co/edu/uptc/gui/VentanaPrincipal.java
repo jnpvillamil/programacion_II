@@ -55,7 +55,11 @@ public class VentanaPrincipal extends JFrame {
         co.edu.uptc.persistencia.PersistenciaCliente persistenciaCliente = new co.edu.uptc.persistencia.PersistenciaCliente();
         co.edu.uptc.negocio.GestionCliente gestionCliente = new co.edu.uptc.negocio.GestionCliente(persistenciaCliente);
         co.edu.uptc.controlador.ControladorCliente controladorCliente = new co.edu.uptc.controlador.ControladorCliente(gestionCliente);
-
+        co.edu.uptc.persistencia.PersistenciaProveedor persistenciaProveedor = new co.edu.uptc.persistencia.PersistenciaProveedor();
+        co.edu.uptc.negocio.GestionProveedor gestionProveedor = new co.edu.uptc.negocio.GestionProveedor(persistenciaProveedor);
+        co.edu.uptc.controlador.ControladorProveedor controladorProveedor = new co.edu.uptc.controlador.ControladorProveedor(gestionProveedor); 
+        
+        
         //Agregar los paneles al contenedor
         panelContenedor.add(new PanelHome(), "Home");
         panelContenedor.add(new PanelProducto(), "Prod"); 
@@ -63,7 +67,7 @@ public class VentanaPrincipal extends JFrame {
        
         panelContenedor.add(new PanelCliente(controladorCliente), "Cli"); 
         
-        panelContenedor.add(new PanelProveedor(), "Prov");
+        panelContenedor.add(new PanelProveedor(controladorProveedor), "Prov");
         panelContenedor.add(new PanelVenta(), "Vent");
         panelContenedor.add(new PanelCompra(), "Comp");
         panelContenedor.add(new PanelContabilidad(), "Cont");

@@ -19,7 +19,8 @@ public class PersistenciaProveedor implements Repositorio<Proveedor> {
 
     @Override
     public void eliminar(String id) {
-        this.proveedores.removeIf(p -> p.getCodigoProveedor().equals(id));
+        // Se permite eliminar por NIT o Código
+        this.proveedores.removeIf(p -> p.getNit().equals(id) || p.getCodigoProveedor().equals(id));
     }
 
     @Override
@@ -28,9 +29,9 @@ public class PersistenciaProveedor implements Repositorio<Proveedor> {
     }
 
     @Override
-    public Proveedor buscarPorId(String id) {
+    public Proveedor buscarPorId(String nit) {
         for (Proveedor p : this.proveedores) {
-            if (p.getCodigoProveedor().equals(id)) {
+            if (p.getNit().equals(nit)) {
                 return p;
             }
         }

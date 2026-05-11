@@ -2,18 +2,19 @@ package co.edu.uptc.modelo;
 
 public class Proveedor extends Persona {
     private String codigoProveedor;
-    private String razonSocial; 
-    private String nit; 
-    private String correoElectronico; 
-    private boolean activo; 
+    private String razonSocial;
+    private String nit;
+    private String correoElectronico;
+    private boolean activo;
 
-    public Proveedor(String nombre, String apellido, String identificacion, String direccion, String telefono, String codigoProveedor, String razonSocial, String nit, String correoElectronico, boolean activo) {
+    public Proveedor(String nombre, String apellido, String identificacion, String direccion, String telefono, 
+                     String codigoProveedor, String razonSocial, String nit, String correoElectronico) {
         super(nombre, apellido, identificacion, direccion, telefono);
         this.codigoProveedor = codigoProveedor;
         this.razonSocial = razonSocial;
         this.nit = nit;
         this.correoElectronico = correoElectronico;
-        this.activo = activo;
+        this.activo = true; // Activo por defecto
     }
 
     public String getCodigoProveedor() { return codigoProveedor; }
