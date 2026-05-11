@@ -1,0 +1,83 @@
+[
+  {
+    "codigoProveedor": 100,
+    "razonSocial": "EXITO",
+    "nit": "123",
+    "direccionP": "CALLE 50",
+    "telefonoP": 1224,
+    "correoP": "EXITO@GMAIL.COM",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 101,
+    "razonSocial": "1",
+    "nit": "2",
+    "direccionP": "3",
+    "telefonoP": 4,
+    "correoP": "5",
+    "estado": "INACTIVO"
+  },
+  {
+    "codigoProveedor": 102,
+    "razonSocial": "1",
+    "nit": "2",
+    "direccionP": "3",
+    "telefonoP": 4,
+    "correoP": "5",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 103,
+    "razonSocial": "1",
+    "nit": "2",
+    "direccionP": "CALLE",
+    "telefonoP": 4,
+    "correoP": "5",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 104,
+    "razonSocial": "1",
+    "nit": "2",
+    "direccionP": "3",
+    "telefonoP": 4,
+    "correoP": "5",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 105,
+    "razonSocial": "11",
+    "nit": "22",
+    "direccionP": "33",
+    "telefonoP": 44,
+    "correoP": "55",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 106,
+    "razonSocial": "1",
+    "nit": "2",
+    "direccionP": "3",
+    "telefonoP": 4,
+    "correoP": "5",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 107,
+    "razonSocial": "1",
+    "nit": "2",
+    "direccionP": "3",
+    "telefonoP": 4,
+    "correoP": "22",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 108,
+    "razonSocial": "OLIMPICA S.A.S",
+    "nit": "989929-1",
+    "direccionP": "CARRERA 24 # 78-99",
+    "telefonoP": 3145552222,
+    "correoP": "OLIMPICA@GMAIL.COM",
+    "estado": "ACTIVO"
+  }
+]

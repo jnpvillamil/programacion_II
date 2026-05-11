@@ -1,0 +1,32 @@
+[
+  {
+    "idCliente": 100,
+    "direccionC": "CALLE 50",
+    "tipoCliente": "Minorista",
+    "telefonoC": 3121214144,
+    "estado": "ACTIVO",
+    "nombreCompleto": "DIANA SUAREZ",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 1000432123
+  },
+  {
+    "idCliente": 101,
+    "direccionC": "CASA",
+    "tipoCliente": "Minorista",
+    "telefonoC": 22,
+    "estado": "ACTIVO",
+    "nombreCompleto": "ANDREA",
+    "tipoDocumento": "RC",
+    "numeroDocumento": 1
+  },
+  {
+    "idCliente": 102,
+    "direccionC": "callft",
+    "tipoCliente": "Minorista",
+    "telefonoC": 65,
+    "estado": "ACTIVO",
+    "nombreCompleto": "56",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 5555
+  }
+]
