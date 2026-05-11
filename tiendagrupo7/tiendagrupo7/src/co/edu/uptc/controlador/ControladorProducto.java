@@ -62,7 +62,7 @@ public class ControladorProducto {
             actualizarTabla();
             JOptionPane.showMessageDialog(vista, "Producto Actualizado.");
         }
-    }
+    }//prueba commit
 
     private void inactivar() {
         String cod = vista.getTxtCodigo().getText();
