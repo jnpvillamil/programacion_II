@@ -19,7 +19,7 @@ public class PersistenciaCliente implements Repositorio<Cliente> {
 
     @Override
     public void eliminar(String id) {
-        this.clientes.removeIf(c -> c.getCodigoCliente().equals(id));
+        this.clientes.removeIf(c -> c.getCodigoCliente().equals(id) || c.getIdentificacion().equals(id));
     }
 
     @Override
@@ -28,9 +28,9 @@ public class PersistenciaCliente implements Repositorio<Cliente> {
     }
 
     @Override
-    public Cliente buscarPorId(String id) {
+    public Cliente buscarPorId(String identificacion) {
         for (Cliente c : this.clientes) {
-            if (c.getCodigoCliente().equals(id)) {
+            if (c.getIdentificacion().equals(identificacion)) {
                 return c;
             }
         }

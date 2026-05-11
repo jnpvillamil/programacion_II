@@ -4,11 +4,13 @@ public class ClienteResumenDTO {
     private String codigo;
     private String nombreCompleto;
     private String telefono;
+    private String estado;
 
-    public ClienteResumenDTO(String codigo, String nombreCompleto, String telefono) {
+    public ClienteResumenDTO(String codigo, String nombreCompleto, String telefono, String estado) {
         this.codigo = codigo;
         this.nombreCompleto = nombreCompleto;
         this.telefono = telefono;
+        this.estado = estado;
     }
 
     public String getCodigo() { return codigo; }
@@ -19,4 +21,7 @@ public class ClienteResumenDTO {
 
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 }

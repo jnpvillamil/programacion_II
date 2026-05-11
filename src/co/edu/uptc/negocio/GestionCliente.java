@@ -11,27 +11,39 @@ public class GestionCliente {
         this.persistenciaCliente = persistenciaCliente;
     }
 
-    public boolean registrarCliente(Cliente cliente) {
-        if (this.persistenciaCliente.buscarPorId(cliente.getCodigoCliente()) != null) {
-            return false;
+    public boolean registrarCliente(Cliente cliente) throws Exception {
+        if (this.persistenciaCliente.buscarPorId(cliente.getIdentificacion()) != null) {
+            throw new Exception("El número de identificación ya se encuentra registrado.");
         }
         this.persistenciaCliente.guardar(cliente);
         return true;
     }
 
-    public void actualizarCliente(Cliente cliente) {
-        Cliente existente = this.persistenciaCliente.buscarPorId(cliente.getCodigoCliente());
+    public boolean actualizarCliente(Cliente clienteActualizado) {
+        Cliente existente = this.persistenciaCliente.buscarPorId(clienteActualizado.getIdentificacion());
         if (existente != null) {
-            this.persistenciaCliente.eliminar(existente.getCodigoCliente());
-            this.persistenciaCliente.guardar(cliente);
+            this.persistenciaCliente.eliminar(existente.getIdentificacion());
+            this.persistenciaCliente.guardar(clienteActualizado);
+            return true;
         }
+        return false;
     }
 
-    public Cliente buscarCliente(String codigoCliente) {
-        return this.persistenciaCliente.buscarPorId(codigoCliente);
+    public boolean inactivarCliente(String identificacion) {
+        Cliente cliente = this.persistenciaCliente.buscarPorId(identificacion);
+        if (cliente != null) {
+            cliente.setActivo(false);
+            actualizarCliente(cliente);
+            return true;
+        }
+        return false;
     }
 
-    public List<Cliente> listarClientes() {
+    public Cliente buscarCliente(String identificacion) {
+        return this.persistenciaCliente.buscarPorId(identificacion);
+    }
+
+    public List<Cliente> listarTodos() {
         return this.persistenciaCliente.listar();
     }
 }

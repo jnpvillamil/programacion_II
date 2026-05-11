@@ -4,24 +4,25 @@ import co.edu.uptc.enums.TipoCliente;
 import co.edu.uptc.enums.TipoIdentificacion;
 
 public class Cliente extends Persona {
-    private String codigoCliente; 
-    private TipoIdentificacion tipoldentificacion; 
-    private TipoCliente tipoCliente; 
+    private String codigoCliente;
+    private TipoIdentificacion tipoIdentificacion;
+    private TipoCliente tipoCliente;
     private boolean activo;
 
-    public Cliente(String nombre, String apellido, String identificacion, String direccion, String telefono, String codigoCliente, TipoIdentificacion tipoldentificacion, TipoCliente tipoCliente, boolean activo) {
+    public Cliente(String nombre, String apellido, String identificacion, String direccion, String telefono, 
+                   String codigoCliente, TipoIdentificacion tipoIdentificacion, TipoCliente tipoCliente) {
         super(nombre, apellido, identificacion, direccion, telefono);
         this.codigoCliente = codigoCliente;
-        this.tipoldentificacion = tipoldentificacion;
+        this.tipoIdentificacion = tipoIdentificacion;
         this.tipoCliente = tipoCliente;
-        this.activo = activo;
+        this.activo = true; 
     }
 
     public String getCodigoCliente() { return codigoCliente; }
     public void setCodigoCliente(String codigoCliente) { this.codigoCliente = codigoCliente; }
 
-    public TipoIdentificacion getTipoldentificacion() { return tipoldentificacion; }
-    public void setTipoldentificacion(TipoIdentificacion tipoldentificacion) { this.tipoldentificacion = tipoldentificacion; }
+    public TipoIdentificacion getTipoIdentificacion() { return tipoIdentificacion; }
+    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) { this.tipoIdentificacion = tipoIdentificacion; }
 
     public TipoCliente getTipoCliente() { return tipoCliente; }
     public void setTipoCliente(TipoCliente tipoCliente) { this.tipoCliente = tipoCliente; }

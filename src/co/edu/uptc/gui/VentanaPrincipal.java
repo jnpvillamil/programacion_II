@@ -14,7 +14,7 @@ public class VentanaPrincipal extends JFrame {
     private ControladorPrincipal controladorPrincipal;
 
     public VentanaPrincipal() {
-        // Configuración básica de la ventana principal [cite: 437, 441]
+        // Configuración básica de la ventana principal 
         setTitle("Sistema de Gestión - Tienda Minorista");
         setSize(1100, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -28,12 +28,12 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private void inicializarComponentes() {
-        // 1. Menú Lateral (Diseño oscuro con botones blancos) [cite: 439, 483]
+        // 1. Menú Lateral (Diseño oscuro con botones blancos) 
         JPanel menuLateral = new JPanel(new GridLayout(10, 1, 0, 2));
         menuLateral.setBackground(ConstructorComponentes.COLOR_MENU_OSCURO);
         menuLateral.setPreferredSize(new Dimension(220, 0));
 
-        // 2. Contenedor Central con CardLayout [cite: 167, 442]
+        // 2. Contenedor Central con CardLayout 
         cardLayout = new CardLayout();
         panelContenedor = new JPanel(cardLayout);
         controladorPrincipal = new ControladorPrincipal(panelContenedor, cardLayout);
@@ -50,10 +50,19 @@ public class VentanaPrincipal extends JFrame {
             menuLateral.add(btn);
         }
 
-        // 3. Inicialización e integración de Paneles [cite: 169, 442]
+        // 3. Inicialización e integración de Paneles 
+       // Instanciar dependencias para el módulo Cliente
+        co.edu.uptc.persistencia.PersistenciaCliente persistenciaCliente = new co.edu.uptc.persistencia.PersistenciaCliente();
+        co.edu.uptc.negocio.GestionCliente gestionCliente = new co.edu.uptc.negocio.GestionCliente(persistenciaCliente);
+        co.edu.uptc.controlador.ControladorCliente controladorCliente = new co.edu.uptc.controlador.ControladorCliente(gestionCliente);
+
+        //Agregar los paneles al contenedor
         panelContenedor.add(new PanelHome(), "Home");
-        panelContenedor.add(new PanelProducto(), "Prod");
-        panelContenedor.add(new PanelCliente(), "Cli");
+        panelContenedor.add(new PanelProducto(), "Prod"); 
+        
+       
+        panelContenedor.add(new PanelCliente(controladorCliente), "Cli"); 
+        
         panelContenedor.add(new PanelProveedor(), "Prov");
         panelContenedor.add(new PanelVenta(), "Vent");
         panelContenedor.add(new PanelCompra(), "Comp");
