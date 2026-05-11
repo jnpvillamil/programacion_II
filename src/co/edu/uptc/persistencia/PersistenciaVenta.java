@@ -1,30 +1,39 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.negocio.Venta;
+import co.edu.uptc.interfaces.Repositorio;
+import co.edu.uptc.modelo.Venta;
 import java.util.ArrayList;
+import java.util.List;
 
-public class PersistenciaVenta {
-    private ArrayList<Venta> listaVentas;
+public class PersistenciaVenta implements Repositorio<Venta> {
+    private List<Venta> ventas;
 
     public PersistenciaVenta() {
-        this.listaVentas = new ArrayList<>();
+        this.ventas = new ArrayList<>();
     }
 
+    @Override
     public void guardar(Venta venta) {
-        this.listaVentas.add(venta);
+        this.ventas.add(venta);
     }
 
-    public ArrayList<Venta> leerTodas() {
-        return this.listaVentas;
+    @Override
+    public void eliminar(String id) {
+        this.ventas.removeIf(v -> v.getNumeroFactura().equals(id));
     }
 
-    public Venta buscarPorFactura(String numeroFactura) {
-        for (Venta venta : listaVentas) {
-            
-            if (venta.getNumeroFactura().equals(numeroFactura)) {
-                return venta;
+    @Override
+    public List<Venta> listar() {
+        return new ArrayList<>(this.ventas);
+    }
+
+    @Override
+    public Venta buscarPorId(String id) {
+        for (Venta v : this.ventas) {
+            if (v.getNumeroFactura().equals(id)) {
+                return v;
             }
         }
-        return null; // Retorna null si no la encuentra
+        return null;
     }
 }

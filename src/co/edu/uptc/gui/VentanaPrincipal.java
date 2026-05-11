@@ -1,92 +1,85 @@
 package co.edu.uptc.gui;
 
-import co.edu.uptc.negocio.SistemaGestion;
+import co.edu.uptc.controlador.ControladorPrincipal;
+import co.edu.uptc.utilidades.ConstructorComponentes;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Punto de entrada (main) y gestiona los paneles mediante CardLayout.
+ */
 public class VentanaPrincipal extends JFrame {
-    private JPanel panelMenu;
-    private JPanel panelContenido;
-    private CardLayout layoutPaneles;
-    private Eventos eventos;
-    private SistemaGestion sistemaGestion;
-    private String rolUsuario;
+    private JPanel panelContenedor;
+    private CardLayout cardLayout;
+    private ControladorPrincipal controladorPrincipal;
 
-    public VentanaPrincipal(SistemaGestion sistemaGestion, String rolUsuario) {
-        this.sistemaGestion = sistemaGestion;
-        this.rolUsuario = rolUsuario;
-        this.eventos = new Eventos(this);
-        
-        setTitle("Sistema de Gestión - Perfil: " + rolUsuario);
-        setSize(1050, 700);
+    public VentanaPrincipal() {
+        // Configuración básica de la ventana principal [cite: 437, 441]
+        setTitle("Sistema de Gestión - Tienda Minorista");
+        setSize(1100, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        iniciarComponentes();
-    }
-
-    public void iniciarComponentes() {
-        //MENU LATERAL
-        panelMenu = new JPanel(new GridLayout(9, 1, 0, 5));
-        panelMenu.setBackground(new Color(44, 62, 80)); 
-        panelMenu.setPreferredSize(new Dimension(220, 0));
-        panelMenu.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-
-        agregarBotonMenu("Productos", Eventos.CMD_VER_PRODUCTOS);
-        agregarBotonMenu("Clientes", Eventos.CMD_VER_CLIENTES);
-        agregarBotonMenu("Proveedores", Eventos.CMD_VER_PROVEEDORES);
-        agregarBotonMenu("Ventas", Eventos.CMD_VER_VENTAS);
-        agregarBotonMenu("Compras", Eventos.CMD_VER_COMPRAS);
-        agregarBotonMenu("Contabilidad", Eventos.CMD_VER_CONTABILIDAD);
+        // Inicialización de la navegación y el control
+        inicializarComponentes();
         
-        add(panelMenu, BorderLayout.WEST);
-
-        //CONTENIDO CENTRAL (CardLayout)
-        layoutPaneles = new CardLayout();
-        panelContenido = new JPanel(layoutPaneles);
-        panelContenido.setBackground(new Color(244, 246, 249));
-
-        // Integra los paneles con el SistemaGestion
-        panelContenido.add(new PanelProductos(sistemaGestion), "PANEL_PRODUCTOS");
-        panelContenido.add(new PanelCompras(sistemaGestion), "PANEL_COMPRAS");
-        panelContenido.add(new PanelVentas(sistemaGestion), "PANEL_VENTAS");
-
-        add(panelContenido, BorderLayout.CENTER);
+        // Ubicación en el centro de la pantalla
+        setLocationRelativeTo(null);
     }
 
-    private void agregarBotonMenu(String texto, String comando) {
-        JButton btn = new JButton(texto);
-        btn.setActionCommand(comando);
-        btn.addActionListener(eventos);
-        btn.setBackground(new Color(52, 73, 94));
-        btn.setForeground(Color.WHITE);
-        btn.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btn.setFocusPainted(false);
-        btn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panelMenu.add(btn);
-    }
+    private void inicializarComponentes() {
+        // 1. Menú Lateral (Diseño oscuro con botones blancos) [cite: 439, 483]
+        JPanel menuLateral = new JPanel(new GridLayout(10, 1, 0, 2));
+        menuLateral.setBackground(ConstructorComponentes.COLOR_MENU_OSCURO);
+        menuLateral.setPreferredSize(new Dimension(220, 0));
 
-    public void mostrarPanel(String nombrePanel) {
-        layoutPaneles.show(panelContenido, nombrePanel);
-    }
+        // 2. Contenedor Central con CardLayout [cite: 167, 442]
+        cardLayout = new CardLayout();
+        panelContenedor = new JPanel(cardLayout);
+        controladorPrincipal = new ControladorPrincipal(panelContenedor, cardLayout);
 
-    // METODO MAIN
-    public static void main(String[] args) {
-        
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Definición de módulos
+        String[] opciones = {"Inicio", "Productos", "Clientes", "Proveedores", "Ventas", "Compras", "Contabilidad"};
+        String[] nombresCard = {"Home", "Prod", "Cli", "Prov", "Vent", "Comp", "Cont"};
+
+        // Creación dinámica de botones del menú
+        for (int i = 0; i < opciones.length; i++) {
+            JButton btn = ConstructorComponentes.crearBotonMenu(opciones[i]);
+            final String card = nombresCard[i];
+            btn.addActionListener(e -> controladorPrincipal.mostrarPanel(card));
+            menuLateral.add(btn);
         }
 
-     
+        // 3. Inicialización e integración de Paneles [cite: 169, 442]
+        panelContenedor.add(new PanelHome(), "Home");
+        panelContenedor.add(new PanelProducto(), "Prod");
+        panelContenedor.add(new PanelCliente(), "Cli");
+        panelContenedor.add(new PanelProveedor(), "Prov");
+        panelContenedor.add(new PanelVenta(), "Vent");
+        panelContenedor.add(new PanelCompra(), "Comp");
+        panelContenedor.add(new PanelContabilidad(), "Cont");
+
+        // Agregar a la ventana
+        add(menuLateral, BorderLayout.WEST);
+        add(panelContenedor, BorderLayout.CENTER);
+    }
+
+    /**
+     * Punto de entrada principal del sistema.
+     * Lanza la ventana de Login para autenticación inicial.
+     */
+    public static void main(String[] args) {
+        // Ejecución en el hilo de despacho de eventos de Swing para estabilidad visual
         SwingUtilities.invokeLater(() -> {
-            // Inicializar toda la capa de negocio y persistencia
-            SistemaGestion sistema = new SistemaGestion();
+            try {
+                // Aplicar Look and Feel del sistema para mejor integración visual 
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             
-            // Abrir primero el Login
-            VentanaLogin login = new VentanaLogin(sistema);
+            // Iniciar con la Ventana de Login 
+            VentanaLogin login = new VentanaLogin();
             login.setVisible(true);
         });
     }

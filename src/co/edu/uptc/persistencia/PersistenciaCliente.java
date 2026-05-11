@@ -1,34 +1,39 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.negocio.Cliente;
+import co.edu.uptc.interfaces.Repositorio;
+import co.edu.uptc.modelo.Cliente;
 import java.util.ArrayList;
+import java.util.List;
 
-public class PersistenciaCliente {
-    private ArrayList<Cliente> listaClientes;
+public class PersistenciaCliente implements Repositorio<Cliente> {
+    private List<Cliente> clientes;
 
     public PersistenciaCliente() {
-        this.listaClientes = new ArrayList<>();
+        this.clientes = new ArrayList<>();
     }
 
-    public void crear(Cliente cliente) {
-        this.listaClientes.add(cliente);
+    @Override
+    public void guardar(Cliente cliente) {
+        this.clientes.add(cliente);
     }
 
-    public ArrayList<Cliente> leerTodos() {
-        return this.listaClientes;
+    @Override
+    public void eliminar(String id) {
+        this.clientes.removeIf(c -> c.getCodigoCliente().equals(id));
     }
 
-    public void actualizar(String codigo, Cliente clienteActualizado) {
-        for (int i = 0; i < listaClientes.size(); i++) {
-        
-            if (listaClientes.get(i).getCodigo().equals(codigo)) {
-                listaClientes.set(i, clienteActualizado);
-                break;
+    @Override
+    public List<Cliente> listar() {
+        return new ArrayList<>(this.clientes);
+    }
+
+    @Override
+    public Cliente buscarPorId(String id) {
+        for (Cliente c : this.clientes) {
+            if (c.getCodigoCliente().equals(id)) {
+                return c;
             }
         }
-    }
-
-    public void eliminar(String codigo) {
-        listaClientes.removeIf(cliente -> cliente.getCodigo().equals(codigo));
+        return null;
     }
 }

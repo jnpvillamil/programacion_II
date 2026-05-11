@@ -1,80 +1,59 @@
 package co.edu.uptc.gui;
-import co.edu.uptc.negocio.Persona;
-import co.edu.uptc.negocio.SistemaGestion;
+
+import co.edu.uptc.utilidades.*;
 import javax.swing.*;
 import java.awt.*;
 
 public class VentanaLogin extends JFrame {
-    private JTextField txtUsuario;
-    private JPasswordField txtContrasena;
-    private SistemaGestion sistemaGestion;
+    private JTextField campoUsuario;
+    private JPasswordField campoClave;
 
-    public VentanaLogin(SistemaGestion sistemaGestion) {
-        this.sistemaGestion = sistemaGestion;
-        setTitle("Login - Tienda Minorista");
-        setSize(400, 250);
+    public VentanaLogin() {
+        setTitle("Acceso al Sistema - Tienda Minorista");
+        setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(244, 246, 249)); // Fondo claro
+        getContentPane().setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
 
-        JLabel lblTitulo = new JLabel("Bienvenido", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 28));
-        lblTitulo.setForeground(new Color(44, 62, 80)); // Panel oscuro
-        lblTitulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
-        add(lblTitulo, BorderLayout.NORTH);
-
-        JPanel panelForm = new JPanel(new GridLayout(2, 2, 10, 15));
-        panelForm.setOpaque(false);
-        panelForm.setBorder(BorderFactory.createEmptyBorder(10, 40, 20, 40));
-
-        JLabel lblUsu = new JLabel("Usuario:");
-        lblUsu.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lblUsu.setForeground(Color.BLACK); // Contraste fuerte
-        panelForm.add(lblUsu);
+        JPanel panelCentral = new JPanel(new GridBagLayout());
+        panelCentral.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
         
-        txtUsuario = new JTextField();
-        panelForm.add(txtUsuario);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Hace que los campos se expandan horizontalmente
+        gbc.insets = new Insets(10, 5, 10, 5);
 
-        JLabel lblPass = new JLabel("Contraseña:");
-        lblPass.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lblPass.setForeground(Color.BLACK);
-        panelForm.add(lblPass);
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 0.3; // Proporción de tamaño para la etiqueta
+        panelCentral.add(ConstructorComponentes.crearEtiquetaNegrita("Usuario:"), gbc);
         
-        txtContrasena = new JPasswordField();
-        panelForm.add(txtContrasena);
+        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.weightx = 0.7; // Proporción de tamaño para el campo de texto
+        campoUsuario = ConstructorComponentes.crearCampoTexto();
+        panelCentral.add(campoUsuario, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.weightx = 0.3;
+        panelCentral.add(ConstructorComponentes.crearEtiquetaNegrita("Contraseña:"), gbc);
         
-        add(panelForm, BorderLayout.CENTER);
+        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.weightx = 0.7;
+        campoClave = new JPasswordField(15);
+        campoClave.setBorder(campoUsuario.getBorder());
+        panelCentral.add(campoClave, gbc);
 
-        JButton btnIniciar = new JButton("Iniciar Sesión");
-        btnIniciar.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btnIniciar.setBackground(new Color(52, 152, 219)); // Azul
-        btnIniciar.setForeground(Color.WHITE); // Letra blanca
-        
-        // Visualización MAC/WINDOWS en SWING
-        btnIniciar.setOpaque(true);
-        btnIniciar.setBorderPainted(false);
-        
-        JPanel panelSur = new JPanel();
-        panelSur.setOpaque(false);
-        panelSur.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-        panelSur.add(btnIniciar);
-        add(panelSur, BorderLayout.SOUTH);
+        gbc.gridx = 0; gbc.gridy = 2; 
+        gbc.gridwidth = 2; // Hace que el botón ocupe dos columnas
+        gbc.fill = GridBagConstraints.NONE; // Para que el botón no se estire demasiado
+        JButton botonIngresar = ConstructorComponentes.crearBotonAccion("Iniciar Sesión", ConstructorComponentes.COLOR_AZUL_ACCION);
+        botonIngresar.setPreferredSize(new Dimension(150, 40));
+        botonIngresar.addActionListener(e -> {
+            new VentanaPrincipal().setVisible(true);
+            dispose();
+        });
+        panelCentral.add(botonIngresar, gbc);
 
-        btnIniciar.addActionListener(e -> validarCredenciales());
-    }
-
-    public void validarCredenciales() {
-        String usuario = txtUsuario.getText();
-        String pass = new String(txtContrasena.getPassword());
-        Persona logueado = sistemaGestion.iniciarSesion(usuario, pass);
-
-        if (logueado != null) {
-            String rol = logueado.getClass().getSimpleName();
-            new VentanaPrincipal(sistemaGestion, rol).setVisible(true);
-            this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Credenciales incorrectas", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        add(panelCentral, BorderLayout.CENTER);
+        CentradorVentanas.centrar(this);
     }
 }

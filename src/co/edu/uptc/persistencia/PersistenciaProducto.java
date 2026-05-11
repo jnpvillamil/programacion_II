@@ -1,34 +1,39 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.negocio.Producto;
+import co.edu.uptc.interfaces.Repositorio;
+import co.edu.uptc.modelo.Producto;
 import java.util.ArrayList;
+import java.util.List;
 
-public class PersistenciaProducto {
-    private ArrayList<Producto> listaProductos;
+public class PersistenciaProducto implements Repositorio<Producto> {
+    private List<Producto> productos;
 
     public PersistenciaProducto() {
-        this.listaProductos = new ArrayList<>();
+        this.productos = new ArrayList<>();
     }
 
-    public void crear(Producto producto) {
-        this.listaProductos.add(producto);
+    @Override
+    public void guardar(Producto producto) {
+        this.productos.add(producto);
     }
 
-    public ArrayList<Producto> leerTodos() {
-        return this.listaProductos;
+    @Override
+    public void eliminar(String id) {
+        this.productos.removeIf(p -> p.getCodigoInterno().equals(id));
     }
 
-    public void actualizar(String codigo, Producto productoActualizado) {
-        for (int i = 0; i < listaProductos.size(); i++) {
-        
-            if (listaProductos.get(i).getCodigoProducto().equals(codigo)) {
-                listaProductos.set(i, productoActualizado);
-                break;
+    @Override
+    public List<Producto> listar() {
+        return new ArrayList<>(this.productos);
+    }
+
+    @Override
+    public Producto buscarPorId(String id) {
+        for (Producto p : this.productos) {
+            if (p.getCodigoInterno().equals(id)) {
+                return p;
             }
         }
-    }
-
-    public void eliminar(String codigo) {
-        listaProductos.removeIf(producto -> producto.getCodigoProducto().equals(codigo));
+        return null;
     }
 }
