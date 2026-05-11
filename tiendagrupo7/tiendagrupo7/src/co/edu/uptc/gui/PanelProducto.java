@@ -2,20 +2,16 @@ package co.edu.uptc.gui;
 
 import co.edu.uptc.utilidades.ConstructorComponentes;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PanelProducto extends PanelBase {
 
-    private JTextField txtCodigo;
-    private JTextField txtNombre;
-    private JTextField txtCategoria;
-    private JTextField txtPrecioCompra;
-    private JTextField txtPrecioVenta;
-    private JTextField txtStockActual;
-    private JTextField txtStockMinimo;
-    private JTextField txtStockMaximo;
-    
-    private JButton btnGuardar;
+    private JTextField txtCodigo, txtNombre, txtCategoria, txtPrecioCompra, 
+                       txtPrecioVenta, txtStockActual, txtStockMinimo, txtStockMaximo;
+    private JButton btnGuardar, btnEditar, btnBuscar, btnInactivar;
+    private JTable tablaProductos;
+    private DefaultTableModel modeloTabla;
 
     public PanelProducto() {
         super();
@@ -23,57 +19,58 @@ public class PanelProducto extends PanelBase {
 
     @Override
     public void initComponents() {
-        this.setLayout(new BorderLayout(0, 30));
+        this.setLayout(new BorderLayout(0, 15));
 
-        JLabel lblTitulo = ConstructorComponentes.crearLabelTitulo("Registro de Nuevos Productos");
+       
+        JLabel lblTitulo = ConstructorComponentes.crearLabelTitulo("Gestión de Inventario - CRUD Completo");
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         this.add(lblTitulo, BorderLayout.NORTH);
 
-        // Formulario simplificado (Solo para agregar) [cite: 521, 522]
-        JPanel panelFormulario = new JPanel(new GridLayout(4, 4, 20, 15));
-        panelFormulario.setOpaque(false);
+       
+        JPanel panelNorte = new JPanel(new BorderLayout(0, 10));
+        panelNorte.setOpaque(false);
 
-        panelFormulario.add(new JLabel("Código:"));
-        txtCodigo = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtCodigo);
+        
+        JPanel panelForm = new JPanel(new GridLayout(4, 4, 10, 10));
+        panelForm.setOpaque(false);
+        
+        panelForm.add(new JLabel("Código:")); txtCodigo = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtCodigo);
+        panelForm.add(new JLabel("Nombre:")); txtNombre = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtNombre);
+        panelForm.add(new JLabel("Categoría:")); txtCategoria = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtCategoria);
+        panelForm.add(new JLabel("P. Compra:")); txtPrecioCompra = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtPrecioCompra);
+        panelForm.add(new JLabel("P. Venta:")); txtPrecioVenta = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtPrecioVenta);
+        panelForm.add(new JLabel("Stock Act:")); txtStockActual = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtStockActual);
+        panelForm.add(new JLabel("Stock Mín:")); txtStockMinimo = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtStockMinimo);
+        panelForm.add(new JLabel("Stock Máx:")); txtStockMaximo = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtStockMaximo);
 
-        panelFormulario.add(new JLabel("Nombre:"));
-        txtNombre = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtNombre);
+     
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        panelBotones.setOpaque(false);
+        btnGuardar = ConstructorComponentes.crearBotonPrimario("GUARDAR");
+        btnEditar = ConstructorComponentes.crearBotonPrimario("EDITAR");
+        btnBuscar = ConstructorComponentes.crearBotonPrimario("BUSCAR");
+        btnInactivar = ConstructorComponentes.crearBotonPrimario("INACTIVAR");
+        btnInactivar.setBackground(new Color(198, 40, 40)); // Rojo para inactivar
 
-        panelFormulario.add(new JLabel("Categoría:"));
-        txtCategoria = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtCategoria);
+        panelBotones.add(btnGuardar);
+        panelBotones.add(btnEditar);
+        panelBotones.add(btnBuscar);
+        panelBotones.add(btnInactivar);
 
-        panelFormulario.add(new JLabel("Precio Compra:"));
-        txtPrecioCompra = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtPrecioCompra);
+        panelNorte.add(panelForm, BorderLayout.CENTER);
+        panelNorte.add(panelBotones, BorderLayout.SOUTH);
 
-        panelFormulario.add(new JLabel("Precio Venta:"));
-        txtPrecioVenta = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtPrecioVenta);
+        
+        String[] columnas = {"Código", "Nombre", "Categoría", "P. Venta", "Stock", "Mínimo"};
+        modeloTabla = new DefaultTableModel(columnas, 0);
+        tablaProductos = new JTable(modeloTabla);
+        tablaProductos.setRowHeight(25);
+        JScrollPane scroll = new JScrollPane(tablaProductos);
 
-        panelFormulario.add(new JLabel("Stock Inicial:"));
-        txtStockActual = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtStockActual);
-
-        panelFormulario.add(new JLabel("Stock Mínimo:"));
-        txtStockMinimo = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtStockMinimo);
-
-        panelFormulario.add(new JLabel("Stock Máximo:"));
-        txtStockMaximo = ConstructorComponentes.crearCampoTexto();
-        panelFormulario.add(txtStockMaximo);
-
-        JPanel panelAccion = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelAccion.setOpaque(false);
-        btnGuardar = ConstructorComponentes.crearBotonPrimario("GUARDAR EN INVENTARIO");
-        btnGuardar.setPreferredSize(new Dimension(300, 45));
-        panelAccion.add(btnGuardar);
-
-        this.add(panelFormulario, BorderLayout.CENTER);
-        this.add(panelAccion, BorderLayout.SOUTH);
+        this.add(panelNorte, BorderLayout.NORTH);
+        this.add(scroll, BorderLayout.CENTER);
     }
+
 
     public JTextField getTxtCodigo() { return txtCodigo; }
     public JTextField getTxtNombre() { return txtNombre; }
@@ -84,4 +81,9 @@ public class PanelProducto extends PanelBase {
     public JTextField getTxtStockMinimo() { return txtStockMinimo; }
     public JTextField getTxtStockMaximo() { return txtStockMaximo; }
     public JButton getBtnGuardar() { return btnGuardar; }
+    public JButton getBtnEditar() { return btnEditar; }
+    public JButton getBtnBuscar() { return btnBuscar; }
+    public JButton getBtnInactivar() { return btnInactivar; }
+    public JTable getTablaProductos() { return tablaProductos; }
+    public DefaultTableModel getModeloTabla() { return modeloTabla; }
 }

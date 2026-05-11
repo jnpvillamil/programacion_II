@@ -1,3 +1,5 @@
 Panadería La Espiga;800.111.222;Calle 10 # 5-20;;PROV-201;ventas@espiga.com;false
 Panadería La Espiga;800.111.222;Calle 10 # 5-20;;PROV-201;ventas@espiga.com;false
 Casa Bruma;111.222.334;Calle 72 #65B-55;;PROV-001;stefanygonzalez613@gmail.com;false
+Prueba;111.333.55;Carrera 100#23;;1234;stefanygonzalez613@gmail.com;false
+Karen;111.333.5678;Carrera 100#23;;9966877;prueba@gmail.com;true

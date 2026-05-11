@@ -58,7 +58,6 @@ public class ControladorProveedor {
     private void editar() {
         if (!validar()) return;
         Proveedor p = crearDesdeForm();
-        // Se usa actualizar para sobreescribir los datos y evitar duplicados
         negocio.actualizar(p); 
         actualizarTabla();
         limpiar();
@@ -69,7 +68,7 @@ public class ControladorProveedor {
         String cod = vista.getTxtCodigo().getText();
         Proveedor p = negocio.buscar(cod);
         if (p != null) {
-            p.setActivo(false); // Inactivación lógica
+            p.setActivo(false); 
             negocio.actualizar(p);
             actualizarTabla();
             limpiar();
@@ -82,7 +81,6 @@ public class ControladorProveedor {
         modelo.setRowCount(0);
         List<Proveedor> lista = negocio.listar();
         for (Proveedor p : lista) {
-            // Solo se agregan a la tabla los proveedores que estén activos
             if (p.isActivo()) { 
                 modelo.addRow(new Object[]{
                     p.getCodigoProveedor(), p.getNombre(), p.getIdentificacion(),
