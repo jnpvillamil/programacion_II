@@ -54,6 +54,7 @@ public class Evento implements ActionListener {
     public final static String GUARDAR_CLI = "Guardar_CLI";
     public final static String EDITAR_CLI = "Editar_CLI";
     public final static String CANCELAR_CLI = "Cancelar_CLI";
+    public final static String ACTIVAR_CLI = "Activar_CLI";
 
     private VentanaPrincipal ventana;
 
@@ -138,6 +139,10 @@ public class Evento implements ActionListener {
         } else if(evento.equals(ELIMINAR_CLI)) {
 
             ventana.eliminarCliente();
+            
+        } else if(evento.equals(ACTIVAR)) {
+            ventana.activarCliente();
+        
 
         } else if(evento.equals(VER)) {
 

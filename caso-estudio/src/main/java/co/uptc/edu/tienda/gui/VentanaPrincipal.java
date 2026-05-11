@@ -538,13 +538,55 @@ public class VentanaPrincipal extends JFrame {
 
         int codigo = pCliente.getItemSeleccionado();
 
-        if(codigo == -1) return;
+        if (codigo == -1) {
+            JOptionPane.showMessageDialog(this,
+                "Por favor, seleccione un cliente de la tabla");
+            return;
+        }
 
-        clienteConfig.getGestCliente().eliminarCliente(codigo);
+        try {
 
-        pCliente.poblarTabla(
-            clienteConfig.getGestCliente().leerClientes()
-        );
+            Cliente c = clienteConfig.getGestCliente().buscarClientePorCodigo(codigo);
+
+            if (c == null) {
+                JOptionPane.showMessageDialog(this,
+                    "Cliente no encontrado");
+                return;
+            }
+
+            if (c.getEstado() == EstadoEnum.INACTIVO) {
+                JOptionPane.showMessageDialog(this,
+                    "El cliente ya está inactivo");
+                return;
+            }
+
+            int respuesta = JOptionPane.showConfirmDialog(
+                this,
+                "¿Está seguro de inactivar el cliente " + codigo + "?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION
+            );
+
+            if (respuesta == JOptionPane.YES_OPTION) {
+
+                // 🔴 NO BORRAMOS, SOLO INACTIVAMOS (como proveedor)
+                c.setEstado(EstadoEnum.INACTIVO);
+
+                clienteConfig.getGestCliente().modificarCliente(c);
+
+                pCliente.poblarTabla(
+                    clienteConfig.getGestCliente().leerClientes()
+                );
+
+                JOptionPane.showMessageDialog(this,
+                    "Cliente inactivado exitosamente.");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void buscarCliente() {
@@ -612,7 +654,53 @@ public class VentanaPrincipal extends JFrame {
                 clienteConfig.getGestCliente().leerClientes()
             );
         }
-    
+        public void activarCliente() {
+
+            int codigo = pCliente.getItemSeleccionado();
+
+            if (codigo == -1) {
+                JOptionPane.showMessageDialog(this,
+                    "Por favor, seleccione un cliente de la tabla");
+                return;
+            }
+
+            try {
+
+                Cliente c = clienteConfig.getGestCliente().buscarClientePorCodigo(codigo);
+
+                if (c != null && c.getEstado() == EstadoEnum.ACTIVO) {
+                    JOptionPane.showMessageDialog(this,
+                        "El cliente ya se encuentra activo.");
+                    return;
+                }
+
+                int respuesta = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Está seguro de activar el cliente " + codigo + "?",
+                    "Confirmar",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (respuesta == JOptionPane.YES_OPTION) {
+
+                    clienteConfig.getGestCliente().activarCliente(codigo);
+
+                    pCliente.poblarTabla(
+                        clienteConfig.getGestCliente().leerClientes()
+                    );
+                }
+
+                JOptionPane.showMessageDialog(this,
+                    "Cliente activado exitosamente.");
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                    "Error: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        
+      
 
     // ===================== PRODUCTO =====================
 

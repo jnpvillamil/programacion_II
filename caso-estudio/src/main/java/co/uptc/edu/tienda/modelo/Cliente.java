@@ -94,4 +94,12 @@ public class Cliente extends Persona {
 
         this.estado = EstadoEnum.INACTIVO;
     }
+    public void activar() {
+
+        this.estado = EstadoEnum.ACTIVO;
+    }
+    public void eliminar() {
+        this.estado = EstadoEnum.INACTIVO;
+    }
+    
 }

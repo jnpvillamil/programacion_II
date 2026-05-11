@@ -1,7 +1,9 @@
 package co.uptc.edu.tienda.negocio;
 
+import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.interfaces.IGestionCliente;
 import co.uptc.edu.tienda.modelo.Cliente;
+import co.uptc.edu.tienda.modelo.Proveedor;
 
 import java.util.List;
 
@@ -62,4 +64,20 @@ public class GestionCliente {
     public Cliente buscarClientePorCodigo(int codigoCliente) {
         return gestionC.buscar(codigoCliente);
     }
+  
+    public void activarCliente (int codigo) throws Exception {
+	    // 1. Lógica de negocio: ¿Existe el proveedor?
+	    Cliente c = gestionC.buscar(codigo);
+	    if (c == null) {
+	        throw new Exception("El proveedor no existe");
+	    }
+	    
+	    // 2. ¿Ya está activo? 
+	    if (c.getEstado() == EstadoEnum.ACTIVO) {
+	        throw new Exception("El proveedor ya se encuentra activo");
+	    }
+
+	    // 3. Mandar a guardar el cambio
+	    gestionC.cambiarEstado(codigo, EstadoEnum.ACTIVO);
+	}
 }

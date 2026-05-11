@@ -129,6 +129,8 @@ public class LocalProveedor implements IGestionProveedor {
 	        }
 	    }
 	    guardar(lista);
+	    
+	    
 		
 	}
 

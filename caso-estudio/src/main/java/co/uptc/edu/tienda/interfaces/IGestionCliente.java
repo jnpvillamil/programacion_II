@@ -1,6 +1,8 @@
 package co.uptc.edu.tienda.interfaces;
 
 import java.util.List;
+
+import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.modelo.Cliente;
 
 public interface IGestionCliente {
@@ -14,4 +16,7 @@ public interface IGestionCliente {
     public Cliente buscar(int codigoCliente);
 
     public List<Cliente> leerClientes();
+    
+	public void cambiarEstado(int codigoCliente, EstadoEnum nuevoEstado);
+
 }

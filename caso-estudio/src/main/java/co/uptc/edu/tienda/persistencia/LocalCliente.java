@@ -17,6 +17,7 @@ import java.util.List;
 import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.interfaces.IGestionCliente;
 import co.uptc.edu.tienda.modelo.Cliente;
+import co.uptc.edu.tienda.modelo.Proveedor;
 
 public class LocalCliente implements IGestionCliente {
 
@@ -146,6 +147,22 @@ public class LocalCliente implements IGestionCliente {
             );
 
             return new ArrayList<Cliente>();
+            
+            
         }
     }
+    
+	public void cambiarEstado(int codigoCliente, EstadoEnum nuevoEstado) {
+		// TODO Auto-generated method stub
+		List<Cliente> lista = leerClientes();
+	    for (Cliente c : lista) {
+	        if (c.getIdCliente() == codigoCliente) {
+	            c.setEstado(nuevoEstado);
+	            break;
+	        }
+	    }
+	    guardar(lista);
+		
+	}
+
 }
