@@ -35,6 +35,15 @@ public class GestionCompra {
     public void incrementarStock(Producto producto, int cantidadComprada) {
         int nuevoStock = producto.getStockActual() + cantidadComprada;
         producto.setStockActual(nuevoStock);
-        this.gestionProducto.actualizarProducto(producto);
+        
+        // Envolvemos la actualización en un try-catch para manejar el posible error
+        try {
+            this.gestionProducto.actualizarProducto(producto);
+        } catch (Exception e) {
+            // Si la regla de negocio falla, imprimimos el error en consola
+        	// TODO: Implementar un sistema de notificaciones o logs. 
+            // Actualmente el error solo se registra en consola.
+            System.err.println("Error al actualizar el stock del producto tras la compra: " + e.getMessage());
+        }
     }
 }

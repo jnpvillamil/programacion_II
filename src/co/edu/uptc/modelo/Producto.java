@@ -3,19 +3,18 @@ package co.edu.uptc.modelo;
 import co.edu.uptc.enums.CategoriaProducto;
 
 public class Producto {
-    private String codigoInterno; 
-    private String nombreProducto; 
-    private CategoriaProducto categoria; 
-    private double precioCompra; 
-    private double precioVenta; 
-    private int stockActual; 
+    private String codigoInterno;
+    private String nombreProducto;
+    private CategoriaProducto categoria;
+    private double precioCompra;
+    private double precioVenta;
+    private int stockActual;
     private int stockMinimo;
-    private int stockMaximo; 
-    private boolean activo; 
+    private int stockMaximo;
+    private boolean activo;
 
-    public Producto(String codigoInterno, String nombreProducto,
-    		CategoriaProducto categoria, double precioCompra, double precioVenta, 
-    		int stockActual, int stockMinimo, int stockMaximo, boolean activo) {
+    public Producto(String codigoInterno, String nombreProducto, CategoriaProducto categoria, 
+                    double precioCompra, double precioVenta, int stockActual, int stockMinimo, int stockMaximo) {
         this.codigoInterno = codigoInterno;
         this.nombreProducto = nombreProducto;
         this.categoria = categoria;
@@ -24,7 +23,7 @@ public class Producto {
         this.stockActual = stockActual;
         this.stockMinimo = stockMinimo;
         this.stockMaximo = stockMaximo;
-        this.activo = activo;
+        this.activo = true; // Activo por defecto al registrarse
     }
 
     public String getCodigoInterno() { return codigoInterno; }
