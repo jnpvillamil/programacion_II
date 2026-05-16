@@ -48,7 +48,6 @@ public class PanelProductos extends JPanel {
         configurarListeners(e);
     }
 
-    // Constructor sin Evento para compatibilidad con PanelInicial que lo llama sin argumento
     public PanelProductos() {
         this(null);
     }
@@ -82,7 +81,6 @@ public class PanelProductos extends JPanel {
     private JPanel crearPanelCentral() {
         JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
 
-        // Formulario izquierda
         JPanel panelForm = new JPanel(new GridBagLayout());
         panelForm.setBorder(BorderFactory.createTitledBorder("Datos del producto"));
         panelForm.setPreferredSize(new Dimension(320, 0));
@@ -116,7 +114,6 @@ public class PanelProductos extends JPanel {
             panelForm.add((Component) campos[i][1], gbc);
         }
 
-        // Tabla derecha
         String[] columnas = {"Código", "Nombre", "Categoría", "P. Compra", "P. Venta", "Stock", "Stock Mín.", "Estado"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -165,7 +162,6 @@ public class PanelProductos extends JPanel {
     // ─────────────────── LISTENERS ───────────────────
 
     private void configurarListeners(Evento evento) {
-        // Clic en fila → llenar formulario
         tabla.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent ev) {
@@ -179,7 +175,7 @@ public class PanelProductos extends JPanel {
                     txtPrecioVenta.setText(modeloTabla.getValueAt(fila, 4).toString());
                     txtStockActual.setText(modeloTabla.getValueAt(fila, 5).toString());
                     txtStockMinimo.setText(modeloTabla.getValueAt(fila, 6).toString());
-                    txtCodigo.setEditable(false); // no cambiar clave primaria al modificar
+                    txtCodigo.setEditable(false);
                 }
             }
         });
@@ -266,46 +262,23 @@ public class PanelProductos extends JPanel {
         }
 
         com.google.gson.Gson gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(lista);
 
-        // Construir objeto reporte
-        java.util.Map<String, Object> reporte = new java.util.LinkedHashMap<>();
-        reporte.put("titulo", "Reporte de Inventario - Sistema Tienda Minorista");
-        reporte.put("fecha", new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
-        reporte.put("totalProductos", lista.size());
+        // Ruta fija al archivo de persistencia del proyecto
+        String rutaArchivo = "Sistema_Tienda_Mnorista/productos.json";
 
-        // Estadísticas básicas
-        double totalInventario = lista.stream()
-            .mapToDouble(p -> p.getPrecioVenta() * p.getStockActual())
-            .sum();
-        long productosActivos = lista.stream().filter(Productodt::isActivo).count();
-        long stockBajo = lista.stream()
-            .filter(p -> p.getStockActual() <= p.getStockMinimo()).count();
-
-        java.util.Map<String, Object> stats = new java.util.LinkedHashMap<>();
-        stats.put("productosActivos", productosActivos);
-        stats.put("productosInactivos", lista.size() - productosActivos);
-        stats.put("productosConStockBajo", stockBajo);
-        stats.put("valorTotalInventario", String.format("$%.2f", totalInventario));
-        reporte.put("estadisticas", stats);
-        reporte.put("productos", lista);
-
-        String json = gson.toJson(reporte);
-
-        // Guardar archivo
-        java.io.File carpeta = new java.io.File("datos");
-        if (!carpeta.exists()) carpeta.mkdir();
-        String nombreArchivo = "datos/reporte_productos_"
-            + new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date()) + ".json";
-
-        try (java.io.FileWriter fw = new java.io.FileWriter(nombreArchivo)) {
+        try (java.io.FileWriter fw = new java.io.FileWriter(rutaArchivo, false)) { // false = sobrescribir
             fw.write(json);
+            double totalInventario = lista.stream()
+                .mapToDouble(p -> p.getPrecioVenta() * p.getStockActual())
+                .sum();
             JOptionPane.showMessageDialog(this,
-                "Reporte generado exitosamente:\n" + nombreArchivo
+                "Archivo actualizado exitosamente:\n" + rutaArchivo
                 + "\n\nProductos: " + lista.size()
                 + "\nValor total inventario: $" + String.format("%.2f", totalInventario),
-                "Reporte JSON generado", JOptionPane.INFORMATION_MESSAGE);
+                "Guardado exitoso", JOptionPane.INFORMATION_MESSAGE);
         } catch (java.io.IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error al generar reporte: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

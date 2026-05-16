@@ -1,1 +1,76 @@
-[{"codigo":"PRD1","nombre":"Arroz Diana","categoria":"Granos","precioCompra":1000.0,"precioVenta":2000.0,"stockActual":20,"stockMinimo":10,"activo":true},{"codigo":"PRD2","nombre":"Leche","categoria":"Lacteos","precioCompra":1500.0,"precioVenta":2500.0,"stockActual":15,"stockMinimo":8,"activo":true},{"codigo":"PRD3","nombre":"1","categoria":"1","precioCompra":1.0,"precioVenta":1.0,"stockActual":1,"stockMinimo":1,"activo":true},{"codigo":"PRD4","nombre":"12","categoria":"12","precioCompra":12.0,"precioVenta":12.0,"stockActual":12,"stockMinimo":12,"activo":true},{"codigo":"PRD5","nombre":"12","categoria":"12","precioCompra":12.0,"precioVenta":12.0,"stockActual":12,"stockMinimo":12,"activo":true},{"codigo":"PRD6","nombre":"1","categoria":"1","precioCompra":1.0,"precioVenta":11.0,"stockActual":11,"stockMinimo":1,"activo":true}]
+[
+  {
+    "codigo": "PRD1",
+    "nombre": "Arroz Diana",
+    "precioCompra": 1000.0,
+    "precioVenta": 2000.0,
+    "stockActual": 20,
+    "stockMinimo": 10,
+    "activo": true
+  },
+  {
+    "codigo": "PRD2",
+    "nombre": "Leche",
+    "precioCompra": 1500.0,
+    "precioVenta": 2500.0,
+    "stockActual": 15,
+    "stockMinimo": 8,
+    "activo": true
+  },
+  {
+    "codigo": "PRD3",
+    "nombre": "1",
+    "precioCompra": 1.0,
+    "precioVenta": 1.0,
+    "stockActual": 1,
+    "stockMinimo": 1,
+    "activo": true
+  },
+  {
+    "codigo": "PRD4",
+    "nombre": "12",
+    "precioCompra": 12.0,
+    "precioVenta": 12.0,
+    "stockActual": 12,
+    "stockMinimo": 12,
+    "activo": true
+  },
+  {
+    "codigo": "PRD5",
+    "nombre": "12",
+    "precioCompra": 12.0,
+    "precioVenta": 12.0,
+    "stockActual": 12,
+    "stockMinimo": 12,
+    "activo": true
+  },
+  {
+    "codigo": "PRD6",
+    "nombre": "1",
+    "precioCompra": 1.0,
+    "precioVenta": 11.0,
+    "stockActual": 11,
+    "stockMinimo": 1,
+    "activo": true
+  },
+  {
+    "codigo": "fghfghfgh",
+    "nombre": "fghfghfghfghfghfgh",
+    "categoria": "GRANOS",
+    "precioCompra": 678678.0,
+    "precioVenta": 678678.0,
+    "stockActual": 678,
+    "stockMinimo": 678,
+    "activo": true
+  },
+  {
+    "codigo": "dfgyhjghjghjd",
+    "nombre": "gdhjghjddghj",
+    "categoria": "GRANOS",
+    "precioCompra": 456546.0,
+    "precioVenta": 6.45456456E8,
+    "stockActual": 456456,
+    "stockMinimo": 456564,
+    "activo": true
+  }
+]

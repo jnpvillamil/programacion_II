@@ -45,7 +45,7 @@ public class Productodt {
     }
 
     public CategoriaProducto getCategoria() {
-        return categoria;
+        return categoria != null ? categoria : CategoriaProducto.values()[0];
     }
 
     public void setCategoria(CategoriaProducto categoria) {
@@ -59,7 +59,10 @@ public class Productodt {
     public void setPrecioCompra(double precioCompra) {
         this.precioCompra = precioCompra;
     }
-
+    private void agregarFilaTabla(Productodt p) {
+        String estado = p.isActivo() ? "Activo" : "Inactivo";
+        String categoriaNombre = p.getCategoria() != null ? p.getCategoria().name() : "SIN_CATEGORIA";
+    }
     public double getPrecioVenta() {
         return precioVenta;
     }
