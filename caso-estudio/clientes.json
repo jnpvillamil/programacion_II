@@ -24,9 +24,8 @@
     "direccionC": "callft",
     "tipoCliente": "Minorista",
     "telefonoC": 65,
-    "estado": "ACTIVO",
     "nombreCompleto": "56",
-    "tipoDocumento": "CC",
+    "tipoDocumento": "RC",
     "numeroDocumento": 5555
   }
 ]

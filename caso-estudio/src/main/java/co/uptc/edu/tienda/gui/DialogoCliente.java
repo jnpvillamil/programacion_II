@@ -33,7 +33,6 @@ public class DialogoCliente extends DialogoCentral {
         txDocumento = new JTextField();
         txDireccion = new JTextField();
         txTelefono = new JTextField();
-        txCorreo = new JTextField();
         cbTipoCliente = new JComboBox<>(TipoClienteEnum.values());
 
         panelCentral.add(
@@ -67,11 +66,6 @@ public class DialogoCliente extends DialogoCentral {
             );
             panelCentral.add (cbTipoCliente); 
         
-
-        panelCentral.add(
-            new JLabel("  Correo:", SwingConstants.RIGHT)
-        );
-        panelCentral.add(txCorreo);
     }
 
     @Override
@@ -93,8 +87,8 @@ public class DialogoCliente extends DialogoCentral {
                 || txDocumento.getText().trim().isEmpty()
                 || txDireccion.getText().trim().isEmpty()
                 || txTelefono.getText().trim().isEmpty()
-                || cbTipoDocumento.getSelectedItem().toString().trim().isEmpty()
-                || txCorreo.getText().trim().isEmpty()) {
+                || cbTipoDocumento.getSelectedItem().toString().trim().isEmpty() )
+                {
 
             throw new Exception(
                 "Ningún campo puede estar vacío."

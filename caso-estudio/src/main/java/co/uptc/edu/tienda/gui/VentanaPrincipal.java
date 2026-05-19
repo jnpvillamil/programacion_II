@@ -11,6 +11,7 @@ import co.uptc.edu.tienda.negocio.GestionSeguridad;
 import co.uptc.edu.tienda.negocio.ProductoConfig;
 import co.uptc.edu.tienda.negocio.ProveedorConfig;
 import co.uptc.edu.tienda.negocio.dto.CredencialDto;
+import co.uptc.edu.tienda.negocio.SeguridadConfig;
 
 import java.awt.*;
 
@@ -28,7 +29,7 @@ public class VentanaPrincipal extends JFrame {
     private JButton btnProducto;
     private JButton btnCliente;
 
-    private GestionSeguridad seguridad;
+    private SeguridadConfig seguridadConfig;
 
     private DialogoProveedor nuevoProveedor;
     private DialogoProducto nuevoProducto;
@@ -56,7 +57,7 @@ public class VentanaPrincipal extends JFrame {
         pProducto = new PanelPadreProducto(evento);
         pCliente = new PanelPadreCliente(evento);
 
-        seguridad = new GestionSeguridad();
+        seguridadConfig = new SeguridadConfig();
 
         proveedorConfig = new ProveedorConfig();
         productoConfig = new ProductoConfig();
@@ -72,107 +73,120 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void loguear() {
-
         try {
-
             CredencialDto validar = pLogin.getCredencialesUsuario();
 
-            if(validar != null && seguridad.validarLogueo(validar)) {
+            if (validar != null) {
+                // 1. Obtenemos el servicio de negocio
+                GestionSeguridad moduloSeguridad = seguridadConfig.getGestSeguridad();
+                
+                // 2. Validamos credenciales y obtenemos el usuario completo
+                co.uptc.edu.tienda.modelo.Usuario usuarioLogueado = moduloSeguridad.validarLogueo(validar);
+                
+                // 3. Evaluamos el Rol del usuario para definir su acceso
+                switch (usuarioLogueado.getRol()) {
+                    
+                    case ADMIN:
+                        // El flujo que ya tienes para el Administrador
+                        remove(pLogin);
 
-                remove(pLogin);
+                        JPanel panelBotones = new JPanel();
+                        btnProveedor = new JButton("Proveedor");
+                        btnProducto = new JButton("Producto");
+                        btnCliente = new JButton("Cliente");
 
-                JPanel panelBotones = new JPanel();
+                        panelBotones.add(btnProveedor);
+                        panelBotones.add(btnProducto);
+                        panelBotones.add(btnCliente);
 
-                btnProveedor = new JButton("Proveedor");
-                btnProducto = new JButton("Producto");
-                btnCliente = new JButton("Cliente");
+                        add(panelBotones, BorderLayout.NORTH);
 
-                panelBotones.add(btnProveedor);
-                panelBotones.add(btnProducto);
-                panelBotones.add(btnCliente);
+                        contenedor = new JPanel(new BorderLayout());
+                        add(contenedor, BorderLayout.CENTER);
+                        contenedor.add(pProveedor);
 
-                add(panelBotones, BorderLayout.NORTH);
+                        // Poblar datos iniciales del Admin
+                        pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+                        pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+                        pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
 
-                contenedor = new JPanel(new BorderLayout());
+                        // Listeners de los botones del Admin
+                        btnProveedor.addActionListener(e -> {
+                            contenedor.removeAll();
+                            contenedor.add(pProveedor);
+                            pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+                            contenedor.repaint();
+                            contenedor.revalidate();
+                        });
 
-                add(contenedor, BorderLayout.CENTER);
+                        btnProducto.addActionListener(e -> {
+                            contenedor.removeAll();
+                            contenedor.add(pProducto);
+                            pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+                            contenedor.repaint();
+                            contenedor.revalidate();
+                        });
 
-                contenedor.add(pProveedor);
+                        btnCliente.addActionListener(e -> {
+                            contenedor.removeAll();
+                            contenedor.add(pCliente);
+                            pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+                            contenedor.repaint();
+                            contenedor.revalidate();
+                        });
 
-                pProveedor.poblarTabla(
-                    proveedorConfig.getGestProveedor().leerProveedores()
-                );
+                        this.setSize(900, 500);
+                        repaint();
+                        revalidate();
+                        break;
 
-                pProducto.poblarTabla(
-                    productoConfig.getGestProducto().listar()
-                );
+                    case CAJERO:
+                        // Preparado para el futuro: Por ahora solo notificamos
+                        JOptionPane.showMessageDialog(
+                            this,
+                            "¡Bienvenido, Cajero(a)! Tu módulo de Ventas y Facturación está en desarrollo.",
+                            "Módulo en Construcción",
+                            JOptionPane.INFORMATION_MESSAGE
+                        );
+                        break;
 
-                pCliente.poblarTabla(
-                    clienteConfig.getGestCliente().leerClientes()
-                );
+                    case ALMACENISTA:
+                        // Preparado para el futuro: Por ahora solo notificamos
+                        JOptionPane.showMessageDialog(
+                            this,
+                            "¡Bienvenido, Almacenista! Tu módulo de Inventario y Stock está en desarrollo.",
+                            "Módulo en Construcción",
+                            JOptionPane.INFORMATION_MESSAGE
+                        );
+                        break;
 
-                btnProveedor.addActionListener(e -> {
+                    case CONTADOR:
+                        // Preparado para el futuro: Por ahora solo notificamos
+                        JOptionPane.showMessageDialog(
+                            this,
+                            "¡Bienvenido, Contador(a)! Tu módulo de Reportes y Balances está en desarrollo.",
+                            "Módulo en Construcción",
+                            JOptionPane.INFORMATION_MESSAGE
+                        );
+                        break;
 
-                    contenedor.removeAll();
-
-                    contenedor.add(pProveedor);
-
-                    pProveedor.poblarTabla(
-                        proveedorConfig.getGestProveedor().leerProveedores()
-                    );
-
-                    contenedor.repaint();
-                    contenedor.revalidate();
-                });
-
-                btnProducto.addActionListener(e -> {
-
-                    contenedor.removeAll();
-
-                    contenedor.add(pProducto);
-
-                    pProducto.poblarTabla(
-                        productoConfig.getGestProducto().listar()
-                    );
-
-                    contenedor.repaint();
-                    contenedor.revalidate();
-                });
-
-                btnCliente.addActionListener(e -> {
-
-                    contenedor.removeAll();
-
-                    contenedor.add(pCliente);
-
-                    pCliente.poblarTabla(
-                        clienteConfig.getGestCliente().leerClientes()
-                    );
-
-                    contenedor.repaint();
-                    contenedor.revalidate();
-                });
-
-                this.setSize(900,500);
-
-                repaint();
-                revalidate();
-
-            } else {
-
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Usuario o contraseña no válida"
-                );
+                    default:
+                        JOptionPane.showMessageDialog(
+                            this,
+                            "Rol no reconocido en el sistema.",
+                            "Error de Permisos",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        break;
+                }
             }
-
         } catch (Exception e) {
-
             e.printStackTrace();
-
             JOptionPane.showMessageDialog(
                 this,
-                e.getMessage()
+                e.getMessage(),
+                "Error de Autenticación",
+                JOptionPane.ERROR_MESSAGE
             );
         }
     }
