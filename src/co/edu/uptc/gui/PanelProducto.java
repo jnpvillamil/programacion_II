@@ -1,4 +1,3 @@
-
 package co.edu.uptc.gui;
 
 import co.edu.uptc.controlador.ControladorProducto;

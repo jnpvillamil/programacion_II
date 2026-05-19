@@ -15,7 +15,7 @@ public class PanelProveedor extends JPanel {
     private DefaultTableModel modeloTabla;
     private JTable tablaProveedores;
 
-    // EL CONSTRUCTOR AHORA RECIBE EL CONTROLADOR CORRECTAMENTE
+
     public PanelProveedor(ControladorProveedor controlador) {
         this.controlador = controlador;
         setLayout(new BorderLayout(20, 20));
