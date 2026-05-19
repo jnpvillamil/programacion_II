@@ -1,31 +1,28 @@
+# ARCHIVOS DE SISTEMA (macOS) 
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# COMPILACIÓN MAVEN
+target/
+*.jar
+*.war
+*.ear
+
+# ARCHIVOS BASURA DE ECLIPSE 
+.metadata/
 bin/
+tmp/
+*.tmp
+*.bak
+.settings/
+.factorypath
+
+# CONFIGURACIÓN LOCAL DE ECLIPSE
+# Los ignoramos para que las rutas locales de Mac no choquen con las de los compañeros en Windows/Linux
+.project
+.classpathbin/
 .settings/
 .classpath
 .project
 .DS_Store
-
-
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# JVM crash logs
-hs_err_pid*
-replay_pid*
