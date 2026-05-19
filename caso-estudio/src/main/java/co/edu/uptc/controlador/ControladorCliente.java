@@ -44,7 +44,7 @@ public class ControladorCliente {
         } else {
             JOptionPane.showMessageDialog(vista, "Error: La identificación ya existe.");
         }
-    }
+    }//
 
     private void buscar() {
         String criterio = vista.getTxtIdentificacion().getText();
