@@ -43,7 +43,7 @@ public class VentanaLogin extends JFrame {
         panelClave.add(txtClave, BorderLayout.CENTER);
 
         btnIngresar = ConstructorComponentes.crearBotonPrimario("INGRESAR");
-
+        btnIngresar.setBackground(new Color(52, 77, 103));
         panelPrincipal.add(lblTitulo);
         panelPrincipal.add(panelUsuario);
         panelPrincipal.add(panelClave);

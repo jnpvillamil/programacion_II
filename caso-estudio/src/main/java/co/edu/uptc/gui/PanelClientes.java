@@ -55,10 +55,13 @@ public class PanelClientes extends PanelBase {
         JPanel panelBotones = new JPanel(new GridLayout(2, 2, 10, 10));
         panelBotones.setOpaque(false);
         btnRegistrar = ConstructorComponentes.crearBotonPrimario("REGISTRAR");
+        btnRegistrar.setBackground(new Color(48, 109, 41));
         btnEditar = ConstructorComponentes.crearBotonPrimario("EDITAR");
+        btnEditar.setBackground(new Color(87, 106, 143));
         btnBuscar = ConstructorComponentes.crearBotonPrimario("BUSCAR");
+        btnBuscar.setBackground(new Color(87, 106, 143));
         btnInactivar = ConstructorComponentes.crearBotonPrimario("INACTIVAR");
-        btnInactivar.setBackground(new Color(198, 40, 40));
+        btnInactivar.setBackground(new Color(196, 74, 58));
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(btnEditar);
