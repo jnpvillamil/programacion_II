@@ -9,20 +9,16 @@ target/
 *.war
 *.ear
 
-# ARCHIVOS BASURA DE ECLIPSE 
+# ARCHIVOS DE ECLIPSE 
 .metadata/
 bin/
 tmp/
 *.tmp
 *.bak
-.settings/
 .factorypath
 
 # CONFIGURACIÓN LOCAL DE ECLIPSE
 # Los ignoramos para que las rutas locales de Mac no choquen con las de los compañeros en Windows/Linux
-.project
-.classpathbin/
-.settings/
 .classpath
 .project
 .DS_Store

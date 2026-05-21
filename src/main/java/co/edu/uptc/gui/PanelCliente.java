@@ -5,6 +5,7 @@ import co.edu.uptc.dto.ClienteResumenDTO;
 import co.edu.uptc.enums.TipoCliente;
 import co.edu.uptc.enums.TipoIdentificacion;
 import co.edu.uptc.modelo.Cliente;
+import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
 import co.edu.uptc.utilidades.ConstructorComponentes;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -29,6 +30,10 @@ public class PanelCliente extends JPanel {
         
         inicializarFormulario();
         inicializarTabla();
+        
+  
+        // Va a la base de datos y llena la JTable inmediatamente al iniciar la app
+        actualizarTabla(); 
     }
 
     private void inicializarFormulario() {
@@ -124,18 +129,22 @@ public class PanelCliente extends JPanel {
     private void buscarCliente() {
         String id = JOptionPane.showInputDialog(this, "Ingrese la identificación a buscar:");
         if (id != null && !id.trim().isEmpty()) {
-            Cliente c = controlador.buscarCliente(id.trim());
-            if (c != null) {
-                txtCodigo.setText(c.getCodigoCliente());
-                cbTipoId.setSelectedItem(c.getTipoIdentificacion());
-                txtIdentificacion.setText(c.getIdentificacion());
-                txtNombres.setText(c.getNombre());
-                txtApellidos.setText(c.getApellido());
-                txtDireccion.setText(c.getDireccion());
-                txtTelefono.setText(c.getTelefono());
-                cbTipoCliente.setSelectedItem(c.getTipoCliente());
-            } else {
-                JOptionPane.showMessageDialog(this, "Cliente no encontrado.");
+            try {
+                Cliente c = controlador.buscarCliente(id.trim());
+                if (c != null) {
+                    txtCodigo.setText(c.getCodigoCliente());
+                    cbTipoId.setSelectedItem(c.getTipoIdentificacion());
+                    txtIdentificacion.setText(c.getIdentificacion());
+                    txtNombres.setText(c.getNombre());
+                    txtApellidos.setText(c.getApellido());
+                    txtDireccion.setText(c.getDireccion());
+                    txtTelefono.setText(c.getTelefono());
+                    cbTipoCliente.setSelectedItem(c.getTipoCliente());
+                } else {
+                    JOptionPane.showMessageDialog(this, "Cliente no encontrado.");
+                }
+            } catch (ExcepcionAccesoDatos e) {
+                mostrarErrorBaseDatos(e);
             }
         }
     }
@@ -163,10 +172,25 @@ public class PanelCliente extends JPanel {
 
     private void actualizarTabla() {
         modeloTabla.setRowCount(0);
-        List<ClienteResumenDTO> lista = controlador.obtenerListadoResumen();
-        for (ClienteResumenDTO dto : lista) {
-            modeloTabla.addRow(new Object[]{dto.getCodigo(), dto.getNombreCompleto(), dto.getTelefono(), dto.getEstado()});
+        try {
+            List<ClienteResumenDTO> lista = controlador.obtenerListadoResumen();
+            for (ClienteResumenDTO dto : lista) {
+                modeloTabla.addRow(new Object[]{
+                        dto.getCodigo(), dto.getNombreCompleto(), dto.getTelefono(), dto.getEstado()
+                });
+            }
+        } catch (ExcepcionAccesoDatos e) {
+            mostrarErrorBaseDatos(e);
         }
+    }
+
+    private void mostrarErrorBaseDatos(ExcepcionAccesoDatos e) {
+        JOptionPane.showMessageDialog(
+                this,
+                ControladorCliente.mensajeParaUsuario(e),
+                "Error de conexión",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     private void limpiarFormulario() {
