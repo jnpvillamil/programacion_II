@@ -2,6 +2,7 @@ package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
 
+
 import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.modelo.Cliente;
 import co.uptc.edu.tienda.modelo.Producto;
@@ -12,6 +13,7 @@ import co.uptc.edu.tienda.negocio.ProductoConfig;
 import co.uptc.edu.tienda.negocio.ProveedorConfig;
 import co.uptc.edu.tienda.negocio.dto.CredencialDto;
 import co.uptc.edu.tienda.negocio.SeguridadConfig;
+import co.uptc.edu.tienda.gui.PanelVenta;
 
 import java.awt.*;
 
@@ -141,13 +143,43 @@ public class VentanaPrincipal extends JFrame {
                         break;
 
                     case CAJERO:
-                        // Preparado para el futuro: Por ahora solo notificamos
-                        JOptionPane.showMessageDialog(
-                            this,
-                            "¡Bienvenido, Cajero(a)! Tu módulo de Ventas y Facturación está en desarrollo.",
-                            "Módulo en Construcción",
-                            JOptionPane.INFORMATION_MESSAGE
+
+                        remove(pLogin);
+
+                        JPanel panelBotonesCajero =
+                                new JPanel();
+
+                        JButton btnVentas =
+                                new JButton("Ventas");
+
+                        panelBotonesCajero.add(btnVentas);
+
+                        add(
+                            panelBotonesCajero,
+                            BorderLayout.NORTH
                         );
+
+                        contenedor =
+                                new JPanel(
+                                        new BorderLayout());
+
+                        add(
+                            contenedor,
+                            BorderLayout.CENTER
+                        );
+
+                        // PANEL VENTAS
+                        PanelVenta pVenta =
+                                new PanelVenta();
+
+                        contenedor.add(pVenta);
+
+                        this.setSize(1000,600);
+
+                        repaint();
+
+                        revalidate();
+
                         break;
 
                     case ALMACENISTA:

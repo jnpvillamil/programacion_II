@@ -28,11 +28,13 @@ public class Producto {
     }
 
     public Producto() {
+
         this.codigoProducto = (int)(Math.random() * 1000);
         this.activo = true;
     }
 
     public Producto(int codigoProducto) {
+
         this.codigoProducto = codigoProducto;
         this.activo = true;
     }
@@ -107,5 +109,12 @@ public class Producto {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    // PARA MOSTRAR BONITO EN JComboBox
+    @Override
+    public String toString() {
+
+        return this.getNombreProducto();
     }
 }
