@@ -10,6 +10,10 @@ import java.util.UUID;
 public class GestionContable {
     private Repositorio<MovimientoContable> persistenciaContable;
 
+    public GestionContable() {
+        this(new co.edu.uptc.persistencia.PersistenciaContable());
+    }
+
     public GestionContable(Repositorio<MovimientoContable> persistenciaContable) {
         this.persistenciaContable = persistenciaContable;
     }

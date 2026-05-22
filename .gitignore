@@ -22,3 +22,6 @@ tmp/
 .classpath
 .project
 .DS_Store
+
+.settings/
+.vscode/

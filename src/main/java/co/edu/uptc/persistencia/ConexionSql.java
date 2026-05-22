@@ -26,9 +26,4 @@ public final class ConexionSql {
         }
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
-
-    /** Alias de compatibilidad; preferir {@link #getConexion()}. */
-    public static Connection obtenerConexion() throws SQLException {
-        return getConexion();
-    }
 }
