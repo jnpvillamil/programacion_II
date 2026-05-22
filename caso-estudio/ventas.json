@@ -92,5 +92,52 @@
     "formaPago": "EFECTIVO",
     "impuestos": 972.99,
     "total": 6093.99
+  },
+  {
+    "numeroFactura": "FACT-3",
+    "fechaHora": "2026-05-20T20:57:06.114173400",
+    "cliente": {
+      "idCliente": 101,
+      "direccionC": "CASA",
+      "tipoCliente": "Minorista",
+      "telefonoC": 22,
+      "estado": "ACTIVO",
+      "nombreCompleto": "ANDREA",
+      "tipoDocumento": "RC",
+      "numeroDocumento": 1
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "121",
+          "precioCompra": 0.0,
+          "precioVenta": 121.0,
+          "stockActual": 0,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true
+        },
+        "cantidad": 1,
+        "precioUnitario": 121.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 101,
+          "nombreProducto": "panela",
+          "precioCompra": 0.0,
+          "precioVenta": 2500.0,
+          "stockActual": 89,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true
+        },
+        "cantidad": 1,
+        "precioUnitario": 2500.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 497.99,
+    "total": 3118.99
   }
 ]

@@ -20,6 +20,7 @@ import java.awt.*;
 public class VentanaPrincipal extends JFrame {
 
     private PanelLogin pLogin;
+    
 
     private PanelPadreProveedor pProveedor;
     private PanelPadreProducto pProducto;
@@ -183,13 +184,36 @@ public class VentanaPrincipal extends JFrame {
                         break;
 
                     case ALMACENISTA:
-                        // Preparado para el futuro: Por ahora solo notificamos
-                        JOptionPane.showMessageDialog(
-                            this,
-                            "¡Bienvenido, Almacenista! Tu módulo de Inventario y Stock está en desarrollo.",
-                            "Módulo en Construcción",
-                            JOptionPane.INFORMATION_MESSAGE
-                        );
+
+                        remove(pLogin);
+
+                        JPanel panelBotonesAlmacen = new JPanel();
+
+                        JButton btnCompras = new JButton("Compras");
+
+                        panelBotonesAlmacen.add(btnCompras);
+
+                        add(panelBotonesAlmacen, BorderLayout.NORTH);
+
+                        contenedor = new JPanel(new BorderLayout());
+                        add(contenedor, BorderLayout.CENTER);
+
+                        // 🔥 AQUÍ CARGAMOS EL MÓDULO DE COMPRAS
+                        PanelCompra pCompra = new PanelCompra();
+                        contenedor.add(pCompra);
+
+                        this.setSize(1000, 600);
+                        repaint();
+                        revalidate();
+
+                        // Evento del botón (por si quieres cambiar vistas después)
+                        btnCompras.addActionListener(e -> {
+                            contenedor.removeAll();
+                            contenedor.add(pCompra);
+                            contenedor.repaint();
+                            contenedor.revalidate();
+                        });
+
                         break;
 
                     case CONTADOR:

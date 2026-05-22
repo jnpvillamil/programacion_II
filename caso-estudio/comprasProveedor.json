@@ -1,0 +1,95 @@
+[
+  {
+    "idCompra": 0,
+    "proveedor": {
+      "codigoProveedor": 100,
+      "razonSocial": "EXITO",
+      "nit": "123",
+      "direccionP": "CALLE 50",
+      "telefonoP": 1224,
+      "correoP": "EXITO@GMAIL.COM",
+      "estado": "ACTIVO"
+    },
+    "fechaCompra": "2026-05-21",
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "121",
+          "precioCompra": 121.0,
+          "precioVenta": 0.0,
+          "stockActual": 3,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true
+        },
+        "cantidad": 2,
+        "precioCompra": 121.0,
+        "subtotal": 242.0
+      }
+    ],
+    "total": 0.0
+  },
+  {
+    "idCompra": 0,
+    "proveedor": {
+      "codigoProveedor": 100,
+      "razonSocial": "EXITO",
+      "nit": "123",
+      "direccionP": "CALLE 50",
+      "telefonoP": 1224,
+      "correoP": "EXITO@GMAIL.COM",
+      "estado": "ACTIVO"
+    },
+    "fechaCompra": "2026-05-21",
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "121",
+          "precioCompra": 121.0,
+          "precioVenta": 0.0,
+          "stockActual": 3,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true
+        },
+        "cantidad": 2,
+        "precioCompra": 121.0,
+        "subtotal": 242.0
+      }
+    ],
+    "total": 0.0
+  },
+  {
+    "idCompra": 0,
+    "proveedor": {
+      "codigoProveedor": 100,
+      "razonSocial": "EXITO",
+      "nit": "123",
+      "direccionP": "CALLE 50",
+      "telefonoP": 1224,
+      "correoP": "EXITO@GMAIL.COM",
+      "estado": "ACTIVO"
+    },
+    "fechaCompra": "2026-05-21",
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 101,
+          "nombreProducto": "panela",
+          "precioCompra": 2200.0,
+          "precioVenta": 0.0,
+          "stockActual": 92,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true
+        },
+        "cantidad": 2,
+        "precioCompra": 2200.0,
+        "subtotal": 4400.0
+      }
+    ],
+    "total": 0.0
+  }
+]

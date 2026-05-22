@@ -13,7 +13,7 @@ public class ProveedorConfig {
 		super();
 		// TODO Auto-generated constructor stub
 		iProveedor = new LocalProveedor();
-		gestProveedor = new GestionProveedor(iProveedor);
+		gestProveedor = new GestionProveedor(iProveedor);	
 	}
 
 	public GestionProveedor getGestProveedor() {
