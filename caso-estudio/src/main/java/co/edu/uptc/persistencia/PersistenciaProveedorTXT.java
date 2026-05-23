@@ -6,15 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Implementación de persistencia para Proveedores usando archivos de texto (.txt).
- * 
- * IMPORTANTE: Esta es una implementación DEMOSTRATIVA para mostrar al profesor
- * cómo el mismo contrato (IPersistenciaProveedor) puede implementarse de manera
- * diferente sin alterar las capas de negocio ni GUI.
- * 
- * En producción, necesitarías optimizar I/O, manejo de concurrencia, serialización, etc.
- */
+
 public class PersistenciaProveedorTXT implements IPersistenciaProveedor {
 
     private static final String ARCHIVO = "proveedores.txt";
@@ -22,7 +14,6 @@ public class PersistenciaProveedorTXT implements IPersistenciaProveedor {
     @Override
     public boolean guardar(Proveedor objeto) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO, true))) {
-            // Formato: codigo|nombre|identificacion|direccion|telefono|correo|activo
             String linea = objeto.getCodigoProveedor() + "|" 
                          + objeto.getNombre() + "|" 
                          + objeto.getIdentificacion() + "|" 

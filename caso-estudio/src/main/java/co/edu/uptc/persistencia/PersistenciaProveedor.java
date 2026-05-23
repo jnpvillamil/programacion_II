@@ -73,7 +73,7 @@ public class PersistenciaProveedor implements IPersistenciaProveedor {
             ps.setString(4, objeto.getTelefono());
             ps.setString(5, objeto.getCorreoElectronico());
             ps.setBoolean(6, objeto.isActivo());
-            ps.setString(7, objeto.getCodigoProveedor()); // El WHERE va al final
+            ps.setString(7, objeto.getCodigoProveedor()); 
             
             return ps.executeUpdate() > 0;
             
