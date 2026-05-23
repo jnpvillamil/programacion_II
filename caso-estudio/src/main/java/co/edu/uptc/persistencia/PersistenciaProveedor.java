@@ -1,76 +1,125 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.Repositorio;
-import co.edu.uptc.modelo.Proveedor;
-import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersistenciaProveedor implements Repositorio<Proveedor> {
-    private final String RUTA = "proveedores.txt";
-    private final String SEP = ";";
+import co.edu.uptc.modelo.Proveedor;
+import co.edu.uptc.utilidades.ConexionBD;
 
-    public PersistenciaProveedor() {
-        try {
-            File file = new File(RUTA);
-            if (!file.exists()) file.createNewFile();
-        } catch (IOException e) { e.printStackTrace(); }
-    }
+public class PersistenciaProveedor {
 
-    @Override
-    public void guardar(Proveedor objeto) {
-        List<Proveedor> lista = listar();
-        lista.add(objeto);
-        escribir(lista);
-    }
-
-    @Override
-    public void eliminar(String id) {
-        List<Proveedor> lista = listar();
-        lista.removeIf(p -> p.getCodigoProveedor().equals(id));
-        escribir(lista);
-    }
-
-    @Override
-    public Proveedor buscarPorId(String id) {
-        for (Proveedor p : listar()) {
-            if (p.getCodigoProveedor().equals(id) || p.getIdentificacion().equals(id)) return p;
+    public boolean guardar(Proveedor objeto) {
+        String sql = "INSERT INTO proveedores (codigo_proveedor, razon_social, nit, direccion, telefono, email, estado) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection con = ConexionBD.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, objeto.getCodigoProveedor());
+            ps.setString(2, objeto.getNombre()); 
+            ps.setString(3, objeto.getIdentificacion()); 
+            ps.setString(4, objeto.getDireccion()); 
+            ps.setString(5, objeto.getTelefono()); 
+            ps.setString(6, objeto.getCorreoElectronico());
+            ps.setBoolean(7, objeto.isActivo());
+            
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al guardar proveedor: " + e.getMessage());
+            return false;
         }
-        return null;
     }
 
-    @Override
     public List<Proveedor> listar() {
         List<Proveedor> lista = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(RUTA))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                String[] d = line.split(SEP);
-                lista.add(new Proveedor(d[0], d[1], d[2], d[3], d[4], d[5], Boolean.parseBoolean(d[6])));
+        String sql = "SELECT * FROM proveedores WHERE estado = true"; 
+        
+        try (Connection con = ConexionBD.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                Proveedor p = new Proveedor();
+                p.setCodigoProveedor(rs.getString("codigo_proveedor"));
+                p.setNombre(rs.getString("razon_social")); // Heredado de Persona
+                p.setIdentificacion(rs.getString("nit")); // Heredado de Persona
+                p.setDireccion(rs.getString("direccion")); // Heredado de Persona
+                p.setTelefono(rs.getString("telefono")); // Heredado de Persona
+                p.setCorreoElectronico(rs.getString("email"));
+                p.setActivo(rs.getBoolean("estado"));
+                
+                lista.add(p);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            System.err.println("Error al listar proveedores: " + e.getMessage());
+        }
         return lista;
     }
 
-    @Override
-    public void actualizar(Proveedor objeto) {
-        List<Proveedor> lista = listar();
-        for (int i = 0; i < lista.size(); i++) {
-            // Se busca por el código único del proveedor para reemplazar los datos
-            if (lista.get(i).getCodigoProveedor().equals(objeto.getCodigoProveedor())) {
-                lista.set(i, objeto);
-            }
+    public boolean actualizar(Proveedor objeto) {
+        String sql = "UPDATE proveedores SET razon_social = ?, nit = ?, direccion = ?, telefono = ?, email = ?, estado = ? WHERE codigo_proveedor = ?";
+        
+        try (Connection con = ConexionBD.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, objeto.getNombre());
+            ps.setString(2, objeto.getIdentificacion());
+            ps.setString(3, objeto.getDireccion());
+            ps.setString(4, objeto.getTelefono());
+            ps.setString(5, objeto.getCorreoElectronico());
+            ps.setBoolean(6, objeto.isActivo());
+            ps.setString(7, objeto.getCodigoProveedor()); // El WHERE va al final
+            
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar proveedor: " + e.getMessage());
+            return false;
         }
-        escribir(lista);
     }
 
-    private void escribir(List<Proveedor> lista) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(RUTA, false))) {
-            for (Proveedor p : lista) {
-                pw.println(p.getNombre() + SEP + p.getIdentificacion() + SEP + p.getDireccion() + SEP + 
-                           p.getTelefono() + SEP + p.getCodigoProveedor() + SEP + p.getCorreoElectronico() + SEP + p.isActivo());
+    public boolean eliminar(String id) {
+        String sql = "UPDATE proveedores SET estado = false WHERE codigo_proveedor = ?";
+        
+        try (Connection con = ConexionBD.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, id);
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar (inactivar) proveedor: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Proveedor buscarPorId(String id) {
+        Proveedor p = null;
+        String sql = "SELECT * FROM proveedores WHERE codigo_proveedor = ?";
+        
+        try (Connection con = ConexionBD.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    p = new Proveedor();
+                    p.setCodigoProveedor(rs.getString("codigo_proveedor"));
+                    p.setNombre(rs.getString("razon_social"));
+                    p.setIdentificacion(rs.getString("nit"));
+                    p.setDireccion(rs.getString("direccion"));
+                    p.setTelefono(rs.getString("telefono"));
+                    p.setCorreoElectronico(rs.getString("email"));
+                    p.setActivo(rs.getBoolean("estado"));
+                }
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar proveedor: " + e.getMessage());
+        }
+        return p;
     }
 }
