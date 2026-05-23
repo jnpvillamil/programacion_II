@@ -1,0 +1,13 @@
+# Ignorar la carpeta de compilación de Maven
+target/
+**/target/
+
+# Ignorar archivos de configuración de IDEs (Eclipse/VS Code)
+.settings/
+.project
+.classpath
+bin/
+
+# Ignorar archivos temporales o de sistema
+.DS_Store
+Thumbs.db
