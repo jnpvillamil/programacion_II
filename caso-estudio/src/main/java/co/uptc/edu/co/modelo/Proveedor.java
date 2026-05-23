@@ -2,92 +2,62 @@ package co.uptc.edu.co.modelo;
 
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
-public class Proveedor {
+public class Proveedor extends Persona {
 
-    private String codigoProveedor;
-    private String razonSocial;
-    private String nit;
-    private String direccion;
-    private String telefono;
-    private String correoElectronico;
-    private EstadoEnum estado;
+	private String codigoProveedor;
+	private String razonSocial;
+	private String nit;
+	private String correoElectronico;
 
-    public Proveedor() {
-    }
+	public Proveedor() {
+		super();
+	}
 
-    public Proveedor(String codigoProveedor, String razonSocial, String nit,
-            String direccion, String telefono, String correoElectronico, EstadoEnum estado) {
-        this.codigoProveedor = codigoProveedor;
-        this.razonSocial = razonSocial;
-        this.nit = nit;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.correoElectronico = correoElectronico;
-        this.estado = estado;
-    }
+	public Proveedor(String codigoProveedor, String razonSocial, String nit, String direccion, String telefono,
+			String correoElectronico, EstadoEnum estado) {
 
-    public String getCodigoProveedor() {
-        return codigoProveedor;
-    }
+		super(direccion, telefono, estado);
+		this.codigoProveedor = codigoProveedor;
+		this.razonSocial = razonSocial;
+		this.nit = nit;
+		this.correoElectronico = correoElectronico;
 
-    public void setCodigoProveedor(String codigoProveedor) {
-        this.codigoProveedor = codigoProveedor;
-    }
+	}
 
-    public String getRazonSocial() {
-        return razonSocial;
-    }
+	public String getCodigoProveedor() {
+		return codigoProveedor;
+	}
 
-    public void setRazonSocial(String razonSocial) {
-        this.razonSocial = razonSocial;
-    }
+	public void setCodigoProveedor(String codigoProveedor) {
+		this.codigoProveedor = codigoProveedor;
+	}
 
-    public String getNit() {
-        return nit;
-    }
+	public String getRazonSocial() {
+		return razonSocial;
+	}
 
-    public void setNit(String nit) {
-        this.nit = nit;
-    }
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
+	}
 
-    public String getDireccion() {
-        return direccion;
-    }
+	public String getNit() {
+		return nit;
+	}
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
+	public void setNit(String nit) {
+		this.nit = nit;
+	}
 
-    public String getTelefono() {
-        return telefono;
-    }
+	public String getCorreoElectronico() {
+		return correoElectronico;
+	}
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
+	public void setCorreoElectronico(String correoElectronico) {
+		this.correoElectronico = correoElectronico;
+	}
 
-    public String getCorreoElectronico() {
-        return correoElectronico;
-    }
-
-    public void setCorreoElectronico(String correoElectronico) {
-        this.correoElectronico = correoElectronico;
-    }
-
-    public EstadoEnum getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoEnum estado) {
-        this.estado = estado;
-    }
-
-    public boolean estaActivo() {
-        return estado == EstadoEnum.ACTIVO;
-    }
-
-    @Override
-    public String toString() {
-        return codigoProveedor + " - " + razonSocial;
-    }
+	@Override
+	public String toString() {
+		return codigoProveedor + " - " + razonSocial;
+	}
 }

@@ -1,16 +1,4 @@
 package co.uptc.edu.co.gui.dialog;
-import co.uptc.edu.co.modelo.Proveedor;
-import co.uptc.edu.co.modelo.enums.EstadoEnum;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import co.uptc.edu.co.gui.Evento;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -19,194 +7,186 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import co.uptc.edu.co.gui.Evento;
+import co.uptc.edu.co.modelo.Proveedor;
+import co.uptc.edu.co.modelo.enums.EstadoEnum;
+
 public class DialogProveedor extends JDialog {
 
-    private JTextField campoCodigo;
-    private JTextField campoRazonSocial;
-    private JTextField campoNit;
-    private JTextField campoDireccion;
-    private JTextField campoTelefono;
-    private JTextField campoCorreoElectronico;
+	private JTextField campoCodigo;
+	private JTextField campoRazonSocial;
+	private JTextField campoNit;
+	private JTextField campoDireccion;
+	private JTextField campoTelefono;
+	private JTextField campoCorreoElectronico;
 
-    private JButton botonGuardar;
-    private JButton botonCancelar;
+	private JButton botonGuardar;
+	private JButton botonCancelar;
 
-    private boolean modoEdicion;
-    private EstadoEnum estadoActual;
-    
-    public DialogProveedor(Frame propietario) {
-        this(propietario, null);
-    }
+	private boolean modoEdicion;
+	private EstadoEnum estadoActual;
 
-    public DialogProveedor(Frame propietario, Evento evento) {
-        super(propietario, "Registrar Proveedor", true);
-        modoEdicion = false;
-        estadoActual = EstadoEnum.ACTIVO;
-        inicializarComponentes();
-        configurarDialogo();
-        agregarComponentes();
-        inicializarEventos(evento);
-    }
 
-    private void inicializarComponentes() {
-        campoCodigo = new JTextField(25);
-        campoRazonSocial = new JTextField(25);
-        campoNit = new JTextField(25);
-        campoDireccion = new JTextField(25);
-        campoTelefono = new JTextField(25);
-        campoCorreoElectronico = new JTextField(25);
+	public DialogProveedor(Frame propietario, Evento evento) {
+		super(propietario, "Registrar Proveedor", true);
+		modoEdicion = false;
+		estadoActual = EstadoEnum.ACTIVO;
+		inicializarComponentes();
+		configurarDialogo();
+		agregarComponentes();
+		inicializarEventos(evento);
+	}
 
-        botonGuardar = new JButton("Guardar");
-        botonCancelar = new JButton("Cancelar");
+	private void inicializarComponentes() {
+		campoCodigo = new JTextField(25);
+		campoRazonSocial = new JTextField(25);
+		campoNit = new JTextField(25);
+		campoDireccion = new JTextField(25);
+		campoTelefono = new JTextField(25);
+		campoCorreoElectronico = new JTextField(25);
 
-        botonGuardar.setBackground(new Color(46, 125, 50));
-        botonGuardar.setForeground(Color.WHITE);
+		botonGuardar = new JButton("Guardar");
+		botonCancelar = new JButton("Cancelar");
 
-        botonCancelar.setBackground(new Color(220, 220, 220));
-    }
+		botonGuardar.setBackground(new Color(46, 125, 50));
+		botonGuardar.setForeground(Color.WHITE);
 
-    private void configurarDialogo() {
-        setSize(420, 500);
-        setLocationRelativeTo(getOwner());
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setResizable(false);
-    }
+		botonCancelar.setBackground(new Color(220, 220, 220));
+	}
 
-    private void agregarComponentes() {
-        JPanel panelPrincipal = new JPanel();
-        panelPrincipal.setLayout(new GridBagLayout());
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+	private void configurarDialogo() {
+		setSize(420, 500);
+		setLocationRelativeTo(getOwner());
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setResizable(false);
+	}
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(8, 0, 4, 0);
+	private void agregarComponentes() {
+		JPanel panelPrincipal = new JPanel();
+		panelPrincipal.setLayout(new GridBagLayout());
+		panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        panelPrincipal.add(new JLabel("Código:"), gbc);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(8, 0, 4, 0);
 
-        gbc.gridy++;
-        panelPrincipal.add(campoCodigo, gbc);
+		panelPrincipal.add(new JLabel("Código:"), gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(new JLabel("Razón social:"), gbc);
+		gbc.gridy++;
+		panelPrincipal.add(campoCodigo, gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(campoRazonSocial, gbc);
+		gbc.gridy++;
+		panelPrincipal.add(new JLabel("Razón social:"), gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(new JLabel("NIT:"), gbc);
+		gbc.gridy++;
+		panelPrincipal.add(campoRazonSocial, gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(campoNit, gbc);
+		gbc.gridy++;
+		panelPrincipal.add(new JLabel("NIT:"), gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(new JLabel("Dirección:"), gbc);
+		gbc.gridy++;
+		panelPrincipal.add(campoNit, gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(campoDireccion, gbc);
+		gbc.gridy++;
+		panelPrincipal.add(new JLabel("Dirección:"), gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(new JLabel("Teléfono:"), gbc);
+		gbc.gridy++;
+		panelPrincipal.add(campoDireccion, gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(campoTelefono, gbc);
+		gbc.gridy++;
+		panelPrincipal.add(new JLabel("Teléfono:"), gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(new JLabel("Correo electrónico:"), gbc);
+		gbc.gridy++;
+		panelPrincipal.add(campoTelefono, gbc);
 
-        gbc.gridy++;
-        panelPrincipal.add(campoCorreoElectronico, gbc);
+		gbc.gridy++;
+		panelPrincipal.add(new JLabel("Correo electrónico:"), gbc);
 
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        panelBotones.add(botonGuardar);
-        panelBotones.add(botonCancelar);
+		gbc.gridy++;
+		panelPrincipal.add(campoCorreoElectronico, gbc);
 
-        gbc.gridy++;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(20, 0, 0, 0);
-        panelPrincipal.add(panelBotones, gbc);
+		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+		panelBotones.add(botonGuardar);
+		panelBotones.add(botonCancelar);
 
-        add(panelPrincipal);
-    }
+		gbc.gridy++;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.anchor = GridBagConstraints.CENTER;
+		gbc.insets = new Insets(20, 0, 0, 0);
+		panelPrincipal.add(panelBotones, gbc);
 
-    private void inicializarEventos(Evento evento) {
-        botonCancelar.addActionListener(e -> dispose());
+		add(panelPrincipal);
+	}
 
-        if (evento != null) {
-            botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_PROVEEDOR);
-            botonGuardar.addActionListener(evento);
-        } else {
-            botonGuardar.addActionListener(e -> {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Formulario de proveedor abierto correctamente.",
-                        "Información",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            });
-        }
-    }
+	private void inicializarEventos(Evento evento) {
+		botonCancelar.addActionListener(e -> dispose());
 
-    public void configurarModoEdicion() {
-        modoEdicion = true;
-        setTitle("Editar Proveedor");
-        botonGuardar.setText("Actualizar");
-        botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_EDICION_PROVEEDOR);
-        campoCodigo.setEditable(false);
-    }
-    public Proveedor obtenerProveedor() throws Exception {
-        validarCampos();
+	    botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_PROVEEDOR);
+	    botonGuardar.addActionListener(evento);
+	}
 
-        EstadoEnum estado = modoEdicion ? estadoActual : EstadoEnum.ACTIVO;
+	public void configurarModoEdicion() {
+		modoEdicion = true;
+		setTitle("Editar Proveedor");
+		botonGuardar.setText("Actualizar");
+		botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_EDICION_PROVEEDOR);
+		campoCodigo.setEditable(false);
+	}
 
-        return new Proveedor(
-                campoCodigo.getText().trim(),
-                campoRazonSocial.getText().trim(),
-                campoNit.getText().trim(),
-                campoDireccion.getText().trim(),
-                campoTelefono.getText().trim(),
-                campoCorreoElectronico.getText().trim(),
-                estado
-        );
-    }
+	public Proveedor obtenerProveedor() throws Exception {
+		validarCampos();
 
-public void cargarProveedor(Proveedor proveedor) {
-    campoCodigo.setText(proveedor.getCodigoProveedor());
-    campoRazonSocial.setText(proveedor.getRazonSocial());
-    campoNit.setText(proveedor.getNit());
-    campoDireccion.setText(proveedor.getDireccion());
-    campoTelefono.setText(proveedor.getTelefono());
-    campoCorreoElectronico.setText(proveedor.getCorreoElectronico());
-    estadoActual = proveedor.getEstado();
-}
+		EstadoEnum estado = modoEdicion ? estadoActual : EstadoEnum.ACTIVO;
 
-private void validarCampos() throws Exception {
-    if (campoCodigo.getText().trim().isEmpty()) {
-        throw new Exception("El código es obligatorio.");
-    }
+		return new Proveedor(campoCodigo.getText().trim(), campoRazonSocial.getText().trim(), campoNit.getText().trim(),
+				campoDireccion.getText().trim(), campoTelefono.getText().trim(),
+				campoCorreoElectronico.getText().trim(), estado);
+	}
 
-    if (campoRazonSocial.getText().trim().isEmpty()) {
-        throw new Exception("La razón social es obligatoria.");
-    }
+	public void cargarProveedor(Proveedor proveedor) {
+		campoCodigo.setText(proveedor.getCodigoProveedor());
+		campoRazonSocial.setText(proveedor.getRazonSocial());
+		campoNit.setText(proveedor.getNit());
+		campoDireccion.setText(proveedor.getDireccion());
+		campoTelefono.setText(proveedor.getTelefono());
+		campoCorreoElectronico.setText(proveedor.getCorreoElectronico());
+		estadoActual = proveedor.getEstado();
+	}
 
-    if (campoNit.getText().trim().isEmpty()) {
-        throw new Exception("El NIT es obligatorio.");
-    }
+	private void validarCampos() throws Exception {
+		if (campoCodigo.getText().trim().isEmpty()) {
+			throw new Exception("El código es obligatorio.");
+		}
 
-    if (campoDireccion.getText().trim().isEmpty()) {
-        throw new Exception("La dirección es obligatoria.");
-    }
+		if (campoRazonSocial.getText().trim().isEmpty()) {
+			throw new Exception("La razón social es obligatoria.");
+		}
 
-    if (campoTelefono.getText().trim().isEmpty()) {
-        throw new Exception("El teléfono es obligatorio.");
-    }
+		if (campoNit.getText().trim().isEmpty()) {
+			throw new Exception("El NIT es obligatorio.");
+		}
 
-    if (campoCorreoElectronico.getText().trim().isEmpty()) {
-        throw new Exception("El correo electrónico es obligatorio.");
-    }
-}
+		if (campoDireccion.getText().trim().isEmpty()) {
+			throw new Exception("La dirección es obligatoria.");
+		}
+
+		if (campoTelefono.getText().trim().isEmpty()) {
+			throw new Exception("El teléfono es obligatorio.");
+		}
+
+		if (campoCorreoElectronico.getText().trim().isEmpty()) {
+			throw new Exception("El correo electrónico es obligatorio.");
+		}
+	}
 }

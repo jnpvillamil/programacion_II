@@ -9,33 +9,32 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import co.uptc.edu.co.config.TiendaConfig;
-import co.uptc.edu.co.gui.dialog.DialogActualizarPrecio;
+import co.uptc.edu.co.gui.dialog.DialogAnularCompra;
 import co.uptc.edu.co.gui.dialog.DialogAnularVenta;
 import co.uptc.edu.co.gui.dialog.DialogCliente;
+import co.uptc.edu.co.gui.dialog.DialogCompra;
+import co.uptc.edu.co.gui.dialog.DialogDetalleCompra;
+import co.uptc.edu.co.gui.dialog.DialogDetalleContable;
+import co.uptc.edu.co.gui.dialog.DialogDetalleVenta;
 import co.uptc.edu.co.gui.dialog.DialogDevolucionVenta;
+import co.uptc.edu.co.gui.dialog.DialogFacturaVenta;
 import co.uptc.edu.co.gui.dialog.DialogHistorialCliente;
 import co.uptc.edu.co.gui.dialog.DialogMovimientoInventario;
 import co.uptc.edu.co.gui.dialog.DialogProducto;
 import co.uptc.edu.co.gui.dialog.DialogProveedor;
 import co.uptc.edu.co.gui.dialog.DialogVenta;
-import co.uptc.edu.co.gui.dialog.DialogDetalleVenta;
-import co.uptc.edu.co.gui.dialog.DialogCompra;
-import co.uptc.edu.co.gui.dialog.DialogDetalleCompra;
-import co.uptc.edu.co.gui.dialog.DialogAnularCompra;
-import co.uptc.edu.co.gui.dialog.DialogDetalleContable;
-import co.uptc.edu.co.gui.dialog.DialogFacturaVenta;
+import co.uptc.edu.co.interfaces.IGestionCliente;
+import co.uptc.edu.co.interfaces.IGestionCompra;
+import co.uptc.edu.co.interfaces.IGestionProducto;
+import co.uptc.edu.co.interfaces.IGestionProveedor;
+import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
-import co.uptc.edu.co.interfaces.IGestionProveedor;
-import co.uptc.edu.co.interfaces.IGestionCliente;
-import co.uptc.edu.co.interfaces.IGestionProducto;
-import co.uptc.edu.co.interfaces.IGestionVenta;
-import co.uptc.edu.co.interfaces.IGestionCompra;
 
 public class Evento implements ActionListener {
 
-	// CONSTANTES DE NAVEGACION
+    // CONSTANTES DE NAVEGACION
     public static final String PRODUCTOS = "Productos";
     public static final String CLIENTES = "Clientes";
     public static final String PROVEEDORES = "Proveedores";
@@ -49,11 +48,9 @@ public class Evento implements ActionListener {
     public static final String CMD_NUEVO_PRODUCTO = "NuevoProducto";
     public static final String CMD_EDITAR_PRODUCTO = "EditarProducto";
     public static final String CMD_ESTADO_PRODUCTO = "CambiarEstadoProducto";
-    public static final String CMD_ACTUALIZAR_PRECIO_PRODUCTO = "ActualizarPrecioProducto";
     public static final String CMD_MOVIMIENTO_INVENTARIO = "MovimientoInventarioProducto";
     public static final String CMD_CONFIRMAR_PRODUCTO = "ConfirmarProducto";
     public static final String CMD_CONFIRMAR_EDICION_PRODUCTO = "ConfirmarEdicionProducto";
-    public static final String CMD_CONFIRMAR_ACTUALIZACION_PRECIO_PRODUCTO = "ConfirmarActualizacionPrecioProducto";
     public static final String CMD_CONFIRMAR_MOVIMIENTO_INVENTARIO = "ConfirmarMovimientoInventario";
 
     // CONSTANTES DE COMANDOS - CLIENTE
@@ -70,9 +67,8 @@ public class Evento implements ActionListener {
     public static final String CMD_ESTADO_PROVEEDOR = "EstadoProveedor";
     public static final String CMD_CONFIRMAR_PROVEEDOR = "ConfirmarProveedor";
     public static final String CMD_CONFIRMAR_EDICION_PROVEEDOR = "ConfirmarEdicionProveedor";
-    public static final String CMD_CONFIRMAR_REGISTRO_COMPRA = "ConfirmarRegistroCompra";
 
-   // CONSTANTES DE COMANDOS - VENTA
+    // CONSTANTES DE COMANDOS - VENTA
     public static final String CMD_NUEVA_VENTA = "NuevaVenta";
     public static final String CMD_CONFIRMAR_VENTA = "ConfirmarVenta";
     public static final String CMD_ANULAR_VENTA = "AnularVenta";
@@ -80,6 +76,7 @@ public class Evento implements ActionListener {
     public static final String CMD_DEVOLUCION_VENTA = "DevolucionVenta";
     public static final String CMD_GUARDAR_DEVOLUCION_VENTA = "GuardarDevolucionVenta";
     public static final String CMD_VER_DETALLE_VENTA = "VerDetalleVenta";
+    public static final String CMD_FACTURA_VENTA = "FacturaVenta";
 
     // CONSTANTES DE COMANDOS - COMPRA
     public static final String CMD_NUEVA_COMPRA = "NuevaCompra";
@@ -87,15 +84,13 @@ public class Evento implements ActionListener {
     public static final String CMD_VER_DETALLE_COMPRA = "VerDetalleCompra";
     public static final String CMD_AGREGAR_PRODUCTO_COMPRA = "AgregarProductoCompra";
     public static final String CMD_ANULAR_COMPRA = "AnularCompra";
-    public static final String CMD_FACTURA_VENTA = "FacturaVenta";
-    // CONSTANTES CONTABILIDAD
+    public static final String CMD_CONFIRMAR_REGISTRO_COMPRA = "ConfirmarRegistroCompra";
+
+    // CONSTANTES DE COMANDOS - CONTABILIDAD
     public static final String CMD_VER_DETALLE_CONTABLE = "VerDetalleContable";
 
-  
-
-    // ATRIBUTOs
+    // ATRIBUTOS
     private VentanaPrincipal ventana;
-    private TiendaConfig config;
     private IGestionProducto gestionProducto;
     private IGestionCliente gestionCliente;
     private IGestionProveedor gestionProveedor;
@@ -105,17 +100,14 @@ public class Evento implements ActionListener {
     // CONSTRUCTOR
     public Evento(VentanaPrincipal ventana, TiendaConfig config) {
         this.ventana = ventana;
-        this.config = config;
         this.gestionProducto = config.getGestionProducto();
         this.gestionCliente = config.getGestionCliente();
         this.gestionProveedor = config.getGestionProveedor();
         this.gestionVenta = config.getGestionVenta();
         this.gestionCompra = config.getGestionCompra();
-        
-        
     }
 
-    // MÉTODO PRINCIPAL DE EVENTOS
+    // METODO PRINCIPAL DE EVENTOS
     @Override
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
@@ -133,7 +125,7 @@ public class Evento implements ActionListener {
         }
 
         if (manejarEventosProveedor(comando, e)) {
-             return;
+            return;
         }
 
         if (manejarEventosVenta(comando, e)) {
@@ -143,13 +135,13 @@ public class Evento implements ActionListener {
         if (manejarEventosCompra(comando, e)) {
             return;
         }
+
         if (manejarEventosContabilidad(comando)) {
             return;
         }
     }
 
-    // MÉTODO PRINCIPAL DE EVENTOS
-    // Cambia entre los paneles principales del sistema
+    // NAVEGACION
     private boolean manejarNavegacion(String comando) {
         switch (comando) {
             case PRODUCTOS:
@@ -192,9 +184,7 @@ public class Evento implements ActionListener {
         }
     }
 
-   
     // EVENTOS DE PRODUCTO
-    // Maneja los comandos relacionados con el módulo de productos
     private boolean manejarEventosProducto(String comando, ActionEvent e) {
         switch (comando) {
             case CMD_NUEVO_PRODUCTO:
@@ -217,14 +207,6 @@ public class Evento implements ActionListener {
                 cambiarEstadoProductoSeleccionado();
                 return true;
 
-            case CMD_ACTUALIZAR_PRECIO_PRODUCTO:
-                abrirDialogoActualizarPrecio();
-                return true;
-
-            case CMD_CONFIRMAR_ACTUALIZACION_PRECIO_PRODUCTO:
-                actualizarPrecioProducto(e);
-                return true;
-
             case CMD_MOVIMIENTO_INVENTARIO:
                 abrirDialogoMovimientoInventario();
                 return true;
@@ -238,7 +220,6 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Obtiene el producto seleccionado desde la tabla
     private Producto obtenerProductoSeleccionado() throws Exception {
         PanelProducto panelProducto = ventana.getPanelProducto();
 
@@ -250,28 +231,20 @@ public class Evento implements ActionListener {
         Producto producto = gestionProducto.buscarProductoPorCodigo(codigo);
 
         if (producto == null) {
-            throw new Exception("No se encontró el producto seleccionado.");
+            throw new Exception("No se encontro el producto seleccionado.");
         }
 
         return producto;
     }
 
-    // Abre el diálogo para registrar un nuevo producto
     private void abrirDialogoNuevoProducto() {
         DialogProducto dialog = new DialogProducto(ventana, this);
         dialog.setVisible(true);
     }
 
-    // Registra un nuevo producto desde el diálogo
     private void registrarProducto(ActionEvent e) {
         try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogProducto)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de producto.");
-            }
-
-            DialogProducto dialog = (DialogProducto) ventanaPadre;
+            DialogProducto dialog = obtenerDialogProducto(e);
             Producto producto = dialog.obtenerProducto();
 
             gestionProducto.registrarProducto(producto);
@@ -284,7 +257,6 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Abre el formulario en modo edición con los datos cargados
     private void abrirFormularioEditarProducto() {
         try {
             Producto producto = obtenerProductoSeleccionado();
@@ -299,16 +271,9 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Actualiza un producto existente
     private void editarProducto(ActionEvent e) {
         try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogProducto)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de edición.");
-            }
-
-            DialogProducto dialog = (DialogProducto) ventanaPadre;
+            DialogProducto dialog = obtenerDialogProducto(e);
             Producto productoEditado = dialog.obtenerProducto();
 
             gestionProducto.actualizarProducto(productoEditado);
@@ -321,15 +286,14 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Cambia el estado del producto seleccionado
     private void cambiarEstadoProductoSeleccionado() {
         try {
             Producto producto = obtenerProductoSeleccionado();
             boolean estabaActivo = producto.estaActivo();
 
             String mensaje = estabaActivo
-                    ? "¿Está seguro de inactivar este producto?"
-                    : "¿Está seguro de activar este producto?";
+                    ? "Esta seguro de inactivar este producto?"
+                    : "Esta seguro de activar este producto?";
 
             int confirmacion = JOptionPane.showConfirmDialog(
                     ventana,
@@ -357,47 +321,6 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Abre el diálogo para actualizar precios de un producto
-    private void abrirDialogoActualizarPrecio() {
-        try {
-            Producto producto = obtenerProductoSeleccionado();
-
-            DialogActualizarPrecio dialog = new DialogActualizarPrecio(ventana, this);
-            dialog.cargarProducto(producto);
-            dialog.setVisible(true);
-
-        } catch (Exception ex) {
-            mostrarError(ex.getMessage());
-        }
-    }
-
-    // Actualiza el precio de compra y venta del producto
-    private void actualizarPrecioProducto(ActionEvent e) {
-        try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogActualizarPrecio)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de actualización de precio.");
-            }
-
-            DialogActualizarPrecio dialog = (DialogActualizarPrecio) ventanaPadre;
-
-            String codigo = dialog.obtenerCodigoProducto();
-            double precioCompra = dialog.obtenerNuevoPrecioCompra();
-            double precioVenta = dialog.obtenerNuevoPrecioVenta();
-
-            gestionProducto.actualizarPrecioProducto(codigo, precioCompra, precioVenta);
-
-            mostrarInformacion("Precio actualizado exitosamente.");
-            refrescarTablaProductos();
-            dialog.dispose();
-
-        } catch (Exception ex) {
-            mostrarError(ex.getMessage());
-        }
-    }
-
-    // Abre el diálogo para registrar movimientos de inventario
     private void abrirDialogoMovimientoInventario() {
         try {
             Producto producto = obtenerProductoSeleccionado();
@@ -411,16 +334,9 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Registra una entrada o salida de inventario
     private void registrarMovimientoInventario(ActionEvent e) {
         try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogMovimientoInventario)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de movimiento.");
-            }
-
-            DialogMovimientoInventario dialog = (DialogMovimientoInventario) ventanaPadre;
+            DialogMovimientoInventario dialog = obtenerDialogMovimientoInventario(e);
 
             String codigo = dialog.obtenerCodigoProducto();
             String tipoMovimiento = dialog.obtenerTipoMovimiento();
@@ -437,14 +353,12 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Refresca la tabla de productos consultando nuevamente al negocio
     private void refrescarTablaProductos() {
         PanelProducto panelProducto = ventana.getPanelProducto();
         panelProducto.cargarProductos(gestionProducto.obtenerProductos());
     }
 
     // EVENTOS DE CLIENTE
-    // Maneja los comandos relacionados con el módulo de clientes
     private boolean manejarEventosCliente(String comando, ActionEvent e) {
         switch (comando) {
             case CMD_NUEVO_CLIENTE:
@@ -476,7 +390,6 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Obtiene el cliente seleccionado desde la tabla
     private Cliente obtenerClienteSeleccionado() throws Exception {
         PanelCliente panelCliente = ventana.getPanelCliente();
 
@@ -488,28 +401,20 @@ public class Evento implements ActionListener {
         Cliente cliente = gestionCliente.buscarClientePorCodigo(codigo);
 
         if (cliente == null) {
-            throw new Exception("No se encontró el cliente seleccionado.");
+            throw new Exception("No se encontro el cliente seleccionado.");
         }
 
         return cliente;
     }
 
-    // Abre el diálogo para registrar un nuevo cliente
     private void abrirDialogoNuevoCliente() {
         DialogCliente dialog = new DialogCliente(ventana, this);
         dialog.setVisible(true);
     }
 
-    // Registra un nuevo cliente desde el formulario
     private void registrarCliente(ActionEvent e) {
         try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogCliente)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de cliente.");
-            }
-
-            DialogCliente dialog = (DialogCliente) ventanaPadre;
+            DialogCliente dialog = obtenerDialogCliente(e);
             Cliente cliente = dialog.obtenerCliente();
 
             gestionCliente.registrarCliente(cliente);
@@ -522,7 +427,6 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Abre el formulario de edición de cliente con datos precargados
     private void abrirFormularioEditarCliente() {
         try {
             Cliente cliente = obtenerClienteSeleccionado();
@@ -537,16 +441,9 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Actualiza un cliente existente
     private void editarCliente(ActionEvent e) {
         try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogCliente)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de edición de cliente.");
-            }
-
-            DialogCliente dialog = (DialogCliente) ventanaPadre;
+            DialogCliente dialog = obtenerDialogCliente(e);
             Cliente clienteEditado = dialog.obtenerCliente();
 
             gestionCliente.actualizarCliente(clienteEditado);
@@ -559,15 +456,14 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Cambia el estado del cliente seleccionado
     private void cambiarEstadoClienteSeleccionado() {
         try {
             Cliente cliente = obtenerClienteSeleccionado();
             boolean estabaActivo = cliente.estaActivo();
 
             String mensaje = estabaActivo
-                    ? "¿Está seguro de inactivar este cliente?"
-                    : "¿Está seguro de activar este cliente?";
+                    ? "Esta seguro de inactivar este cliente?"
+                    : "Esta seguro de activar este cliente?";
 
             int confirmacion = JOptionPane.showConfirmDialog(
                     ventana,
@@ -596,7 +492,6 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Abre el historial del cliente seleccionado
     private void abrirHistorialCliente() {
         try {
             Cliente cliente = obtenerClienteSeleccionado();
@@ -610,160 +505,144 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Refresca la tabla de clientes consultando nuevamente al negocio
     private void refrescarTablaClientes() {
         PanelCliente panelCliente = ventana.getPanelCliente();
         panelCliente.cargarClientes(gestionCliente.obtenerClientes());
     }
 
     // EVENTOS DE PROVEEDOR
-    // Maneja los comandos relacionados con el módulo de proveedores
-   // EVENTOS DE PROVEEDOR
-private boolean manejarEventosProveedor(String comando, ActionEvent e) {
-    switch (comando) {
-        case CMD_NUEVO_PROVEEDOR:
-            abrirDialogoNuevoProveedor();
-            return true;
+    private boolean manejarEventosProveedor(String comando, ActionEvent e) {
+        switch (comando) {
+            case CMD_NUEVO_PROVEEDOR:
+                abrirDialogoNuevoProveedor();
+                return true;
 
-        case CMD_CONFIRMAR_PROVEEDOR:
-            registrarProveedor(e);
-            return true;
+            case CMD_CONFIRMAR_PROVEEDOR:
+                registrarProveedor(e);
+                return true;
 
-        case CMD_EDITAR_PROVEEDOR:
-            abrirFormularioEditarProveedor();
-            return true;
+            case CMD_EDITAR_PROVEEDOR:
+                abrirFormularioEditarProveedor();
+                return true;
 
-        case CMD_CONFIRMAR_EDICION_PROVEEDOR:
-            editarProveedor(e);
-            return true;
+            case CMD_CONFIRMAR_EDICION_PROVEEDOR:
+                editarProveedor(e);
+                return true;
 
-        case CMD_ESTADO_PROVEEDOR:
-            cambiarEstadoProveedorSeleccionado();
-            return true;
+            case CMD_ESTADO_PROVEEDOR:
+                cambiarEstadoProveedorSeleccionado();
+                return true;
 
-        default:
-            return false;
-    }
-}
-
-private Proveedor obtenerProveedorSeleccionado() throws Exception {
-    PanelProveedor panelProveedor = ventana.getPanelProveedor();
-
-    if (!panelProveedor.haySeleccion()) {
-        throw new Exception("Debe seleccionar un proveedor.");
+            default:
+                return false;
+        }
     }
 
-    String codigo = panelProveedor.obtenerCodigoSeleccionado();
-    Proveedor proveedor = gestionProveedor.buscarProveedorPorCodigo(codigo);
+    private Proveedor obtenerProveedorSeleccionado() throws Exception {
+        PanelProveedor panelProveedor = ventana.getPanelProveedor();
 
-    if (proveedor == null) {
-        throw new Exception("No se encontró el proveedor seleccionado.");
-    }
-
-    return proveedor;
-}
-
-private void abrirDialogoNuevoProveedor() {
-    DialogProveedor dialog = new DialogProveedor(ventana, this);
-    dialog.setVisible(true);
-}
-
-private void registrarProveedor(ActionEvent e) {
-    try {
-        Window ventanaPadre = obtenerVentanaPadre(e);
-
-        if (!(ventanaPadre instanceof DialogProveedor)) {
-            throw new Exception("Error interno: no se pudo identificar el formulario de proveedor.");
+        if (!panelProveedor.haySeleccion()) {
+            throw new Exception("Debe seleccionar un proveedor.");
         }
 
-        DialogProveedor dialog = (DialogProveedor) ventanaPadre;
-        Proveedor proveedor = dialog.obtenerProveedor();
+        String codigo = panelProveedor.obtenerCodigoSeleccionado();
+        Proveedor proveedor = gestionProveedor.buscarProveedorPorCodigo(codigo);
 
-        gestionProveedor.registrarProveedor(proveedor);
-        mostrarInformacion("Proveedor registrado exitosamente.");
-        refrescarTablaProveedores();
-        dialog.dispose();
+        if (proveedor == null) {
+            throw new Exception("No se encontro el proveedor seleccionado.");
+        }
 
-    } catch (Exception ex) {
-        mostrarError(ex.getMessage());
+        return proveedor;
     }
-}
 
-private void abrirFormularioEditarProveedor() {
-    try {
-        Proveedor proveedor = obtenerProveedorSeleccionado();
-
+    private void abrirDialogoNuevoProveedor() {
         DialogProveedor dialog = new DialogProveedor(ventana, this);
-        dialog.configurarModoEdicion();
-        dialog.cargarProveedor(proveedor);
         dialog.setVisible(true);
-
-    } catch (Exception ex) {
-        mostrarError(ex.getMessage());
     }
-}
 
-private void editarProveedor(ActionEvent e) {
-    try {
-        Window ventanaPadre = obtenerVentanaPadre(e);
+    private void registrarProveedor(ActionEvent e) {
+        try {
+            DialogProveedor dialog = obtenerDialogProveedor(e);
+            Proveedor proveedor = dialog.obtenerProveedor();
 
-        if (!(ventanaPadre instanceof DialogProveedor)) {
-            throw new Exception("Error interno: no se pudo identificar el formulario de edición de proveedor.");
+            gestionProveedor.registrarProveedor(proveedor);
+            mostrarInformacion("Proveedor registrado exitosamente.");
+            refrescarTablaProveedores();
+            dialog.dispose();
+
+        } catch (Exception ex) {
+            mostrarError(ex.getMessage());
         }
-
-        DialogProveedor dialog = (DialogProveedor) ventanaPadre;
-        Proveedor proveedorEditado = dialog.obtenerProveedor();
-
-        gestionProveedor.actualizarProveedor(proveedorEditado);
-        mostrarInformacion("Proveedor editado exitosamente.");
-        refrescarTablaProveedores();
-        dialog.dispose();
-
-    } catch (Exception ex) {
-        mostrarError(ex.getMessage());
     }
-}
 
-private void cambiarEstadoProveedorSeleccionado() {
-    try {
-        Proveedor proveedor = obtenerProveedorSeleccionado();
-        boolean estabaActivo = proveedor.estaActivo();
+    private void abrirFormularioEditarProveedor() {
+        try {
+            Proveedor proveedor = obtenerProveedorSeleccionado();
 
-        int confirmacion = JOptionPane.showConfirmDialog(
-                ventana,
-                estabaActivo
-                        ? "¿Está seguro de inactivar este proveedor?"
-                        : "¿Está seguro de activar este proveedor?",
-                "Confirmar cambio de estado",
-                JOptionPane.YES_NO_OPTION
-        );
+            DialogProveedor dialog = new DialogProveedor(ventana, this);
+            dialog.configurarModoEdicion();
+            dialog.cargarProveedor(proveedor);
+            dialog.setVisible(true);
 
-        if (confirmacion != JOptionPane.YES_OPTION) {
-            return;
+        } catch (Exception ex) {
+            mostrarError(ex.getMessage());
         }
-
-        gestionProveedor.cambiarEstadoProveedor(proveedor.getCodigoProveedor());
-
-        mostrarInformacion(
-                estabaActivo
-                        ? "Proveedor inactivado exitosamente."
-                        : "Proveedor activado exitosamente."
-        );
-
-        refrescarTablaProveedores();
-
-    } catch (Exception ex) {
-        mostrarError(ex.getMessage());
     }
-}
 
-private void refrescarTablaProveedores() {
-    PanelProveedor panelProveedor = ventana.getPanelProveedor();
-    panelProveedor.cargarProveedores(gestionProveedor.obtenerProveedores());
-}
- 
+    private void editarProveedor(ActionEvent e) {
+        try {
+            DialogProveedor dialog = obtenerDialogProveedor(e);
+            Proveedor proveedorEditado = dialog.obtenerProveedor();
+
+            gestionProveedor.actualizarProveedor(proveedorEditado);
+            mostrarInformacion("Proveedor editado exitosamente.");
+            refrescarTablaProveedores();
+            dialog.dispose();
+
+        } catch (Exception ex) {
+            mostrarError(ex.getMessage());
+        }
+    }
+
+    private void cambiarEstadoProveedorSeleccionado() {
+        try {
+            Proveedor proveedor = obtenerProveedorSeleccionado();
+            boolean estabaActivo = proveedor.estaActivo();
+
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    ventana,
+                    estabaActivo
+                            ? "Esta seguro de inactivar este proveedor?"
+                            : "Esta seguro de activar este proveedor?",
+                    "Confirmar cambio de estado",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirmacion != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            gestionProveedor.cambiarEstadoProveedor(proveedor.getCodigoProveedor());
+
+            mostrarInformacion(
+                    estabaActivo
+                            ? "Proveedor inactivado exitosamente."
+                            : "Proveedor activado exitosamente."
+            );
+
+            refrescarTablaProveedores();
+
+        } catch (Exception ex) {
+            mostrarError(ex.getMessage());
+        }
+    }
+
+    private void refrescarTablaProveedores() {
+        PanelProveedor panelProveedor = ventana.getPanelProveedor();
+        panelProveedor.cargarProveedores(gestionProveedor.obtenerProveedores());
+    }
+
     // EVENTOS DE VENTA
-    // Maneja los comandos relacionados con el módulo de ventas
     private boolean manejarEventosVenta(String comando, ActionEvent e) {
         switch (comando) {
             case CMD_NUEVA_VENTA:
@@ -793,6 +672,7 @@ private void refrescarTablaProveedores() {
             case CMD_VER_DETALLE_VENTA:
                 abrirDialogoDetalleVenta();
                 return true;
+
             case CMD_FACTURA_VENTA:
                 abrirDialogoFacturaVenta();
                 return true;
@@ -802,100 +682,44 @@ private void refrescarTablaProveedores() {
         }
     }
 
-    // Abre el diálogo para registrar una nueva venta
     private void abrirDialogoNuevaVenta() {
         DialogVenta dialog = new DialogVenta(ventana, this);
         dialog.setVisible(true);
     }
 
-    // Registra una venta desde la vista
     private void registrarVenta(ActionEvent e) {
-        mostrarInformacion("Venta capturada desde la vista.");
+        mostrarInformacion("Modulo de venta pendiente de implementacion.");
     }
 
-    // Abre el diálogo para anular una venta
     private void abrirDialogoAnularVenta() {
         DialogAnularVenta dialog = new DialogAnularVenta(ventana, this);
         dialog.setVisible(true);
     }
 
-    // Confirma la anulación de una venta
     private void confirmarAnulacionVenta(ActionEvent e) {
-        try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogAnularVenta)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de anulación.");
-            }
-
-            DialogAnularVenta dialog = (DialogAnularVenta) ventanaPadre;
-            String motivo = dialog.obtenerMotivoAnulacion();
-
-            if (motivo.isEmpty()) {
-                throw new Exception("Debe ingresar el motivo de anulación.");
-            }
-
-            mostrarInformacion("Anulación capturada desde la vista.");
-            dialog.dispose();
-
-        } catch (Exception ex) {
-            mostrarError(ex.getMessage());
-        }
+        mostrarInformacion("Anulacion de venta pendiente de implementacion.");
     }
 
-    // Abre el diálogo para registrar devoluciones de venta
     private void abrirDialogoDevolucionVenta() {
         DialogDevolucionVenta dialog = new DialogDevolucionVenta(ventana, this);
         dialog.setVisible(true);
     }
 
-    // Guarda la devolución de una venta desde el formulario
     private void guardarDevolucionVenta(ActionEvent e) {
-        try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogDevolucionVenta)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de devolución.");
-            }
-
-            DialogDevolucionVenta dialog = (DialogDevolucionVenta) ventanaPadre;
-
-            String producto = dialog.obtenerProductoSeleccionado();
-            String cantidad = dialog.obtenerCantidad();
-            String motivo = dialog.obtenerMotivoDevolucion();
-
-            if (producto.equals("Seleccione producto")) {
-                throw new Exception("Debe seleccionar un producto.");
-            }
-
-            if (cantidad.isEmpty()) {
-                throw new Exception("Debe ingresar la cantidad a devolver.");
-            }
-
-            if (motivo.isEmpty()) {
-                throw new Exception("Debe ingresar el motivo de devolución.");
-            }
-
-            mostrarInformacion("Devolución capturada.");
-            dialog.dispose();
-
-        } catch (Exception ex) {
-            mostrarError(ex.getMessage());
-        }
+        mostrarInformacion("Devolucion de venta pendiente de implementacion.");
     }
 
-    // Abre el diálogo para visualizar el detalle de una venta
     private void abrirDialogoDetalleVenta() {
         DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
         dialog.setVisible(true);
     }
+
     private void abrirDialogoFacturaVenta() {
         DialogFacturaVenta dialog = new DialogFacturaVenta(ventana);
         dialog.setVisible(true);
     }
 
-     // EVENTOS DE COMPRA
-    // Maneja los comandos relacionados con el módulo de compras
+    // EVENTOS DE COMPRA
     private boolean manejarEventosCompra(String comando, ActionEvent e) {
         switch (comando) {
             case CMD_NUEVA_COMPRA:
@@ -909,81 +733,53 @@ private void refrescarTablaProveedores() {
             case CMD_VER_DETALLE_COMPRA:
                 abrirDialogoDetalleCompra();
                 return true;
-                
+
             case CMD_ANULAR_COMPRA:
                 abrirDialogoAnularCompra();
                 return true;
-                
 
             default:
                 return false;
         }
     }
 
-    // Abre el diálogo para registrar una nueva compra
     private void abrirDialogoNuevaCompra() {
         DialogCompra dialog = new DialogCompra(ventana, this);
         dialog.setVisible(true);
     }
 
-    // Registra una compra desde el formulario
     private void registrarCompra(ActionEvent e) {
-        try {
-            Window ventanaPadre = obtenerVentanaPadre(e);
-
-            if (!(ventanaPadre instanceof DialogCompra)) {
-                throw new Exception("Error interno: no se pudo identificar el formulario de compra.");
-            }
-
-            DialogCompra dialog = (DialogCompra) ventanaPadre;
-
-            String numeroFactura = dialog.obtenerNumeroFactura();
-            String fecha = dialog.obtenerFecha();
-            String proveedor = dialog.obtenerProveedor();
-            String impuestos = dialog.obtenerImpuestos();
-            String totalCompra = dialog.obtenerTotalCompra();
-
-            if (numeroFactura.isEmpty()) {
-                throw new Exception("Debe ingresar el número de factura del proveedor.");
-            }
-
-            if (fecha.isEmpty()) {
-                throw new Exception("Debe ingresar la fecha de la compra.");
-            }
-
-            if (proveedor.equals("Seleccione proveedor")) {
-                throw new Exception("Debe seleccionar un proveedor.");
-            }
-
-            if (impuestos.isEmpty()) {
-                throw new Exception("Debe ingresar los impuestos.");
-            }
-
-            if (totalCompra.isEmpty()) {
-                throw new Exception("Debe ingresar el total de la compra.");
-            }
-
-            mostrarInformacion("Compra capturada desde la vista.");
-            dialog.dispose();
-
-        } catch (Exception ex) {
-            mostrarError(ex.getMessage());
-        }
+        mostrarInformacion("Modulo de compra pendiente de implementacion.");
     }
 
-    // Abre el diálogo para visualizar el detalle de una compra
     private void abrirDialogoDetalleCompra() {
         DialogDetalleCompra dialog = new DialogDetalleCompra(ventana);
         dialog.setVisible(true);
     }
-    
+
     private void abrirDialogoAnularCompra() {
         DialogAnularCompra dialog = new DialogAnularCompra(ventana);
         dialog.setVisible(true);
     }
 
-    // MÉTODOS AUXILIARES GENERALES
-    // Muestra un mensaje de error al usuario
+    // EVENTOS DE CONTABILIDAD
+    private boolean manejarEventosContabilidad(String comando) {
+        switch (comando) {
+            case CMD_VER_DETALLE_CONTABLE:
+                abrirDialogoDetalleContable();
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    private void abrirDialogoDetalleContable() {
+        DialogDetalleContable dialog = new DialogDetalleContable(ventana);
+        dialog.setVisible(true);
+    }
+
+    // METODOS AUXILIARES GENERALES
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(
                 ventana,
@@ -993,39 +789,57 @@ private void refrescarTablaProveedores() {
         );
     }
 
-    // Muestra un mensaje informativo al usuario
     private void mostrarInformacion(String mensaje) {
         JOptionPane.showMessageDialog(
                 ventana,
                 mensaje,
-                "Información",
+                "Informacion",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }
 
-    // Obtiene la ventana padre desde el componente que disparó el evento
     private Window obtenerVentanaPadre(ActionEvent e) {
         Component componente = (Component) e.getSource();
         return SwingUtilities.getWindowAncestor(componente);
     }
-    
-    private boolean manejarEventosContabilidad(String comando) {
-        switch (comando) {
 
-            case CMD_VER_DETALLE_CONTABLE:
-                abrirDialogoDetalleContable();
-                return true;
+    private DialogProducto obtenerDialogProducto(ActionEvent e) throws Exception {
+        Window ventanaPadre = obtenerVentanaPadre(e);
 
-
-            default:
-                return false;
+        if (!(ventanaPadre instanceof DialogProducto)) {
+            throw new Exception("Error interno: no se pudo identificar el formulario de producto.");
         }
+
+        return (DialogProducto) ventanaPadre;
     }
-            
-    private void abrirDialogoDetalleContable() {
-        DialogDetalleContable dialog = new DialogDetalleContable(ventana);
-        dialog.setVisible(true);
+
+    private DialogCliente obtenerDialogCliente(ActionEvent e) throws Exception {
+        Window ventanaPadre = obtenerVentanaPadre(e);
+
+        if (!(ventanaPadre instanceof DialogCliente)) {
+            throw new Exception("Error interno: no se pudo identificar el formulario de cliente.");
+        }
+
+        return (DialogCliente) ventanaPadre;
     }
-           
-        
+
+    private DialogProveedor obtenerDialogProveedor(ActionEvent e) throws Exception {
+        Window ventanaPadre = obtenerVentanaPadre(e);
+
+        if (!(ventanaPadre instanceof DialogProveedor)) {
+            throw new Exception("Error interno: no se pudo identificar el formulario de proveedor.");
+        }
+
+        return (DialogProveedor) ventanaPadre;
     }
+
+    private DialogMovimientoInventario obtenerDialogMovimientoInventario(ActionEvent e) throws Exception {
+        Window ventanaPadre = obtenerVentanaPadre(e);
+
+        if (!(ventanaPadre instanceof DialogMovimientoInventario)) {
+            throw new Exception("Error interno: no se pudo identificar el formulario de movimiento.");
+        }
+
+        return (DialogMovimientoInventario) ventanaPadre;
+    }
+}

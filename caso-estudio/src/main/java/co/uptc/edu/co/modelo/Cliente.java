@@ -4,104 +4,74 @@ import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.modelo.enums.TipoClienteEnum;
 import co.uptc.edu.co.modelo.enums.TipoDocEnum;
 
-public class Cliente {
+public class Cliente extends Persona {
 
-    private String codigo;
-    private String nombre;
-    private TipoDocEnum tipoIdentificacion;
-    private String numeroIdentificacion;
-    private String direccion;
-    private String telefono;
-    private TipoClienteEnum tipoCliente;
-    private EstadoEnum estado;
+	private String codigo;
+	private String nombre;
+	private TipoDocEnum tipoIdentificacion;
+	private String numeroIdentificacion;
+	private TipoClienteEnum tipoCliente;
 
-    public Cliente() {
-    }
+	public Cliente() {
+		super();
+	}
 
-    public Cliente(String codigo, String nombre, TipoDocEnum tipoIdentificacion,
-                   String numeroIdentificacion, String direccion, String telefono,
-                   TipoClienteEnum tipoCliente, EstadoEnum estado) {
+	public Cliente(String codigo, String nombre, TipoDocEnum tipoIdentificacion,
+			String numeroIdentificacion,String direccion, String telefono,
+			TipoClienteEnum tipoCliente, EstadoEnum estado)
+			 {
+        super(direccion,telefono,estado);
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.tipoIdentificacion = tipoIdentificacion;
+		this.numeroIdentificacion = numeroIdentificacion;
+		this.tipoCliente = tipoCliente;
+	}
 
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.tipoIdentificacion = tipoIdentificacion;
-        this.numeroIdentificacion = numeroIdentificacion;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.tipoCliente = tipoCliente;
-        this.estado = estado;
-    }
+	public String getCodigo() {
+		return codigo;
+	}
 
-    public String getCodigo() {
-        return codigo;
-    }
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
+	public String getNombre() {
+		return nombre;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public TipoDocEnum getTipoIdentificacion() {
+		return tipoIdentificacion;
+	}
 
-    public TipoDocEnum getTipoIdentificacion() {
-        return tipoIdentificacion;
-    }
+	public void setTipoIdentificacion(TipoDocEnum tipoIdentificacion) {
+		this.tipoIdentificacion = tipoIdentificacion;
+	}
 
-    public void setTipoIdentificacion(TipoDocEnum tipoIdentificacion) {
-        this.tipoIdentificacion = tipoIdentificacion;
-    }
+	public String getNumeroIdentificacion() {
+		return numeroIdentificacion;
+	}
 
-    public String getNumeroIdentificacion() {
-        return numeroIdentificacion;
-    }
+	public void setNumeroIdentificacion(String numeroIdentificacion) {
+		this.numeroIdentificacion = numeroIdentificacion;
+	}
 
-    public void setNumeroIdentificacion(String numeroIdentificacion) {
-        this.numeroIdentificacion = numeroIdentificacion;
-    }
 
-    public String getDireccion() {
-        return direccion;
-    }
+	public TipoClienteEnum getTipoCliente() {
+		return tipoCliente;
+	}
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
+	public void setTipoCliente(TipoClienteEnum tipoCliente) {
+		this.tipoCliente = tipoCliente;
+	}
 
-    public String getTelefono() {
-        return telefono;
-    }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public TipoClienteEnum getTipoCliente() {
-        return tipoCliente;
-    }
-
-    public void setTipoCliente(TipoClienteEnum tipoCliente) {
-        this.tipoCliente = tipoCliente;
-    }
-
-    public EstadoEnum getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoEnum estado) {
-        this.estado = estado;
-    }
-
-    public boolean estaActivo() {
-        return estado == EstadoEnum.ACTIVO;
-    }
-
-    @Override
-    public String toString() {
-        return codigo + " - " + nombre;
-    }
+	@Override
+	public String toString() {
+		return codigo + " - " + nombre;
+	}
 }

@@ -1,5 +1,4 @@
 package co.uptc.edu.co.gui.dialog;
-import javax.swing.JDialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

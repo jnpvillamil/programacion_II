@@ -15,104 +15,104 @@ import javax.swing.table.DefaultTableModel;
 
 public class DialogHistorialCliente extends JDialog {
 
-    private JLabel lblCodigoCliente;
-    private JLabel lblNombreCliente;
+	private JLabel lblCodigoCliente;
+	private JLabel lblNombreCliente;
 
-    private JTable tablaHistorial;
-    private DefaultTableModel modeloTabla;
+	private JTable tablaHistorial;
+	private DefaultTableModel modeloTabla;
 
-    private JButton btnCerrar;
+	private JButton btnCerrar;
 
-    public DialogHistorialCliente(Frame propietario) {
-        super(propietario, "Historial de Compras del Cliente", true);
-        setLayout(new BorderLayout());
+	public DialogHistorialCliente(Frame propietario) {
+		super(propietario, "Historial de Compras del Cliente", true);
+		setLayout(new BorderLayout());
 
-        inicializarComponentes();
-        configurarDialogo();
-        agregarComponentes();
-        agregarEventos();
-    }
+		inicializarComponentes();
+		configurarDialogo();
+		agregarComponentes();
+		agregarEventos();
+	}
 
-    private void inicializarComponentes() {
-        lblCodigoCliente = new JLabel("Código: ");
-        lblNombreCliente = new JLabel("Cliente: ");
+	private void inicializarComponentes() {
+		lblCodigoCliente = new JLabel("Código: ");
+		lblNombreCliente = new JLabel("Cliente: ");
 
-        modeloTabla = new DefaultTableModel(
-                new String[] { "Factura", "Fecha", "Forma de Pago", "Impuestos", "Total", "Estado" }, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+		modeloTabla = new DefaultTableModel(
+				new String[] { "Factura", "Fecha", "Forma de Pago", "Impuestos", "Total", "Estado" }, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 
-        tablaHistorial = new JTable(modeloTabla);
-        btnCerrar = new JButton("Cerrar");
-    }
+		tablaHistorial = new JTable(modeloTabla);
+		btnCerrar = new JButton("Cerrar");
+	}
 
-    private void configurarDialogo() {
-        setSize(750, 420);
-        setLocationRelativeTo(getOwner());
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setResizable(false);
+	private void configurarDialogo() {
+		setSize(750, 420);
+		setLocationRelativeTo(getOwner());
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setResizable(false);
 
-        tablaHistorial.setRowHeight(25);
-        tablaHistorial.getTableHeader().setReorderingAllowed(false);
-    }
+		tablaHistorial.setRowHeight(25);
+		tablaHistorial.getTableHeader().setReorderingAllowed(false);
+	}
 
-    private void agregarComponentes() {
-        add(crearPanelSuperior(), BorderLayout.NORTH);
-        add(crearScrollTabla(), BorderLayout.CENTER);
-        add(crearPanelBotones(), BorderLayout.SOUTH);
-    }
+	private void agregarComponentes() {
+		add(crearPanelSuperior(), BorderLayout.NORTH);
+		add(crearScrollTabla(), BorderLayout.CENTER);
+		add(crearPanelBotones(), BorderLayout.SOUTH);
+	}
 
-    private JPanel crearPanelSuperior() {
-        JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        panelSuperior.setBorder(BorderFactory.createTitledBorder("Datos del Cliente"));
+	private JPanel crearPanelSuperior() {
+		JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+		panelSuperior.setBorder(BorderFactory.createTitledBorder("Datos del Cliente"));
 
-        panelSuperior.add(lblCodigoCliente);
-        panelSuperior.add(lblNombreCliente);
+		panelSuperior.add(lblCodigoCliente);
+		panelSuperior.add(lblNombreCliente);
 
-        return panelSuperior;
-    }
+		return panelSuperior;
+	}
 
-    private JScrollPane crearScrollTabla() {
-        JScrollPane scrollPane = new JScrollPane(tablaHistorial);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Historial de Compras"));
-        return scrollPane;
-    }
+	private JScrollPane crearScrollTabla() {
+		JScrollPane scrollPane = new JScrollPane(tablaHistorial);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Historial de Compras"));
+		return scrollPane;
+	}
 
-    private JPanel crearPanelBotones() {
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        panelBotones.add(btnCerrar);
-        return panelBotones;
-    }
+	private JPanel crearPanelBotones() {
+		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		panelBotones.add(btnCerrar);
+		return panelBotones;
+	}
 
-    private void agregarEventos() {
-        btnCerrar.addActionListener(e -> dispose());
-    }
+	private void agregarEventos() {
+		btnCerrar.addActionListener(e -> dispose());
+	}
 
-    public void cargarCliente(String codigo, String nombre) {
-        lblCodigoCliente.setText("Código: " + codigo);
-        lblNombreCliente.setText("Cliente: " + nombre);
-    }
+	public void cargarCliente(String codigo, String nombre) {
+		lblCodigoCliente.setText("Código: " + codigo);
+		lblNombreCliente.setText("Cliente: " + nombre);
+	}
 
-    public void agregarFilaHistorial(Object[] fila) {
-        modeloTabla.addRow(fila);
-    }
+	public void agregarFilaHistorial(Object[] fila) {
+		modeloTabla.addRow(fila);
+	}
 
-    public void limpiarTabla() {
-        modeloTabla.setRowCount(0);
-    }
+	public void limpiarTabla() {
+		modeloTabla.setRowCount(0);
+	}
 
-    public JTable getTablaHistorial() {
-        return tablaHistorial;
-    }
+	public JTable getTablaHistorial() {
+		return tablaHistorial;
+	}
 
-    public DefaultTableModel getModeloTabla() {
-        return modeloTabla;
-    }
+	public DefaultTableModel getModeloTabla() {
+		return modeloTabla;
+	}
 
-    public JButton getBtnCerrar() {
-        return btnCerrar;
-    }
+	public JButton getBtnCerrar() {
+		return btnCerrar;
+	}
 }

@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.IGestionProveedor;
-import co.uptc.edu.co.interfaces.ProductoDAO;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
-import co.uptc.edu.co.modelo.MovimientoInventario;
-import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
-import co.uptc.edu.co.persistencia.ProveedorJSONDAO;
 
 public class GestionProveedor implements IGestionProveedor {
 

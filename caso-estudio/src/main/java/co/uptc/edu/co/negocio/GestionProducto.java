@@ -170,38 +170,6 @@ public class GestionProducto implements IGestionProducto {
         }
     }
 
-    @Override
-    public void actualizarPrecioProducto(String codigo, Double nuevoPrecioCompra, Double nuevoPrecioVenta) throws Exception {
-        Producto producto = buscarProductoPorCodigo(codigo);
-
-        if (producto == null) {
-            throw new Exception("No se encontró el producto.");
-        }
-
-        if (nuevoPrecioCompra == null && nuevoPrecioVenta == null) {
-            throw new Exception("Debe ingresar al menos un precio para actualizar.");
-        }
-
-        if (nuevoPrecioCompra != null) {
-            if (nuevoPrecioCompra < 0) {
-                throw new Exception("El precio de compra no puede ser negativo.");
-            }
-            producto.setPrecioCompra(nuevoPrecioCompra);
-        }
-
-        if (nuevoPrecioVenta != null) {
-            if (nuevoPrecioVenta < 0) {
-                throw new Exception("El precio de venta no puede ser negativo.");
-            }
-            producto.setPrecioVenta(nuevoPrecioVenta);
-        }
-
-        if (producto.getPrecioVenta() < producto.getPrecioCompra()) {
-            throw new Exception("El precio de venta no puede ser menor al precio de compra.");
-        }
-        
-        productoDAO.actualizarProducto(producto);
-    }
 
     @Override
     public void registrarMovimientoInventario(String codigo, String tipoMovimiento, int cantidad) throws Exception {

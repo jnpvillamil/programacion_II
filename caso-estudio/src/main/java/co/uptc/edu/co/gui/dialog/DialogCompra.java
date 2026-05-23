@@ -20,9 +20,6 @@ import javax.swing.table.DefaultTableModel;
 
 import co.uptc.edu.co.gui.Evento;
 
-
-import javax.swing.JDialog;
-
 public class DialogCompra extends JDialog {
 	private JTextField campoNumeroFactura;
     private JTextField campoFecha;

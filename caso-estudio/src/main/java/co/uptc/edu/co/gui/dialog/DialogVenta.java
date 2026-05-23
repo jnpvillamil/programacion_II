@@ -23,280 +23,277 @@ import co.uptc.edu.co.gui.Evento;
 
 public class DialogVenta extends JDialog {
 
-	  // CAMPOS DE DATOS GENERALES
-    private JTextField campoNumeroFactura;
-    private JTextField campoFecha;
-    private JTextField campoHora;
-    private JComboBox<String> comboCliente;
-    private JComboBox<String> comboFormaPago;
+	// CAMPOS DE DATOS GENERALES
+	private JTextField campoNumeroFactura;
+	private JTextField campoFecha;
+	private JTextField campoHora;
+	private JComboBox<String> comboCliente;
+	private JComboBox<String> comboFormaPago;
 
-    // CAMPOS PARA AGREGAR PRODUCTO
-    private JComboBox<String> comboProducto;
-    private JTextField campoCantidad;
-    private JTextField campoPrecioUnitario;
+	// CAMPOS PARA AGREGAR PRODUCTO
+	private JComboBox<String> comboProducto;
+	private JTextField campoCantidad;
+	private JTextField campoPrecioUnitario;
 
-    // TABLA DE DETALLE DE LA VENTA
-    private JTable tablaProductos;
-    private DefaultTableModel modeloTabla;
-    
-    // CAMPOS DE RESUMEN
-    private JTextField campoSubtotal;
-    private JTextField campoIva;
-    private JTextField campoTotal;
+	// TABLA DE DETALLE DE LA VENTA
+	private JTable tablaProductos;
+	private DefaultTableModel modeloTabla;
 
-    // BOTONES
-    private JButton botonAgregarProducto;
-    private JButton botonQuitarProducto;
-    private JButton botonGuardar;
-    private JButton botonCancelar;
+	// CAMPOS DE RESUMEN
+	private JTextField campoSubtotal;
+	private JTextField campoIva;
+	private JTextField campoTotal;
 
-    // CONSTRUCTORES
-    public DialogVenta(Frame propietario) {
-        this(propietario, null);
-    }
+	// BOTONES
+	private JButton botonAgregarProducto;
+	private JButton botonQuitarProducto;
+	private JButton botonGuardar;
+	private JButton botonCancelar;
 
-    public DialogVenta(Frame propietario, Evento evento) {
-        super(propietario, "Registrar Venta", true);
-        inicializarComponentes();
-        configurarDialogo();
-        agregarComponentes();
-        inicializarEventos(evento);
-    }
+	// CONSTRUCTORES
+	public DialogVenta(Frame propietario) {
+		this(propietario, null);
+	}
 
-    // INICIALIZACIÓN DE COMPONENTES
-    private void inicializarComponentes() {
-        campoNumeroFactura = new JTextField(18);
-        campoFecha = new JTextField(18);
-        campoHora = new JTextField(18);
+	public DialogVenta(Frame propietario, Evento evento) {
+		super(propietario, "Registrar Venta", true);
+		inicializarComponentes();
+		configurarDialogo();
+		agregarComponentes();
+		inicializarEventos(evento);
+	}
 
-        comboCliente = new JComboBox<>();
-        comboCliente.addItem("Seleccione cliente");
+	// INICIALIZACIÓN DE COMPONENTES
+	private void inicializarComponentes() {
+		campoNumeroFactura = new JTextField(18);
+		campoFecha = new JTextField(18);
+		campoHora = new JTextField(18);
 
-        comboFormaPago = new JComboBox<>();
-        comboFormaPago.addItem("Efectivo");
-        comboFormaPago.addItem("Transferencia");
-        comboFormaPago.addItem("Tarjeta");
-        comboFormaPago.addItem("Crédito");
+		comboCliente = new JComboBox<>();
+		comboCliente.addItem("Seleccione cliente");
 
-        comboProducto = new JComboBox<>();
-        comboProducto.addItem("Seleccione producto");
+		comboFormaPago = new JComboBox<>();
+		comboFormaPago.addItem("Efectivo");
+		comboFormaPago.addItem("Transferencia");
+		comboFormaPago.addItem("Tarjeta");
+		comboFormaPago.addItem("Crédito");
 
-        campoCantidad = new JTextField(10);
-        campoPrecioUnitario = new JTextField(12);
+		comboProducto = new JComboBox<>();
+		comboProducto.addItem("Seleccione producto");
 
-        modeloTabla = new DefaultTableModel(
-                new String[] { "Código", "Producto", "Cantidad", "Precio Unitario", "IVA", "Subtotal" }, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+		campoCantidad = new JTextField(10);
+		campoPrecioUnitario = new JTextField(12);
 
-        tablaProductos = new JTable(modeloTabla);
+		modeloTabla = new DefaultTableModel(
+				new String[] { "Código", "Producto", "Cantidad", "Precio Unitario", "IVA", "Subtotal" }, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 
-        campoSubtotal = new JTextField(12);
-        campoIva = new JTextField(12);
-        campoTotal = new JTextField(12);
+		tablaProductos = new JTable(modeloTabla);
 
-        botonAgregarProducto = new JButton("Agregar Producto");
-        botonQuitarProducto = new JButton("Quitar Producto");
-        botonGuardar = new JButton("Guardar");
-        botonCancelar = new JButton("Cancelar");
-        
-        botonAgregarProducto.setBackground(new Color(46, 125, 50));
-        botonAgregarProducto.setForeground(Color.WHITE);
+		campoSubtotal = new JTextField(12);
+		campoIva = new JTextField(12);
+		campoTotal = new JTextField(12);
 
-        botonGuardar.setBackground(new Color(46, 125, 50));
-        botonGuardar.setForeground(Color.WHITE);
+		botonAgregarProducto = new JButton("Agregar Producto");
+		botonQuitarProducto = new JButton("Quitar Producto");
+		botonGuardar = new JButton("Guardar");
+		botonCancelar = new JButton("Cancelar");
 
-        botonQuitarProducto.setBackground(new Color(198, 40, 40));
-        botonQuitarProducto.setForeground(Color.WHITE);
+		botonAgregarProducto.setBackground(new Color(46, 125, 50));
+		botonAgregarProducto.setForeground(Color.WHITE);
 
-        campoSubtotal.setEditable(false);
-        campoIva.setEditable(false);
-        campoTotal.setEditable(false);
-    }
+		botonGuardar.setBackground(new Color(46, 125, 50));
+		botonGuardar.setForeground(Color.WHITE);
 
-    // CONFIGURACIÓN GENERAL DEL DIÁLOGO
-    private void configurarDialogo() {
-        setSize(950, 650);
-        setLocationRelativeTo(getOwner());
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setResizable(false);
+		botonQuitarProducto.setBackground(new Color(198, 40, 40));
+		botonQuitarProducto.setForeground(Color.WHITE);
 
-        tablaProductos.setRowHeight(25);
-        tablaProductos.getTableHeader().setReorderingAllowed(false);
-    }
+		campoSubtotal.setEditable(false);
+		campoIva.setEditable(false);
+		campoTotal.setEditable(false);
+	}
 
- // AGREGAR COMPONENTES AL DIÁLOGO
-    private void agregarComponentes() {
-        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+	// CONFIGURACIÓN GENERAL DEL DIÁLOGO
+	private void configurarDialogo() {
+		setSize(950, 650);
+		setLocationRelativeTo(getOwner());
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setResizable(false);
 
-        panelPrincipal.add(crearPanelDatosGenerales(), BorderLayout.NORTH);
-        panelPrincipal.add(crearPanelCentro(), BorderLayout.CENTER);
-        panelPrincipal.add(crearPanelInferior(), BorderLayout.SOUTH);
-        
-        
+		tablaProductos.setRowHeight(25);
+		tablaProductos.getTableHeader().setReorderingAllowed(false);
+	}
 
-        add(panelPrincipal);
-    }
+	// AGREGAR COMPONENTES AL DIÁLOGO
+	private void agregarComponentes() {
+		JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
+		panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-    // PANEL DE DATOS GENERALES
-    private JPanel crearPanelDatosGenerales() {
-        JPanel panelSuperior = new JPanel(new GridBagLayout());
-        panelSuperior.setBorder(BorderFactory.createTitledBorder("Datos de la venta"));
+		panelPrincipal.add(crearPanelDatosGenerales(), BorderLayout.NORTH);
+		panelPrincipal.add(crearPanelCentro(), BorderLayout.CENTER);
+		panelPrincipal.add(crearPanelInferior(), BorderLayout.SOUTH);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 6, 6, 6);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+		add(panelPrincipal);
+	}
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panelSuperior.add(new JLabel("N° Factura:"), gbc);
+	// PANEL DE DATOS GENERALES
+	private JPanel crearPanelDatosGenerales() {
+		JPanel panelSuperior = new JPanel(new GridBagLayout());
+		panelSuperior.setBorder(BorderFactory.createTitledBorder("Datos de la venta"));
 
-        gbc.gridx = 1;
-        panelSuperior.add(campoNumeroFactura, gbc);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(6, 6, 6, 6);
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 2;
-        panelSuperior.add(new JLabel("Fecha:"), gbc);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		panelSuperior.add(new JLabel("N° Factura:"), gbc);
 
-        gbc.gridx = 3;
-        panelSuperior.add(campoFecha, gbc);
+		gbc.gridx = 1;
+		panelSuperior.add(campoNumeroFactura, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panelSuperior.add(new JLabel("Hora:"), gbc);
+		gbc.gridx = 2;
+		panelSuperior.add(new JLabel("Fecha:"), gbc);
 
-        gbc.gridx = 1;
-        panelSuperior.add(campoHora, gbc);
+		gbc.gridx = 3;
+		panelSuperior.add(campoFecha, gbc);
 
-        gbc.gridx = 2;
-        panelSuperior.add(new JLabel("Cliente:"), gbc);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		panelSuperior.add(new JLabel("Hora:"), gbc);
 
-        gbc.gridx = 3;
-        panelSuperior.add(comboCliente, gbc);
+		gbc.gridx = 1;
+		panelSuperior.add(campoHora, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panelSuperior.add(new JLabel("Forma de pago:"), gbc);
+		gbc.gridx = 2;
+		panelSuperior.add(new JLabel("Cliente:"), gbc);
 
-        gbc.gridx = 1;
-        panelSuperior.add(comboFormaPago, gbc);
+		gbc.gridx = 3;
+		panelSuperior.add(comboCliente, gbc);
 
-        return panelSuperior;
-    }
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		panelSuperior.add(new JLabel("Forma de pago:"), gbc);
 
-    // PANEL CENTRAL
-    private JPanel crearPanelCentro() {
-        JPanel panelCentro = new JPanel(new BorderLayout(10, 10));
-        panelCentro.add(crearPanelAgregarProducto(), BorderLayout.NORTH);
-        panelCentro.add(crearPanelTabla(), BorderLayout.CENTER);
-        return panelCentro;
-    }
+		gbc.gridx = 1;
+		panelSuperior.add(comboFormaPago, gbc);
 
-    // PANEL PARA AGREGAR PRODUCTOS
-    private JPanel crearPanelAgregarProducto() {
-        JPanel panelProducto = new JPanel(new GridBagLayout());
-        panelProducto.setBorder(BorderFactory.createTitledBorder("Agregar producto"));
+		return panelSuperior;
+	}
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 6, 6, 6);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+	// PANEL CENTRAL
+	private JPanel crearPanelCentro() {
+		JPanel panelCentro = new JPanel(new BorderLayout(10, 10));
+		panelCentro.add(crearPanelAgregarProducto(), BorderLayout.NORTH);
+		panelCentro.add(crearPanelTabla(), BorderLayout.CENTER);
+		return panelCentro;
+	}
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panelProducto.add(new JLabel("Producto:"), gbc);
+	// PANEL PARA AGREGAR PRODUCTOS
+	private JPanel crearPanelAgregarProducto() {
+		JPanel panelProducto = new JPanel(new GridBagLayout());
+		panelProducto.setBorder(BorderFactory.createTitledBorder("Agregar producto"));
 
-        gbc.gridx = 1;
-        panelProducto.add(comboProducto, gbc);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(6, 6, 6, 6);
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 2;
-        panelProducto.add(new JLabel("Cantidad:"), gbc);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		panelProducto.add(new JLabel("Producto:"), gbc);
 
-        gbc.gridx = 3;
-        panelProducto.add(campoCantidad, gbc);
+		gbc.gridx = 1;
+		panelProducto.add(comboProducto, gbc);
 
-        gbc.gridx = 4;
-        panelProducto.add(new JLabel("Precio Unitario:"), gbc);
+		gbc.gridx = 2;
+		panelProducto.add(new JLabel("Cantidad:"), gbc);
 
-        gbc.gridx = 5;
-        panelProducto.add(campoPrecioUnitario, gbc);
+		gbc.gridx = 3;
+		panelProducto.add(campoCantidad, gbc);
 
-        gbc.gridx = 6;
-        panelProducto.add(botonAgregarProducto, gbc);
+		gbc.gridx = 4;
+		panelProducto.add(new JLabel("Precio Unitario:"), gbc);
 
-        return panelProducto;
-    }
+		gbc.gridx = 5;
+		panelProducto.add(campoPrecioUnitario, gbc);
 
-    // PANEL DE TABLA
-    private JScrollPane crearPanelTabla() {
-        JScrollPane scrollTabla = new JScrollPane(tablaProductos);
-        scrollTabla.setBorder(BorderFactory.createTitledBorder("Detalle de productos vendidos"));
-        return scrollTabla;
-    }
+		gbc.gridx = 6;
+		panelProducto.add(botonAgregarProducto, gbc);
 
-    // PANEL INFERIOR
-    private JPanel crearPanelInferior() {
-        JPanel panelInferior = new JPanel(new BorderLayout(10, 10));
-        panelInferior.add(crearPanelResumen(), BorderLayout.CENTER);
-        panelInferior.add(crearPanelAcciones(), BorderLayout.SOUTH);
-        return panelInferior;
-    }
+		return panelProducto;
+	}
 
-    // PANEL DE RESUMEN
-    private JPanel crearPanelResumen() {
-        JPanel panelResumen = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
-        panelResumen.setBorder(BorderFactory.createTitledBorder("Resumen"));
+	// PANEL DE TABLA
+	private JScrollPane crearPanelTabla() {
+		JScrollPane scrollTabla = new JScrollPane(tablaProductos);
+		scrollTabla.setBorder(BorderFactory.createTitledBorder("Detalle de productos vendidos"));
+		return scrollTabla;
+	}
 
-        panelResumen.add(new JLabel("Subtotal:"));
-        panelResumen.add(campoSubtotal);
+	// PANEL INFERIOR
+	private JPanel crearPanelInferior() {
+		JPanel panelInferior = new JPanel(new BorderLayout(10, 10));
+		panelInferior.add(crearPanelResumen(), BorderLayout.CENTER);
+		panelInferior.add(crearPanelAcciones(), BorderLayout.SOUTH);
+		return panelInferior;
+	}
 
-        panelResumen.add(new JLabel("IVA:"));
-        panelResumen.add(campoIva);
+	// PANEL DE RESUMEN
+	private JPanel crearPanelResumen() {
+		JPanel panelResumen = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+		panelResumen.setBorder(BorderFactory.createTitledBorder("Resumen"));
 
-        panelResumen.add(new JLabel("Total:"));
-        panelResumen.add(campoTotal);
+		panelResumen.add(new JLabel("Subtotal:"));
+		panelResumen.add(campoSubtotal);
 
-        return panelResumen;
-    }
+		panelResumen.add(new JLabel("IVA:"));
+		panelResumen.add(campoIva);
 
-    // PANEL DE BOTONES FINALES
-    private JPanel crearPanelAcciones() {
-        JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        panelAcciones.add(botonQuitarProducto);
-        panelAcciones.add(botonGuardar);
-        panelAcciones.add(botonCancelar);
-        return panelAcciones;
-    }
+		panelResumen.add(new JLabel("Total:"));
+		panelResumen.add(campoTotal);
 
-    // EVENTOS
-    private void inicializarEventos(Evento evento) {
-        botonCancelar.addActionListener(e -> dispose());
+		return panelResumen;
+	}
 
-        if (evento != null) {
-            botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_VENTA);
-            botonGuardar.addActionListener(evento);
-        }
-    }
+	// PANEL DE BOTONES FINALES
+	private JPanel crearPanelAcciones() {
+		JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+		panelAcciones.add(botonQuitarProducto);
+		panelAcciones.add(botonGuardar);
+		panelAcciones.add(botonCancelar);
+		return panelAcciones;
+	}
 
-    // MÉTODOS AUXILIARES DE TABLA
-    public void agregarFilaProducto(Object[] fila) {
-        modeloTabla.addRow(fila);
-    }
+	// EVENTOS
+	private void inicializarEventos(Evento evento) {
+		botonCancelar.addActionListener(e -> dispose());
 
-    public void quitarFilaSeleccionada() {
-        int filaSeleccionada = tablaProductos.getSelectedRow();
-        if (filaSeleccionada != -1) {
-            modeloTabla.removeRow(filaSeleccionada);
-        }
-    }
+		if (evento != null) {
+			botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_VENTA);
+			botonGuardar.addActionListener(evento);
+		}
+	}
 
-    public void limpiarTabla() {
-        modeloTabla.setRowCount(0);
-    }
+	// MÉTODOS AUXILIARES DE TABLA
+	public void agregarFilaProducto(Object[] fila) {
+		modeloTabla.addRow(fila);
+	}
 
-   
+	public void quitarFilaSeleccionada() {
+		int filaSeleccionada = tablaProductos.getSelectedRow();
+		if (filaSeleccionada != -1) {
+			modeloTabla.removeRow(filaSeleccionada);
+		}
+	}
+
+	public void limpiarTabla() {
+		modeloTabla.setRowCount(0);
+	}
+
 }

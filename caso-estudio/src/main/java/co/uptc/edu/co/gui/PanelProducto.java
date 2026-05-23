@@ -41,7 +41,6 @@ public class PanelProducto extends PanelCentral {
     private JButton botonNuevo;
     private JButton botonEditar;
     private JButton botonEstadoProducto;
-    private JButton botonActualizarPrecio;
     private JButton botonMovimientoInventario;
 
     private JTextField campoBuscar;
@@ -77,7 +76,6 @@ public class PanelProducto extends PanelCentral {
         botonNuevo = new JButton("Nuevo");
         botonEditar = new JButton("Editar");
         botonEstadoProducto = new JButton(TEXTO_BOTON_CAMBIAR_ESTADO);
-        botonActualizarPrecio = new JButton("Actualizar Precio");
         botonMovimientoInventario = new JButton("Movimiento Inventario");
 
         campoBuscar = new JTextField(20);
@@ -100,7 +98,6 @@ public class PanelProducto extends PanelCentral {
         configurarBotonBase(botonNuevo);
         configurarBotonBase(botonEditar);
         configurarBotonBase(botonEstadoProducto);
-        configurarBotonBase(botonActualizarPrecio);
         configurarBotonBase(botonMovimientoInventario);
     }
 
@@ -108,7 +105,6 @@ public class PanelProducto extends PanelCentral {
         panelBotones.add(botonNuevo);
         panelBotones.add(botonEditar);
         panelBotones.add(botonEstadoProducto);
-        panelBotones.add(botonActualizarPrecio);
         panelBotones.add(botonMovimientoInventario);
 
         agregarFiltro("Buscar:", campoBuscar);
@@ -130,9 +126,6 @@ public class PanelProducto extends PanelCentral {
 
         botonEstadoProducto.setActionCommand(Evento.CMD_ESTADO_PRODUCTO);
         botonEstadoProducto.addActionListener(evento);
-
-        botonActualizarPrecio.setActionCommand(Evento.CMD_ACTUALIZAR_PRECIO_PRODUCTO);
-        botonActualizarPrecio.addActionListener(evento);
 
         botonMovimientoInventario.setActionCommand(Evento.CMD_MOVIMIENTO_INVENTARIO);
         botonMovimientoInventario.addActionListener(evento);

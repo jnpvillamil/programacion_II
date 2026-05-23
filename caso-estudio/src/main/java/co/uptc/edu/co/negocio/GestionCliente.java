@@ -10,162 +10,159 @@ import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
 public class GestionCliente implements IGestionCliente {
 
-    private List<Cliente> clientes;
+	private List<Cliente> clientes;
 
-    private final ClienteDAO clienteDAO;
+	private final ClienteDAO clienteDAO;
 
-    public GestionCliente(ClienteDAO clienteDAO) {
+	public GestionCliente(ClienteDAO clienteDAO) {
 
-        if (clienteDAO == null) {
+		if (clienteDAO == null) {
 
-            throw new IllegalArgumentException("El ClienteDAO no puede ser nulo.");
-        }
+			throw new IllegalArgumentException("El ClienteDAO no puede ser nulo.");
+		}
 
-        this.clienteDAO = clienteDAO;
+		this.clienteDAO = clienteDAO;
 
-        try {
+		try {
 
-            clientes = clienteDAO.listarClientes();
+			clientes = clienteDAO.listarClientes();
 
-        } catch (Exception e) {
+		} catch (Exception e) {
 
-            clientes = new ArrayList<>();
+			clientes = new ArrayList<>();
 
-            System.out.println("Error al cargar clientes: " + e.getMessage());
-        }
-    }
+			System.out.println("Error al cargar clientes: " + e.getMessage());
+		}
+	}
 
-    @Override
-    public Cliente buscarClientePorCodigo(String codigo) {
+	@Override
+	public Cliente buscarClientePorCodigo(String codigo) {
 
-        for (Cliente cliente : clientes) {
+		for (Cliente cliente : clientes) {
 
-            if (cliente.getCodigo().equalsIgnoreCase(codigo)) {
+			if (cliente.getCodigo().equalsIgnoreCase(codigo)) {
 
-                return cliente;
-            }
-        }
+				return cliente;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public List<Cliente> obtenerClientes() {
+	@Override
+	public List<Cliente> obtenerClientes() {
 
-        return new ArrayList<>(clientes);
-    }
+		return new ArrayList<>(clientes);
+	}
 
-    @Override
-    public void registrarCliente(Cliente cliente) throws Exception {
+	@Override
+	public void registrarCliente(Cliente cliente) throws Exception {
 
-        validarCliente(cliente);
+		validarCliente(cliente);
 
-        Cliente existente = buscarClientePorCodigo(cliente.getCodigo());
+		Cliente existente = buscarClientePorCodigo(cliente.getCodigo());
 
-        if (existente != null) {
+		if (existente != null) {
 
-            throw new Exception("Ya existe un cliente con ese código.");
-        }
+			throw new Exception("Ya existe un cliente con ese código.");
+		}
 
-        cliente.setEstado(EstadoEnum.ACTIVO);
+		cliente.setEstado(EstadoEnum.ACTIVO);
 
-        clienteDAO.guardarCliente(cliente);
+		clienteDAO.guardarCliente(cliente);
 
-        clientes.add(cliente);
-    }
+		clientes.add(cliente);
+	}
 
-    @Override
-    public void actualizarCliente(Cliente clienteActualizado) throws Exception {
+	@Override
+	public void actualizarCliente(Cliente clienteActualizado) throws Exception {
 
-        validarCliente(clienteActualizado);
+		validarCliente(clienteActualizado);
 
-        Cliente clienteExistente = buscarClientePorCodigo(clienteActualizado.getCodigo());
+		Cliente clienteExistente = buscarClientePorCodigo(clienteActualizado.getCodigo());
 
-        if (clienteExistente == null) {
+		if (clienteExistente == null) {
 
-            throw new Exception("No se encontró el cliente a actualizar.");
-        }
+			throw new Exception("No se encontró el cliente a actualizar.");
+		}
 
-        clienteExistente.setNombre(clienteActualizado.getNombre());
+		clienteExistente.setNombre(clienteActualizado.getNombre());
 
-        clienteExistente.setTipoIdentificacion(clienteActualizado.getTipoIdentificacion());
+		clienteExistente.setTipoIdentificacion(clienteActualizado.getTipoIdentificacion());
 
-        clienteExistente.setNumeroIdentificacion(clienteActualizado.getNumeroIdentificacion());
+		clienteExistente.setNumeroIdentificacion(clienteActualizado.getNumeroIdentificacion());
 
-        clienteExistente.setDireccion(clienteActualizado.getDireccion());
+		clienteExistente.setDireccion(clienteActualizado.getDireccion());
 
-        clienteExistente.setTelefono(clienteActualizado.getTelefono());
+		clienteExistente.setTelefono(clienteActualizado.getTelefono());
 
-        clienteExistente.setTipoCliente(clienteActualizado.getTipoCliente());
+		clienteExistente.setTipoCliente(clienteActualizado.getTipoCliente());
 
-        clienteDAO.actualizarCliente(clienteExistente);
-    }
+		clienteDAO.actualizarCliente(clienteExistente);
+	}
 
-    @Override
-    public void cambiarEstadoCliente(String codigo) throws Exception {
+	@Override
+	public void cambiarEstadoCliente(String codigo) throws Exception {
 
-        Cliente cliente = buscarClientePorCodigo(codigo);
+		Cliente cliente = buscarClientePorCodigo(codigo);
 
-        if (cliente == null) {
+		if (cliente == null) {
 
-            throw new Exception("No se encontró el cliente.");
-        }
+			throw new Exception("No se encontró el cliente.");
+		}
 
-        if (cliente.estaActivo()) {
+		if (cliente.estaActivo()) {
 
-            cliente.setEstado(EstadoEnum.INACTIVO);
+			cliente.setEstado(EstadoEnum.INACTIVO);
 
-        } else {
+		} else {
 
-            cliente.setEstado(EstadoEnum.ACTIVO);
-        }
+			cliente.setEstado(EstadoEnum.ACTIVO);
+		}
 
-        clienteDAO.actualizarCliente(cliente);
-    }
+		clienteDAO.actualizarCliente(cliente);
+	}
 
-    private void validarCliente(Cliente cliente) throws Exception {
+	private void validarCliente(Cliente cliente) throws Exception {
 
-        if (cliente == null) {
+		if (cliente == null) {
 
-            throw new Exception("El cliente no puede ser nulo.");
-        }
+			throw new Exception("El cliente no puede ser nulo.");
+		}
 
-        if (cliente.getCodigo() == null || cliente.getCodigo().trim().isEmpty()) {
+		if (cliente.getCodigo() == null || cliente.getCodigo().trim().isEmpty()) {
 
-            throw new Exception("El código es obligatorio.");
-        }
+			throw new Exception("El código es obligatorio.");
+		}
 
-        if (cliente.getNombre() == null || cliente.getNombre().trim().isEmpty()) {
+		if (cliente.getNombre() == null || cliente.getNombre().trim().isEmpty()) {
 
-            throw new Exception("El nombre es obligatorio.");
-        }
+			throw new Exception("El nombre es obligatorio.");
+		}
 
-        if (cliente.getTipoIdentificacion() == null) {
+		if (cliente.getTipoIdentificacion() == null) {
 
-            throw new Exception("El tipo de identificación es obligatorio.");
-        }
+			throw new Exception("El tipo de identificación es obligatorio.");
+		}
 
-        if (cliente.getNumeroIdentificacion() == null
-                || cliente.getNumeroIdentificacion().trim().isEmpty()) {
+		if (cliente.getNumeroIdentificacion() == null || cliente.getNumeroIdentificacion().trim().isEmpty()) {
 
-            throw new Exception("El número de identificación es obligatorio.");
-        }
+			throw new Exception("El número de identificación es obligatorio.");
+		}
 
-        if (cliente.getDireccion() == null
-                || cliente.getDireccion().trim().isEmpty()) {
+		if (cliente.getDireccion() == null || cliente.getDireccion().trim().isEmpty()) {
 
-            throw new Exception("La dirección es obligatoria.");
-        }
+			throw new Exception("La dirección es obligatoria.");
+		}
 
-        if (cliente.getTelefono() == null
-                || cliente.getTelefono().trim().isEmpty()) {
+		if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) {
 
-            throw new Exception("El teléfono es obligatorio.");
-        }
+			throw new Exception("El teléfono es obligatorio.");
+		}
 
-        if (cliente.getTipoCliente() == null) {
+		if (cliente.getTipoCliente() == null) {
 
-            throw new Exception("El tipo de cliente es obligatorio.");
-        }
-    }
+			throw new Exception("El tipo de cliente es obligatorio.");
+		}
+	}
 }

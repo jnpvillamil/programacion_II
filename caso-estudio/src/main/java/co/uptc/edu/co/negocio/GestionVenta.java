@@ -5,14 +5,12 @@ import java.util.List;
 import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.Venta;
 
+public class GestionVenta implements IGestionVenta {
 
-public class GestionVenta implements IGestionVenta  {
-
-		
 	@Override
 	public void registrarVenta(Venta venta) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -26,8 +24,5 @@ public class GestionVenta implements IGestionVenta  {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	
-	
+
 }
