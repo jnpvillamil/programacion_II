@@ -9,17 +9,24 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class ControladorLogin {
 
     private VentanaLogin vistaLogin;
     private VentanaPrincipal vistaPrincipal;
     private GestionUsuarios gestionUsuarios;
 
+   
     public ControladorLogin(VentanaLogin vistaLogin, VentanaPrincipal vistaPrincipal, GestionUsuarios gestionUsuarios) {
         this.vistaLogin = vistaLogin;
         this.vistaPrincipal = vistaPrincipal;
         this.gestionUsuarios = gestionUsuarios;
         inicializarEventos();
+    }
+
+ 
+    public ControladorLogin(VentanaLogin vistaLogin, VentanaPrincipal vistaPrincipal) {
+        this(vistaLogin, vistaPrincipal, new GestionUsuarios());
     }
 
     private void inicializarEventos() {

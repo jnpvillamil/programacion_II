@@ -2,17 +2,53 @@
 package co.edu.uptc.controlador;
 
 import co.edu.uptc.gui.PanelClientes;
+import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.negocio.GestionClientes;
+import co.edu.uptc.persistencia.PersistenciaCliente;
 import co.edu.uptc.utilidades.ValidadorEntradas;
 import javax.swing.*;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de clientes.
+ * 
+ * APLICACIÓN DE PRINCIPIOS SOLID:
+ * - S (Single Responsibility): Solo coordina interacción entre GUI y negocio
+ * - D (Dependency Inversion): Depende de Repositorio<Cliente> (interfaz), no de implementación
+ * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia sin modificar este código
+ */
 public class ControladorCliente {
 
     private PanelClientes vista;
     private GestionClientes negocio;
 
+    /**
+     * Constructor con inyección de dependencias (DIP).
+     * 
+     * @param vista El panel GUI de clientes
+     * @param repositorioCliente Implementación de Repositorio<Cliente>
+     */
+    public ControladorCliente(PanelClientes vista, Repositorio<Cliente> repositorioCliente) {
+        this.vista = vista;
+        this.negocio = new GestionClientes(repositorioCliente);
+        this.inicializarEventos();
+        this.actualizarTabla();
+    }
+
+    /**
+     * Constructor convenencia: usa PersistenciaCliente por defecto.
+     * 
+     * @param vista El panel GUI de clientes
+     */
+    public ControladorCliente(PanelClientes vista) {
+        this(vista, new PersistenciaCliente());
+    }
+
+    /**
+     * Constructor alternativo si aún se recibe GestionClientes instanciada.
+     * Se mantiene para máxima compatibilidad.
+     */
     public ControladorCliente(PanelClientes vista, GestionClientes negocio) {
         this.vista = vista;
         this.negocio = negocio;

@@ -1,26 +1,30 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.interfaces.IPersistenciaUsuario;
 import co.edu.uptc.modelo.Usuario;
 import co.edu.uptc.persistencia.PersistenciaUsuario;
 
-import java.util.List;
 
 public class GestionUsuarios {
 
-    private PersistenciaUsuario persistenciaUsuario;
+    private IPersistenciaUsuario persistenciaUsuario;
     private Usuario usuarioAutenticado;
 
+  
+    public GestionUsuarios(IPersistenciaUsuario persistenciaUsuario) {
+        this.persistenciaUsuario = persistenciaUsuario;
+    }
+
+ 
     public GestionUsuarios() {
-        this.persistenciaUsuario = new PersistenciaUsuario();
+        this(new PersistenciaUsuario());
     }
 
     public boolean autenticar(String username, String password) {
-        List<Usuario> usuarios = persistenciaUsuario.listarUsuarios();
-        for (Usuario u : usuarios) {
-            if (u.getUsuario().equals(username) && u.getClave().equals(password)) {
-                this.usuarioAutenticado = u;
-                return true;
-            }
+        Usuario usuario = persistenciaUsuario.validarUsuario(username, password);
+        if (usuario != null) {
+            this.usuarioAutenticado = usuario;
+            return true;
         }
         return false;
     }

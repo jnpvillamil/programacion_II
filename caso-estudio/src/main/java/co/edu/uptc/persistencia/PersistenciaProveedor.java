@@ -7,10 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.edu.uptc.interfaces.IPersistenciaProveedor;
 import co.edu.uptc.modelo.Proveedor;
 import co.edu.uptc.utilidades.ConexionBD;
 
-public class PersistenciaProveedor {
+public class PersistenciaProveedor implements IPersistenciaProveedor {
 
     public boolean guardar(Proveedor objeto) {
         String sql = "INSERT INTO proveedores (codigo_proveedor, razon_social, nit, direccion, telefono, email, estado) VALUES (?, ?, ?, ?, ?, ?, ?)";

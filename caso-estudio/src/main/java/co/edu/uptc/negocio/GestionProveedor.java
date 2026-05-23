@@ -1,14 +1,21 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.interfaces.IPersistenciaProveedor;
 import co.edu.uptc.modelo.Proveedor;
 import co.edu.uptc.persistencia.PersistenciaProveedor;
 import java.util.List;
 
-public class GestionProveedor {
-    private PersistenciaProveedor repo;
 
+public class GestionProveedor {
+    private IPersistenciaProveedor repo;
+
+  
+    public GestionProveedor(IPersistenciaProveedor repo) { 
+        this.repo = repo; 
+    }
+ 
     public GestionProveedor() { 
-        this.repo = new PersistenciaProveedor(); 
+        this(new PersistenciaProveedor());
     }
 
     public boolean registrar(Proveedor p) {

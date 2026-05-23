@@ -6,12 +6,33 @@ import co.edu.uptc.persistencia.PersistenciaProducto;
 
 import java.util.List;
 
+/**
+ * Capa de negocio para la gestión de inventario/productos.
+ * 
+ * APLICACIÓN DE PRINCIPIOS SOLID:
+ * - S (Single Responsibility): Solo gestiona lógica de negocio de productos
+ * - D (Dependency Inversion): Depende de Repositorio<Producto>, no de implementación concreta
+ * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia
+ */
 public class GestionInventario {
 
     private Repositorio<Producto> repositorioProducto;
 
+    /**
+     * Constructor con inyección de dependencias.
+     * 
+     * @param repositorioProducto Implementación de Repositorio<Producto>
+     */
+    public GestionInventario(Repositorio<Producto> repositorioProducto) {
+        this.repositorioProducto = repositorioProducto;
+    }
+
+    /**
+     * Constructor por defecto: usa PersistenciaProducto.
+     * Mantiene compatibilidad con código existente.
+     */
     public GestionInventario() {
-        this.repositorioProducto = new PersistenciaProducto();
+        this(new PersistenciaProducto());
     }
 
     public boolean registrarProducto(Producto producto) {

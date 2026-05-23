@@ -5,3 +5,4 @@
 *.class
 *.log
 caso-estudio-codigo-inicial/
+**/caso-estudio-codigo-inicial/

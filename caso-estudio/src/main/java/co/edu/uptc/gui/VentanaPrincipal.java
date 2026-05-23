@@ -103,7 +103,7 @@ public class VentanaPrincipal extends JFrame {
             new ControladorProducto(panelProducto, gestionInventario);
             new ControladorCliente(panelClientes, gestionClientes);
             new ControladorVentas(panelVentas, gestionVentas, gestionInventario, gestionClientes);
-            new ControladorProveedor(panelProveedor, gestionProveedor);
+            new ControladorProveedor(panelProveedor);            
             new ControladorCompra(panelCompra, gestionCompra, gestionProveedor, gestionInventario);
 
             ventanaPrincipal.mostrarPanel("INVENTARIO"); 

@@ -2,6 +2,7 @@ package co.edu.uptc.controlador;
 
 import co.edu.uptc.dto.CarritoItemDTO;
 import co.edu.uptc.gui.PanelVentas;
+import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.modelo.DetalleVenta;
 import co.edu.uptc.modelo.Producto;
@@ -9,6 +10,8 @@ import co.edu.uptc.modelo.Venta;
 import co.edu.uptc.negocio.GestionClientes;
 import co.edu.uptc.negocio.GestionInventario;
 import co.edu.uptc.negocio.GestionVentas;
+import co.edu.uptc.persistencia.PersistenciaCliente;
+import co.edu.uptc.persistencia.PersistenciaProducto;
 import co.edu.uptc.utilidades.FormateadorMoneda;
 import co.edu.uptc.utilidades.ValidadorEntradas;
 
@@ -19,6 +22,14 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de ventas.
+ * 
+ * APLICACIÓN DE PRINCIPIOS SOLID:
+ * - S (Single Responsibility): Solo coordina interacción entre GUI y negocio de ventas
+ * - D (Dependency Inversion): Recibe dependencias inyectadas, no las instancia
+ * - O (Open/Closed): Abierto a nuevas implementaciones sin modificar este código
+ */
 public class ControladorVentas {
 
     private PanelVentas vistaVentas;
@@ -30,6 +41,14 @@ public class ControladorVentas {
     private List<CarritoItemDTO> carritoTemporal;
     private double totalVentaTemporal;
 
+    /**
+     * Constructor con inyección completa de dependencias.
+     * 
+     * @param vistaVentas Panel de GUI
+     * @param gestionVentas Gestión de ventas
+     * @param gestionInventario Gestión de inventario
+     * @param gestionClientes Gestión de clientes
+     */
     public ControladorVentas(PanelVentas vistaVentas, GestionVentas gestionVentas, GestionInventario gestionInventario, GestionClientes gestionClientes) {
         this.vistaVentas = vistaVentas;
         this.gestionVentas = gestionVentas;
@@ -39,6 +58,16 @@ public class ControladorVentas {
         this.totalVentaTemporal = 0;
         
         inicializarEventos();
+    }
+
+    /**
+     * Constructor convenencia: crea instancias por defecto con persistencia en texto.
+     */
+    public ControladorVentas(PanelVentas vistaVentas) {
+        this(vistaVentas,
+             new GestionVentas(new GestionInventario()),
+             new GestionInventario(),
+             new GestionClientes());
     }
 
     private void inicializarEventos() {

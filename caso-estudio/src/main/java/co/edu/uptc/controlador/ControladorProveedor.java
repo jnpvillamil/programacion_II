@@ -1,23 +1,50 @@
 package co.edu.uptc.controlador;
 
 import co.edu.uptc.gui.PanelProveedor;
+import co.edu.uptc.interfaces.IPersistenciaProveedor;
 import co.edu.uptc.modelo.Proveedor;
 import co.edu.uptc.negocio.GestionProveedor;
+import co.edu.uptc.persistencia.PersistenciaProveedor;
 import co.edu.uptc.utilidades.ValidadorEntradas;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de proveedores.
+ * 
+ * APLICACIÓN DE PRINCIPIOS SOLID:
+ * - S (Single Responsibility): Solo coordina interacción entre GUI y negocio
+ * - D (Dependency Inversion): Depende de IPersistenciaProveedor (interfaz), no de implementación
+ * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia sin modificar este código
+ */
 public class ControladorProveedor {
 
     private PanelProveedor vista;
     private GestionProveedor negocio;
 
-    public ControladorProveedor(PanelProveedor vista, GestionProveedor negocio) {
+    /**
+     * Constructor con inyección de dependencias (DIP).
+     * Permite cambiar la fuente de datos sin modificar este controlador.
+     * 
+     * @param vista El panel GUI de proveedores
+     * @param persistencia Implementación de persistencia (MySQL, TXT, MongoDB, etc)
+     */
+    public ControladorProveedor(PanelProveedor vista, IPersistenciaProveedor persistencia) {
         this.vista = vista;
-        this.negocio = negocio;
+        this.negocio = new GestionProveedor(persistencia);
         this.inicializarEventos();
         this.actualizarTabla();
+    }
+
+    /**
+     * Constructor convenencia: usa MySQL por defecto.
+     * Mantiene compatibilidad con código existente.
+     * 
+     * @param vista El panel GUI de proveedores
+     */
+    public ControladorProveedor(PanelProveedor vista) {
+        this(vista, new PersistenciaProveedor());
     }
 
     private void inicializarEventos() {

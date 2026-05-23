@@ -1,8 +1,10 @@
 package co.edu.uptc.controlador;
 
 import co.edu.uptc.gui.PanelInventario;
+import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.negocio.GestionInventario;
+import co.edu.uptc.persistencia.PersistenciaProducto;
 import co.edu.uptc.utilidades.FormateadorMoneda;
 import co.edu.uptc.utilidades.ValidadorEntradas;
 
@@ -12,11 +14,42 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de inventario/productos.
+ * 
+ * APLICACIÓN DE PRINCIPIOS SOLID:
+ * - S (Single Responsibility): Solo coordina interacción entre GUI e inventario
+ * - D (Dependency Inversion): Depende de Repositorio<Producto>, no de implementación
+ * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia
+ */
 public class ControladorInventario {
 
     private PanelInventario vistaInventario;
     private GestionInventario gestionInventario;
 
+    /**
+     * Constructor con inyección de dependencias.
+     * 
+     * @param vistaInventario Panel de GUI
+     * @param repositorioProducto Implementación de Repositorio<Producto>
+     */
+    public ControladorInventario(PanelInventario vistaInventario, Repositorio<Producto> repositorioProducto) {
+        this.vistaInventario = vistaInventario;
+        this.gestionInventario = new GestionInventario(repositorioProducto);
+        inicializarEventos();
+        actualizarTabla();
+    }
+
+    /**
+     * Constructor convenencia: usa PersistenciaProducto por defecto.
+     */
+    public ControladorInventario(PanelInventario vistaInventario) {
+        this(vistaInventario, new PersistenciaProducto());
+    }
+
+    /**
+     * Constructor alternativo si aún se recibe GestionInventario instanciada.
+     */
     public ControladorInventario(PanelInventario vistaInventario, GestionInventario gestionInventario) {
         this.vistaInventario = vistaInventario;
         this.gestionInventario = gestionInventario;

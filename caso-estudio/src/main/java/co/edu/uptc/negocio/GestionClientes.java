@@ -6,12 +6,33 @@ import co.edu.uptc.persistencia.PersistenciaCliente;
 
 import java.util.List;
 
+/**
+ * Capa de negocio para la gestión de clientes.
+ * 
+ * APLICACIÓN DE PRINCIPIOS SOLID:
+ * - S (Single Responsibility): Solo gestiona lógica de negocio de clientes
+ * - D (Dependency Inversion): Depende de Repositorio<Cliente>, no de implementación concreta
+ * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia
+ */
 public class GestionClientes {
 
     private Repositorio<Cliente> repositorioCliente;
 
+    /**
+     * Constructor con inyección de dependencias.
+     * 
+     * @param repositorioCliente Implementación de Repositorio<Cliente>
+     */
+    public GestionClientes(Repositorio<Cliente> repositorioCliente) {
+        this.repositorioCliente = repositorioCliente;
+    }
+
+    /**
+     * Constructor por defecto: usa PersistenciaCliente.
+     * Mantiene compatibilidad con código existente.
+     */
     public GestionClientes() {
-        this.repositorioCliente = new PersistenciaCliente();
+        this(new PersistenciaCliente());
     }
 
     public boolean registrarCliente(Cliente cliente) {
