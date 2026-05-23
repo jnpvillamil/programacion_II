@@ -1,11 +1,11 @@
-package co.uptc.edu.tienda.negocio;
+package co.uptc.edu.co.tienda.configs;
 
 import co.uptc.edu.tienda.interfaces.IGestionVenta;
+import co.uptc.edu.tienda.negocio.GestionVenta;
 import co.uptc.edu.tienda.persistencia.LocalVenta;
 
 public class VentaConfig {
 
-    public static final double IVA = 0.19;
 
     public static final String PREFIJO_FACTURA = "FACT-";
 

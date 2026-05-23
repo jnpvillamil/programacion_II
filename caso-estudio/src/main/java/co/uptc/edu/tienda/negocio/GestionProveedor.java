@@ -20,41 +20,26 @@ public class GestionProveedor {
 	}
 
 	
-	public void agregarProveedor(Proveedor nuevo) throws Exception{
-        // 1. Leer los que ya existen
-		
-		if(nuevo.getRazonSocial().trim().isEmpty()) {
-			throw new Exception("La razón social es obligatoria");
-		}
-		if(nuevo.getTelefonoP()<= 0) {
-			throw new Exception("El teléfono debe ser un número positivo");
-		}
-		
-        List<Proveedor> actuales = gestionP.leerProveedores();
-        
-        int maxId = 99;
-        if (actuales.size() > 0) {
-            for (int i = 0; i < actuales.size(); i++) {
-                if (actuales.get(i).getCodigoProveedor() > maxId) {
-                    maxId = actuales.get(i).getCodigoProveedor();
-                }
-            }
-        }
+	public void agregarProveedor(Proveedor nuevo) throws Exception {
+	    if (nuevo.getRazonSocial().trim().isEmpty()) {
+	        throw new Exception("La razón social es obligatoria");
+	    }
+	    if (nuevo.getTelefonoP() <= 0) {
+	        throw new Exception("El teléfono debe ser un número positivo");
+	    }
 
-        // 2. FORZAR el código consecutivo real basado en el archivo
-        // Esto ignora si el contador de la RAM saltó números
-        int idReal = maxId + 1;
-        
-        // Necesitas un setter en Proveedor para esta línea:
-        nuevo.setCodigoProveedor(idReal); 
-        
-        // 3. Sincronizar el contador global para el futuro
-        Proveedor.setContador(idReal);
+	    // Consecutivo sigue siendo necesario para JSON
+	    // En SQL esto desaparece
+	    List<Proveedor> actuales = gestionP.leerProveedores();
+	    int maxId = 99;
+	    for (Proveedor p : actuales) {
+	        if (p.getCodigoProveedor() > maxId) maxId = p.getCodigoProveedor();
+	    }
+	    nuevo.setCodigoProveedor(maxId + 1);
+	    Proveedor.setContador(maxId + 1);
 
-        // 4. Agregar y Guardar
-        actuales.add(nuevo);
-        gestionP.guardar(actuales);
-    }
+	    gestionP.guardar(nuevo); //
+	}
 	
 	public void modificarProveedor(Proveedor proveedor) {
 		gestionP.actualizar(proveedor);

@@ -55,6 +55,13 @@ public class Evento implements ActionListener {
     public final static String EDITAR_CLI = "Editar_CLI";
     public final static String CANCELAR_CLI = "Cancelar_CLI";
     public final static String ACTIVAR_CLI = "Activar_CLI";
+    
+ // VENTA
+    public final static String AGREGAR_PRODUCTO_VTA  = "Agregar_Producto_VTA";
+    public final static String FINALIZAR_VTA         = "Finalizar_VTA";
+    public final static String LANZAR_ANULAR_VTA     = "Lanzar_Anular_VTA";   // abre el diálogo
+    public final static String ANULAR_VTA            = "Anular_VTA";           // confirma la anulación
+    public final static String CANCELAR_ANULAR_VTA   = "Cancelar_Anular_VTA"; // cierra el diálogo
 
     private VentanaPrincipal ventana;
 
@@ -196,6 +203,17 @@ public class Evento implements ActionListener {
         } else if(evento.equals(VER_PRD)) {
 
             ventana.verProducto();
+        } else if (evento.equals(AGREGAR_PRODUCTO_VTA)) {
+            ventana.agregarProductoVenta();
+        } else if (evento.equals(FINALIZAR_VTA)) {
+            ventana.finalizarVenta();
+        } else if (evento.equals(LANZAR_ANULAR_VTA)) {
+            ventana.lanzarDialogoAnularVenta();   // ← botón del historial
+        } else if (evento.equals(ANULAR_VTA)) {
+            ventana.anularVenta();                // ← botón confirmar del diálogo
+        } else if (evento.equals(CANCELAR_ANULAR_VTA)) {
+            ventana.cerrarDialogoAnularVenta();
         }
+        
     }
 }

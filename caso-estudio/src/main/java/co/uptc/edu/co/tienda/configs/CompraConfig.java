@@ -1,6 +1,7 @@
-package co.uptc.edu.tienda.negocio;
+package co.uptc.edu.co.tienda.configs;
 
 import co.uptc.edu.tienda.interfaces.IGestionCompra;
+import co.uptc.edu.tienda.negocio.GestionCompra;
 import co.uptc.edu.tienda.persistencia.LocalCompra;
 
 public class CompraConfig {

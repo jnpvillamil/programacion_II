@@ -25,55 +25,38 @@ public class LocalProveedor implements IGestionProveedor {
 	public LocalProveedor() {
 		super();
 		// TODO Auto-generated constructor stub
-//		this.listaProveedores = new ArrayList<>();
+
 	}
 
 	@Override
-	public void guardar(List<Proveedor> proveedores) {
-		try(FileWriter writer = new FileWriter(RUTA)){
-			gson.toJson(proveedores,writer);
-			System.out.println("Proveedores");
-		}catch(IOException e) {
-			System.out.println("Error al guardar en "+RUTA+":"+e.getMessage());
-			
-		}
-		// TODO Auto-generated method stub
-		
+	public void guardar(Proveedor nuevo) {
+	    List<Proveedor> lista = leerProveedores();
+	    lista.add(nuevo);
+	    guardarArchivo(lista);
 	}
 
 	@Override
 	public void actualizar(Proveedor proveedor) {
-		// TODO Auto-generated method stub
-		List<Proveedor> lista = leerProveedores();
-	    
-	    // 2. Buscamos el proveedor por su ID y lo reemplazamos
+	    List<Proveedor> lista = leerProveedores();
 	    for (int i = 0; i < lista.size(); i++) {
 	        if (lista.get(i).getCodigoProveedor() == proveedor.getCodigoProveedor()) {
-	            lista.set(i, proveedor); // Reemplaza el objeto viejo por el nuevo
-	            break; // Ya lo encontramos, salimos del bucle
+	            lista.set(i, proveedor);
+	            break;
 	        }
 	    }
-	    
-	    guardar(lista);
-
+	    guardarArchivo(lista); // ← usa el privado
 	}
 
 	@Override
 	public void eliminar(int codigoProveedor) {
-		// TODO Auto-generated method stub
-		List<Proveedor> lista = leerProveedores();
-	    
-	    // 2. Buscamos la posición del proveedor a borrar
-	    for (int i = 0; i < lista.size(); i++) {
-	    	Proveedor p = lista.get(i);
+	    List<Proveedor> lista = leerProveedores();
+	    for (Proveedor p : lista) {
 	        if (p.getCodigoProveedor() == codigoProveedor) {
-	            p.setEstado(EstadoEnum.INACTIVO); // Elimina el elemento en esa posición
-	            break; 
+	            p.setEstado(EstadoEnum.INACTIVO);
+	            break;
 	        }
 	    }
-	    
-	    // 3. SOBRESCRIBIMOS el archivo con la lista ahora más corta
-	    guardar(lista);
+	    guardarArchivo(lista); // ← usa el privado
 	}
 
 	@Override
@@ -120,18 +103,27 @@ public class LocalProveedor implements IGestionProveedor {
 
 	@Override
 	public void cambiarEstado(int codigoProveedor, EstadoEnum nuevoEstado) {
-		// TODO Auto-generated method stub
-		List<Proveedor> lista = leerProveedores();
+	    List<Proveedor> lista = leerProveedores();
 	    for (Proveedor p : lista) {
 	        if (p.getCodigoProveedor() == codigoProveedor) {
 	            p.setEstado(nuevoEstado);
 	            break;
 	        }
 	    }
-	    guardar(lista);
+	    guardarArchivo(lista); // ← usa el privado
+	}
 	    
 	    
 		
+	
+	
+	private void guardarArchivo(List<Proveedor> proveedores) {
+	    try (FileWriter writer = new FileWriter(RUTA)) {
+	        gson.toJson(proveedores, writer);
+	        System.out.println("Proveedores guardados");
+	    } catch (IOException e) {
+	        System.out.println("Error al guardar en " + RUTA + ": " + e.getMessage());
+	    }
 	}
 
 

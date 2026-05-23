@@ -1,0 +1,38 @@
+[
+  {
+    "idMovimiento": 1,
+    "producto": {
+      "codigoProducto": 101,
+      "nombreProducto": "panela",
+      "categoria": "vivere",
+      "precioCompra": 2200.0,
+      "precioVenta": 2500.0,
+      "stockActual": 89,
+      "stockMinimo": 10,
+      "stockMaximo": 120,
+      "activo": true
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 1,
+    "fechaHora": "2026-05-22T23:31:56.971939100",
+    "motivo": "Venta: FACT-4"
+  },
+  {
+    "idMovimiento": 2,
+    "producto": {
+      "codigoProducto": 101,
+      "nombreProducto": "panela",
+      "categoria": "vivere",
+      "precioCompra": 2200.0,
+      "precioVenta": 2500.0,
+      "stockActual": 79,
+      "stockMinimo": 10,
+      "stockMaximo": 120,
+      "activo": true
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 10,
+    "fechaHora": "2026-05-22T23:33:36.105047400",
+    "motivo": "Venta: FACT-1"
+  }
+]

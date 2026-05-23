@@ -7,68 +7,63 @@ import co.uptc.edu.tienda.modelo.Producto;
 public class DialogoProducto extends DialogoCentral {
 
     private JTextField txtNombre, txtCategoria, txtPrecioCompra, txtPrecioVenta, txtStock, txtStockMinimo, txtStockMaximo;
+    private JComboBox<String> comboIva; // ← atributo de instancia
     private int codigoActual;
 
     public DialogoProducto(Evento evento, String titulo, boolean isCrear) {
         super(evento, titulo, isCrear);
-        setSize(450, 500); // Un poco más ancho para que los campos luzcan bien
+        setSize(450, 550); // Un poco más alto para acomodar la fila de IVA
     }
 
     @Override
     public void iniciarComponentes() {
-        // Añadimos margen para que no se vea "feo" ni pegado a los bordes
         panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-        
-        // Usamos GridLayout de 7 filas y 2 columnas con espacio entre ellas
-        panelCentral.setLayout(new GridLayout(7, 2, 10, 15));
 
-        txtNombre = new JTextField();
-        txtCategoria = new JTextField();
-        txtPrecioCompra = new JTextField();
-        txtPrecioVenta = new JTextField();
-        txtStock = new JTextField();
-        txtStockMinimo = new JTextField();
-        txtStockMaximo = new JTextField();
+        // 8 filas: 7 campos originales + 1 para IVA
+        panelCentral.setLayout(new GridLayout(8, 2, 10, 15));
 
-        // Agregamos Labels y Fields
-        panelCentral.add(new JLabel("Nombre:", SwingConstants.RIGHT));
-        panelCentral.add(txtNombre);
-        
-        panelCentral.add(new JLabel("Categoría:", SwingConstants.RIGHT));
-        panelCentral.add(txtCategoria);
-        
-        panelCentral.add(new JLabel("Precio Compra:", SwingConstants.RIGHT));
-        panelCentral.add(txtPrecioCompra);
-        
-        panelCentral.add(new JLabel("Precio Venta:", SwingConstants.RIGHT));
-        panelCentral.add(txtPrecioVenta);
-        
-        panelCentral.add(new JLabel("Stock Actual:", SwingConstants.RIGHT));
-        panelCentral.add(txtStock);
-        
-        panelCentral.add(new JLabel("Stock Mínimo:", SwingConstants.RIGHT));
-        panelCentral.add(txtStockMinimo);
-        
-        panelCentral.add(new JLabel("Stock Máximo:", SwingConstants.RIGHT));
-        panelCentral.add(txtStockMaximo);
+        txtNombre        = new JTextField();
+        txtCategoria     = new JTextField();
+        txtPrecioCompra  = new JTextField();
+        txtPrecioVenta   = new JTextField();
+        txtStock         = new JTextField();
+        txtStockMinimo   = new JTextField();
+        txtStockMaximo   = new JTextField();
+
+        comboIva = new JComboBox<>(
+            new String[]{"0% - No aplica", "5% - Reducido", "19% - General"}
+        );
+
+        panelCentral.add(new JLabel("Nombre:",        SwingConstants.RIGHT)); panelCentral.add(txtNombre);
+        panelCentral.add(new JLabel("Categoría:",     SwingConstants.RIGHT)); panelCentral.add(txtCategoria);
+        panelCentral.add(new JLabel("Precio Compra:", SwingConstants.RIGHT)); panelCentral.add(txtPrecioCompra);
+        panelCentral.add(new JLabel("Precio Venta:",  SwingConstants.RIGHT)); panelCentral.add(txtPrecioVenta);
+        panelCentral.add(new JLabel("Stock Actual:",  SwingConstants.RIGHT)); panelCentral.add(txtStock);
+        panelCentral.add(new JLabel("Stock Mínimo:",  SwingConstants.RIGHT)); panelCentral.add(txtStockMinimo);
+        panelCentral.add(new JLabel("Stock Máximo:",  SwingConstants.RIGHT)); panelCentral.add(txtStockMaximo);
+        panelCentral.add(new JLabel("IVA:",           SwingConstants.RIGHT)); panelCentral.add(comboIva);
     }
 
     @Override
     public void asignarComandos() {
-        // Los botones btnGuardar y btnCerrar vienen heredados de DialogoCentral
         btnGuardar.setActionCommand(isCrear ? Evento.GUARDAR_PRD : Evento.EDITAR_PRD);
         btnCerrar.setActionCommand(Evento.CANCELAR_PRD);
     }
 
     public Producto capturarDatos() {
-        // Si es crear, podrías usar el random o dejar que la lógica lo maneje
         int codigo = isCrear ? (int)(Math.random() * 1000) : codigoActual;
 
         try {
-            // Validamos que no haya campos vacíos antes de parsear
-            if(txtNombre.getText().trim().isEmpty() || txtPrecioCompra.getText().trim().isEmpty()){
+            if (txtNombre.getText().trim().isEmpty() || txtPrecioCompra.getText().trim().isEmpty()) {
                 throw new Exception("Campos obligatorios vacíos.");
             }
+
+            // Resolver porcentaje de IVA desde el combo
+            double porcentajeIva;
+            String ivaSeleccionado = (String) comboIva.getSelectedItem();
+            if      (ivaSeleccionado.startsWith("19")) porcentajeIva = 0.19;
+            else if (ivaSeleccionado.startsWith("5"))  porcentajeIva = 0.05;
+            else                                       porcentajeIva = 0.0;
 
             return new Producto(
                 codigo,
@@ -78,7 +73,8 @@ public class DialogoProducto extends DialogoCentral {
                 Double.parseDouble(txtPrecioVenta.getText().trim()),
                 Integer.parseInt(txtStock.getText().trim()),
                 Integer.parseInt(txtStockMinimo.getText().trim()),
-                Integer.parseInt(txtStockMaximo.getText().trim())
+                Integer.parseInt(txtStockMaximo.getText().trim()),
+                porcentajeIva
             );
 
         } catch (Exception e) {
@@ -95,5 +91,11 @@ public class DialogoProducto extends DialogoCentral {
         txtStock.setText(String.valueOf(p.getStockActual()));
         txtStockMinimo.setText(String.valueOf(p.getStockMinimo()));
         txtStockMaximo.setText(String.valueOf(p.getStockMaximo()));
+
+        // Preseleccionar la opción de IVA correcta al editar
+        double iva = p.getPorcentajeIva();
+        if      (iva == 0.19) comboIva.setSelectedIndex(2);
+        else if (iva == 0.05) comboIva.setSelectedIndex(1);
+        else                  comboIva.setSelectedIndex(0);
     }
 }

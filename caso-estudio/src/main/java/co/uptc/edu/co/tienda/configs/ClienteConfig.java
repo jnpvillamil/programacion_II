@@ -1,6 +1,7 @@
-package co.uptc.edu.tienda.negocio;
+package co.uptc.edu.co.tienda.configs;
 
 import co.uptc.edu.tienda.interfaces.IGestionCliente;
+import co.uptc.edu.tienda.negocio.GestionCliente;
 import co.uptc.edu.tienda.persistencia.LocalCliente;
 
 public class ClienteConfig {

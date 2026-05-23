@@ -9,7 +9,7 @@ import co.uptc.edu.tienda.modelo.Proveedor;
 
 
 public interface IGestionProveedor {
-	public void guardar(List<Proveedor> proveedores);
+	void guardar(Proveedor proveedor);
 	
 	public void actualizar(Proveedor proveedor);
 	

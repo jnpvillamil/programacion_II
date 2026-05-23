@@ -1,6 +1,7 @@
-package co.uptc.edu.tienda.negocio;
+package co.uptc.edu.co.tienda.configs;
 
 import co.uptc.edu.tienda.interfaces.IGestionProducto;
+import co.uptc.edu.tienda.negocio.GestionProducto;
 import co.uptc.edu.tienda.persistencia.LocalProducto;
 
 public class ProductoConfig {

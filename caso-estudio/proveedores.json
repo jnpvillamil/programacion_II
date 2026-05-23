@@ -79,5 +79,14 @@
     "telefonoP": 3145552222,
     "correoP": "OLIMPICA@GMAIL.COM",
     "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": 109,
+    "razonSocial": "CARNES",
+    "nit": "98234576-9",
+    "direccionP": "CALLE 32",
+    "telefonoP": 1234567890,
+    "correoP": "CARNES@CORREO.COM",
+    "estado": "ACTIVO"
   }
 ]

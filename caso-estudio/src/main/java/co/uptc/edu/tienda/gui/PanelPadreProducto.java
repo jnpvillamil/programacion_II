@@ -45,6 +45,7 @@ public class PanelPadreProducto extends PanelCentral<Producto> {
         modelo.addColumn("Categoría");
         modelo.addColumn("P. Compra");
         modelo.addColumn("P. Venta");
+        modelo.addColumn("IVA (%)");
         modelo.addColumn("Stock");
         modelo.addColumn("S. Mín");
         modelo.addColumn("S. Máx");
@@ -63,6 +64,7 @@ public class PanelPadreProducto extends PanelCentral<Producto> {
                 p.getCategoria(),
                 p.getPrecioCompra(),
                 p.getPrecioVenta(),
+                p.getPorcentajeIva(),
                 p.getStockActual(),
                 p.getStockMinimo(),
                 p.getStockMaximo(),

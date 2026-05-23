@@ -28,5 +28,25 @@
     "nombreCompleto": "56",
     "tipoDocumento": "RC",
     "numeroDocumento": 5555
+  },
+  {
+    "idCliente": 103,
+    "direccionC": "CARRERA 56#87-09",
+    "tipoCliente": "Minorista",
+    "telefonoC": 3112445678,
+    "estado": "ACTIVO",
+    "nombreCompleto": "JUAN PABLO",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 1010334466
+  },
+  {
+    "idCliente": 104,
+    "direccionC": "CALLE 32",
+    "tipoCliente": "Minorista",
+    "telefonoC": 3124563245,
+    "estado": "ACTIVO",
+    "nombreCompleto": "SEBASTIAN",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 1000432543
   }
 ]

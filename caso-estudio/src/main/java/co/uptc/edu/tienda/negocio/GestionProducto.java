@@ -78,4 +78,8 @@ public class GestionProducto {
 
         gestionP.cambiarEstado(codigoProducto);
     }
+    
+    public void guardarTodos(List<Producto> productos) {
+        gestionP.guardar(productos); // guardar(List) ya existe en IGestionProducto
+    }
 }

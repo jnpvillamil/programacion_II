@@ -1,6 +1,7 @@
-package co.uptc.edu.tienda.negocio; // Ajusta el paquete según corresponda
+package co.uptc.edu.co.tienda.configs; // Ajusta el paquete según corresponda
 
 import co.uptc.edu.tienda.interfaces.IGestionUsuario;
+import co.uptc.edu.tienda.negocio.GestionSeguridad;
 import co.uptc.edu.tienda.persistencia.LocalUsuario;
 
 public class SeguridadConfig {

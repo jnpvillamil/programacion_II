@@ -11,10 +11,13 @@ public class Producto {
     private int stockMinimo;
     private int stockMaximo;
     private boolean activo;
+    private double porcentajeIva; // 0.0 no aplica, 0.19 = 19%; 0.05 = 5%
 
-    public Producto(int codigoProducto, String nombreProducto, String categoria,
+
+
+	public Producto(int codigoProducto, String nombreProducto, String categoria,
                     double precioCompra, double precioVenta,
-                    int stockActual, int stockMinimo, int stockMaximo) {
+                    int stockActual, int stockMinimo, int stockMaximo,double porcentajeIva) {
 
         this.codigoProducto = codigoProducto;
         this.nombreProducto = nombreProducto;
@@ -24,6 +27,7 @@ public class Producto {
         this.stockActual = stockActual;
         this.stockMinimo = stockMinimo;
         this.stockMaximo = stockMaximo;
+        this.porcentajeIva = porcentajeIva;
         this.activo = true;
     }
 
@@ -117,4 +121,12 @@ public class Producto {
 
         return this.getNombreProducto();
     }
+    
+    public double getPorcentajeIva() {
+		return porcentajeIva;
+	}
+
+	public void setPorcentajeIva(double porcentajeIva) {
+		this.porcentajeIva = porcentajeIva;
+	}
 }

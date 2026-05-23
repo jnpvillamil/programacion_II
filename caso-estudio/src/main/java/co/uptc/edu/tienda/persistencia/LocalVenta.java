@@ -84,4 +84,28 @@ public class LocalVenta implements IGestionVenta {
 
         return new ArrayList<>();
     }
+    
+    @Override
+    public Venta buscarPorFactura(String numeroFactura) {
+        List<Venta> lista = leerVentas();
+        for (Venta v : lista) {
+            if (v.getNumeroFactura().equalsIgnoreCase(numeroFactura)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void actualizar(Venta venta) {
+        List<Venta> lista = leerVentas();
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).getNumeroFactura()
+                    .equalsIgnoreCase(venta.getNumeroFactura())) {
+                lista.set(i, venta);
+                break;
+            }
+        }
+        guardar(lista);
+    }
 }

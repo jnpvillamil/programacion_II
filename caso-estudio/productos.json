@@ -8,7 +8,7 @@
     "stockActual": 56,
     "stockMinimo": 5,
     "stockMaximo": 70,
-    "activo": false
+    "activo": true
   },
   {
     "codigoProducto": 101,
@@ -16,20 +16,42 @@
     "categoria": "vivere",
     "precioCompra": 2200.0,
     "precioVenta": 2500.0,
-    "stockActual": 90,
+    "stockActual": 79,
     "stockMinimo": 10,
     "stockMaximo": 120,
     "activo": true
   },
   {
     "codigoProducto": 102,
-    "nombreProducto": "121",
-    "categoria": "121",
-    "precioCompra": 121.0,
-    "precioVenta": 121.0,
-    "stockActual": 1,
+    "nombreProducto": "Pasta",
+    "categoria": "viveres",
+    "precioCompra": 5000.0,
+    "precioVenta": 8000.0,
+    "stockActual": 100,
     "stockMinimo": 22,
-    "stockMaximo": 32,
+    "stockMaximo": 300,
+    "activo": true
+  },
+  {
+    "codigoProducto": 103,
+    "nombreProducto": "Azucar",
+    "categoria": "viveres",
+    "precioCompra": 8000.0,
+    "precioVenta": 12000.0,
+    "stockActual": 100,
+    "stockMinimo": 20,
+    "stockMaximo": 300,
+    "activo": true
+  },
+  {
+    "codigoProducto": 104,
+    "nombreProducto": "Frijol",
+    "categoria": "viveres",
+    "precioCompra": 7000.0,
+    "precioVenta": 10000.0,
+    "stockActual": 100,
+    "stockMinimo": 20,
+    "stockMaximo": 200,
     "activo": true
   }
 ]

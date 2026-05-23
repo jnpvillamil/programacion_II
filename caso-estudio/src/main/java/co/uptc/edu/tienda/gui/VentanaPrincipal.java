@@ -2,18 +2,23 @@ package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
 
-
+import co.uptc.edu.co.tienda.configs.ClienteConfig;
+import co.uptc.edu.co.tienda.configs.InventarioConfig;
+import co.uptc.edu.co.tienda.configs.ProductoConfig;
+import co.uptc.edu.co.tienda.configs.ProveedorConfig;
+import co.uptc.edu.co.tienda.configs.SeguridadConfig;
+import co.uptc.edu.co.tienda.configs.VentaConfig;
 import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.modelo.Cliente;
 import co.uptc.edu.tienda.modelo.Producto;
 import co.uptc.edu.tienda.modelo.Proveedor;
-import co.uptc.edu.tienda.negocio.ClienteConfig;
+import co.uptc.edu.tienda.modelo.Venta;
+import co.uptc.edu.tienda.modelo.DetalleVenta;
 import co.uptc.edu.tienda.negocio.GestionSeguridad;
-import co.uptc.edu.tienda.negocio.ProductoConfig;
-import co.uptc.edu.tienda.negocio.ProveedorConfig;
 import co.uptc.edu.tienda.negocio.dto.CredencialDto;
-import co.uptc.edu.tienda.negocio.SeguridadConfig;
-import co.uptc.edu.tienda.gui.PanelVenta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.awt.*;
 
@@ -25,6 +30,9 @@ public class VentanaPrincipal extends JFrame {
     private PanelPadreProveedor pProveedor;
     private PanelPadreProducto pProducto;
     private PanelPadreCliente pCliente;
+    private PanelVenta pVenta;
+    private PanelHistorialVentas pHistorial;
+    private List<DetalleVenta> listaDetalle = new ArrayList<>();
 
     private JPanel contenedor;
 
@@ -37,12 +45,16 @@ public class VentanaPrincipal extends JFrame {
     private DialogoProveedor nuevoProveedor;
     private DialogoProducto nuevoProducto;
     private DialogoCliente nuevoCliente;
+    private DialogoAnularVenta dialogoAnular;
 
     private Evento evento;
-
+    
+//CONFIGS
     private ProveedorConfig proveedorConfig;
     private ProductoConfig productoConfig;
     private ClienteConfig clienteConfig;
+    private VentaConfig ventaConfig;
+    private InventarioConfig inventarioConfig;
 
     public VentanaPrincipal() {
 
@@ -59,12 +71,16 @@ public class VentanaPrincipal extends JFrame {
         pProveedor = new PanelPadreProveedor(evento);
         pProducto = new PanelPadreProducto(evento);
         pCliente = new PanelPadreCliente(evento);
+        pVenta = new PanelVenta(evento);
+        pHistorial = new PanelHistorialVentas(evento);
 
         seguridadConfig = new SeguridadConfig();
 
         proveedorConfig = new ProveedorConfig();
         productoConfig = new ProductoConfig();
         clienteConfig = new ClienteConfig();
+        ventaConfig = new VentaConfig();
+        inventarioConfig = new InventarioConfig();
 
         add(pLogin, BorderLayout.CENTER);
     }
@@ -144,72 +160,71 @@ public class VentanaPrincipal extends JFrame {
                         break;
 
                     case CAJERO:
-
                         remove(pLogin);
 
-                        JPanel panelBotonesCajero =
-                                new JPanel();
+                        // Panel lateral izquierdo
+                        JPanel panelLateral = new JPanel(new GridLayout(3, 1, 5, 5));
+                        panelLateral.setPreferredSize(new Dimension(150, 0));
+                        panelLateral.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                        panelLateral.setBackground(new Color(52, 73, 94)); // azul oscuro
 
-                        JButton btnVentas =
-                                new JButton("Ventas");
+                        JButton btnNuevaVenta = new JButton("Nueva Venta");
+                        JButton btnHistorial = new JButton("Historial Ventas");
+                        JButton btnClientesCajero = new JButton("Clientes");
 
-                        panelBotonesCajero.add(btnVentas);
+                        // Estilo botones laterales
+                        for (JButton btn : new JButton[]{btnNuevaVenta, btnHistorial, btnClientesCajero}) {
+                            btn.setBackground(new Color(52, 73, 94));
+                            btn.setForeground(Color.WHITE);
+                            btn.setFocusPainted(false);
+                            btn.setBorderPainted(false);
+                            btn.setFont(new Font("Arial", Font.BOLD, 13));
+                        }
 
-                        add(
-                            panelBotonesCajero,
-                            BorderLayout.NORTH
-                        );
+                        panelLateral.add(btnNuevaVenta);
+                        panelLateral.add(btnHistorial);
+                        panelLateral.add(btnClientesCajero);
 
-                        contenedor =
-                                new JPanel(
-                                        new BorderLayout());
+                        add(panelLateral, BorderLayout.WEST);
 
-                        add(
-                            contenedor,
-                            BorderLayout.CENTER
-                        );
-
-                        // PANEL VENTAS
-                        PanelVenta pVenta =
-                                new PanelVenta();
-
-                        contenedor.add(pVenta);
-
-                        this.setSize(1000,600);
-
-                        repaint();
-
-                        revalidate();
-
-                        break;
-
-                    case ALMACENISTA:
-
-                        remove(pLogin);
-
-                        JPanel panelBotonesAlmacen = new JPanel();
-
-                        JButton btnCompras = new JButton("Compras");
-
-                        panelBotonesAlmacen.add(btnCompras);
-
-                        add(panelBotonesAlmacen, BorderLayout.NORTH);
-
+                        // Panel de contenido derecho
                         contenedor = new JPanel(new BorderLayout());
                         add(contenedor, BorderLayout.CENTER);
 
-                        // 🔥 AQUÍ CARGAMOS EL MÓDULO DE COMPRAS
-                        PanelCompra pCompra = new PanelCompra();
-                        contenedor.add(pCompra);
+                        // Cargar datos en pVenta
+                        pVenta.poblarClientes(clienteConfig.getGestCliente().leerClientes());
+                        pVenta.poblarProductos(productoConfig.getGestProducto().listar());
 
-                        this.setSize(1000, 600);
+                        // Mostrar nueva venta por defecto
+                        contenedor.add(pVenta);
+
+                        this.setSize(1100, 650);
                         repaint();
                         revalidate();
 
-                        // Evento del botón (por si quieres cambiar vistas después)
-                        btnCompras.addActionListener(e -> {
+                        // Eventos botones laterales
+                        btnNuevaVenta.addActionListener(e -> {
                             contenedor.removeAll();
-                            contenedor.add(pCompra);
+                            pVenta.poblarProductos(productoConfig.getGestProducto().listar());
+                            pVenta.poblarClientes(clienteConfig.getGestCliente().leerClientes());
+                            contenedor.add(pVenta);
+                            contenedor.repaint();
+                            contenedor.revalidate();
+                        });
+
+                        btnHistorial.addActionListener(e -> {
+                            contenedor.removeAll();
+                            pHistorial.refrescar(ventaConfig.getGestVenta().listarVentas());
+                            contenedor.add(pHistorial);
+                            contenedor.repaint();
+                            contenedor.revalidate();
+                        });
+
+                        btnClientesCajero.addActionListener(e -> {
+                            contenedor.removeAll();
+                            // El cajero solo VE clientes, no los modifica
+                            pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+                            contenedor.add(pCliente);
                             contenedor.repaint();
                             contenedor.revalidate();
                         });
@@ -937,6 +952,151 @@ public class VentanaPrincipal extends JFrame {
                 "\nPrecio Venta: " + p.getPrecioVenta() +
                 "\nStock: " + p.getStockActual()
             );
+        }
+    }
+    
+    //VENTA
+    
+    public void agregarProductoVenta() {
+
+        if (pVenta.getFilaProductoSeleccionada() == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un producto");
+            return;
+        }
+
+        try {
+            if (pVenta.getTxtCantidad().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese una cantidad");
+                return;
+            }
+
+            int cantidad = pVenta.getCantidad();
+            int stock = pVenta.getStockProductoSeleccionado();
+
+            if (cantidad <= 0) {
+                JOptionPane.showMessageDialog(this, "Cantidad inválida");
+                return;
+            }
+            if (cantidad > stock) {
+                JOptionPane.showMessageDialog(this, "Stock insuficiente");
+                return;
+            }
+
+            int codigo = pVenta.getCodigoProductoSeleccionado();
+            String nombre = pVenta.getNombreProductoSeleccionado();
+            double precio = pVenta.getPrecioProductoSeleccionado();
+            double subtotal = precio * cantidad;
+            int nuevoStock = stock - cantidad;
+
+            // Actualizar tabla UI
+            pVenta.agregarFilaDetalle(nombre, cantidad, precio, subtotal);
+            pVenta.actualizarStockTabla(pVenta.getFilaProductoSeleccionada(), nuevoStock);
+
+            // Construir detalle para la lista
+            Producto producto = new Producto();
+            producto.setCodigoProducto(codigo);
+            producto.setNombreProducto(nombre);
+            producto.setPrecioVenta(precio);
+            producto.setStockActual(nuevoStock);
+
+            listaDetalle.add(new DetalleVenta(producto, cantidad));
+
+            // Recalcular total en pantalla
+            double total = 0;
+            for (int i = 0; i < pVenta.getFilasDetalle(); i++) {
+                total += pVenta.getSubtotalDetalle(i);
+            }
+            pVenta.actualizarTotal(total);
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Cantidad inválida");
+        }
+    }
+
+    public void finalizarVenta() {
+        try {
+            Venta venta = new Venta();
+            venta.setCliente(pVenta.getClienteSeleccionado());
+            venta.setFormaPago(pVenta.getFormaPagoSeleccionada());
+            venta.setDetalles(listaDetalle);
+
+            List<Producto> productos = productoConfig.getGestProducto().listar();
+
+            // 1. Guardar venta (negocio asigna número y fecha)
+            ventaConfig.getGestVenta().guardarVenta(venta);
+
+            // 2. Inventario registra la salida y actualiza stock
+            inventarioConfig.getGestInventario()
+                    .registrarSalidaPorVenta(venta, productos);
+
+            // 3. Persistir productos con stock actualizado
+            productoConfig.getGestProducto().guardarTodos(productos);
+
+            JOptionPane.showMessageDialog(this,
+                    "Venta registrada.\nFactura: " + venta.getNumeroFactura());
+            listaDetalle = new ArrayList<>();
+            pVenta.limpiar();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
+    
+    public void lanzarDialogoAnularVenta() {
+        dialogoAnular = new DialogoAnularVenta(evento);
+        // Si hay una factura seleccionada en el historial, la precarga
+        String facturaSeleccionada = pHistorial.getFacturaSeleccionada();
+        if (facturaSeleccionada != null) {
+            dialogoAnular.setFactura(facturaSeleccionada);
+        }
+        dialogoAnular.setVisible(true);
+    }
+    
+    public void cerrarDialogoAnularVenta() {
+        if (dialogoAnular != null) {
+            dialogoAnular.setVisible(false);
+            dialogoAnular = null;
+        }
+    }
+
+    public void anularVenta() {
+        try {
+            // Factura viene de la fila seleccionada en el historial
+            String factura = pHistorial.getFacturaSeleccionada();
+            String motivo = dialogoAnular.getMotivo();
+
+            if (factura == null) {
+                JOptionPane.showMessageDialog(this, "Seleccione una venta de la tabla");
+                return;
+            }
+
+            if (motivo.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese el motivo de anulación");
+                return;
+            }
+
+            // 1. Buscar la venta
+            Venta venta = ventaConfig.getGestVenta().buscarPorFactura(factura);
+
+            // 2. Anular
+            ventaConfig.getGestVenta().anularVenta(factura, motivo);
+
+            // 3. Devolver stock via inventario
+            List<Producto> productos = productoConfig.getGestProducto().listar();
+            inventarioConfig.getGestInventario()
+                    .registrarEntradaPorAnulacion(venta, productos);
+
+            // 4. Persistir stock
+            productoConfig.getGestProducto().guardarTodos(productos);
+
+            // 5. Refrescar historial
+            pHistorial.refrescar(ventaConfig.getGestVenta().listarVentas());
+            cerrarDialogoAnularVenta();
+
+            JOptionPane.showMessageDialog(this, "Venta anulada correctamente.");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     }
 }

@@ -2,32 +2,23 @@ package co.uptc.edu.tienda.modelo;
 
 import java.util.List;
 
+import co.uptc.edu.tienda.enums.EstadoVentaEnum;
 import co.uptc.edu.tienda.enums.FormaPagoEnum;
 
 public class Venta {
 
-    // =====================================
-    // ATRIBUTOS
-    // =====================================
 
     private String numeroFactura;
-
     // CAMBIADO A STRING PARA JSON
     private String fechaHora;
-
     private Cliente cliente;
-
     private List<DetalleVenta> detalles;
-
     private FormaPagoEnum formaPago;
-
     private double impuestos;
-
     private double total;
+    private EstadoVentaEnum estado;
+    private String motivoAnulacion;
 
-    // =====================================
-    // CONSTRUCTOR COMPLETO
-    // =====================================
 
     public Venta(
             String numeroFactura,
@@ -45,6 +36,8 @@ public class Venta {
         this.formaPago = formaPago;
         this.impuestos = impuestos;
         this.total = total;
+        this.estado = EstadoVentaEnum.ACTIVA;
+        this.motivoAnulacion = null;
     }
 
     // =====================================
@@ -52,6 +45,7 @@ public class Venta {
     // =====================================
 
     public Venta() {
+    	this.estado = EstadoVentaEnum.ACTIVA;
 
     }
 
@@ -135,4 +129,22 @@ public class Venta {
 
         this.total = total;
     }
+
+	public EstadoVentaEnum getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoVentaEnum estado) {
+		this.estado = estado;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
+    
+    
 }

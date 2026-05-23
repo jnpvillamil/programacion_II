@@ -8,5 +8,8 @@ public interface IGestionVenta {
 
     void guardar(List<Venta> ventas);
 
-    List<Venta> leerVentas();
+    public List<Venta> leerVentas();
+    
+    public Venta buscarPorFactura(String numeroFactura); // ← nuevo
+    public void actualizar(Venta venta);                 // ← nuevo
 }

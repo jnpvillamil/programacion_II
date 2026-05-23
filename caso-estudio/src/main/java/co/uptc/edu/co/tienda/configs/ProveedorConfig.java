@@ -1,7 +1,9 @@
-package co.uptc.edu.tienda.negocio;
+package co.uptc.edu.co.tienda.configs;
 
 import co.uptc.edu.tienda.interfaces.IGestionProveedor;
+import co.uptc.edu.tienda.negocio.GestionProveedor;
 import co.uptc.edu.tienda.persistencia.LocalProveedor;
+import co.uptc.edu.tienda.persistencia.SqlProveedor;
 
 public class ProveedorConfig {
 	
@@ -12,7 +14,7 @@ public class ProveedorConfig {
 	public ProveedorConfig() {
 		super();
 		// TODO Auto-generated constructor stub
-		iProveedor = new LocalProveedor();
+		iProveedor = new SqlProveedor();
 		gestProveedor = new GestionProveedor(iProveedor);	
 	}
 

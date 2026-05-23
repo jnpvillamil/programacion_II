@@ -20,11 +20,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import co.uptc.edu.co.tienda.configs.CompraConfig;
 import co.uptc.edu.tienda.modelo.Compra;
 import co.uptc.edu.tienda.modelo.DetalleCompra;
 import co.uptc.edu.tienda.modelo.Producto;
 import co.uptc.edu.tienda.modelo.Proveedor;
-import co.uptc.edu.tienda.negocio.CompraConfig;
 import co.uptc.edu.tienda.negocio.GestionCompra;
 import co.uptc.edu.tienda.persistencia.LocalProducto;
 import co.uptc.edu.tienda.persistencia.LocalProveedor;
