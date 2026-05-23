@@ -1,0 +1,27 @@
+package co.edu.uptc.tiendaminorista.negocio;
+
+import co.edu.uptc.tiendaminorista.persistencia.*;
+
+/**
+ * Punto central de configuración del sistema.
+ * Instancia la capa de persistencia e inyecta las dependencias
+ * en los gestores de negocio.
+ */
+public class TiendaConfig {
+    private final GestionCliente gestionCliente;
+    private final GestionProveedor gestionProveedor;
+    private final GestionProducto gestionProducto;
+    private final GestionContable gestionContable;
+
+    public TiendaConfig() {
+        this.gestionCliente   = new GestionCliente(new LocalCliente());
+        this.gestionProveedor = new GestionProveedor(new LocalProveedor());
+        this.gestionProducto  = new GestionProducto(new LocalProducto());
+        this.gestionContable  = new GestionContable(new LocalContable());
+    }
+
+    public GestionCliente getGestionCliente()     { return gestionCliente; }
+    public GestionProveedor getGestionProveedor() { return gestionProveedor; }
+    public GestionProducto getGestionProducto()   { return gestionProducto; }
+    public GestionContable getGestionContable()   { return gestionContable; }
+}
