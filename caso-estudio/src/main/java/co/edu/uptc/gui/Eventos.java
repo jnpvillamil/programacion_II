@@ -39,6 +39,13 @@ public class Eventos implements ActionListener {
     public final static String vANULAR    = "vAnular";
     public final static String vBUSCAR    = "vBuscar";
 
+    // Panel Compras
+    public final static String COMPRAS      = "COMPRAS";
+    public final static String cmREGISTRAR  = "cmpRegistrar";
+    public final static String cmANULAR     = "cmpAnular";
+    public final static String cmBUSCAR     = "cmpBuscar";
+    public final static String cmLIMPIAR    = "cmpLimpiar";
+
     // General
     public final static String SALIR  = "SALIR";
     public final static String VOLVER = "Volver";
@@ -49,46 +56,54 @@ public class Eventos implements ActionListener {
     private gestionProductos gProductos;
     private gestionProveedor gProveedor;
     private gestionVentas    gVentas;
+    private gestionCompras   gCompras;
 
     private panelClientes  clientesActivo;
     private panelProductos productosActivo;
     private panelProveedor proveedorActivo;
     private panelVentas    ventasActivo;
+    private panelCompras   comprasActivo;
 
     public Eventos() {
         this.gClientes  = new gestionClientes();
         this.gProductos = new gestionProductos();
         this.gProveedor = new gestionProveedor();
         this.gVentas    = new gestionVentas();
+        this.gCompras   = new gestionCompras();
     }
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         switch (cmd) {
-            case CLIENTES:   abrirClientes();      break;
-            case cREGISTRAR: registrarCliente();   break;
-            case cMODIFICAR: modificarCliente();   break;
-            case cINACTIVAR: inactivarCliente();   break;
-            case cBUSCAR:    buscarCliente();       break;
-            case cLIMPIAR:   limpiarCliente();      break;
-            case PRODUCTOS:  abrirProductos();     break;
-            case pREGISTRAR: registrarProducto();  break;
-            case pMODIFICAR: modificarProducto();  break;
-            case pINACTIVAR: inactivarProducto();  break;
-            case pBUSCAR:    buscarProducto();      break;
-            case pLIMPIAR:   limpiarProducto();     break;
-            case PROVEEDORES: abrirProveedores();  break;
-            case oREGISTRAR: registrarProveedor(); break;
-            case oMODIFICAR: modificarProveedor(); break;
-            case oINACTIVAR: inactivarProveedor(); break;
-            case oBUSCAR:    buscarProveedor();     break;
-            case oLIMPIAR:   limpiarProveedor();    break;
-            case VENTAS:     abrirVentas();        break;
-            case vREGISTRAR: registrarVenta();     break;
-            case vANULAR:    anularVenta();         break;
-            case vBUSCAR:    buscarVenta();         break;
-            case SALIR:      abrirSalir();         break;
-            case VOLVER:     volver(e);            break;
+            case CLIENTES:    abrirClientes();      break;
+            case cREGISTRAR:  registrarCliente();   break;
+            case cMODIFICAR:  modificarCliente();   break;
+            case cINACTIVAR:  inactivarCliente();   break;
+            case cBUSCAR:     buscarCliente();       break;
+            case cLIMPIAR:    limpiarCliente();      break;
+            case PRODUCTOS:   abrirProductos();      break;
+            case pREGISTRAR:  registrarProducto();   break;
+            case pMODIFICAR:  modificarProducto();   break;
+            case pINACTIVAR:  inactivarProducto();   break;
+            case pBUSCAR:     buscarProducto();      break;
+            case pLIMPIAR:    limpiarProducto();     break;
+            case PROVEEDORES: abrirProveedores();    break;
+            case oREGISTRAR:  registrarProveedor();  break;
+            case oMODIFICAR:  modificarProveedor();  break;
+            case oINACTIVAR:  inactivarProveedor();  break;
+            case oBUSCAR:     buscarProveedor();     break;
+            case oLIMPIAR:    limpiarProveedor();    break;
+            case VENTAS:      abrirVentas();         break;
+            case vREGISTRAR:  registrarVenta();      break;
+            case vANULAR:     anularVenta();         break;
+            case vBUSCAR:     buscarVenta();         break;
+            case COMPRAS:     abrirCompras();        break;
+            case cmREGISTRAR: registrarCompra();     break;
+            case cmANULAR:    anularCompra();        break;
+            case cmBUSCAR:    buscarCompra();        break;
+            case cmLIMPIAR:   limpiarCompra();       break;
+            case SALIR:       abrirSalir();          break;
+            case VOLVER:      volver(e);             break;
             default: System.out.println("Comando no reconocido: " + cmd);
         }
     }
@@ -99,7 +114,7 @@ public class Eventos implements ActionListener {
         if (vPrincipal != null) vPrincipal.setVisible(true);
     }
 
-    // Clientes 
+    //  Clientes 
     private void registrarCliente() {
         try {
             clienteDto c = clientesActivo.getDatosCliente();
@@ -255,7 +270,7 @@ public class Eventos implements ActionListener {
         proveedorActivo.poblarTabla(gProveedor.listar());
     }
 
-    //  Ventas funciones
+    //  Ventas 
     private void registrarVenta() {
         try {
             ventaDto v = ventasActivo.getDatosVenta();
@@ -286,6 +301,50 @@ public class Eventos implements ActionListener {
         } catch (Exception e) { JOptionPane.showMessageDialog(vPrincipal, e.getMessage()); }
     }
 
+    //  Compras 
+    private void registrarCompra() {
+        try {
+            compraDto c = comprasActivo.getDatosCompra();
+            if (c == null) return;
+            gCompras.registrar(c);
+            comprasActivo.poblarTabla(gCompras.listar());
+            comprasActivo.limpiarCampos();
+            JOptionPane.showMessageDialog(vPrincipal,
+                "Compra registrada. Factura N°: " + c.getNumeroFacturaProveedor()
+                + "\nInventario actualizado automaticamente."
+                + "\nEgreso contable registrado.");
+        } catch (Exception e) { JOptionPane.showMessageDialog(vPrincipal, e.getMessage()); }
+    }
+
+    private void anularCompra() {
+        try {
+            int num = comprasActivo.getNumeroFacturaSeleccionado();
+            if (num == -1) return;
+            if (JOptionPane.showConfirmDialog(vPrincipal,
+                    "¿Anular la compra N° " + num + "?",
+                    "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                gCompras.anular(num);
+                comprasActivo.poblarTabla(gCompras.listar());
+                JOptionPane.showMessageDialog(vPrincipal, "Compra anulada correctamente");
+            }
+        } catch (Exception e) { JOptionPane.showMessageDialog(vPrincipal, e.getMessage()); }
+    }
+
+    private void buscarCompra() {
+        try {
+            String input = JOptionPane.showInputDialog(vPrincipal, "Ingrese el numero de factura de compra:");
+            if (input == null || input.isBlank()) return;
+            compraDto c = gCompras.buscar(Integer.parseInt(input));
+            JOptionPane.showMessageDialog(vPrincipal,
+                    c != null ? "Compra encontrada:\n" + c : "Compra no encontrada");
+        } catch (Exception e) { JOptionPane.showMessageDialog(vPrincipal, e.getMessage()); }
+    }
+
+    private void limpiarCompra() {
+        comprasActivo.limpiarCampos();
+        comprasActivo.poblarTabla(gCompras.listar());
+    }
+
     //  Abrir paneles 
     public void abrirClientes() {
         if (vPrincipal != null) vPrincipal.setVisible(false);
@@ -313,6 +372,13 @@ public class Eventos implements ActionListener {
         ventasActivo = new panelVentas(this);
         ventasActivo.poblarTabla(gVentas.listar());
         abrirVentana("Ventas", ventasActivo);
+    }
+
+    public void abrirCompras() {
+        if (vPrincipal != null) vPrincipal.setVisible(false);
+        comprasActivo = new panelCompras(this);
+        comprasActivo.poblarTabla(gCompras.listar());
+        abrirVentana("Compras a Proveedor", comprasActivo);
     }
 
     private void abrirVentana(String titulo, JPanel panel) {
