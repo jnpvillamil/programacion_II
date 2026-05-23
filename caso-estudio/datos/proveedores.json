@@ -1,0 +1,28 @@
+[
+  {
+    "codigoProveedor": "PR001",
+    "razonSocial": "Alimentos del Valle S.A.S",
+    "nit": "800234567-2",
+    "direccion": "Zona Industrial Calle 80 # 30-10",
+    "ciudad": "Bogotá, D.C.",
+    "telefono": "6014567890",
+    "correoElectronico": "ventas@alimentosdelvalle.com",
+    "activo": true,
+    "responsabilidadFiscal": "R-99-PN",
+    "responsabilidadTributaria": "No aplica",
+    "actividadEconomica": "4761"
+  },
+  {
+    "codigoProveedor": "PR002",
+    "razonSocial": "Papelería Central Ltda",
+    "nit": "900876543-1",
+    "direccion": "Cra 15 # 22-40, Bogotá",
+    "ciudad": "Bogotá, D.C.",
+    "telefono": "3012345678",
+    "correoElectronico": "info@papeleriacentral.com",
+    "activo": true,
+    "responsabilidadFiscal": "R-99-PN",
+    "responsabilidadTributaria": "No aplica",
+    "actividadEconomica": "4761"
+  }
+]

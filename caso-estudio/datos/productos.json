@@ -1,0 +1,68 @@
+[
+  {
+    "codigoInterno": "P001",
+    "nombreProducto": "Arroz 1kg",
+    "categoria": "VIVERES",
+    "precioCompra": 2500.0,
+    "precioVenta": 3200.0,
+    "stockActual": 3,
+    "stockMinimo": 10,
+    "activo": true,
+    "tipoImpuesto": "EXLUIDO"
+  },
+  {
+    "codigoInterno": "P002",
+    "nombreProducto": "Aceite 1L",
+    "categoria": "VIVERES",
+    "precioCompra": 7000.0,
+    "precioVenta": 9500.0,
+    "stockActual": 5,
+    "stockMinimo": 15,
+    "activo": true,
+    "tipoImpuesto": "EXLUIDO"
+  },
+  {
+    "codigoInterno": "P003",
+    "nombreProducto": "Azúcar 1kg",
+    "categoria": "VIVERES",
+    "precioCompra": 2800.0,
+    "precioVenta": 3500.0,
+    "stockActual": 2,
+    "stockMinimo": 10,
+    "activo": true,
+    "tipoImpuesto": "EXLUIDO"
+  },
+  {
+    "codigoInterno": "P004",
+    "nombreProducto": "Jabón de baño",
+    "categoria": "ASEO",
+    "precioCompra": 1800.0,
+    "precioVenta": 2500.0,
+    "stockActual": 20,
+    "stockMinimo": 5,
+    "activo": true,
+    "tipoImpuesto": "IVA"
+  },
+  {
+    "codigoInterno": "P005",
+    "nombreProducto": "Cuaderno 100 hojas",
+    "categoria": "PAPELERIA",
+    "precioCompra": 3500.0,
+    "precioVenta": 5000.0,
+    "stockActual": 15,
+    "stockMinimo": 8,
+    "activo": true,
+    "tipoImpuesto": "IVA"
+  },
+  {
+    "codigoInterno": "P006",
+    "nombreProducto": "Gaseosa",
+    "categoria": "VIVERES",
+    "precioCompra": 6500.0,
+    "precioVenta": 8500.0,
+    "stockActual": 10,
+    "stockMinimo": 12,
+    "activo": true,
+    "tipoImpuesto": "IVA"
+  }
+]
