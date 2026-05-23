@@ -14,23 +14,25 @@ public class ventanaPrincipal extends JFrame {
 
     private void construirVentana() {
         setTitle("Tienda Minorista");
-        setSize(380, 180);
+        setSize(420, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JPanel panelMenu = new JPanel(new GridLayout(2, 2, 10, 10));
+        JPanel panelMenu = new JPanel(new GridLayout(2, 3, 10, 10));
         panelMenu.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
         JButton bClientes    = new JButton(Eventos.CLIENTES);
         JButton bProductos   = new JButton(Eventos.PRODUCTOS);
         JButton bProveedores = new JButton(Eventos.PROVEEDORES);
         JButton bVentas      = new JButton(Eventos.VENTAS);
+        JButton bCompras     = new JButton(Eventos.COMPRAS);
 
         panelMenu.add(bClientes);
         panelMenu.add(bProductos);
         panelMenu.add(bProveedores);
         panelMenu.add(bVentas);
+        panelMenu.add(bCompras);
 
         JPanel panelSalir = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelSalir.add(new JButton(Eventos.SALIR) {{ addActionListener(evento); }});
@@ -42,6 +44,7 @@ public class ventanaPrincipal extends JFrame {
         bProductos.addActionListener(evento);
         bProveedores.addActionListener(evento);
         bVentas.addActionListener(evento);
+        bCompras.addActionListener(evento);
     }
 
     public static void main(String[] args) {
