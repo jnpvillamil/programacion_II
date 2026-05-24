@@ -964,53 +964,56 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
 
-        try {
-            if (pVenta.getTxtCantidad().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ingrese una cantidad");
-                return;
-            }
+        String txtCantidad = pVenta.getTxtCantidad();
 
-            int cantidad = pVenta.getCantidad();
-            int stock = pVenta.getStockProductoSeleccionado();
-
-            if (cantidad <= 0) {
-                JOptionPane.showMessageDialog(this, "Cantidad inválida");
-                return;
-            }
-            if (cantidad > stock) {
-                JOptionPane.showMessageDialog(this, "Stock insuficiente");
-                return;
-            }
-
-            int codigo = pVenta.getCodigoProductoSeleccionado();
-            String nombre = pVenta.getNombreProductoSeleccionado();
-            double precio = pVenta.getPrecioProductoSeleccionado();
-            double subtotal = precio * cantidad;
-            int nuevoStock = stock - cantidad;
-
-            // Actualizar tabla UI
-            pVenta.agregarFilaDetalle(nombre, cantidad, precio, subtotal);
-            pVenta.actualizarStockTabla(pVenta.getFilaProductoSeleccionada(), nuevoStock);
-
-            // Construir detalle para la lista
-            Producto producto = new Producto();
-            producto.setCodigoProducto(codigo);
-            producto.setNombreProducto(nombre);
-            producto.setPrecioVenta(precio);
-            producto.setStockActual(nuevoStock);
-
-            listaDetalle.add(new DetalleVenta(producto, cantidad));
-
-            // Recalcular total en pantalla
-            double total = 0;
-            for (int i = 0; i < pVenta.getFilasDetalle(); i++) {
-                total += pVenta.getSubtotalDetalle(i);
-            }
-            pVenta.actualizarTotal(total);
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Cantidad inválida");
+        if (txtCantidad.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese una cantidad");
+            return;
         }
+
+        int cantidad;
+        try {
+            cantidad = Integer.parseInt(txtCantidad);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "La cantidad debe ser un número");
+            return;
+        }
+
+        int stock = pVenta.getStockProductoSeleccionado();
+
+        if (cantidad <= 0) {
+            JOptionPane.showMessageDialog(this, "Cantidad inválida");
+            return;
+        }
+        if (cantidad > stock) {
+            JOptionPane.showMessageDialog(this, "Stock insuficiente");
+            return;
+        }
+
+        int codigo = pVenta.getCodigoProductoSeleccionado();
+        String nombre = pVenta.getNombreProductoSeleccionado();
+        double precio = pVenta.getPrecioProductoSeleccionado();
+        double iva = pVenta.getIvaProductoSeleccionado(); // ← agregar
+        double subtotal = precio * cantidad;
+        int nuevoStock = stock - cantidad;
+
+        pVenta.agregarFilaDetalle(nombre, cantidad, precio, subtotal);
+        pVenta.actualizarStockTabla(pVenta.getFilaProductoSeleccionada(), nuevoStock);
+
+        Producto producto = new Producto();
+        producto.setCodigoProducto(codigo);
+        producto.setNombreProducto(nombre);
+        producto.setPrecioVenta(precio);
+        producto.setPorcentajeIva(iva); // ← agregar
+        producto.setStockActual(nuevoStock);
+
+        listaDetalle.add(new DetalleVenta(producto, cantidad));
+
+        double total = 0;
+        for (int i = 0; i < pVenta.getFilasDetalle(); i++) {
+            total += pVenta.getSubtotalDetalle(i);
+        }
+        pVenta.actualizarTotal(total);
     }
 
     public void finalizarVenta() {

@@ -256,7 +256,7 @@ public class PanelVenta extends JPanel {
     }
 
     public int getStockProductoSeleccionado() {
-        return Integer.parseInt(modeloProductos.getValueAt(tablaProductos.getSelectedRow(), 3).toString());
+        return Integer.parseInt(modeloProductos.getValueAt(tablaProductos.getSelectedRow(), 4).toString());
     }
 
     public int getCantidad() {
@@ -276,7 +276,7 @@ public class PanelVenta extends JPanel {
     }
 
     public void actualizarStockTabla(int fila, int nuevoStock) {
-        modeloProductos.setValueAt(nuevoStock, fila, 3);
+        modeloProductos.setValueAt(nuevoStock, fila, 4);
     }
 
     public void actualizarTotal(double total) {
@@ -299,5 +299,14 @@ public class PanelVenta extends JPanel {
 
     public String getTxtCantidad() {
         return txtCantidad.getText().trim();
+    }
+    
+    public double getIvaProductoSeleccionado() {
+        String iva = modeloProductos
+                .getValueAt(tablaProductos.getSelectedRow(), 3)
+                .toString()
+                .replace("%", "")
+                .trim();
+        return Double.parseDouble(iva) / 100;
     }
 }
