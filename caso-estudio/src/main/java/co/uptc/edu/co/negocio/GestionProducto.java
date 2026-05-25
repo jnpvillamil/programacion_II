@@ -129,16 +129,16 @@ public class GestionProducto implements IGestionProducto {
             throw new Exception("El código debe ser alfanumérico, en mayúsculas, y tener entre 3 y 10 caracteres.");
         }
 
-        if (!producto.getNombreProducto().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
-            throw new Exception("El nombre solo debe contener letras y espacios.");
+        if (!producto.getNombreProducto().matches("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ .]+")) {
+            throw new Exception("El nombre solo debe contener letras, numeros, espacios.");
         }
 
-        if (producto.getPrecioCompra() < 0) {
-            throw new Exception("El precio de compra no puede ser negativo.");
+        if (producto.getPrecioCompra() <= 0) {
+            throw new Exception("El precio de compra debe ser mayor que 0.");
         }
 
-        if (producto.getPrecioVenta() < 0) {
-            throw new Exception("El precio de venta no puede ser negativo.");
+        if (producto.getPrecioVenta() <= 0) {
+            throw new Exception("El precio de venta debe ser mayor que 0.");
         }
 
         if (producto.getPrecioVenta() < producto.getPrecioCompra()) {
@@ -153,12 +153,8 @@ public class GestionProducto implements IGestionProducto {
             throw new Exception("El stock mínimo no puede ser negativo.");
         }
 
-        if (producto.getStockMaximo() < 0) {
-            throw new Exception("El stock máximo no puede ser negativo.");
-        }
-
-        if (producto.getStockMinimo() > producto.getStockActual()) {
-            throw new Exception("El stock mínimo no puede ser mayor que el stock actual.");
+        if (producto.getStockMaximo() <= 0) {
+            throw new Exception("El stock máximo debe ser mayor que 0.");
         }
 
         if (producto.getStockActual() > producto.getStockMaximo()) {
@@ -219,4 +215,25 @@ public class GestionProducto implements IGestionProducto {
             movimientos.add(movimiento);
             productoDAO.actualizarProducto(producto);
     }
+    @Override
+    public String generarCodigoProducto() {
+    	
+    	int mayor = 0;
+    	
+    	for (Producto producto : productos) {
+    		String codigo = producto.getCodigoProducto();
+    		
+    		if(codigo != null && codigo.matches("P\\d{5}")) {
+    			int numero = Integer.parseInt(codigo.substring(1));
+    			
+    			if(numero > mayor) {
+    				mayor = numero;
+    			}
+    		}
+    	}		 
+    	
+    	return String.format("P%05d", mayor + 1);
+    			
+    }
+    
 }

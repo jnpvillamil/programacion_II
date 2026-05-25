@@ -239,6 +239,8 @@ public class Evento implements ActionListener {
 
     private void abrirDialogoNuevoProducto() {
         DialogProducto dialog = new DialogProducto(ventana, this);
+        String codigoGenerado = gestionProducto.generarCodigoProducto();
+        dialog.cargarCodigoGenerado(codigoGenerado);
         dialog.setVisible(true);
     }
 

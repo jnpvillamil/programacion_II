@@ -248,4 +248,11 @@ public class DialogProducto extends JDialog {
 		campoStockMaximo.setText(String.valueOf(producto.getStockMaximo()));
 		estadoActual = producto.getEstado();
 	}
+	
+	public void cargarCodigoGenerado(String codigo) {
+		
+		campoCodigo.setText(codigo);
+		campoCodigo.setEditable(false);
+		
+	}
 }

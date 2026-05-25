@@ -2,11 +2,10 @@ package co.uptc.edu.co.modelo.enums;
 
 public enum TipoDocEnum {
     CC("CC"),
-    TI("TI"),
-    CE("CE"),
     NIT("NIT"),
-    PASAPORTE("Pasaporte");
-
+    CE("CE"),
+    PA("PA");
+   
     private final String texto;
 
     TipoDocEnum(String texto) {

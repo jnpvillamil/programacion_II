@@ -84,7 +84,6 @@ public class PanelProducto extends PanelCentral {
         comboCategoria.addItem(OPCION_TODOS);
         comboCategoria.addItem(CategoriaProductoEnum.ASEO.toString());
         comboCategoria.addItem(CategoriaProductoEnum.ALIMENTOS.toString());
-        comboCategoria.addItem(CategoriaProductoEnum.BEBIDAS.toString());
         comboCategoria.addItem(CategoriaProductoEnum.PAPELERIA.toString());
     }
 

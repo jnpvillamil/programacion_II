@@ -21,6 +21,8 @@ public interface IGestionProducto {
 
     void registrarMovimientoInventario(String codigo, String tipoMovimiento, int cantidad) throws Exception;
     
+    String generarCodigoProducto();
+    
   
     
     
