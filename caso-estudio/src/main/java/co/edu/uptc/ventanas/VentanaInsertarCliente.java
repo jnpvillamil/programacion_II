@@ -1,133 +1,128 @@
 package co.edu.uptc.ventanas;
 
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.HashMap;
 import javax.swing.*;
 import co.edu.uptc.dao.ClienteDao;
 import co.edu.uptc.vo.ClienteVo;
 
 @SuppressWarnings("serial")
-public class VentanaInsertarCliente extends JInternalFrame { 
+public class VentanaInsertarCliente extends JInternalFrame {
 
-    private JTextField txtCodigo;
-    private JTextField txtNombre;
-    private JTextField txtApellido;
-    private JTextField txtDocumento;
-    private JTextField txtTelefono;
-    private JTextField txtCorreo;
-    private JComboBox<String> comboPais;
-    private JComboBox<String> comboCiudad;
-    private JTextField txtDireccionDetallada;
-    
+    private JTextField txtCodigo, txtNombre, txtApellido, txtDocumento, txtTelefono, txtDireccion, txtCorreo;
+    private JComboBox<String> comboPaises, comboCiudades;
+    private HashMap<String, Integer> mapaCiudades; 
     private JButton btnGuardar;
+    private ClienteDao miClienteDao;
 
     public VentanaInsertarCliente() {
-        setTitle("Registrar Nuevo Cliente (Escalable)");
-        setSize(450, 450);
-        setClosable(true);
-        setIconifiable(true);
-        
-       
-        getContentPane().setLayout(new GridLayout(10, 2, 10, 10));
+        super("Registrar Nuevo Cliente", false, true, false, true);
+        setSize(500, 450); 
+        setLayout(new GridLayout(10, 2, 10, 10)); 
 
-        getContentPane().add(new JLabel("  Código Cliente:"));
-        txtCodigo = new JTextField();
-        getContentPane().add(txtCodigo);
+        miClienteDao = new ClienteDao();
+        mapaCiudades = new HashMap<>();
 
-        getContentPane().add(new JLabel("  Nombre:"));
-        txtNombre = new JTextField();
-        getContentPane().add(txtNombre);
+        add(new JLabel("  Código Cliente:"));
+        add(txtCodigo = new JTextField());
 
-        getContentPane().add(new JLabel("  Apellido:"));
-        txtApellido = new JTextField();
-        getContentPane().add(txtApellido);
+        add(new JLabel("  Nombre:"));
+        add(txtNombre = new JTextField());
 
-        getContentPane().add(new JLabel("  Número Documento:"));
-        txtDocumento = new JTextField();
-        getContentPane().add(txtDocumento);
+        add(new JLabel("  Apellido:"));
+        add(txtApellido = new JTextField());
 
-        getContentPane().add(new JLabel("  Teléfono:"));
-        txtTelefono = new JTextField();
-        getContentPane().add(txtTelefono);
+        add(new JLabel("  Número Documento:"));
+        add(txtDocumento = new JTextField());
 
-        getContentPane().add(new JLabel("  Correo Electrónico:"));
-        txtCorreo = new JTextField();
-        getContentPane().add(txtCorreo);
+        add(new JLabel("  Teléfono:"));
+        add(txtTelefono = new JTextField());
 
-        getContentPane().add(new JLabel("  País:"));
-        comboPais = new JComboBox<>(new String[] { "Colombia", "México", "Argentina" });
-        getContentPane().add(comboPais);
+        add(new JLabel("  Dirección:"));
+        add(txtDireccion = new JTextField());
 
-        getContentPane().add(new JLabel("  Ciudad (ID - Nombre):"));
-        comboCiudad = new JComboBox<>(new String[] { "1 - Bogotá", "2 - Medellín", "3 - Tunja" });
-        getContentPane().add(comboCiudad);
+        add(new JLabel("  Correo Electrónico:"));
+        add(txtCorreo = new JTextField());
 
-        getContentPane().add(new JLabel("  Dirección Detallada:"));
-        txtDireccionDetallada = new JTextField();
-        getContentPane().add(txtDireccionDetallada);
+        add(new JLabel("  País:"));
+        comboPaises = new JComboBox<>(new String[]{"Colombia", "México", "Argentina"});
+        add(comboPaises);
 
-        getContentPane().add(new JLabel("")); 
-        btnGuardar = new JButton("Guardar Cliente");
-        getContentPane().add(btnGuardar);
+        add(new JLabel("  Ciudad:"));
+        comboCiudades = new JComboBox<>();
+        add(comboCiudades);
 
-        btnGuardar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ejecutarRegistroDeCliente();
-            }
-        });
+        add(new JLabel()); 
+        add(btnGuardar = new JButton("Guardar Cliente"));
+
+        cargarTodasLasCiudades();
+
+        btnGuardar.addActionListener(e -> guardarCliente());
     }
 
-    private void ejecutarRegistroDeCliente() {
-        if (txtCodigo.getText().isEmpty() || txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor llene los campos obligatorios (Código, Nombre, Apellido).", 
-                    "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+    private void cargarTodasLasCiudades() {
+        comboCiudades.removeAllItems();
+        mapaCiudades.clear();
+        
+        co.edu.uptc.conexion.Conexion con = new co.edu.uptc.conexion.Conexion();
+        String sql = "SELECT id_ciudad, nombre_ciudad FROM ciudades ORDER BY nombre_ciudad ASC";
+        
+        try (Connection c = con.getConnection(); 
+             Statement st = c.createStatement(); 
+             ResultSet rs = st.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("id_ciudad");
+                String nombre = rs.getString("nombre_ciudad");
+                
+                comboCiudades.addItem(nombre);
+                mapaCiudades.put(nombre, id);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error crítico al cargar ciudades: " + ex.getMessage());
+        }
+    }
+
+    private void guardarCliente() {
+        if (txtCodigo.getText().isEmpty() || txtNombre.getText().isEmpty() || comboCiudades.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Por favor llene los campos obligatorios.");
             return;
         }
 
         try {
-            ClienteVo miCliente = new ClienteVo();
+            ClienteVo c = new ClienteVo();
+            c.setCodigo(txtCodigo.getText().trim());
+            c.setNombre(txtNombre.getText().trim());
+            c.setApellido(txtApellido.getText().trim());
+            c.setNumeroDocumento(txtDocumento.getText().trim());
+            c.setTelefono(txtTelefono.getText().trim());
+            c.setDireccionDetallada(txtDireccion.getText().trim());
+            c.setCorreo(txtCorreo.getText().trim());
+    
+            String ciudadSeleccionada = comboCiudades.getSelectedItem().toString();
+            int idCiudadReal = mapaCiudades.get(ciudadSeleccionada);
+            c.setIdCiudad(idCiudadReal);
+            c.setTipoDocumento("C.C");
+            c.setTipoCliente("Frecuente");
+            c.setActivo(true);
 
-            miCliente.setCodigo(txtCodigo.getText());
-            miCliente.setNombre(txtNombre.getText());
-            miCliente.setApellido(txtApellido.getText());
-            miCliente.setNumeroDocumento(txtDocumento.getText());
-            miCliente.setTelefono(txtTelefono.getText());
-            miCliente.setCorreo(txtCorreo.getText());
-            miCliente.setTipoDocumento("C.C");
-            miCliente.setTipoCliente("Frecuente");
-            miCliente.setActivo(true);
-            
-       
-            String ciudadSeleccionada = (String) comboCiudad.getSelectedItem();
-            String[] partes = ciudadSeleccionada.split(" - ");
-            int idCiudad = Integer.parseInt(partes[0]); 
-            
-            miCliente.setIdCiudad(idCiudad);
-            miCliente.setDireccionDetallada(txtDireccionDetallada.getText());
-            
-       
-            ClienteDao miClienteDao = new ClienteDao();
-            miClienteDao.registrarCliente(miCliente);
- 
-            limpiarFormulario();
+            miClienteDao.registrarCliente(c);
+            JOptionPane.showMessageDialog(this, "¡Cliente registrado con éxito!");
+            limpiarCampos();
             
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error de formato en los datos: " + ex.getMessage(), 
-                    "Error de Validación", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage());
         }
     }
 
-    private void limpiarFormulario() {
-        txtCodigo.setText("");
-        txtNombre.setText("");
-        txtApellido.setText("");
-        txtDocumento.setText("");
-        txtTelefono.setText("");
+    private void limpiarCampos() {
+        txtCodigo.setText(""); txtNombre.setText(""); txtApellido.setText("");
+        txtDocumento.setText(""); txtTelefono.setText(""); txtDireccion.setText("");
         txtCorreo.setText("");
-        txtDireccionDetallada.setText("");
-        comboPais.setSelectedIndex(0);
-        comboCiudad.setSelectedIndex(0);
+        if (comboPaises.getItemCount() > 0) comboPaises.setSelectedIndex(0);
+        if (comboCiudades.getItemCount() > 0) comboCiudades.setSelectedIndex(0);
     }
 }

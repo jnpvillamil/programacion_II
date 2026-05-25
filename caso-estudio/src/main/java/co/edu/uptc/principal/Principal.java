@@ -1,99 +1,116 @@
 package co.edu.uptc.principal;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.Font;
-import javax.swing.*;
-import co.edu.uptc.ventanas.*; // Importa todas tus ventanas
+import javax.swing.Box;
+import javax.swing.BorderFactory;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import co.edu.uptc.ventanas.VentanaInsertarCliente;
+import co.edu.uptc.ventanas.VentanaConsultarCliente;
+import co.edu.uptc.ventanas.VentanaInsertarProveedor;
+import co.edu.uptc.ventanas.VentanaConsultarProveedor;
+import co.edu.uptc.ventanas.VentanaInsertarProducto;
+import co.edu.uptc.ventanas.VentanaConsultarProducto;
 
 @SuppressWarnings("serial")
 public class Principal extends JFrame {
 
-    private JDesktopPane escritorio;
-    private JMenuItem itemInsCli, itemConCli, itemInsProv, itemConProv, itemInsProd, itemConProd;
+    private JMenuBar barraMenu;
+    private JMenu menuClientes, menuProveedores, menuProductos;
+    private JMenuItem itemRegCliente, itemConCliente, itemRegProv, itemConProv, itemRegProd, itemConProd;
+    private JDesktopPane panelEscritorio; 
 
     public Principal() {
-
         setTitle("Sistema Comercial Optimizado - UPTC");
-        setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setSize(900, 650); 
+        setLocationRelativeTo(null); 
 
-        escritorio = new JDesktopPane();
-        getContentPane().add(escritorio, BorderLayout.CENTER);
+        panelEscritorio = new JDesktopPane();
+        panelEscritorio.setBackground(Color.WHITE); 
+        setContentPane(panelEscritorio);
 
-        JMenuBar barra = new JMenuBar();
-        Font fuenteMenu = new Font("Arial", Font.BOLD, 13);
+        barraMenu = new JMenuBar();
+        barraMenu.setBackground(new Color(24, 44, 97)); 
+        barraMenu.setBorder(BorderFactory.createEmptyBorder(7, 7, 7, 7));
+        barraMenu.add(Box.createHorizontalStrut(280)); 
 
-        JMenu mClientes = new JMenu("Clientes"); mClientes.setFont(fuenteMenu);
-        JMenu mProveedores = new JMenu("Proveedores"); mProveedores.setFont(fuenteMenu);
-        JMenu mProductos = new JMenu("Productos"); mProductos.setFont(fuenteMenu);
+        menuClientes = new JMenu("CLIENTES");
+        menuClientes.setForeground(Color.WHITE);
+        menuClientes.setFont(new Font("Arial", Font.BOLD, 14));
+        itemRegCliente = new JMenuItem("Registrar Cliente");
+        itemConCliente = new JMenuItem("Consultar Clientes");
+        menuClientes.add(itemRegCliente);
+        menuClientes.add(itemConCliente);
 
-        mClientes.add(itemInsCli = new JMenuItem("Registrar Cliente"));
-        mClientes.add(itemConCli = new JMenuItem("Consultar Listado"));
+        menuProveedores = new JMenu("PROVEEDORES");
+        menuProveedores.setForeground(Color.WHITE);
+        menuProveedores.setFont(new Font("Arial", Font.BOLD, 14));
+        itemRegProv = new JMenuItem("Registrar Proveedor");
+        itemConProv = new JMenuItem("Consultar Proveedores");
+        menuProveedores.add(itemRegProv);
+        menuProveedores.add(itemConProv);
+
+        menuProductos = new JMenu("PRODUCTOS");
+        menuProductos.setForeground(Color.WHITE);
+        menuProductos.setFont(new Font("Arial", Font.BOLD, 14));
+        itemRegProd = new JMenuItem("Registrar Producto");
+        itemConProd = new JMenuItem("Consultar Inventario");
+        menuProductos.add(itemRegProd);
+        menuProductos.add(itemConProd);
+
+        barraMenu.add(menuClientes);
+        barraMenu.add(Box.createHorizontalStrut(30)); 
+        barraMenu.add(menuProveedores);
+        barraMenu.add(Box.createHorizontalStrut(30)); 
+        barraMenu.add(menuProductos);
         
-        mProveedores.add(itemInsProv = new JMenuItem("Registrar Proveedor"));
-        mProveedores.add(itemConProv = new JMenuItem("Consultar Proveedores"));
-        
-        mProductos.add(itemInsProd = new JMenuItem("Registrar Producto"));
-        mProductos.add(itemConProd = new JMenuItem("Consultar Inventario"));
+        setJMenuBar(barraMenu);
 
-        barra.add(mClientes); barra.add(mProveedores); barra.add(mProductos);
-        setJMenuBar(barra);
-
-
-        itemInsCli.addActionListener(e -> {
+        itemRegCliente.addActionListener(e -> {
             VentanaInsertarCliente v = new VentanaInsertarCliente();
-            mostrarVentanaAjustada(v, 500, 400);
+            panelEscritorio.add(v);
+            v.setVisible(true);
         });
-
-        itemConCli.addActionListener(e -> {
+        itemConCliente.addActionListener(e -> {
             VentanaConsultarCliente v = new VentanaConsultarCliente();
-            mostrarVentanaAjustada(v, 790, 450);
+            panelEscritorio.add(v);
+            v.setVisible(true);
         });
 
-        itemInsProv.addActionListener(e -> {
+        itemRegProv.addActionListener(e -> {
             VentanaInsertarProveedor v = new VentanaInsertarProveedor();
-            mostrarVentanaAjustada(v, 500, 400); 
+            panelEscritorio.add(v);
+            v.setVisible(true);
         });
-
         itemConProv.addActionListener(e -> {
+ 
             VentanaConsultarProveedor v = new VentanaConsultarProveedor();
-            mostrarVentanaAjustada(v, 790, 450); 
+            panelEscritorio.add(v);
+            v.setVisible(true);
         });
 
-        itemInsProd.addActionListener(e -> {
-            VentanaActualizarProducto v = new VentanaActualizarProducto();
-            mostrarVentanaAjustada(v, 500, 400); 
+ 
+        itemRegProd.addActionListener(e -> {
+            VentanaInsertarProducto v = new VentanaInsertarProducto();
+            panelEscritorio.add(v);
+            v.setVisible(true);
         });
-
         itemConProd.addActionListener(e -> {
             VentanaConsultarProducto v = new VentanaConsultarProducto();
-            mostrarVentanaAjustada(v, 790, 450); 
+            panelEscritorio.add(v);
+            v.setVisible(true);
         });
-    }
-
-    private void mostrarVentanaAjustada(JInternalFrame ventana, int ancho, int alto) {
-        try {
- 
-            ventana.setSize(ancho, alto);
-            Dimension desktopSize = escritorio.getSize();
-            int x = (desktopSize.width - ancho) / 2;
-            int y = (desktopSize.height - alto) / 2;
-            ventana.setLocation(x, y);
-            escritorio.add(ventana);
-            ventana.setVisible(true);
-            ventana.toFront();
-            ventana.setSelected(true);
-            escritorio.revalidate();
-            escritorio.repaint();
-            
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al abrir ventana: " + ex.getMessage());
-        }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Principal().setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            new Principal().setVisible(true);
+        });
     }
 }
