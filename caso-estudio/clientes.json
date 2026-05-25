@@ -1,1 +1,41 @@
-[{"tipoCliente":"NORMAL","activo":true,"correoElectronico":"Fm@caso.estudio.es","responsableTributariamente":"SI","codigo":"CL-01","nombre":"FREDY","apellido":"MERCURY","tipoDocumento":"PASAPORTE","numeroDocumento":"EN3767216","telefono":"349898498","direccion":"PARK AVENUE"},{"tipoCliente":"MAYORISTA","activo":true,"correoElectronico":"Jbj@caso.estudio.es","responsableTributariamente":"SI","codigo":"CL-02","nombre":"JHON","apellido":"BON JOVI","tipoDocumento":"CE","numeroDocumento":"488782388","telefono":"984328874","direccion":"NY SAINT JON´S"}]
+[
+  {
+    "tipoCliente": "NORMAL",
+    "activo": true,
+    "correoElectronico": "Fm@caso.estudio.es",
+    "responsableTributariamente": "SI",
+    "codigo": "CL-01",
+    "nombre": "FREDY",
+    "apellido": "MERCURY",
+    "tipoDocumento": "PASAPORTE",
+    "numeroDocumento": "EN3767216",
+    "telefono": "349898498",
+    "direccion": "PARK AVENUE"
+  },
+  {
+    "tipoCliente": "MAYORISTA",
+    "activo": true,
+    "correoElectronico": "Jbj@caso.estudio.es",
+    "responsableTributariamente": "SI",
+    "codigo": "CL-02",
+    "nombre": "JHON",
+    "apellido": "BON JOVI",
+    "tipoDocumento": "CE",
+    "numeroDocumento": "488782388",
+    "telefono": "984328874",
+    "direccion": "NY SAINT JON´S"
+  },
+  {
+    "tipoCliente": "MAYORISTA",
+    "activo": true,
+    "correoElectronico": "Oo@caso.estudio.es",
+    "responsableTributariamente": "EN_ESTUDIO",
+    "codigo": "CL-03",
+    "nombre": "OZZY",
+    "apellido": "OUSBORNE",
+    "tipoDocumento": "PASAPORTE",
+    "numeroDocumento": "EN59830485",
+    "telefono": "3498958234",
+    "direccion": "AVENUE SIEMPRE VIVA"
+  }
+]
