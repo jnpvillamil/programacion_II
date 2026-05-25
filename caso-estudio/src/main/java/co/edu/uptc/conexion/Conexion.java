@@ -1,4 +1,4 @@
-package co.edu.upt.conexion;
+package co.edu.uptc.conexion;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
