@@ -1,8 +1,8 @@
 package co.uptc.edu.tienda.modelo;
 
-import java.io.Serializable;
 
-public class DetalleCompra implements Serializable {
+
+public class DetalleCompra{
 
     private Producto producto;
 

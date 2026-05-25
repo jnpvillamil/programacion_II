@@ -33,7 +33,7 @@ public class PanelVenta extends JPanel {
     private DefaultTableModel modeloDetalle;
     private JTextField txtCantidad;
     private JLabel lblTotal;
-    private JButton btnAgregar;
+    private JButton btnAgregar,btnQuitar;
     private JButton btnFinalizar;
     private List<Producto> todosProductos = new ArrayList<>();
 
@@ -126,6 +126,7 @@ public class PanelVenta extends JPanel {
         modeloDetalle.addColumn("Producto");
         modeloDetalle.addColumn("Cantidad");
         modeloDetalle.addColumn("Precio");
+        modeloDetalle.addColumn("Impuestos");
         modeloDetalle.addColumn("Subtotal");
 
         tablaDetalle = new JTable(modeloDetalle);
@@ -154,6 +155,12 @@ public class PanelVenta extends JPanel {
         btnAgregar.setForeground(Color.WHITE);
         btnAgregar.setActionCommand(Evento.AGREGAR_PRODUCTO_VTA);
         btnAgregar.addActionListener(evento);
+        
+        btnQuitar = new JButton("Quitar Producto");
+        btnQuitar.setBackground(new Color(192, 57, 43));
+        btnQuitar.setForeground(Color.WHITE);
+        btnQuitar.setActionCommand(Evento.QUITAR_PRODUCTO_VTA);
+        btnQuitar.addActionListener(evento);
 
         btnFinalizar = new JButton("Finalizar Venta");
         btnFinalizar.setBackground(new Color(46, 204, 113));
@@ -170,6 +177,7 @@ public class PanelVenta extends JPanel {
         inferior.add(new JLabel("Cantidad"));
         inferior.add(txtCantidad);
         inferior.add(btnAgregar);
+        inferior.add(btnQuitar);
         inferior.add(lblTotal);
         inferior.add(btnFinalizar);
 
@@ -271,8 +279,8 @@ public class PanelVenta extends JPanel {
         return (FormaPagoEnum) comboPago.getSelectedItem();
     }
 
-    public void agregarFilaDetalle(String nombre, int cantidad, double precio, double subtotal) {
-        modeloDetalle.addRow(new Object[]{nombre, cantidad, precio, subtotal});
+    public void agregarFilaDetalle(String nombre, int cantidad, double precio, double impuestos, double subtotal) {
+        modeloDetalle.addRow(new Object[]{nombre, cantidad, precio, impuestos, subtotal});
     }
 
     public void actualizarStockTabla(int fila, int nuevoStock) {
@@ -288,7 +296,7 @@ public class PanelVenta extends JPanel {
     }
 
     public double getSubtotalDetalle(int fila) {
-        return Double.parseDouble(modeloDetalle.getValueAt(fila, 3).toString());
+        return Double.parseDouble(modeloDetalle.getValueAt(fila, 4).toString());
     }
 
     public void limpiar() {
@@ -308,5 +316,24 @@ public class PanelVenta extends JPanel {
                 .replace("%", "")
                 .trim();
         return Double.parseDouble(iva) / 100;
+    }
+    
+    public int getFilaDetalleSeleccionada() {
+        return tablaDetalle.getSelectedRow();
+    }
+
+    public void quitarFilaDetalle(int fila) {
+        modeloDetalle.removeRow(fila);
+    }
+    
+    public void devolverStockTabla(int codigoProducto, int cantidadADevolver) {
+        for (int i = 0; i < modeloProductos.getRowCount(); i++) {
+            int codigoFila = Integer.parseInt(modeloProductos.getValueAt(i, 0).toString());
+            if (codigoFila == codigoProducto) {
+                int stockActual = Integer.parseInt(modeloProductos.getValueAt(i, 4).toString());
+                modeloProductos.setValueAt(stockActual + cantidadADevolver, i, 4);
+                return;
+            }
+        }
     }
 }

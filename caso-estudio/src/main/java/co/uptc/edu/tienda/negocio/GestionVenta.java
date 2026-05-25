@@ -45,16 +45,22 @@ public class GestionVenta {
     // CALCULAR TOTAL
     // =====================================
     public void calcularTotal(Venta venta) {
-        double subtotal = 0;
-        double totalIva = 0;
+        double sumaBases = 0;
+        double sumaIva = 0;
+
         for (DetalleVenta d : venta.getDetalles()) {
-        	double valorProducto = d.getSubtotal();
-            double ivaProducto = valorProducto * d.getProducto().getPorcentajeIva();
-            subtotal += valorProducto;
-            totalIva += ivaProducto;
+            // La base es: Cantidad * Precio Unitario (SIN IVA)
+            double baseLinea = (double) d.getCantidad() * d.getPrecioUnitario();
+            
+            // El IVA es: lo que ya guardó el detalle (o lo recalculas sobre la base)
+            double ivaLinea = d.getImpuestos(); 
+
+            sumaBases += baseLinea;
+            sumaIva += ivaLinea;
         }
-        venta.setImpuestos(totalIva);
-        venta.setTotal(subtotal + totalIva);
+
+        venta.setImpuestos(sumaIva);
+        venta.setTotal(sumaBases + sumaIva);
     }
 
     // =====================================

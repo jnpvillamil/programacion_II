@@ -4,16 +4,18 @@ public class DetalleVenta {
     private Producto producto;
     private int cantidad;
     private double precioUnitario; // Guardamos el precio del momento (por si cambia en el inventario mañana)
+    private double impuestos;
 
     public DetalleVenta(Producto producto, int cantidad) {
         this.producto = producto;
         this.cantidad = cantidad;
         this.precioUnitario = producto.getPrecioVenta(); // Tomamos el precio actual del producto
+        this.impuestos = (double) cantidad * precioUnitario * producto.getPorcentajeIva();
     }
 
     // El subtotal requerido se calcula dinámicamente
     public double getSubtotal() {
-        return this.cantidad * this.precioUnitario;
+        return (this.cantidad * this.precioUnitario) + this.impuestos;
     }
 
 	public Producto getProducto() {
@@ -40,5 +42,9 @@ public class DetalleVenta {
 		this.precioUnitario = precioUnitario;
 	}
 
-    // Getters y Setters...
+	public double getImpuestos() {
+		return impuestos;
+	}
+
+    
 }

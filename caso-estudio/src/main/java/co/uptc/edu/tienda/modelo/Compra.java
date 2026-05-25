@@ -5,6 +5,7 @@ import java.util.List;
 public class Compra {
 
     private int idCompra;
+    private String numeroFactura;
     private Proveedor proveedor;
     private String fechaCompra;
     private List<DetalleCompra> detalles;
@@ -52,4 +53,14 @@ public class Compra {
     public void setTotal(double total) {
         this.total = total;
     }
+
+	public String getNumeroFactura() {
+		return numeroFactura;
+	}
+
+	public void setNumeroFactura(String numeroFactura) {
+		this.numeroFactura = numeroFactura;
+	}
+    
+    
 }

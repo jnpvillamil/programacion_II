@@ -10,7 +10,8 @@
       "stockActual": 89,
       "stockMinimo": 10,
       "stockMaximo": 120,
-      "activo": true
+      "activo": true,
+      "porcentajeIva": 0.0
     },
     "tipoMovimiento": "SALIDA",
     "cantidad": 1,
@@ -28,11 +29,335 @@
       "stockActual": 79,
       "stockMinimo": 10,
       "stockMaximo": 120,
-      "activo": true
+      "activo": true,
+      "porcentajeIva": 0.0
     },
     "tipoMovimiento": "SALIDA",
     "cantidad": 10,
     "fechaHora": "2026-05-22T23:33:36.105047400",
     "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 3,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 59,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "ENTRADA",
+    "cantidad": 1,
+    "fechaHora": "2026-05-24T19:23:23.774286400",
+    "motivo": "Compra: COMP-1"
+  },
+  {
+    "idMovimiento": 4,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 59,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "ENTRADA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T19:23:23.777287400",
+    "motivo": "Compra: COMP-1"
+  },
+  {
+    "idMovimiento": 5,
+    "producto": {
+      "codigoProducto": 101,
+      "nombreProducto": "panela",
+      "categoria": "vivere",
+      "precioCompra": 2200.0,
+      "precioVenta": 2500.0,
+      "stockActual": 69,
+      "stockMinimo": 10,
+      "stockMaximo": 120,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 10,
+    "fechaHora": "2026-05-24T20:43:34.516708600",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 6,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 56,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.05
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 3,
+    "fechaHora": "2026-05-24T20:44:12.686999600",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 7,
+    "producto": {
+      "codigoProducto": 102,
+      "nombreProducto": "Pasta",
+      "categoria": "viveres",
+      "precioCompra": 5000.0,
+      "precioVenta": 8000.0,
+      "stockActual": 98,
+      "stockMinimo": 22,
+      "stockMaximo": 300,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T20:44:12.686999600",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 8,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 54,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.05
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T21:05:18.882979",
+    "motivo": "Venta: FACT-3"
+  },
+  {
+    "idMovimiento": 9,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 51,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.05
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 3,
+    "fechaHora": "2026-05-24T21:06:44.270042700",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 10,
+    "producto": {
+      "codigoProducto": 102,
+      "nombreProducto": "Pasta",
+      "categoria": "viveres",
+      "precioCompra": 5000.0,
+      "precioVenta": 8000.0,
+      "stockActual": 96,
+      "stockMinimo": 22,
+      "stockMaximo": 300,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T21:06:44.270042700",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 11,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 48,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.05
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 3,
+    "fechaHora": "2026-05-24T21:08:55.771191700",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 12,
+    "producto": {
+      "codigoProducto": 102,
+      "nombreProducto": "Pasta",
+      "categoria": "viveres",
+      "precioCompra": 5000.0,
+      "precioVenta": 8000.0,
+      "stockActual": 94,
+      "stockMinimo": 22,
+      "stockMaximo": 300,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T21:08:55.771191700",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 13,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 46,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.05
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T21:24:37.426308600",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 14,
+    "producto": {
+      "codigoProducto": 103,
+      "nombreProducto": "Azucar",
+      "categoria": "viveres",
+      "precioCompra": 8000.0,
+      "precioVenta": 12000.0,
+      "stockActual": 99,
+      "stockMinimo": 20,
+      "stockMaximo": 300,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 1,
+    "fechaHora": "2026-05-24T21:24:37.426308600",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 15,
+    "producto": {
+      "codigoProducto": 100,
+      "nombreProducto": "arroz",
+      "categoria": "vivere",
+      "precioCompra": 2600.0,
+      "precioVenta": 2900.0,
+      "stockActual": 44,
+      "stockMinimo": 5,
+      "stockMaximo": 70,
+      "activo": true,
+      "porcentajeIva": 0.05
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T22:34:07.768001700",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 16,
+    "producto": {
+      "codigoProducto": 104,
+      "nombreProducto": "Frijol",
+      "categoria": "viveres",
+      "precioCompra": 7000.0,
+      "precioVenta": 10000.0,
+      "stockActual": 96,
+      "stockMinimo": 20,
+      "stockMaximo": 200,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 4,
+    "fechaHora": "2026-05-24T22:34:07.768999500",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 17,
+    "producto": {
+      "codigoProducto": 103,
+      "nombreProducto": "Azucar",
+      "categoria": "viveres",
+      "precioCompra": 8000.0,
+      "precioVenta": 12000.0,
+      "stockActual": 98,
+      "stockMinimo": 20,
+      "stockMaximo": 300,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 1,
+    "fechaHora": "2026-05-24T23:26:37.493672600",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 18,
+    "producto": {
+      "codigoProducto": 104,
+      "nombreProducto": "Frijol",
+      "categoria": "viveres",
+      "precioCompra": 7000.0,
+      "precioVenta": 10000.0,
+      "stockActual": 94,
+      "stockMinimo": 20,
+      "stockMaximo": 200,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-24T23:26:37.493672600",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 19,
+    "producto": {
+      "codigoProducto": 102,
+      "nombreProducto": "Pasta",
+      "categoria": "viveres",
+      "precioCompra": 5000.0,
+      "precioVenta": 8000.0,
+      "stockActual": 93,
+      "stockMinimo": 22,
+      "stockMaximo": 300,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 1,
+    "fechaHora": "2026-05-24T23:41:50.330724400",
+    "motivo": "Venta: FACT-3"
   }
 ]

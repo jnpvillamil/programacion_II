@@ -1,7 +1,7 @@
 [
   {
     "numeroFactura": "FACT-1",
-    "fechaHora": "2026-05-22T23:33:36.086047300",
+    "fechaHora": "2026-05-24T22:34:07.753996600",
     "cliente": {
       "idCliente": 100,
       "direccionC": "CALLE 50",
@@ -15,22 +15,128 @@
     "detalles": [
       {
         "producto": {
-          "codigoProducto": 101,
-          "nombreProducto": "panela",
+          "codigoProducto": 100,
+          "nombreProducto": "arroz",
           "precioCompra": 0.0,
-          "precioVenta": 2500.0,
-          "stockActual": 79,
+          "precioVenta": 2900.0,
+          "stockActual": 44,
           "stockMinimo": 0,
           "stockMaximo": 0,
-          "activo": true
+          "activo": true,
+          "porcentajeIva": 0.05
         },
-        "cantidad": 10,
-        "precioUnitario": 2500.0
+        "cantidad": 2,
+        "precioUnitario": 2900.0,
+        "impuestos": 290.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 104,
+          "nombreProducto": "Frijol",
+          "precioCompra": 0.0,
+          "precioVenta": 10000.0,
+          "stockActual": 96,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 4,
+        "precioUnitario": 10000.0,
+        "impuestos": 0.0
       }
     ],
     "formaPago": "EFECTIVO",
-    "impuestos": 4750.0,
-    "total": 29750.0,
+    "impuestos": 290.0,
+    "total": 46090.0,
+    "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-2",
+    "fechaHora": "2026-05-24T23:26:37.480672600",
+    "cliente": {
+      "idCliente": 103,
+      "direccionC": "CARRERA 56#87-09",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3112445678,
+      "estado": "ACTIVO",
+      "nombreCompleto": "JUAN PABLO",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1010334466
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 103,
+          "nombreProducto": "Azucar",
+          "precioCompra": 0.0,
+          "precioVenta": 12000.0,
+          "stockActual": 98,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 1,
+        "precioUnitario": 12000.0,
+        "impuestos": 0.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 104,
+          "nombreProducto": "Frijol",
+          "precioCompra": 0.0,
+          "precioVenta": 10000.0,
+          "stockActual": 94,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 2,
+        "precioUnitario": 10000.0,
+        "impuestos": 0.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 0.0,
+    "total": 32000.0,
+    "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-3",
+    "fechaHora": "2026-05-24T23:41:50.313719",
+    "cliente": {
+      "idCliente": 103,
+      "direccionC": "CARRERA 56#87-09",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3112445678,
+      "estado": "ACTIVO",
+      "nombreCompleto": "JUAN PABLO",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1010334466
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "Pasta",
+          "precioCompra": 0.0,
+          "precioVenta": 8000.0,
+          "stockActual": 93,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 1,
+        "precioUnitario": 8000.0,
+        "impuestos": 0.0
+      }
+    ],
+    "formaPago": "CREDITO",
+    "impuestos": 0.0,
+    "total": 8000.0,
     "estado": "ACTIVA"
   }
 ]
