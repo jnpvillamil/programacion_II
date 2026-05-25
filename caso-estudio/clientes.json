@@ -39,3 +39,5 @@
     "direccion": "AVENUE SIEMPRE VIVA"
   }
 ]
+[{"tipoCliente":"NORMAL","activo":true,"codigo":"1","nombre":"PEPITO","apellido":"PEREZ","tipoDocumento":"CE","numeroDocumento":"1234567","telefono":"0987675","direccion":"SAIN VELS"}]
+
