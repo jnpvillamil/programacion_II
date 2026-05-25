@@ -31,6 +31,7 @@ public class LocalCliente {
             return false;
         }
         clientes.add(cliente);
+        guardarClientesEnArchivo();
         return true;
     }
 
@@ -47,6 +48,7 @@ public class LocalCliente {
         for (int i = 0; i < clientes.size(); i++) {
             if (clientes.get(i).getCodigo().equalsIgnoreCase(clienteActualizado.getCodigo())) {
                 clientes.set(i, clienteActualizado);
+                guardarClientesEnArchivo();
                 return true;
             }
         }
@@ -57,6 +59,7 @@ public class LocalCliente {
         Cliente cliente = buscarCliente(codigoCliente);
         if (cliente != null) {
             clientes.remove(cliente);
+            guardarClientesEnArchivo();
             return true;
         }
         return false;
