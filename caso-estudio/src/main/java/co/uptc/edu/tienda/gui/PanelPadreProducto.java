@@ -2,17 +2,31 @@ package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
 import co.uptc.edu.tienda.modelo.Producto;
-import co.uptc.edu.tienda.negocio.GestionProducto;
-import co.uptc.edu.tienda.persistencia.LocalProducto;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PanelPadreProducto extends PanelCentral<Producto> {
 
-
+	private JButton btnAlertaStock;
+	private List<Producto> todosProductos = new ArrayList<>();
 
     public PanelPadreProducto(Evento evento) {
         // 1. Llama al constructor del padre (crea botones, tabla y layout)
         super(evento); 
+        
+        btnAlertaStock = new JButton("⚠ Stock Mínimo");
+        btnAlertaStock.setBackground(new Color(230, 126, 34));
+        btnAlertaStock.setForeground(Color.WHITE);
+        btnAlertaStock.setFocusPainted(false);
+        btnAlertaStock.setActionCommand(Evento.ALERTA_STOCK);
+        btnAlertaStock.addActionListener(evento); // ← pasa el evento
+
+        JPanel panelAlerta = new JPanel();
+        panelAlerta.add(btnAlertaStock);
+        add(panelAlerta, BorderLayout.SOUTH);
         
     }
 
@@ -31,6 +45,8 @@ public class PanelPadreProducto extends PanelCentral<Producto> {
         btnBuscar.setActionCommand(Evento.BUSCAR_PRD);
         btnLimpiar.setActionCommand(Evento.LIMPIAR_PRD);
         btnActivar.setActionCommand(Evento.ACTIVAR_PRD);
+        
+        
         
         // Nota: Si necesitas el botón "Activar", podrías añadirlo aquí:
         // JButton btnActivar = new JButton("Activar");
@@ -56,6 +72,7 @@ public class PanelPadreProducto extends PanelCentral<Producto> {
 
     @Override
     public void poblarTabla(List<Producto> listaProducto) {
+    	this.todosProductos = listaProducto;
         modelo.setRowCount(0);
         for (Producto p : listaProducto) {
             modelo.addRow(new Object[]{
@@ -86,5 +103,31 @@ public class PanelPadreProducto extends PanelCentral<Producto> {
         
         // Retornamos el código del producto (columna 0)
         return Integer.parseInt(modelo.getValueAt(fila, 0).toString());
+    }
+    
+    public void filtrarStockMinimo() {
+        modelo.setRowCount(0);
+        for (Producto p : todosProductos) {
+            if (p.getStockActual() < p.getStockMinimo()) {
+                modelo.addRow(new Object[]{
+                    p.getCodigoProducto(),
+                    p.getNombreProducto(),
+                    p.getCategoria(),
+                    p.getPrecioCompra(),
+                    p.getPrecioVenta(),
+                    p.getPorcentajeIva(),
+                    p.getStockActual(),
+                    p.getStockMinimo(),
+                    p.getStockMaximo(),
+                    p.isActivo() ? "Activo" : "Inactivo"
+                });
+            }
+        }
+        if (modelo.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this,
+                "No hay productos por debajo del stock mínimo.",
+                "Sin alertas",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }

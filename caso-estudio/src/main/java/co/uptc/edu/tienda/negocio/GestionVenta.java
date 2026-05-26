@@ -80,7 +80,7 @@ public class GestionVenta {
         venta.setFechaHora(LocalDateTime.now().toString());
         calcularTotal(venta);
         listaVentas.add(venta);
-        iVenta.guardar(listaVentas);
+        iVenta.guardar(venta);
     }
 
     // =====================================

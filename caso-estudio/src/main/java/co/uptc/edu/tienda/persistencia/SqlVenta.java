@@ -8,7 +8,7 @@ import co.uptc.edu.tienda.modelo.Venta;
 public class SqlVenta implements IGestionVenta{
 
 	@Override
-	public void guardar(List<Venta> ventas) {
+	public void guardar(Venta venta) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -19,11 +19,7 @@ public class SqlVenta implements IGestionVenta{
 		return null;
 	}
 
-	@Override
-	public Venta buscarPorFactura(String numeroFactura) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public void actualizar(Venta venta) {

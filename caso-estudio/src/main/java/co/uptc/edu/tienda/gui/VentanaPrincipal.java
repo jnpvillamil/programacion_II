@@ -10,6 +10,7 @@ import co.uptc.edu.co.tienda.configs.ProveedorConfig;
 import co.uptc.edu.co.tienda.configs.SeguridadConfig;
 import co.uptc.edu.co.tienda.configs.VentaConfig;
 import co.uptc.edu.tienda.enums.EstadoEnum;
+import co.uptc.edu.tienda.enums.EstadoVentaEnum;
 import co.uptc.edu.tienda.modelo.Cliente;
 import co.uptc.edu.tienda.modelo.Compra;
 import co.uptc.edu.tienda.modelo.DetalleCompra;
@@ -35,7 +36,9 @@ public class VentanaPrincipal extends JFrame {
     private PanelPadreCliente pCliente;
     private PanelVenta pVenta;
     private PanelHistorialVentas pHistorial;
+    private PanelHistorialCompra pHistorialCompra;
     private PanelCompra pCompra;
+    private PanelInventario pInventario;
     private PanelHistorialCliente pHistorialCliente;
     private List<DetalleVenta> listaDetalle = new ArrayList<>();
     private List<DetalleCompra> listaDetalleCompra = new ArrayList<>();
@@ -82,6 +85,8 @@ public class VentanaPrincipal extends JFrame {
         pHistorial = new PanelHistorialVentas(evento);
         pCompra = new PanelCompra(evento);
         pHistorialCliente = new PanelHistorialCliente(evento);
+        pHistorialCompra = new PanelHistorialCompra(evento);
+        pInventario = new PanelInventario(evento);
 
         seguridadConfig = new SeguridadConfig();
 
@@ -124,8 +129,7 @@ public class VentanaPrincipal extends JFrame {
                         btnProducto = new JButton("Producto");
                         btnCliente = new JButton("Cliente");
 
-                        panelBotones.add(btnProveedor);
-                        panelBotones.add(btnProducto);
+                        panelBotones.add(btnProveedor);                       
                         panelBotones.add(btnCliente);
 
                         add(panelBotones, BorderLayout.NORTH);
@@ -148,13 +152,6 @@ public class VentanaPrincipal extends JFrame {
                             contenedor.revalidate();
                         });
 
-                        btnProducto.addActionListener(e -> {
-                            contenedor.removeAll();
-                            contenedor.add(pProducto);
-                            pProducto.poblarTabla(productoConfig.getGestProducto().listar());
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
 
                         btnCliente.addActionListener(e -> {
                             contenedor.removeAll();
@@ -254,7 +251,7 @@ public class VentanaPrincipal extends JFrame {
                     case ALMACENISTA:
                         remove(pLogin);
 
-                        JPanel panelLateralAlmacen = new JPanel(new GridLayout(4, 1, 5, 5));
+                        JPanel panelLateralAlmacen = new JPanel(new GridLayout(5, 1, 5, 5));
                         panelLateralAlmacen.setPreferredSize(new Dimension(150, 0));
                         panelLateralAlmacen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
                         panelLateralAlmacen.setBackground(new Color(52, 73, 94));
@@ -263,9 +260,12 @@ public class VentanaPrincipal extends JFrame {
                         JButton btnHistorialCompra = new JButton("Historial");      // ← futuro
                         JButton btnProveedores = new JButton("Proveedores");
                         JButton btnProductos = new JButton("Productos");
+                        JButton btnInventario = new JButton("Inventario");
+
                         
 
-                        for (JButton btn : new JButton[]{btnNuevaCompra, btnHistorialCompra, btnProveedores, btnProductos}) {
+                        for (JButton btn : new JButton[]{btnNuevaCompra, btnHistorialCompra, btnProveedores, btnProductos, 
+                        		btnInventario}) {
                             btn.setBackground(new Color(52, 73, 94));
                             btn.setForeground(Color.WHITE);
                             btn.setFocusPainted(false);
@@ -277,6 +277,7 @@ public class VentanaPrincipal extends JFrame {
                         panelLateralAlmacen.add(btnHistorialCompra);
                         panelLateralAlmacen.add(btnProveedores);
                         panelLateralAlmacen.add(btnProductos);
+                        panelLateralAlmacen.add(btnInventario);
 
                         add(panelLateralAlmacen, BorderLayout.WEST);
 
@@ -304,7 +305,11 @@ public class VentanaPrincipal extends JFrame {
 
                         btnHistorialCompra.addActionListener(e -> {
                             
-                            JOptionPane.showMessageDialog(this, "Historial en desarrollo");
+                        	contenedor.removeAll();
+                            pHistorialCompra.refrescar(compraConfig.getGestion().listarCompras());
+                            contenedor.add(pHistorialCompra);
+                            contenedor.repaint();
+                            contenedor.revalidate();
                         });
 
                         btnProveedores.addActionListener(e -> {
@@ -316,9 +321,17 @@ public class VentanaPrincipal extends JFrame {
                         });
                         
                         btnProductos.addActionListener(e -> {
-                        	contenedor.removeAll();
-                            pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+                            contenedor.removeAll();
                             contenedor.add(pProducto);
+                            pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+                            contenedor.repaint();
+                            contenedor.revalidate();
+                        });
+                        
+                        btnInventario.addActionListener(e -> {
+                        	contenedor.removeAll();
+                            contenedor.add(pInventario);
+                            pInventario.refrescar(inventarioConfig.getGestInventario().listarMovimientos());
                             contenedor.repaint();
                             contenedor.revalidate();
                         });
@@ -1170,12 +1183,24 @@ public class VentanaPrincipal extends JFrame {
     }
     
     public void lanzarDialogoAnularVenta() {
-        dialogoAnular = new DialogoAnularVenta(evento);
-        // Si hay una factura seleccionada en el historial, la precarga
+
         String facturaSeleccionada = pHistorial.getFacturaSeleccionada();
-        if (facturaSeleccionada != null) {
-            dialogoAnular.setFactura(facturaSeleccionada);
+
+        if (facturaSeleccionada == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione una venta de la tabla");
+            return;
         }
+
+        // Verificar si ya está anulada antes de abrir el diálogo
+        Venta venta = ventaConfig.getGestVenta().buscarPorFactura(facturaSeleccionada);
+        if (venta != null && venta.getEstado() == EstadoVentaEnum.ANULADA) {
+            JOptionPane.showMessageDialog(this, 
+                "La venta " + facturaSeleccionada + " ya está anulada.");
+            return;
+        }
+
+        dialogoAnular = new DialogoAnularVenta(evento);
+        dialogoAnular.setFactura(facturaSeleccionada);
         dialogoAnular.setVisible(true);
     }
     
@@ -1211,7 +1236,7 @@ public class VentanaPrincipal extends JFrame {
             // 3. Devolver stock via inventario
             List<Producto> productos = productoConfig.getGestProducto().listar();
             inventarioConfig.getGestInventario()
-                    .registrarEntradaPorAnulacion(venta, productos);
+                    .registrarEntradaPorAnulacion(venta, productos, motivo);
 
             // 4. Persistir stock
             productoConfig.getGestProducto().guardarTodos(productos);
@@ -1330,4 +1355,12 @@ public class VentanaPrincipal extends JFrame {
             e.printStackTrace();
         }
     }
+    
+    public void alertaStockMinimo() {
+        pProducto.filtrarStockMinimo();
+    }
+    
+    
+    
+    
 }

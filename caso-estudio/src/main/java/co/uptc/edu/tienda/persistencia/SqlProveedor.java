@@ -36,7 +36,7 @@ public class SqlProveedor implements IGestionProveedor {
     public void actualizar(Proveedor p) {
         Conexion conex = new Conexion();
         try {
-            String sql = "UPDATE proveedor SET razon_social=?, nit=?, direccion=?, "
+            String sql = "UPDATE proveedores SET razon_social=?, nit=?, direccion=?, "
                        + "telefono=?, correo=?, estado=? WHERE codigo_proveedor=?";
             PreparedStatement ps = conex.getConnection().prepareStatement(sql);
             ps.setString(1, p.getRazonSocial());
@@ -63,7 +63,7 @@ public class SqlProveedor implements IGestionProveedor {
     public Proveedor buscar(int codigoProveedor) {
         Conexion conex = new Conexion();
         try {
-            String sql = "SELECT * FROM proveedor WHERE codigo_proveedor=?";
+            String sql = "SELECT * FROM proveedores WHERE codigo_proveedor=?";
             PreparedStatement ps = conex.getConnection().prepareStatement(sql);
             ps.setInt(1, codigoProveedor);
             ResultSet rs = ps.executeQuery();
@@ -97,7 +97,7 @@ public class SqlProveedor implements IGestionProveedor {
     public void cambiarEstado(int codigoProveedor, EstadoEnum nuevoEstado) {
         Conexion conex = new Conexion();
         try {
-            String sql = "UPDATE proveedor SET estado=? WHERE codigo_proveedor=?";
+            String sql = "UPDATE proveedores SET estado=? WHERE codigo_proveedor=?";
             PreparedStatement ps = conex.getConnection().prepareStatement(sql);
             ps.setString(1, nuevoEstado.name());
             ps.setInt(2, codigoProveedor);

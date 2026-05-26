@@ -24,21 +24,12 @@ public class LocalVenta implements IGestionVenta {
     private final String RUTA = "ventas.json";
 
     @Override
-    public void guardar(List<Venta> ventas) {
-
-        try(FileWriter writer =
-                    new FileWriter(RUTA)) {
-
-            gson.toJson(ventas, writer);
-
-            System.out.println(
-                    "Ventas guardadas correctamente");
-
-        } catch(Exception e) {
-
-            System.out.println(
-                    "Error al guardar ventas");
-
+    public void guardar(Venta venta) {
+        List<Venta> lista = leerVentas();
+        lista.add(venta);
+        try (FileWriter writer = new FileWriter(RUTA)) {
+            gson.toJson(lista, writer);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -85,16 +76,8 @@ public class LocalVenta implements IGestionVenta {
         return new ArrayList<>();
     }
     
-    @Override
-    public Venta buscarPorFactura(String numeroFactura) {
-        List<Venta> lista = leerVentas();
-        for (Venta v : lista) {
-            if (v.getNumeroFactura().equalsIgnoreCase(numeroFactura)) {
-                return v;
-            }
-        }
-        return null;
-    }
+    
+   
 
     @Override
     public void actualizar(Venta venta) {
@@ -106,6 +89,10 @@ public class LocalVenta implements IGestionVenta {
                 break;
             }
         }
-        guardar(lista);
+        try (FileWriter writer = new FileWriter(RUTA)) {
+            gson.toJson(lista, writer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

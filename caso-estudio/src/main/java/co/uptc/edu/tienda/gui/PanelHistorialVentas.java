@@ -184,10 +184,16 @@ public class PanelHistorialVentas extends JPanel {
         modeloVentas.setRowCount(0);
         modeloDetalle.setRowCount(0);
         for (Venta v : listaVentas) {
+            String nombreCliente;
+            if (v.getCliente() != null) {
+                nombreCliente = v.getCliente().getNombreCompleto();
+            } else {
+                nombreCliente = "N/A";
+            }
             modeloVentas.addRow(new Object[]{
                 v.getNumeroFactura(),
                 v.getFechaHora(),
-                v.getCliente() != null ? v.getCliente().getNombreCompleto() : "N/A",
+                nombreCliente,
                 v.getFormaPago(),
                 String.format("$%.2f", v.getTotal()),
                 v.getEstado()
@@ -283,7 +289,7 @@ public class PanelHistorialVentas extends JPanel {
                 }
             }
         }
-        lblTotalDia.setText("Total vendido hoy: $" + String.format("%.2f", total));
+        lblTotalDia.setText("Total vendido: $" + String.format("%.2f", total));
     }
 
     // =====================================

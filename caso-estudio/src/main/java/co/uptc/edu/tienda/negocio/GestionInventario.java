@@ -28,7 +28,6 @@ public class GestionInventario {
 
     // =====================================
     // REGISTRAR SALIDA POR VENTA
-    // Se llama cuando se confirma una venta
     // =====================================
     public void registrarSalidaPorVenta(Venta venta,
                                         List<Producto> listaProductos) throws Exception {
@@ -38,7 +37,6 @@ public class GestionInventario {
 
         for (DetalleVenta detalle : venta.getDetalles()) {
 
-            // Buscar el producto real para actualizar su stock
             Producto productoReal = buscarProducto(
                     detalle.getProducto().getCodigoProducto(), listaProductos);
 
@@ -47,11 +45,9 @@ public class GestionInventario {
                         + detalle.getProducto().getCodigoProducto());
             }
 
-            // Descontar stock
             productoReal.setStockActual(
                     productoReal.getStockActual() - detalle.getCantidad());
 
-            // Registrar movimiento
             MovimientoInventario mov = new MovimientoInventario();
             mov.setIdMovimiento(consecutivo++);
             mov.setProducto(productoReal);
@@ -61,17 +57,15 @@ public class GestionInventario {
             mov.setMotivo("Venta: " + venta.getNumeroFactura());
 
             listaMovimientos.add(mov);
+            iInventario.guardar(mov); // ← guarda uno por uno
         }
-
-        iInventario.guardar(listaMovimientos);
     }
 
     // =====================================
     // REGISTRAR ENTRADA POR ANULACION
-    // Se llama cuando se anula una venta
     // =====================================
     public void registrarEntradaPorAnulacion(Venta venta,
-                                             List<Producto> listaProductos) throws Exception {
+                                             List<Producto> listaProductos, String motivoUsuario) throws Exception {
         if (venta == null || venta.getDetalles().isEmpty()) {
             throw new Exception("La venta no tiene productos");
         }
@@ -86,28 +80,23 @@ public class GestionInventario {
                         + detalle.getProducto().getCodigoProducto());
             }
 
-            // Devolver stock
             productoReal.setStockActual(
                     productoReal.getStockActual() + detalle.getCantidad());
 
-            // Registrar movimiento
             MovimientoInventario mov = new MovimientoInventario();
             mov.setIdMovimiento(consecutivo++);
             mov.setProducto(productoReal);
             mov.setTipoMovimiento(TipoMovimiento.ENTRADA);
             mov.setCantidad(detalle.getCantidad());
             mov.setFechaHora(LocalDateTime.now().toString());
-            mov.setMotivo("Anulación venta: " + venta.getNumeroFactura());
-
+            mov.setMotivo("Anulación venta: " + venta.getNumeroFactura() + " - " + motivoUsuario);
             listaMovimientos.add(mov);
+            iInventario.guardar(mov); // ← guarda uno por uno
         }
-
-        iInventario.guardar(listaMovimientos);
     }
 
     // =====================================
     // REGISTRAR ENTRADA POR COMPRA
-    // Se llama cuando se registra una compra
     // =====================================
     public void registrarEntradaPorCompra(String numeroFacturaCompra,
                                           Producto producto,
@@ -134,7 +123,7 @@ public class GestionInventario {
         mov.setMotivo("Compra: " + numeroFacturaCompra);
 
         listaMovimientos.add(mov);
-        iInventario.guardar(listaMovimientos);
+        iInventario.guardar(mov); // ← guarda uno por uno
     }
 
     // =====================================

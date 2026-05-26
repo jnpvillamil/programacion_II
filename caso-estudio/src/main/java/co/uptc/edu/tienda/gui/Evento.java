@@ -68,7 +68,11 @@ public class Evento implements ActionListener {
     
     public final static String AGREGAR_PRODUCTO_CMP = "Agregar_Producto_CMP";
     public final static String FINALIZAR_CMP = "Finalizar_CMP";
-
+    
+    // ALERTA STOCK
+    public final static String ALERTA_STOCK = "Alerta_Stock";
+    
+    
     private VentanaPrincipal ventana;
 
     Evento(VentanaPrincipal v) {
@@ -225,7 +229,9 @@ public class Evento implements ActionListener {
             ventana.agregarProductoCompra();
         } else if (evento.equals(FINALIZAR_CMP)) {
             ventana.finalizarCompra();
-        }
+        } else if (evento.equals(ALERTA_STOCK)) {
+            ventana.alertaStockMinimo();
+        } 
         
     }
 }

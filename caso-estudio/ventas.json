@@ -137,6 +137,60 @@
     "formaPago": "CREDITO",
     "impuestos": 0.0,
     "total": 8000.0,
-    "estado": "ACTIVA"
+    "estado": "ACTIVA",
+    "motivoAnulacion": "Se anula venta por producto equivocado."
+  },
+  {
+    "numeroFactura": "FACT-4",
+    "fechaHora": "2026-05-25T21:47:53.967068100",
+    "cliente": {
+      "idCliente": 100,
+      "direccionC": "CALLE 50",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3121214144,
+      "estado": "ACTIVO",
+      "nombreCompleto": "DIANA SUAREZ",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1000432123
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 101,
+          "nombreProducto": "panela",
+          "precioCompra": 0.0,
+          "precioVenta": 2500.0,
+          "stockActual": 69,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 2,
+        "precioUnitario": 2500.0,
+        "impuestos": 0.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 104,
+          "nombreProducto": "Frijol",
+          "precioCompra": 0.0,
+          "precioVenta": 10000.0,
+          "stockActual": 89,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 5,
+        "precioUnitario": 10000.0,
+        "impuestos": 0.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 0.0,
+    "total": 55000.0,
+    "estado": "ANULADA",
+    "motivoAnulacion": "Cambio de producto"
   }
 ]

@@ -1,0 +1,35 @@
+[
+  {
+    "idCompra": 0,
+    "numeroFactura": "COMP-1",
+    "proveedor": {
+      "codigoProveedor": 1,
+      "razonSocial": "EXITO",
+      "nit": "9823",
+      "direccionP": "CALLE",
+      "telefonoP": 3121211212,
+      "correoP": "EXITO@CORREO.COM",
+      "estado": "ACTIVO"
+    },
+    "fechaCompra": "2026-05-25T21:49:34.519898300",
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 100,
+          "nombreProducto": "arroz",
+          "precioCompra": 2600.0,
+          "precioVenta": 0.0,
+          "stockActual": 50,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 2,
+        "precioCompra": 2600.0,
+        "subtotal": 5200.0
+      }
+    ],
+    "total": 5200.0
+  }
+]

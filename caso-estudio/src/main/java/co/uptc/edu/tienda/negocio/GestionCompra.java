@@ -55,8 +55,9 @@ public class GestionCompra {
         }
         compra.setTotal(total);
 
-        listaCompras.add(compra);
+        
         iCompra.guardar(compra);
+        listaCompras.add(compra);
     }
 
     public List<Compra> listarCompras() {

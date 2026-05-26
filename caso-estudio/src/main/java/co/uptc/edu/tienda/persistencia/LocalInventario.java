@@ -20,12 +20,10 @@ public class LocalInventario implements IGestionInventario {
     private final String RUTA = "inventario.json";
 
     @Override
-    public void guardar(List<MovimientoInventario> movimientos) {
-        try (FileWriter writer = new FileWriter(RUTA)) {
-            gson.toJson(movimientos, writer);
-        } catch (Exception e) {
-            System.out.println("Error al guardar inventario: " + e.getMessage());
-        }
+    public void guardar(MovimientoInventario movimiento) {
+        List<MovimientoInventario> lista = leerMovimientos();
+        lista.add(movimiento);
+        guardarArchivo(lista);
     }
 
     @Override
@@ -41,6 +39,15 @@ public class LocalInventario implements IGestionInventario {
         } catch (Exception e) {
             System.out.println("Error al leer inventario: " + e.getMessage());
             return new ArrayList<>();
+        }
+    }
+    
+ 
+    private void guardarArchivo(List<MovimientoInventario> lista) {
+        try (FileWriter writer = new FileWriter(RUTA)) {
+            gson.toJson(lista, writer);
+        } catch (Exception e) {
+            System.out.println("Error al guardar inventario: " + e.getMessage());
         }
     }
 }

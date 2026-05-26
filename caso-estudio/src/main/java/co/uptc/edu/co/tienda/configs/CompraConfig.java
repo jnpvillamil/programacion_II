@@ -6,7 +6,7 @@ import co.uptc.edu.tienda.persistencia.LocalCompra;
 
 public class CompraConfig {
 
-    private GestionCompra gestion;
+    private GestionCompra gestCompra;
 
     private IGestionCompra iCompra;
 
@@ -14,17 +14,17 @@ public class CompraConfig {
 
         iCompra = new LocalCompra();
 
-        gestion = new GestionCompra(iCompra);
+        gestCompra = new GestionCompra(iCompra);
     }
 
     public GestionCompra getGestion() {
 
-        return gestion;
+        return gestCompra;
     }
 
     public void setGestCompra(GestionCompra gestCompra) {
 
-        this.gestion = gestCompra;
+        this.gestCompra = gestCompra;
     }
 
     public IGestionCompra getiCompra() {

@@ -18,7 +18,7 @@ import co.uptc.edu.tienda.modelo.Compra;
 public class LocalCompra implements IGestionCompra {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final String RUTA = "comprasProveedor.json";
+    private final String RUTA = "compras.json";
 
     @Override
     public void guardar(Compra compra) {
