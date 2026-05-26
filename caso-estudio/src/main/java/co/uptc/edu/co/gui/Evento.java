@@ -559,6 +559,8 @@ public class Evento implements ActionListener {
 
     private void abrirDialogoNuevoProveedor() {
         DialogProveedor dialog = new DialogProveedor(ventana, this);
+        String codigoGenerado = gestionProveedor.generarCodigoProveedor();
+        dialog.cargarCodigoGenerado(codigoGenerado);
         dialog.setVisible(true);
     }
 

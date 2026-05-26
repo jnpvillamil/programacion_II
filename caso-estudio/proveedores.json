@@ -3,9 +3,18 @@
     "codigoProveedor": "34rf",
     "razonSocial": "Universidad pedagogica",
     "nit": "45676543",
+    "correoElectronico": "UniversidaPegagogica@gmail.com",
     "direccion": "Avenida Central del Norte",
     "telefono": "608 7436208",
-    "correoElectronico": "UniversidaPegagogica@gmail.com",
+    "estado": "ACTIVO"
+  },
+  {
+    "codigoProveedor": "PRV0001",
+    "razonSocial": "ALMACENES EXITO S A",
+    "nit": "890900608-9",
+    "correoElectronico": "ghdgh@fgh.hg",
+    "direccion": "CR 48 32 B SUR 139",
+    "telefono": "6 0 4 9 6 9 6",
     "estado": "ACTIVO"
   }
 ]

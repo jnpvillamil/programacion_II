@@ -14,4 +14,6 @@ public interface IGestionProveedor {
     void actualizarProveedor(Proveedor proveedor) throws Exception;
 
     void cambiarEstadoProveedor(String codigo) throws Exception;
+
+	String generarCodigoProveedor();
 }

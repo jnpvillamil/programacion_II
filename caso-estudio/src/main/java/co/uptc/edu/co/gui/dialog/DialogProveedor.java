@@ -189,4 +189,10 @@ public class DialogProveedor extends JDialog {
 			throw new Exception("El correo electrónico es obligatorio.");
 		}
 	}
+
+	public void cargarCodigoGenerado(String codigoGenerado) {
+		 campoCodigo.setText(codigoGenerado);
+			campoCodigo.setEditable(false);
+		
+	}
 }

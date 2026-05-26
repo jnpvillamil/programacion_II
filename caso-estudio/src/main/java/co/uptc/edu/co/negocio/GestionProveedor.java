@@ -2,9 +2,11 @@ package co.uptc.edu.co.negocio;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
+import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
@@ -91,6 +93,26 @@ public class GestionProveedor implements IGestionProveedor {
 			proveedor.setEstado(EstadoEnum.ACTIVO);
 		}
 		proveedorDAO.actualizarProveedor(proveedor);
+	}
+
+	public String generarCodigoProveedor() {
+
+		int mayor = 0;
+
+		for (Proveedor proveedor : proveedores) {
+			String codigo = proveedor.getCodigoProveedor();
+
+			if (codigo != null && codigo.matches("PRV\\d{4}")) {
+				int numero = Integer.parseInt(codigo.substring(3));
+
+				if (numero > mayor) {
+					mayor = numero;
+				}
+			}
+		}
+
+		return String.format("PRV%04d", mayor + 1);
+
 	}
 
 	private void validarProveedor(Proveedor proveedor) throws Exception {
