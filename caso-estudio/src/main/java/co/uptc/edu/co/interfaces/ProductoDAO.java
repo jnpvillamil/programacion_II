@@ -1,6 +1,8 @@
 package co.uptc.edu.co.interfaces;
 
 import java.util.List;
+
+import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.modelo.Producto;
 
 public interface ProductoDAO {
@@ -12,6 +14,7 @@ public interface ProductoDAO {
     Producto buscarPorCodigo(String codigo) throws Exception;
 
     List<Producto> listarProducto() throws Exception;
+    void registrarMovimiento(MovimientoInventario movimiento) throws Exception;
 
 
 }

@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import co.uptc.edu.co.interfaces.ProductoDAO;
+import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.modelo.Producto;
 
 public class ProductoJSONDAO implements ProductoDAO {
@@ -104,4 +105,10 @@ public class ProductoJSONDAO implements ProductoDAO {
             gson.toJson(productos, writer);
         }
     }
+
+	@Override
+	public void registrarMovimiento(MovimientoInventario movimiento) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

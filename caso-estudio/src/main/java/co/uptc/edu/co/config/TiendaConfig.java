@@ -15,9 +15,11 @@ import co.uptc.edu.co.negocio.GestionProducto;
 import co.uptc.edu.co.negocio.GestionProveedor;
 import co.uptc.edu.co.negocio.GestionVenta;
 
-import co.uptc.edu.co.persistencia.ProductoJSONDAO;
+
 import co.uptc.edu.co.persistencia.ProveedorJSONDAO;
 import co.uptc.edu.co.persistencia.ClienteJSONDAO;
+import co.uptc.edu.co.persistencia.ProductoDBDAO;
+import co.uptc.edu.co.persistencia.ProveedorDBDAO;
 
 public class TiendaConfig {
 
@@ -33,10 +35,10 @@ public class TiendaConfig {
 
 	private void inicializarGestiones() {
 
-		ProductoDAO productoDAO = new ProductoJSONDAO();
+		ProductoDAO productoDAO = new ProductoDBDAO();
 		gestionProducto = new GestionProducto(productoDAO);
 
-		ProveedorDAO proveedorDAO = new ProveedorJSONDAO();
+		ProveedorDAO proveedorDAO = new ProveedorDBDAO();
 		gestionProveedor = new GestionProveedor(proveedorDAO);
 
 		ClienteDAO clienteDAO = new ClienteJSONDAO();

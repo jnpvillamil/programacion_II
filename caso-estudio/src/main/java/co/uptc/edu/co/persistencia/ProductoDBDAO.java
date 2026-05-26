@@ -1,0 +1,170 @@
+package co.uptc.edu.co.persistencia;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import co.uptc.edu.co.conexion.ConexionBD;
+import co.uptc.edu.co.interfaces.ProductoDAO;
+import co.uptc.edu.co.modelo.MovimientoInventario;
+import co.uptc.edu.co.modelo.Producto;
+import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
+import co.uptc.edu.co.modelo.enums.EstadoEnum;
+import co.uptc.edu.co.modelo.enums.TipoMovimientoInventarioEnum;
+
+public class ProductoDBDAO implements ProductoDAO {
+	private static final String TABLA_PRODUCTOS = "productos";
+
+	private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_PRODUCTOS
+			+ " (codigoProducto, nombreProducto, categoria, precioCompra, precioVenta, stockActual, stockMinimo, stockMaximo, estado) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoProducto, nombreProducto, categoria, precioCompra, precioVenta, "
+			+ "stockActual, stockMinimo, stockMaximo, estado " + "FROM " + TABLA_PRODUCTOS
+			+ " WHERE codigoProducto = ?";
+
+	private static final String SQL_LISTAR = "SELECT codigoProducto, nombreProducto, categoria, precioCompra, precioVenta, "
+			+ "stockActual, stockMinimo, stockMaximo, estado " + "FROM " + TABLA_PRODUCTOS;
+
+	private static final String SQL_ACTUALIZAR = "UPDATE " + TABLA_PRODUCTOS + " SET "
+			+ "nombreProducto = ?, categoria = ?, precioCompra = ?, precioVenta = ?, "
+			+ "stockActual = ?, stockMinimo = ?, stockMaximo = ?, estado = ? " + "WHERE codigoProducto = ?";
+	private static final String SQL_INSERTAR_MOVIMIENTO = "INSERT INTO movimientos_inventario (codigoProducto, tipoMovimiento, cantidad, fecha, descripcion) "
+			+ "VALUES (?, ?, ?, ?, ?)";
+
+	private static final String SQL_UPDATE_STOCK_ENTRADA = "UPDATE productos SET stockActual = stockActual + ? WHERE codigoProducto = ?";
+
+	private static final String SQL_UPDATE_STOCK_SALIDA = "UPDATE productos SET stockActual = stockActual - ? WHERE codigoProducto = ?";
+
+	@Override
+	public void guardarProducto(Producto producto) throws Exception {
+		try (Connection connection = ConexionBD.getConexion();
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERTAR)) {
+
+			prepararInsert(preparedStatement, producto);
+			preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new Exception("Error al guardar el producto en el servidor remoto: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void actualizarProducto(Producto producto) throws Exception {
+		// TODO Auto-generated method stub
+		try (Connection connection = ConexionBD.getConexion();
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_ACTUALIZAR)) {
+
+			prepararActualizar(preparedStatement, producto);
+			preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new Exception("Error al actualizar el producto en el servidor remoto: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public Producto buscarPorCodigo(String codigo) throws Exception {
+		// TODO Auto-generated method stub
+		try (Connection connection = ConexionBD.getConexion();
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
+
+			preparedStatement.setString(1, codigo);
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					return construirProducto(resultSet);
+				}
+			}
+		} catch (SQLException e) {
+			throw new Exception("Error al buscar el producto solicitado: " + e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Producto> listarProducto() throws Exception {
+		// TODO Auto-generated method stub
+		List<Producto> lista = new ArrayList<>();
+		try (Connection connection = ConexionBD.getConexion();
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_LISTAR);
+				ResultSet resultSet = preparedStatement.executeQuery()) {
+
+			while (resultSet.next()) {
+				lista.add(construirProducto(resultSet));
+			}
+		} catch (SQLException e) {
+			throw new Exception("Error al listar los producto: " + e.getMessage(), e);
+		}
+		return lista;
+	}
+
+	public void registrarMovimiento(MovimientoInventario movimiento) throws Exception {
+		try (Connection conn = ConexionBD.getConexion()) {
+
+			try (PreparedStatement psMov = conn.prepareStatement(SQL_INSERTAR_MOVIMIENTO)) {
+				psMov.setString(1, movimiento.getCodigoProducto());
+				psMov.setString(2, movimiento.getTipoMovimiento().name());
+				psMov.setInt(3, movimiento.getCantidad());
+				psMov.setDate(4, java.sql.Date.valueOf(movimiento.getFechaMovimiento()));
+				psMov.setString(5, movimiento.getDescripcion());
+				psMov.executeUpdate();
+			}
+			String sqlUpdate = (movimiento.getTipoMovimiento() == TipoMovimientoInventarioEnum.ENTRADA)
+					? SQL_UPDATE_STOCK_ENTRADA
+					: SQL_UPDATE_STOCK_SALIDA;
+
+			try (PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate)) {
+				psUpdate.setInt(1, movimiento.getCantidad());
+				psUpdate.setString(2, movimiento.getCodigoProducto());
+				psUpdate.executeUpdate();
+			}
+		} catch (SQLException e) {
+			throw new Exception("Error al registrar movimiento: " + e.getMessage(), e);
+		}
+	}
+
+	private Producto construirProducto(ResultSet resultSet) throws SQLException {
+		// TODO Auto-generated method stub
+		Producto producto = new Producto();
+		producto.setCodigoProducto(resultSet.getString("codigoProducto"));
+		producto.setNombreProducto(resultSet.getString("nombreProducto"));
+		producto.setCategoria(CategoriaProductoEnum.valueOf(resultSet.getString("categoria")));
+		producto.setPrecioCompra(resultSet.getDouble("precioCompra"));
+		producto.setPrecioVenta(resultSet.getDouble("precioVenta"));
+		producto.setStockActual(resultSet.getInt("stockActual"));
+		producto.setStockMinimo(resultSet.getInt("stockMinimo"));
+		producto.setStockMaximo(resultSet.getInt("stockMaximo"));
+		producto.setEstado(EstadoEnum.valueOf(resultSet.getString("estado")));
+		return producto;
+
+	}
+
+	private void prepararInsert(PreparedStatement preparedStatement, Producto producto) throws SQLException {
+		preparedStatement.setString(1, producto.getCodigoProducto());
+		preparedStatement.setString(2, producto.getNombreProducto());
+		preparedStatement.setString(3, producto.getCategoria().name());
+		preparedStatement.setBigDecimal(4, BigDecimal.valueOf(producto.getPrecioCompra()));
+		preparedStatement.setBigDecimal(5, BigDecimal.valueOf(producto.getPrecioVenta()));
+		preparedStatement.setInt(6, producto.getStockActual());
+		preparedStatement.setInt(7, producto.getStockMinimo());
+		preparedStatement.setInt(8, producto.getStockMaximo());
+		preparedStatement.setString(9, producto.getEstado().name());
+	}
+
+	private void prepararActualizar(PreparedStatement preparedStatement, Producto producto) throws SQLException {
+		preparedStatement.setString(1, producto.getNombreProducto());
+		preparedStatement.setString(2, producto.getCategoria().name());
+		preparedStatement.setBigDecimal(3, BigDecimal.valueOf(producto.getPrecioCompra()));
+		preparedStatement.setBigDecimal(4, BigDecimal.valueOf(producto.getPrecioVenta()));
+		preparedStatement.setInt(5, producto.getStockActual());
+		preparedStatement.setInt(6, producto.getStockMinimo());
+		preparedStatement.setInt(7, producto.getStockMaximo());
+		preparedStatement.setString(8, producto.getEstado().name());
+		preparedStatement.setString(9, producto.getCodigoProducto());
+	}
+
+}

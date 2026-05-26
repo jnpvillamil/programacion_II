@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.time.LocalDate;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -49,6 +50,9 @@ public class DialogMovimientoInventario extends JDialog {
 
 		campoCantidad = new JTextField(25);
 		campoFecha = new JTextField(25);
+		campoFecha.setText(LocalDate.now().toString());
+		campoFecha.setEditable(false);
+		campoFecha.setFocusable(false);
 		campoDescripcionMovimiento = new JTextArea(4, 25);
 		campoDescripcionMovimiento.setLineWrap(true);
 		campoDescripcionMovimiento.setWrapStyleWord(true);

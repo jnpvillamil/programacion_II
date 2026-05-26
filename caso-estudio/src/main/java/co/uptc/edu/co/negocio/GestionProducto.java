@@ -214,6 +214,7 @@ public class GestionProducto implements IGestionProducto {
 
             movimientos.add(movimiento);
             productoDAO.actualizarProducto(producto);
+            productoDAO.registrarMovimiento(movimiento);
     }
     @Override
     public String generarCodigoProducto() {
