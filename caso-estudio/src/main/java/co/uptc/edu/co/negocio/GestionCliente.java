@@ -6,6 +6,7 @@ import java.util.List;
 import co.uptc.edu.co.interfaces.ClienteDAO;
 import co.uptc.edu.co.interfaces.IGestionCliente;
 import co.uptc.edu.co.modelo.Cliente;
+import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
 public class GestionCliente implements IGestionCliente {
@@ -73,7 +74,7 @@ public class GestionCliente implements IGestionCliente {
 
 		clientes.add(cliente);
 	}
-
+	
 	@Override
 	public void actualizarCliente(Cliente clienteActualizado) throws Exception {
 
@@ -100,7 +101,7 @@ public class GestionCliente implements IGestionCliente {
 
 		clienteDAO.actualizarCliente(clienteExistente);
 	}
-
+	
 	@Override
 	public void cambiarEstadoCliente(String codigo) throws Exception {
 
@@ -122,7 +123,25 @@ public class GestionCliente implements IGestionCliente {
 
 		clienteDAO.actualizarCliente(cliente);
 	}
+	@Override
+	public String generarCodigoCliente() {
+		int mayor = 0;
 
+		for (Cliente cliente : clientes) {
+			String codigo = cliente.getCodigo();
+
+			if (codigo != null && codigo.matches("CLIE\\d{4}")) {
+				int numero = Integer.parseInt(codigo.substring(3));
+
+				if (numero > mayor) {
+					mayor = numero;
+				}
+			}
+		}
+
+		return String.format("CLIE%04d", mayor + 1);
+
+	}
 	private void validarCliente(Cliente cliente) throws Exception {
 
 		if (cliente == null) {
@@ -165,4 +184,5 @@ public class GestionCliente implements IGestionCliente {
 			throw new Exception("El tipo de cliente es obligatorio.");
 		}
 	}
-}
+
+	}

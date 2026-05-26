@@ -209,4 +209,10 @@ public class DialogCliente extends JDialog {
 		comboTipoCliente.setSelectedItem(cliente.getTipoCliente());
 		estadoActual = cliente.getEstado();
 	}
+
+	public void cargarCodigoGenerado(String codigoGenerado) {
+		// TODO Auto-generated method stub
+		campoCodigo.setText(codigoGenerado);
+		campoCodigo.setEditable(false);
+	}
 }

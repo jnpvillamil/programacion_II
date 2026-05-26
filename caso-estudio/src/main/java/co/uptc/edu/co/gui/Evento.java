@@ -411,9 +411,11 @@ public class Evento implements ActionListener {
 
     private void abrirDialogoNuevoCliente() {
         DialogCliente dialog = new DialogCliente(ventana, this);
+        String codigoGenerado = gestionCliente.generarCodigoCliente();
+        dialog.cargarCodigoGenerado(codigoGenerado);
         dialog.setVisible(true);
     }
-
+   
     private void registrarCliente(ActionEvent e) {
         try {
             DialogCliente dialog = obtenerDialogCliente(e);

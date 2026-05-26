@@ -15,4 +15,5 @@ public interface IGestionCliente {
     void actualizarCliente(Cliente clienteActualizado) throws Exception;
 
     void cambiarEstadoCliente(String codigo) throws Exception;
+    String generarCodigoCliente();
 }
