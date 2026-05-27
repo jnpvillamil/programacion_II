@@ -18,10 +18,14 @@ tmp/
 .factorypath
 
 # CONFIGURACIÓN LOCAL DE ECLIPSE
-# Los ignoramos para que las rutas locales de Mac no choquen con las de los compañeros en Windows/Linux
+# .classpath se genera con Maven > Update Project (no versionar)
 .classpath
-.project
-.DS_Store
-
-.settings/
+.factorypath
 .vscode/
+
+# .project y .settings (JDT 17 + m2e) sí se versionan para importar sin errores
+
+DOCUMENTACION_PROYECTO.md
+
+# CREDENCIALES DE BASE DE DATOS (Aiven)
+configuracion/bd.properties
