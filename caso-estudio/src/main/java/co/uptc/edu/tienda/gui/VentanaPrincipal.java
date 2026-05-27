@@ -123,7 +123,9 @@ public class VentanaPrincipal extends JFrame {
                     case ADMIN:
                         // El flujo que ya tienes para el Administrador
                         remove(pLogin);
-
+                        
+                        JPanel panelNorteAdmin = new JPanel(new BorderLayout());
+                        		
                         JPanel panelBotones = new JPanel();
                         btnProveedor = new JButton("Proveedor");
                         btnProducto = new JButton("Producto");
@@ -131,8 +133,16 @@ public class VentanaPrincipal extends JFrame {
 
                         panelBotones.add(btnProveedor);                       
                         panelBotones.add(btnCliente);
+                        JButton btnCerrarSesionAdmin = new JButton("Cerrar Sesión");
+                        btnCerrarSesionAdmin.setBackground(new Color(192, 57, 43));
+                        btnCerrarSesionAdmin.setForeground(Color.WHITE);
+                        btnCerrarSesionAdmin.setFocusPainted(false);
+                        JPanel panelCerrar = new JPanel();
+                        panelCerrar.add(btnCerrarSesionAdmin);
+                        panelNorteAdmin.add(panelBotones, BorderLayout.CENTER);
+                        panelNorteAdmin.add(panelCerrar, BorderLayout.EAST);
 
-                        add(panelBotones, BorderLayout.NORTH);
+                        add(panelNorteAdmin, BorderLayout.NORTH);
 
                         contenedor = new JPanel(new BorderLayout());
                         add(contenedor, BorderLayout.CENTER);
@@ -160,7 +170,7 @@ public class VentanaPrincipal extends JFrame {
                             contenedor.repaint();
                             contenedor.revalidate();
                         });
-
+                        btnCerrarSesionAdmin.addActionListener(e -> cerrarSesion());
                         this.setSize(900, 500);
                         this.setLocationRelativeTo(null);
                         repaint();
@@ -169,8 +179,20 @@ public class VentanaPrincipal extends JFrame {
 
                     case CAJERO:
                         remove(pLogin);
-
+                        // boton para cerrar sesion
+                        JPanel panelNorteCajero = new JPanel(new BorderLayout());
+                        JButton btnCerrarSesionCajero = new JButton("Cerrar Sesión");
+                        btnCerrarSesionCajero.setBackground(new Color(192, 57, 43));
+                        btnCerrarSesionCajero.setForeground(Color.WHITE);
+                        btnCerrarSesionCajero.setFocusPainted(false);
+                        JPanel panelCerrarCajero = new JPanel();
+                        panelCerrarCajero.add(btnCerrarSesionCajero);
+                        panelNorteCajero.add(panelCerrarCajero, BorderLayout.EAST);
+                        add(panelNorteCajero, BorderLayout.NORTH);
+                        btnCerrarSesionCajero.addActionListener(e -> cerrarSesion());
+                        
                         // Panel lateral izquierdo
+                        
                         JPanel panelLateral = new JPanel(new GridLayout(4, 1, 5, 5));
                         panelLateral.setPreferredSize(new Dimension(165, 0));
                         panelLateral.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -250,7 +272,18 @@ public class VentanaPrincipal extends JFrame {
                         break;
                     case ALMACENISTA:
                         remove(pLogin);
-
+                        
+                        JPanel panelNorteAlmacenista = new JPanel(new BorderLayout());
+                        JButton btnCerrarSesionAlmacenista = new JButton("Cerrar Sesión");
+                        btnCerrarSesionAlmacenista.setBackground(new Color(192, 57, 43));
+                        btnCerrarSesionAlmacenista.setForeground(Color.WHITE);
+                        btnCerrarSesionAlmacenista.setFocusPainted(false);
+                        JPanel panelCerrarAlmacenista = new JPanel();
+                        panelCerrarAlmacenista.add(btnCerrarSesionAlmacenista);
+                        panelNorteAlmacenista.add(panelCerrarAlmacenista, BorderLayout.EAST);
+                        add(panelNorteAlmacenista, BorderLayout.NORTH);
+                        btnCerrarSesionAlmacenista.addActionListener(e -> cerrarSesion());
+                        
                         JPanel panelLateralAlmacen = new JPanel(new GridLayout(5, 1, 5, 5));
                         panelLateralAlmacen.setPreferredSize(new Dimension(150, 0));
                         panelLateralAlmacen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -1360,6 +1393,30 @@ public class VentanaPrincipal extends JFrame {
         pProducto.filtrarStockMinimo();
     }
     
+    public void cerrarSesion() {
+        Object[] opciones = {"Sí", "No"};
+        int respuesta = JOptionPane.showOptionDialog(
+            this,
+            "¿Está seguro de que desea cerrar sesión?",
+            "Cerrar Sesión",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            opciones,
+            opciones[1] // botón por defecto: "No"
+        );
+
+        if (respuesta == 0) { // 0 = "Sí"
+            getContentPane().removeAll();
+            listaDetalle = new ArrayList<>();
+            listaDetalleCompra = new ArrayList<>();
+            setSize(400, 300);
+            setLocationRelativeTo(null);
+            add(pLogin, BorderLayout.CENTER);
+            repaint();
+            revalidate();
+        }
+    }
     
     
     
