@@ -20,6 +20,7 @@ import co.uptc.edu.tienda.modelo.Venta;
 import co.uptc.edu.tienda.modelo.DetalleVenta;
 import co.uptc.edu.tienda.negocio.GestionSeguridad;
 import co.uptc.edu.tienda.negocio.dto.CredencialDto;
+import co.uptc.edu.tienda.persistencia.TxtFactura;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1204,7 +1205,9 @@ public class VentanaPrincipal extends JFrame {
 
             // 3. Persistir productos con stock actualizado
             productoConfig.getGestProducto().guardarTodos(productos);
-
+            
+            new TxtFactura().generarFactura(venta);
+            
             JOptionPane.showMessageDialog(this,
                     "Venta registrada.\nFactura: " + venta.getNumeroFactura());
             listaDetalle = new ArrayList<>();

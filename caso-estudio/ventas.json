@@ -192,5 +192,177 @@
     "total": 55000.0,
     "estado": "ANULADA",
     "motivoAnulacion": "Cambio de producto"
+  },
+  {
+    "numeroFactura": "FACT-5",
+    "fechaHora": "2026-05-26T21:49:42.559211500",
+    "cliente": {
+      "idCliente": 100,
+      "direccionC": "CALLE 50",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3121214144,
+      "estado": "ACTIVO",
+      "nombreCompleto": "DIANA SUAREZ",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1000432123
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 100,
+          "nombreProducto": "arroz",
+          "precioCompra": 0.0,
+          "precioVenta": 2900.0,
+          "stockActual": 38,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.05
+        },
+        "cantidad": 12,
+        "precioUnitario": 2900.0,
+        "impuestos": 1740.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "Pasta",
+          "precioCompra": 0.0,
+          "precioVenta": 8000.0,
+          "stockActual": 86,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 11,
+        "precioUnitario": 8000.0,
+        "impuestos": 0.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 1740.0,
+    "total": 124540.0,
+    "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-6",
+    "fechaHora": "2026-05-26T22:04:21.494510",
+    "cliente": {
+      "idCliente": 100,
+      "direccionC": "CALLE 50",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3121214144,
+      "estado": "ACTIVO",
+      "nombreCompleto": "DIANA SUAREZ",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1000432123
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 100,
+          "nombreProducto": "arroz",
+          "precioCompra": 0.0,
+          "precioVenta": 2900.0,
+          "stockActual": 35,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.05
+        },
+        "cantidad": 3,
+        "precioUnitario": 2900.0,
+        "impuestos": 435.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "Pasta",
+          "precioCompra": 0.0,
+          "precioVenta": 8000.0,
+          "stockActual": 79,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 7,
+        "precioUnitario": 8000.0,
+        "impuestos": 0.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "Pasta",
+          "precioCompra": 0.0,
+          "precioVenta": 8000.0,
+          "stockActual": 72,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 7,
+        "precioUnitario": 8000.0,
+        "impuestos": 0.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 435.0,
+    "total": 121135.0,
+    "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-7",
+    "fechaHora": "2026-05-26T22:08:33.344151100",
+    "cliente": {
+      "idCliente": 100,
+      "direccionC": "CALLE 50",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3121214144,
+      "estado": "ACTIVO",
+      "nombreCompleto": "DIANA SUAREZ",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1000432123
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "Pasta",
+          "precioCompra": 0.0,
+          "precioVenta": 8000.0,
+          "stockActual": 70,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 2,
+        "precioUnitario": 8000.0,
+        "impuestos": 0.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 103,
+          "nombreProducto": "Azucar",
+          "precioCompra": 0.0,
+          "precioVenta": 12000.0,
+          "stockActual": 95,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 3,
+        "precioUnitario": 12000.0,
+        "impuestos": 0.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 0.0,
+    "total": 52000.0,
+    "estado": "ACTIVA"
   }
 ]
