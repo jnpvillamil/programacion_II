@@ -12,7 +12,7 @@ import co.uptc.edu.co.interfaces.ProveedorDAO;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
-public class ProveedorDBDAO implements ProveedorDAO {
+public class ProveedorBDDAO implements ProveedorDAO {
 
 	private static final String TABLA_PROVEEDORES = "proveedores";
 

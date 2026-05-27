@@ -37,15 +37,19 @@ public class GestionProducto implements IGestionProducto {
 
         movimientos = new ArrayList<>();
     }
+    
+    private void recargarProductos() throws Exception {
+        productos = productoDAO.listarProducto();
+    }
 
     @Override
     public Producto buscarProductoPorCodigo(String codigo) {
-        for (Producto producto : productos) {
-            if (producto.getCodigoProducto().equalsIgnoreCase(codigo)) {
-                return producto;
-            }
+        try {
+        	return productoDAO.buscarPorCodigo(codigo);
+        } catch (Exception e) {
+        	System.out.println("Error al buscar productos: " + e.getMessage());
+        	return null;
         }
-        return null;
     }
 
     @Override
@@ -68,9 +72,9 @@ public class GestionProducto implements IGestionProducto {
 
         producto.setEstado(EstadoEnum.ACTIVO);
         productoDAO.guardarProducto(producto);
-        productos.add(producto);
+        recargarProductos();
     }
-
+    
     @Override
     public void actualizarProducto(Producto productoActualizado) throws Exception {
         validarProducto(productoActualizado);
@@ -90,6 +94,7 @@ public class GestionProducto implements IGestionProducto {
         productoExistente.setStockMaximo(productoActualizado.getStockMaximo());
         
         productoDAO.actualizarProducto(productoExistente);
+        recargarProductos(); 
     }
 
     @Override
@@ -106,6 +111,7 @@ public class GestionProducto implements IGestionProducto {
             producto.setEstado(EstadoEnum.ACTIVO);
         }
         productoDAO.actualizarProducto(producto);
+        recargarProductos();
     }
 
     private void validarProducto(Producto producto) throws Exception {
@@ -212,12 +218,19 @@ public class GestionProducto implements IGestionProducto {
                 "Movimiento registrado"
             );
 
-            movimientos.add(movimiento);
-            productoDAO.actualizarProducto(producto);
-            productoDAO.registrarMovimiento(movimiento);
+        movimientos.add(movimiento);
+        productoDAO.actualizarProducto(producto);
+        productoDAO.registrarMovimiento(movimiento);
+        recargarProductos();
     }
+
     @Override
     public String generarCodigoProducto() {
+        try {
+            recargarProductos();
+        } catch (Exception e) {
+            System.out.println("Error al recargar productos para generar codigo: " + e.getMessage());
+        }
     	
     	int mayor = 0;
     	
@@ -235,6 +248,10 @@ public class GestionProducto implements IGestionProducto {
     	
     	return String.format("P%05d", mayor + 1);
     			
+    }
+    
+    public void recargar() throws Exception{
+    	recargarProductos();
     }
     
 }

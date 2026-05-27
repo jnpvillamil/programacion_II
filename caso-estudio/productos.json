@@ -1,13 +1,13 @@
 [
   {
-    "codigoProducto": "56YH",
-    "nombreProducto": "Arroz diana",
+    "codigoProducto": "P00001",
+    "nombreProducto": "Arroz diana 1k",
     "categoria": "ALIMENTOS",
-    "precioCompra": 2500.0,
+    "precioCompra": 2000.0,
     "precioVenta": 3000.0,
-    "stockActual": 20,
+    "stockActual": 40,
     "stockMinimo": 10,
-    "stockMaximo": 80,
+    "stockMaximo": 100,
     "estado": "ACTIVO"
   }
 ]

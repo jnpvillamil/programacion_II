@@ -1,131 +1,112 @@
 package co.uptc.edu.co.modelo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
 public class Venta {
 
 	private String numeroFactura;
 	private LocalDateTime fechaHora;
 	private String cliente;
-	private String producto;
-	private int cantidad;
-	private double precioUnitario;
+	private List<DetalleVenta> detalles;
 	private double subtotal;
 	private String formaPago;
 	private double impuestos;
-	
+	private double total;
+	private EstadoVentaEnum estado;
+
 	public Venta() {
+		this.detalles = new ArrayList<>();
+		this.estado = EstadoVentaEnum.ACTIVA;
 	}
 
-	
-	public Venta(String numeroFactura, LocalDateTime fechaHora, String cliente, String producto, int cantidad,
-			double precioUnitario, double subtotal, String formaPago, double impuestos) {
+	public Venta(String numeroFactura, LocalDateTime fechaHora, String cliente, List<DetalleVenta> detalles,
+			double subtotal, String formaPago, double impuestos, double total, EstadoVentaEnum estado) {
+
 		this.numeroFactura = numeroFactura;
 		this.fechaHora = fechaHora;
 		this.cliente = cliente;
-		this.producto = producto;
-		this.cantidad = cantidad;
-		this.precioUnitario = precioUnitario;
+		this.detalles = detalles;
 		this.subtotal = subtotal;
 		this.formaPago = formaPago;
 		this.impuestos = impuestos;
+		this.total = total;
+		this.estado = estado;
 	}
-
 
 	public String getNumeroFactura() {
 		return numeroFactura;
 	}
 
-
 	public void setNumeroFactura(String numeroFactura) {
 		this.numeroFactura = numeroFactura;
 	}
-
 
 	public LocalDateTime getFechaHora() {
 		return fechaHora;
 	}
 
-
 	public void setFechaHora(LocalDateTime fechaHora) {
 		this.fechaHora = fechaHora;
 	}
-
 
 	public String getCliente() {
 		return cliente;
 	}
 
-
 	public void setCliente(String cliente) {
 		this.cliente = cliente;
 	}
 
-
-	public String getProducto() {
-		return producto;
+	public List<DetalleVenta> getDetalles() {
+		return detalles;
 	}
 
-
-	public void setProducto(String producto) {
-		this.producto = producto;
+	public void setDetalles(List<DetalleVenta> detalles) {
+		this.detalles = detalles;
 	}
 
-
-	public int getCantidad() {
-		return cantidad;
-	}
-
-
-	public void setCantidad(int cantidad) {
-		this.cantidad = cantidad;
-	}
-
-
-	public double getPrecioUnitario() {
-		return precioUnitario;
-	}
-
-
-	public void setPrecioUnitario(double precioUnitario) {
-		this.precioUnitario = precioUnitario;
-	}
-
-
-	public double getSubtotal() {
+	public double getSubTotal() {
 		return subtotal;
 	}
 
-
-	public void setSubtotal(double subtotal) {
-		this.subtotal = subtotal;
+	public void setSubTotal(double subTotal) {
+		this.subtotal = subTotal;
 	}
-
 
 	public String getFormaPago() {
 		return formaPago;
 	}
 
-
 	public void setFormaPago(String formaPago) {
 		this.formaPago = formaPago;
 	}
-
 
 	public double getImpuestos() {
 		return impuestos;
 	}
 
-
 	public void setImpuestos(double impuestos) {
 		this.impuestos = impuestos;
 	}
 
-
-	@Override
-	public String toString() {
-		return "Venta [numeroFactura=" + numeroFactura + ", fechaHora=" + fechaHora + ", cliente=" + cliente
-				+ ", producto=" + producto + "]";
+	public double getTotal() {
+		return total;
 	}
-	
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	public EstadoVentaEnum getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoVentaEnum estado) {
+		this.estado = estado;
+	}
+
 }

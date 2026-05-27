@@ -23,6 +23,8 @@ public interface IGestionProducto {
     
     String generarCodigoProducto();
     
+    void recargar() throws Exception;
+    
   
     
     

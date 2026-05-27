@@ -14,9 +14,8 @@ import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
-import co.uptc.edu.co.modelo.enums.TipoMovimientoInventarioEnum;
 
-public class ProductoDBDAO implements ProductoDAO {
+public class ProductoBDDAO implements ProductoDAO {
 	private static final String TABLA_PRODUCTOS = "productos";
 
 	private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_PRODUCTOS
@@ -36,10 +35,6 @@ public class ProductoDBDAO implements ProductoDAO {
 	private static final String SQL_INSERTAR_MOVIMIENTO = "INSERT INTO movimientos_inventario (codigoProducto, tipoMovimiento, cantidad, fecha, descripcion) "
 			+ "VALUES (?, ?, ?, ?, ?)";
 
-	private static final String SQL_UPDATE_STOCK_ENTRADA = "UPDATE productos SET stockActual = stockActual + ? WHERE codigoProducto = ?";
-
-	private static final String SQL_UPDATE_STOCK_SALIDA = "UPDATE productos SET stockActual = stockActual - ? WHERE codigoProducto = ?";
-
 	@Override
 	public void guardarProducto(Producto producto) throws Exception {
 		try (Connection connection = ConexionBD.getConexion();
@@ -55,7 +50,6 @@ public class ProductoDBDAO implements ProductoDAO {
 
 	@Override
 	public void actualizarProducto(Producto producto) throws Exception {
-		// TODO Auto-generated method stub
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_ACTUALIZAR)) {
 
@@ -69,7 +63,6 @@ public class ProductoDBDAO implements ProductoDAO {
 
 	@Override
 	public Producto buscarPorCodigo(String codigo) throws Exception {
-		// TODO Auto-generated method stub
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
 
@@ -87,7 +80,6 @@ public class ProductoDBDAO implements ProductoDAO {
 
 	@Override
 	public List<Producto> listarProducto() throws Exception {
-		// TODO Auto-generated method stub
 		List<Producto> lista = new ArrayList<>();
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_LISTAR);
@@ -102,6 +94,7 @@ public class ProductoDBDAO implements ProductoDAO {
 		return lista;
 	}
 
+	@Override
 	public void registrarMovimiento(MovimientoInventario movimiento) throws Exception {
 		try (Connection conn = ConexionBD.getConexion()) {
 
@@ -113,22 +106,13 @@ public class ProductoDBDAO implements ProductoDAO {
 				psMov.setString(5, movimiento.getDescripcion());
 				psMov.executeUpdate();
 			}
-			String sqlUpdate = (movimiento.getTipoMovimiento() == TipoMovimientoInventarioEnum.ENTRADA)
-					? SQL_UPDATE_STOCK_ENTRADA
-					: SQL_UPDATE_STOCK_SALIDA;
 
-			try (PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate)) {
-				psUpdate.setInt(1, movimiento.getCantidad());
-				psUpdate.setString(2, movimiento.getCodigoProducto());
-				psUpdate.executeUpdate();
-			}
 		} catch (SQLException e) {
 			throw new Exception("Error al registrar movimiento: " + e.getMessage(), e);
 		}
 	}
 
 	private Producto construirProducto(ResultSet resultSet) throws SQLException {
-		// TODO Auto-generated method stub
 		Producto producto = new Producto();
 		producto.setCodigoProducto(resultSet.getString("codigoProducto"));
 		producto.setNombreProducto(resultSet.getString("nombreProducto"));

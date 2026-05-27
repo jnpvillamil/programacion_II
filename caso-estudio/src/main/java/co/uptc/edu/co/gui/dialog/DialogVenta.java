@@ -7,12 +7,19 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -20,37 +27,40 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import co.uptc.edu.co.gui.Evento;
+import co.uptc.edu.co.modelo.Cliente;
+import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.Producto;
+import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
 public class DialogVenta extends JDialog {
 
-	// CAMPOS DE DATOS GENERALES
+	private static final double IVA = 0.19;
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");
+
 	private JTextField campoNumeroFactura;
 	private JTextField campoFecha;
 	private JTextField campoHora;
-	private JComboBox<String> comboCliente;
+	private JComboBox<Cliente> comboCliente;
 	private JComboBox<String> comboFormaPago;
 
-	// CAMPOS PARA AGREGAR PRODUCTO
-	private JComboBox<String> comboProducto;
+	private JComboBox<Producto> comboProducto;
 	private JTextField campoCantidad;
 	private JTextField campoPrecioUnitario;
 
-	// TABLA DE DETALLE DE LA VENTA
 	private JTable tablaProductos;
 	private DefaultTableModel modeloTabla;
 
-	// CAMPOS DE RESUMEN
 	private JTextField campoSubtotal;
 	private JTextField campoIva;
 	private JTextField campoTotal;
 
-	// BOTONES
 	private JButton botonAgregarProducto;
 	private JButton botonQuitarProducto;
 	private JButton botonGuardar;
 	private JButton botonCancelar;
 
-	// CONSTRUCTORES
 	public DialogVenta(Frame propietario) {
 		this(propietario, null);
 	}
@@ -63,29 +73,26 @@ public class DialogVenta extends JDialog {
 		inicializarEventos(evento);
 	}
 
-	// INICIALIZACIÓN DE COMPONENTES
 	private void inicializarComponentes() {
 		campoNumeroFactura = new JTextField(18);
 		campoFecha = new JTextField(18);
 		campoHora = new JTextField(18);
 
 		comboCliente = new JComboBox<>();
-		comboCliente.addItem("Seleccione cliente");
 
 		comboFormaPago = new JComboBox<>();
 		comboFormaPago.addItem("Efectivo");
 		comboFormaPago.addItem("Transferencia");
 		comboFormaPago.addItem("Tarjeta");
-		comboFormaPago.addItem("Crédito");
+		comboFormaPago.addItem("Credito");
 
 		comboProducto = new JComboBox<>();
-		comboProducto.addItem("Seleccione producto");
 
 		campoCantidad = new JTextField(10);
 		campoPrecioUnitario = new JTextField(12);
 
 		modeloTabla = new DefaultTableModel(
-				new String[] { "Código", "Producto", "Cantidad", "Precio Unitario", "IVA", "Subtotal" }, 0) {
+				new String[] { "Codigo", "Producto", "Cantidad", "Precio Unitario", "IVA", "Subtotal" }, 0) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -115,9 +122,11 @@ public class DialogVenta extends JDialog {
 		campoSubtotal.setEditable(false);
 		campoIva.setEditable(false);
 		campoTotal.setEditable(false);
+
+		campoFecha.setText(LocalDate.now().format(FORMATO_FECHA));
+		campoHora.setText(LocalTime.now().format(FORMATO_HORA));
 	}
 
-	// CONFIGURACIÓN GENERAL DEL DIÁLOGO
 	private void configurarDialogo() {
 		setSize(950, 650);
 		setLocationRelativeTo(getOwner());
@@ -128,7 +137,6 @@ public class DialogVenta extends JDialog {
 		tablaProductos.getTableHeader().setReorderingAllowed(false);
 	}
 
-	// AGREGAR COMPONENTES AL DIÁLOGO
 	private void agregarComponentes() {
 		JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
 		panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -140,7 +148,6 @@ public class DialogVenta extends JDialog {
 		add(panelPrincipal);
 	}
 
-	// PANEL DE DATOS GENERALES
 	private JPanel crearPanelDatosGenerales() {
 		JPanel panelSuperior = new JPanel(new GridBagLayout());
 		panelSuperior.setBorder(BorderFactory.createTitledBorder("Datos de la venta"));
@@ -152,7 +159,7 @@ public class DialogVenta extends JDialog {
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		panelSuperior.add(new JLabel("N° Factura:"), gbc);
+		panelSuperior.add(new JLabel("N. Factura:"), gbc);
 
 		gbc.gridx = 1;
 		panelSuperior.add(campoNumeroFactura, gbc);
@@ -186,7 +193,6 @@ public class DialogVenta extends JDialog {
 		return panelSuperior;
 	}
 
-	// PANEL CENTRAL
 	private JPanel crearPanelCentro() {
 		JPanel panelCentro = new JPanel(new BorderLayout(10, 10));
 		panelCentro.add(crearPanelAgregarProducto(), BorderLayout.NORTH);
@@ -194,7 +200,6 @@ public class DialogVenta extends JDialog {
 		return panelCentro;
 	}
 
-	// PANEL PARA AGREGAR PRODUCTOS
 	private JPanel crearPanelAgregarProducto() {
 		JPanel panelProducto = new JPanel(new GridBagLayout());
 		panelProducto.setBorder(BorderFactory.createTitledBorder("Agregar producto"));
@@ -229,14 +234,12 @@ public class DialogVenta extends JDialog {
 		return panelProducto;
 	}
 
-	// PANEL DE TABLA
 	private JScrollPane crearPanelTabla() {
 		JScrollPane scrollTabla = new JScrollPane(tablaProductos);
 		scrollTabla.setBorder(BorderFactory.createTitledBorder("Detalle de productos vendidos"));
 		return scrollTabla;
 	}
 
-	// PANEL INFERIOR
 	private JPanel crearPanelInferior() {
 		JPanel panelInferior = new JPanel(new BorderLayout(10, 10));
 		panelInferior.add(crearPanelResumen(), BorderLayout.CENTER);
@@ -244,7 +247,6 @@ public class DialogVenta extends JDialog {
 		return panelInferior;
 	}
 
-	// PANEL DE RESUMEN
 	private JPanel crearPanelResumen() {
 		JPanel panelResumen = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
 		panelResumen.setBorder(BorderFactory.createTitledBorder("Resumen"));
@@ -261,7 +263,6 @@ public class DialogVenta extends JDialog {
 		return panelResumen;
 	}
 
-	// PANEL DE BOTONES FINALES
 	private JPanel crearPanelAcciones() {
 		JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		panelAcciones.add(botonQuitarProducto);
@@ -270,9 +271,10 @@ public class DialogVenta extends JDialog {
 		return panelAcciones;
 	}
 
-	// EVENTOS
 	private void inicializarEventos(Evento evento) {
 		botonCancelar.addActionListener(e -> dispose());
+		botonAgregarProducto.addActionListener(e -> agregarProductoSeleccionado());
+		botonQuitarProducto.addActionListener(e -> quitarProductoSeleccionado());
 
 		if (evento != null) {
 			botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_VENTA);
@@ -280,7 +282,47 @@ public class DialogVenta extends JDialog {
 		}
 	}
 
-	// MÉTODOS AUXILIARES DE TABLA
+	public void cargarClientes(List<Cliente> clientes) {
+		comboCliente.removeAllItems();
+
+		for (Cliente cliente : clientes) {
+			comboCliente.addItem(cliente);
+		}
+	}
+
+	public void cargarProductos(List<Producto> productos) {
+		comboProducto.removeAllItems();
+
+		for (Producto producto : productos) {
+			if (producto.estaActivo()) {
+				comboProducto.addItem(producto);
+			}
+		}
+	}
+
+	public Venta obtenerVenta() throws Exception {
+		String numeroFactura = campoNumeroFactura.getText().trim();
+		Cliente cliente = (Cliente) comboCliente.getSelectedItem();
+		String formaPago = comboFormaPago.getSelectedItem().toString();
+		LocalDateTime fechaHora = obtenerFechaHora();
+		List<DetalleVenta> detalles = obtenerDetallesVenta();
+
+		if (numeroFactura.isEmpty()) {
+			throw new Exception("El numero de factura es obligatorio.");
+		}
+
+		if (cliente == null) {
+			throw new Exception("Debe seleccionar un cliente.");
+		}
+
+		if (detalles.isEmpty()) {
+			throw new Exception("Debe agregar al menos un producto.");
+		}
+
+		return new Venta(numeroFactura, fechaHora, cliente.toString(), detalles, 0, formaPago, 0, 0,
+				EstadoVentaEnum.ACTIVA);
+	}
+
 	public void agregarFilaProducto(Object[] fila) {
 		modeloTabla.addRow(fila);
 	}
@@ -296,4 +338,115 @@ public class DialogVenta extends JDialog {
 		modeloTabla.setRowCount(0);
 	}
 
+	private void agregarProductoSeleccionado() {
+		try {
+			Producto producto = (Producto) comboProducto.getSelectedItem();
+
+			if (producto == null) {
+				throw new Exception("Debe seleccionar un producto.");
+			}
+
+			int cantidad = convertirEntero(campoCantidad.getText().trim(), "La cantidad debe ser numerica.");
+			double precioUnitario = convertirDouble(
+					campoPrecioUnitario.getText().trim(),
+					"El precio unitario debe ser numerico."
+			);
+
+			if (cantidad <= 0) {
+				throw new Exception("La cantidad debe ser mayor que cero.");
+			}
+
+			if (precioUnitario <= 0) {
+				throw new Exception("El precio unitario debe ser mayor que cero.");
+			}
+
+			double subtotal = cantidad * precioUnitario;
+			double iva = subtotal * IVA;
+
+			Object[] fila = {
+					producto.getCodigoProducto(),
+					producto.getNombreProducto(),
+					cantidad,
+					precioUnitario,
+					iva,
+					subtotal
+			};
+
+			modeloTabla.addRow(fila);
+			actualizarResumen();
+			limpiarCamposProducto();
+
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void quitarProductoSeleccionado() {
+		quitarFilaSeleccionada();
+		actualizarResumen();
+	}
+
+	private List<DetalleVenta> obtenerDetallesVenta() {
+		List<DetalleVenta> detalles = new ArrayList<>();
+
+		for (int fila = 0; fila < modeloTabla.getRowCount(); fila++) {
+			Producto producto = new Producto();
+			producto.setCodigoProducto(modeloTabla.getValueAt(fila, 0).toString());
+			producto.setNombreProducto(modeloTabla.getValueAt(fila, 1).toString());
+
+			int cantidad = Integer.parseInt(modeloTabla.getValueAt(fila, 2).toString());
+			double precioUnitario = Double.parseDouble(modeloTabla.getValueAt(fila, 3).toString());
+			double subtotal = Double.parseDouble(modeloTabla.getValueAt(fila, 5).toString());
+
+			detalles.add(new DetalleVenta(producto, cantidad, precioUnitario, subtotal));
+		}
+
+		return detalles;
+	}
+
+	private LocalDateTime obtenerFechaHora() throws Exception {
+		try {
+			LocalDate fecha = LocalDate.parse(campoFecha.getText().trim(), FORMATO_FECHA);
+			LocalTime hora = LocalTime.parse(campoHora.getText().trim(), FORMATO_HORA);
+			return LocalDateTime.of(fecha, hora);
+		} catch (Exception e) {
+			throw new Exception("La fecha y hora deben tener formato yyyy-MM-dd y HH:mm.");
+		}
+	}
+
+	private void actualizarResumen() {
+		double subtotal = 0;
+
+		for (int fila = 0; fila < modeloTabla.getRowCount(); fila++) {
+			subtotal += Double.parseDouble(modeloTabla.getValueAt(fila, 5).toString());
+		}
+
+		double iva = subtotal * IVA;
+		double total = subtotal + iva;
+
+		campoSubtotal.setText(String.valueOf(subtotal));
+		campoIva.setText(String.valueOf(iva));
+		campoTotal.setText(String.valueOf(total));
+	}
+
+	private void limpiarCamposProducto() {
+		campoCantidad.setText("");
+		campoPrecioUnitario.setText("");
+	}
+
+	private int convertirEntero(String texto, String mensajeError) throws Exception {
+		try {
+			return Integer.parseInt(texto);
+		} catch (NumberFormatException e) {
+			throw new Exception(mensajeError);
+		}
+	}
+
+	private double convertirDouble(String texto, String mensajeError) throws Exception {
+		try {
+			return Double.parseDouble(texto);
+		} catch (NumberFormatException e) {
+			throw new Exception(mensajeError);
+		}
+	}
 }
