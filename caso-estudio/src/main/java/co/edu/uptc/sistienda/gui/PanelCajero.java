@@ -18,15 +18,18 @@ import co.edu.uptc.sistienda.modelo.Producto;
 import co.edu.uptc.sistienda.modelo.Venta;
 import co.edu.uptc.sistienda.modelo.enums.FormaPagoEnum;
 import co.edu.uptc.sistienda.ventas.gui.PanelRegistrarVenta;
+import co.edu.uptc.sistienda.ventas.gui.PanelStockBajoMinimo;
 import co.edu.uptc.sistienda.ventas.gui.PanelVentasRegistradas;
 
 public class PanelCajero extends JPanel {
 
     public static final String TARJETA_REGISTRAR   = "CAJERO_REGISTRAR";
     public static final String TARJETA_REGISTRADAS = "CAJERO_REGISTRADAS";
+    public static final String TARJETA_STOCK_BAJO_MINIMO = "CAJERO_STOCK_BAJO_MINIMO";
 
     private PanelRegistrarVenta    panelRegistrarVenta;
     private PanelVentasRegistradas panelVentasRegistradas;
+    private PanelStockBajoMinimo   panelStockBajoMinimo;
     private CardLayout             navegadorDeTarjetas;
     private JPanel                 contenedorDeTarjetas;
 
@@ -39,9 +42,11 @@ public class PanelCajero extends JPanel {
 
         panelRegistrarVenta    = new PanelRegistrarVenta(evento);
         panelVentasRegistradas = new PanelVentasRegistradas(evento);
+        panelStockBajoMinimo = new PanelStockBajoMinimo();
 
         contenedorDeTarjetas.add(panelRegistrarVenta,    TARJETA_REGISTRAR);
         contenedorDeTarjetas.add(panelVentasRegistradas, TARJETA_REGISTRADAS);
+        contenedorDeTarjetas.add(panelStockBajoMinimo, TARJETA_STOCK_BAJO_MINIMO);
         
         add(contenedorDeTarjetas, BorderLayout.CENTER);
     }
@@ -57,6 +62,7 @@ public class PanelCajero extends JPanel {
         menuLateral.add(crearBotonMenu("Ventas del día",    Evento.MENU_VENTAS_REGISTRADAS,    evento));
 
         menuLateral.add(crearTituloSeccion("CONSULTAS"));
+        menuLateral.add(crearBotonMenu("Stock bajo mínimo", Evento.MENU_STOCK_BAJO_MINIMO, evento));
 
         return menuLateral;
     }
@@ -90,7 +96,10 @@ public class PanelCajero extends JPanel {
         navegadorDeTarjetas.show(contenedorDeTarjetas, TARJETA_REGISTRADAS);
     }
 
-    
+    public void mostrarStockBajoMinimo(List<Producto> productos) {
+    	panelStockBajoMinimo.poblarTabla(productos);
+    	navegadorDeTarjetas.show(contenedorDeTarjetas, TARJETA_STOCK_BAJO_MINIMO);
+    }
     
     //Delegados hacia VentanaPrincipal
     public String getNumeroFactura(){

@@ -52,12 +52,15 @@ public class Evento implements ActionListener {
 	//Ventas (Cajero)
 	public static final String MENU_REGISTRAR_VENTA = "MENU_REGISTRAR_VENTA";
 	public static final String MENU_VENTAS_REGISTRADAS ="MENU_VENTAS_REGISTRADAS";
+	public static final String MENU_STOCK_BAJO_MINIMO = "MENU_STOCK_BAJO_MINIMO";
 	public static final String ABRIR_SELECTOR_PRODUCTO ="ABRIR_SELECTOR_PRODUCTO";
 	public static final String REGISTRAR_VENTA = "REGISTRAR_VENTA";
 	public static final String CANCELAR_VENTA = "CANCELAR_VENTA";
 	public static final String ANULAR_VENTA = "ANULAR_VENTA";
 	public static final String CONSULTAR_VENTAS_POR_FECHA = "CONSULTAR_VENTAS_POR_FECHA";
 	public static final String MOSTRAR_TODAS_VENTAS = "MOSTRAR_TODAS_VENTAS";
+	public static final String REGISTRAR_DEVOLUCION = "REGISTRAR_DEVOLUCION";
+	public static final String VER_FACTURA = "VER_FACTURA";
 	
 	private VentanaPrincipal ventana;
 
@@ -182,6 +185,9 @@ public class Evento implements ActionListener {
 		case MENU_VENTAS_REGISTRADAS:
 			ventana.mostrarPanelVentasRegistradas();
 			break;
+		case MENU_STOCK_BAJO_MINIMO:
+			ventana.mostrarPanelStockBajoMinimo();
+			break; 
 		case ABRIR_SELECTOR_PRODUCTO:
 			ventana.abrirSelectorProducto();
 			break; 
@@ -197,6 +203,12 @@ public class Evento implements ActionListener {
 		case CONSULTAR_VENTAS_POR_FECHA:
 			ventana.consultarVentasPorFecha();		
 			break; 
+		case REGISTRAR_DEVOLUCION:
+			ventana.registrarDevolucion();
+			break;
+		case VER_FACTURA:
+			ventana.verFactura();
+			break;
 		
 		}
 	}

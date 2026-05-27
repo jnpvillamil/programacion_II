@@ -30,6 +30,8 @@ import co.edu.uptc.sistienda.productos.gui.DialogoProducto;
 import co.edu.uptc.sistienda.productos.gui.PanelProductos;
 import co.edu.uptc.sistienda.proveedores.gui.DialogoProveedor;
 import co.edu.uptc.sistienda.proveedores.gui.PanelProveedores;
+import co.edu.uptc.sistienda.ventas.gui.DialogoDevolucion;
+import co.edu.uptc.sistienda.ventas.gui.DialogoFactura;
 import co.edu.uptc.sistienda.ventas.gui.DialogoSelectorProducto;
 
 public class VentanaPrincipal extends JFrame {
@@ -298,6 +300,9 @@ public class VentanaPrincipal extends JFrame {
 		panelCajero.mostrarVentasRegistradas(configuracion.getGestionVenta().obtenerListaVentas());
 	}
 
+	public void mostrarPanelStockBajoMinimo() {
+		panelCajero.mostrarStockBajoMinimo(configuracion.getGestionProducto().obtenerProductosConStockBajoMinimo());
+	}
 
 	// Acciones Cajero
 
@@ -370,7 +375,48 @@ public class VentanaPrincipal extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
+	
+	public void registrarDevolucion() {
+		String numeroFacturaDevolucion = panelCajero.obtenerNumeroFacturaSeleccionada();
+		if(numeroFacturaDevolucion == null) {
+			JOptionPane.showMessageDialog(this, "No se encontró la venta.", "Aviso", JOptionPane.ERROR_MESSAGE);
+			return; 
+		}
+		Venta ventaADevolver = configuracion.getGestionVenta().consultarVentaPorFactura(numeroFacturaDevolucion);
+		if(ventaADevolver == null) {
+			JOptionPane.showMessageDialog(this, "No se encontró la venta.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		if(ventaADevolver.isAnulada()) {
+			JOptionPane.showMessageDialog(this, "No se puede devolver sobre una venta anulada.", "Aviso", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		DialogoDevolucion dialogoDevolucion = new DialogoDevolucion(this, ventaADevolver);
+		dialogoDevolucion.setVisible(true);
+		if(dialogoDevolucion.isConfirmado()) {
+			try {
+				configuracion.getGestionVenta().registrarDevolucion(numeroFacturaDevolucion, dialogoDevolucion.getDetalles(), dialogoDevolucion.getMotivoResultado());
+				JOptionPane.showMessageDialog(this, "Devolución registrada.");
+				mostrarPanelVentasRegistradas();
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
 
+	public void verFactura() {
+		String numeroFacturaConsulta = panelCajero.obtenerNumeroFacturaSeleccionada();
+		if(numeroFacturaConsulta == null) {
+			JOptionPane.showMessageDialog(this, "Seleccione una venta", "Aviso", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		Venta ventaConsultada = configuracion.getGestionVenta().consultarVentaPorFactura(numeroFacturaConsulta);
+		if(ventaConsultada == null) {
+			JOptionPane.showMessageDialog(this, "No se encontró la venta", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		new DialogoFactura(this, ventaConsultada).setVisible(true);
+	}
 	// CRUD Productos
 
 	private void refrescarTablaProductos() {
