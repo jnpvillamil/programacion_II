@@ -1,12 +1,12 @@
 package co.edu.uptc.tiendaminorista.gui;
 
 import java.awt.BorderLayout;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelInicial;
+import co.edu.uptc.tiendaminorista.gui.administrador.PanelRegistrosEmpleados;
 import co.edu.uptc.tiendaminorista.enums.TipoDocumentoEnum;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
 import co.edu.uptc.tiendaminorista.modelo.Proveedor;
@@ -28,6 +28,7 @@ public class PanelPrincipal extends JFrame {
     private GestionCliente gestionCliente;
     private GestionProveedor gestionProveedor;
     private GestionProducto gestionProducto;
+    private PanelRegistrosEmpleados empleados; 
 
     private SistemaSeguridad seguridad;
 
@@ -38,14 +39,16 @@ public class PanelPrincipal extends JFrame {
         gestionCliente = new GestionCliente(new LocalCliente());
         gestionProveedor = new GestionProveedor(new LocalProveedor());
         gestionProducto = new GestionProducto(new LocalProducto());
-
+        
+    
+        evento = new Evento(this); 
+        empleados = new PanelRegistrosEmpleados(evento);
+        
         setTitle("Sistema Tienda Minorista");
         setSize(900, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
-        evento = new Evento(this);
 
         iniciarPaneles();
 
@@ -56,7 +59,8 @@ public class PanelPrincipal extends JFrame {
 
         panelLogin = new PanelLogin(evento);
 
-        panelInicial = new PanelInicial(evento, gestionProducto, gestionCliente, gestionProveedor);
+ 
+        panelInicial = new PanelInicial(evento, gestionProducto, gestionCliente, gestionProveedor, empleados);
     }
 
     public void cambiarPanel(JPanel panel) {
