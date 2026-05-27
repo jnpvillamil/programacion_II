@@ -1,0 +1,55 @@
+package co.edu.uptc.gui.modelo;
+
+import co.edu.uptc.gui.interfaces.Gestionable;
+import co.edu.uptc.dao.ProveedorDao;
+
+public class Proveedor implements Gestionable {
+    private String nit;
+    private String razonSocial;
+    private String telefono;
+    private String direccion;
+    private String productoSuministrado;
+
+    public Proveedor() {}
+
+    public Proveedor(String nit, String razonSocial, String telefono, String direccion, String productoSuministrado) {
+        this.nit = nit;
+        this.razonSocial = razonSocial;
+        this.telefono = telefono;
+        this.direccion = direccion;
+        this.productoSuministrado = productoSuministrado;
+    }
+
+    // Getters y Setters
+    public String getNit() { return nit; }
+    public void setNit(String nit) { this.nit = nit; }
+
+    public String getRazonSocial() { return razonSocial; }
+    public void setRazonSocial(String razonSocial) { this.razonSocial = razonSocial; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public String getProductoSuministrado() { return productoSuministrado; }
+    public void setProductoSuministrado(String productoSuministrado) { this.productoSuministrado = productoSuministrado; }
+
+    @Override
+    public void registrar() {
+        ProveedorDao dao = new ProveedorDao();
+        dao.registrarProveedor(this);
+    }
+
+    @Override
+    public void modificar() {
+        ProveedorDao dao = new ProveedorDao();
+        dao.actualizarProveedor(this);
+    }
+
+    @Override
+    public void inactivar() {
+        System.out.println("Proveedor inactivado");
+    }
+}

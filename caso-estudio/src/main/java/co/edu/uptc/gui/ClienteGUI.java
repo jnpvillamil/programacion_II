@@ -21,6 +21,8 @@ import co.edu.uptc.enums.TipoClienteEnum;
 import co.edu.uptc.enums.TipoDocumentoEnum;
 import co.edu.uptc.gui.modelo.Cliente;
 
+
+@SuppressWarnings("serial")
 public class ClienteGUI extends JFrame{
 	
 	private JTextField txtCodigo;

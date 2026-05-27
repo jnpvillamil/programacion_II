@@ -70,11 +70,11 @@ public class Evento implements ActionListener {
                 iniciarSesion();
                 break;
             case "SALIR":
-                System.exit(0); //explicar porfa
+                System.exit(0); 
                 break;
             case "CERRAR_SESION":
-                menuPrincipalGUI.dispose(); //aca que acontece
-                usuarioSesion = null; ///aca tambuen
+                menuPrincipalGUI.dispose();
+                usuarioSesion = null; 
                 iniciar();
                 break;
             case "ABRIR_CLIENTES":
@@ -95,8 +95,6 @@ public class Evento implements ActionListener {
             case "LIMPIAR_CLIENTE":
                 clienteGUI.limpiarFormulario();
                 break;
-
-            // Aquí agregamos el caso para abrir la ventana de productos
             case "REGISTRAR_PRODUCTO":
                 abrirRegistrarProducto();
                 break;
@@ -174,9 +172,9 @@ public class Evento implements ActionListener {
         }
     }
 
-    // Método para abrir la ventana de "Registrar Producto"
+  
     private void abrirRegistrarProducto() {
-        // Crear y mostrar la ventana de ProductoGUI
+
         productoGUI = new ProductoGUI();
         productoGUI.setVisible(true);
     }

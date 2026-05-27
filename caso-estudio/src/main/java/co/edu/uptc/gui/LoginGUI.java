@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -17,8 +19,11 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import co.edu.uptc.ventanas.MenuPrincipal;
+import co.edu.uptc.ventanas.MenuVendedor;
+
 @SuppressWarnings("serial")
-public class LoginGUI extends JFrame {
+public class LoginGUI extends JFrame implements ActionListener {
 
     private JTextField txtUsuario;
     private JPasswordField txtContrasena;
@@ -83,9 +88,11 @@ public class LoginGUI extends JFrame {
 
         btnIngresar = new JButton("Ingresar");
         btnIngresar.setActionCommand("INGRESAR");
+        btnIngresar.addActionListener(this);
 
         btnSalir = new JButton("Salir");
         btnSalir.setActionCommand("SALIR");
+        btnSalir.addActionListener(this); 
 
         panelInferior.add(btnIngresar);
         panelInferior.add(btnSalir);
@@ -93,6 +100,33 @@ public class LoginGUI extends JFrame {
         add(panelSuperior, BorderLayout.NORTH);
         add(panelCentral, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String comando = e.getActionCommand();
+        
+        if (comando.equals("INGRESAR")) {
+       
+            String usuario = txtUsuario.getText();
+            String contrasena = new String(txtContrasena.getPassword());
+
+            if (usuario.equals("admin") && contrasena.equals("1234")) {
+                this.dispose(); 
+                MenuPrincipal menuAdmin = new MenuPrincipal();
+                menuAdmin.setVisible(true);
+
+            } else if (usuario.equals("vendedor") && contrasena.equals("1234")) {
+                this.dispose(); 
+                MenuVendedor menuEmpleado = new MenuVendedor();
+                menuEmpleado.setVisible(true);
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Credenciales incorrectas de prueba.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (comando.equals("SALIR")) {
+            System.exit(0); 
+        }
     }
 
     public JTextField getTxtUsuario() {

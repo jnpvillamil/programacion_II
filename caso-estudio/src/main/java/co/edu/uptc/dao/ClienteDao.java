@@ -1,106 +1,74 @@
 package co.edu.uptc.dao;
 
 import co.edu.uptc.conexion.Conexion;
-import co.edu.uptc.vo.ClienteVo;
-import java.sql.*;
-import java.util.ArrayList;
+import co.edu.uptc.gui.modelo.Cliente;
+import java.sql.Statement;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class ClienteDao {
-    
-    public void registrarCliente(ClienteVo miCliente) {
-        Conexion conexion = new Conexion();
+
+    public void registrarCliente(Cliente miCliente) {
+        Conexion conex = new Conexion();
         try {
-            Connection conn = conexion.getConnection();
-            if (conn != null) {
-                Statement estatuto = conn.createStatement();
-                String consulta = "INSERT INTO clientes (codigo, nombre, apellido, tipo_documento, numero_documento, telefono, id_ciudad, direccion_detallada, correo, tipo_cliente, activo) VALUES ("
-                        + "'" + miCliente.getCodigo() + "', "
-                        + "'" + miCliente.getNombre() + "', "
-                        + "'" + miCliente.getApellido() + "', "
-                        + "'" + miCliente.getTipoDocumento() + "', "
-                        + "'" + miCliente.getNumeroDocumento() + "', "
-                        + "'" + miCliente.getTelefono() + "', "
-                        + "" + miCliente.getIdCiudad() + ", "
-                        + "'" + miCliente.getDireccionDetallada() + "', "
-                        + "'" + miCliente.getCorreo() + "', "
-                        + "'" + miCliente.getTipoCliente() + "', " 
-                        + miCliente.isActivo() + ")";
-                
-                estatuto.executeUpdate(consulta);
-                JOptionPane.showMessageDialog(null, "Cliente Registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                estatuto.close();
-            } else {
-                JOptionPane.showMessageDialog(null, "Error de conexión con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            conexion.desconectar();
+            Statement estatuto = conex.getConnection().createStatement();
+
+
+            String consulta = "INSERT INTO cliente (codigo, nombre, apellido, tipo_documento, numero_documento, "
+                    + "telefono, direccion, pais_id, city_id, tipo_cliente, activo, correo_electronico, responsable_tributario) VALUES ('"
+                    + miCliente.getCodigo() + "', '"
+                    + miCliente.getNombre() + "', '"
+                    + miCliente.getApellido() + "', '"
+                    + (miCliente.getTipoDocumento() != null ? miCliente.getTipoDocumento().name() : "") + "', '"
+                    + miCliente.getNumeroDocumento() + "', '"
+                    + miCliente.getTelefono() + "', '"
+                    + miCliente.getDireccion() + "', "
+                    + miCliente.getPaisId() + ", "
+                    + miCliente.getCiudadId() + ", '" 
+                    + (miCliente.getTipoCliente() != null ? miCliente.getTipoCliente().name() : "") + "', "
+                    + (miCliente.isActivo() ? 1 : 0) + ", '"
+                    + miCliente.getCorreoElectronico() + "', '"
+                    + (miCliente.getResponsableTributariamente() != null ? miCliente.getResponsableTributariamente().name() : "") + "')";
+
+            estatuto.executeUpdate(consulta);
+            JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente en la BD", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+            estatuto.close();
+            conex.desconectar();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error en la BD al registrar: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Error SQL al registrar: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "No se pudo registrar el cliente en la BD", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public void actualizarCliente(ClienteVo miCliente) {
-        Conexion conexion = new Conexion();
+    public void actualizarCliente(Cliente miCliente) {
+        Conexion conex = new Conexion();
         try {
-            Connection conn = conexion.getConnection();
-            if (conn != null) {
-                Statement estatuto = conn.createStatement();
-                String consulta = "UPDATE clientes SET "
-                        + "nombre = '" + miCliente.getNombre() + "', "
-                        + "apellido = '" + miCliente.getApellido() + "', "
-                        + "tipo_documento = '" + miCliente.getTipoDocumento() + "', "
-                        + "numero_documento = '" + miCliente.getNumeroDocumento() + "', "
-                        + "telefono = '" + miCliente.getTelefono() + "', "
-                        + "id_ciudad = " + miCliente.getIdCiudad() + ", "
-                        + "direccion_detallada = '" + miCliente.getDireccionDetallada() + "', "
-                        + "correo = '" + miCliente.getCorreo() + "', "
-                        + "tipo_cliente = '" + miCliente.getTipoCliente() + "', "
-                        + "activo = " + miCliente.isActivo() + " "
-                        + "WHERE codigo = '" + miCliente.getCodigo() + "'";
-                
-                estatuto.executeUpdate(consulta);
-                JOptionPane.showMessageDialog(null, "Cliente Actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                estatuto.close();
-            }
-            conexion.desconectar();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error en la BD al actualizar: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+            Statement estatuto = conex.getConnection().createStatement();
 
-    public ArrayList<ClienteVo> consultarTodosLosClientes() {
-        ArrayList<ClienteVo> listaClientes = new ArrayList<>();
-        Conexion conexion = new Conexion();
-        try {
-            Connection conn = conexion.getConnection();
-            if (conn != null) {
-                Statement estatuto = conn.createStatement();
-                String consulta = "SELECT codigo, nombre, apellido, tipo_documento, numero_documento, telefono, id_ciudad, direccion_detallada, correo, tipo_cliente, activo FROM clientes";
-                ResultSet rs = estatuto.executeQuery(consulta);
-                
-                while (rs.next()) {
-                    ClienteVo cliente = new ClienteVo();
-                    cliente.setCodigo(rs.getString("codigo"));
-                    cliente.setNombre(rs.getString("nombre"));
-                    cliente.setApellido(rs.getString("apellido"));
-                    cliente.setTipoDocumento(rs.getString("tipo_documento"));
-                    cliente.setNumeroDocumento(rs.getString("numero_documento"));
-                    cliente.setTelefono(rs.getString("telefono"));
-                    cliente.setIdCiudad(rs.getInt("id_ciudad"));
-                    cliente.setDireccionDetallada(rs.getString("direccion_detallada"));
-                    cliente.setCorreo(rs.getString("correo"));
-                    cliente.setTipoCliente(rs.getString("tipo_cliente"));
-                    cliente.setActivo(rs.getBoolean("activo"));
-                    
-                    listaClientes.add(cliente);
-                }
-                rs.close();
-                estatuto.close();
-            }
-            conexion.desconectar();
+            String consulta = "UPDATE cliente SET "
+                    + "nombre = '" + miCliente.getNombre() + "', "
+                    + "apellido = '" + miCliente.getApellido() + "', "
+                    + "tipo_documento = '" + (miCliente.getTipoDocumento() != null ? miCliente.getTipoDocumento().name() : "") + "', "
+                    + "numero_documento = '" + miCliente.getNumeroDocumento() + "', "
+                    + "telefono = '" + miCliente.getTelefono() + "', "
+                    + "direccion = '" + miCliente.getDireccion() + "', "
+                    + "pais_id = " + miCliente.getPaisId() + ", "
+                    + "ciudad_id = " + miCliente.getCiudadId() + ", "
+                    + "tipo_cliente = '" + (miCliente.getTipoCliente() != null ? miCliente.getTipoCliente().name() : "") + "', "
+                    + "activo = " + (miCliente.isActivo() ? 1 : 0) + ", "
+                    + "correo_electronico = '" + miCliente.getCorreoElectronico() + "', "
+                    + "responsable_tributario = '" + (miCliente.getResponsableTributariamente() != null ? miCliente.getResponsableTributariamente().name() : "") + "' "
+                    + "WHERE codigo = '" + miCliente.getCodigo() + "'";
+
+            estatuto.executeUpdate(consulta);
+            JOptionPane.showMessageDialog(null, "Cliente actualizado correctamente en la BD", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+            estatuto.close();
+            conex.desconectar();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error en la BD al consultar: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Error SQL al actualizar: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "No se pudo actualizar el cliente en la BD", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return listaClientes;
     }
 }

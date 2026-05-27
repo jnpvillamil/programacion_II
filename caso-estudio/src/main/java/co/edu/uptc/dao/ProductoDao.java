@@ -1,67 +1,64 @@
 package co.edu.uptc.dao;
 
 import co.edu.uptc.conexion.Conexion;
-import co.edu.uptc.vo.ProductoVo;
-import java.sql.*;
+import co.edu.uptc.gui.modelo.Producto;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class ProductoDao {
-    public void registrarProducto(ProductoVo miProducto) {
-        Conexion conexion = new Conexion();
-        try {
-            Statement estatuto = conexion.getConnection().createStatement();
-            String consulta = "INSERT INTO productos (codigo_producto, nombre_producto, categoria, precio_compra, precio_venta, stock, stock_minimo) VALUES ("
-                    + "'" + miProducto.getCodigoProducto() + "', '" + miProducto.getNombreProducto() + "', '" + miProducto.getCategoria() + "', "
-                    + miProducto.getPrecioCompra() + ", " + miProducto.getPrecioVenta() + ", " + miProducto.getStock() + ", " + miProducto.getStockMinimo() + ")";
-            estatuto.executeUpdate(consulta);
-            JOptionPane.showMessageDialog(null, "Producto Guardado", "Información", JOptionPane.INFORMATION_MESSAGE);
-            estatuto.close(); conexion.desconectar();
+
+    public void registrarProducto(Producto prod) {
+        Conexion conex = new Conexion();
+
+        String consulta = "INSERT INTO producto (codigo, nombre, precio_venta, stock, nit_proveedor) VALUES (?, ?, ?, ?, ?)";
+        
+        try (java.sql.Connection c = conex.getConnection();
+             PreparedStatement pst = c.prepareStatement(consulta)) {
+            
+            pst.setString(1, prod.getCodigo());
+            pst.setString(2, prod.getNombre());
+            pst.setDouble(3, prod.getPrecio()); 
+            pst.setInt(4, prod.getCantidadInventario()); 
+            pst.setString(5, "800123456-1"); 
+
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Producto e Inventario guardados exitosamente en la BD", "Información", JOptionPane.INFORMATION_MESSAGE);
+            
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al registrar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Error SQL al registrar producto: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al guardar producto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            conex.desconectar();
         }
     }
 
-    public void actualizarProducto(ProductoVo miProducto) {
-        Conexion conexion = new Conexion();
-        try {
-            Statement estatuto = conexion.getConnection().createStatement();
-            String consulta = "UPDATE productos SET "
-                    + "nombre_producto = '" + miProducto.getNombreProducto() + "', categoria = '" + miProducto.getCategoria() + "', "
-                    + "precio_compra = " + miProducto.getPrecioCompra() + ", precio_venta = " + miProducto.getPrecioVenta() + ", "
-                    + "stock = " + miProducto.getStock() + ", stock_minimo = " + miProducto.getStockMinimo() + " "
-                    + "WHERE codigo_producto = '" + miProducto.getCodigoProducto() + "'";
-            estatuto.executeUpdate(consulta);
-            JOptionPane.showMessageDialog(null, "Producto Actualizado con Éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
-            estatuto.close(); conexion.desconectar();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al actualizar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    public void actualizarProducto(Producto prod) {
+        Conexion conex = new Conexion();
+ 
+        String consulta = "UPDATE producto SET nombre = ?, precio_venta = ?, stock = ? WHERE codigo = ?";
+        
+        try (java.sql.Connection c = conex.getConnection();
+             PreparedStatement pst = c.prepareStatement(consulta)) {
+            
+            pst.setString(1, prod.getNombre());
+            pst.setDouble(2, prod.getPrecio());
+            pst.setInt(3, prod.getCantidadInventario());
+            pst.setString(4, prod.getCodigo());
 
-    public Object[][] consultarTodosLosProductos() {
-        Conexion conexion = new Conexion();
-        Object[][] datos = new Object[0][7];
-        try {
-            Statement estatuto = conexion.getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            String consulta = "SELECT * FROM productos";
-            ResultSet rs = estatuto.executeQuery(consulta);
-            rs.last(); int filas = rs.getRow(); rs.beforeFirst();
-            datos = new Object[filas][7];
-            int i = 0;
-            while(rs.next()) {
-                datos[i][0] = rs.getString("codigo_producto");
-                datos[i][1] = rs.getString("nombre_producto");
-                datos[i][2] = rs.getString("categoria");
-                datos[i][3] = rs.getDouble("precio_compra");
-                datos[i][4] = rs.getDouble("precio_venta");
-                datos[i][5] = rs.getInt("stock");
-                datos[i][6] = rs.getInt("stock_minimo");
-                i++;
+            int filasAfectadas = pst.executeUpdate();
+            
+            if (filasAfectadas > 0) {
+                JOptionPane.showMessageDialog(null, "Inventario y Producto actualizados correctamente en MySQL", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se encontró ningún producto con el código especificado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-            rs.close(); estatuto.close(); conexion.desconectar();
+            
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error SQL al actualizar producto: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al modificar inventario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            conex.desconectar();
         }
-        return datos;
     }
 }

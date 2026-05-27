@@ -3,9 +3,8 @@ package co.edu.uptc.persistencia;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.edu.uptc.gui.modelo.Administrador;
+import co.edu.uptc.enums.RolUsuarioEnum;
 import co.edu.uptc.gui.modelo.Usuario;
-import co.edu.uptc.gui.modelo.Vendedor;
 
 public class LocalUsuario {
 
@@ -17,8 +16,8 @@ public class LocalUsuario {
     }
 
     private void cargarUsuariosBase() {
-        usuarios.add(new Administrador(1, "admin", "1234"));
-        usuarios.add(new Vendedor(2, "vendedor", "1234"));
+        usuarios.add(new Usuario(1, "admin", "1234", RolUsuarioEnum.ADMINISTRADOR));
+        usuarios.add(new Usuario(2, "vendedor", "1234", RolUsuarioEnum.VENDEDOR));
     }
 
     public Usuario buscarUsuario(String nombreUsuario) {

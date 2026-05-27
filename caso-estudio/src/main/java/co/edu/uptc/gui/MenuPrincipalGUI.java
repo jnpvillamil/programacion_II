@@ -11,7 +11,7 @@ import co.edu.uptc.gui.modelo.Usuario;
 public class MenuPrincipalGUI extends JFrame {
 
     private JButton btnCerrarSesion;
-    private JButton btnRegistrarProducto;  // Nuevo botón
+    private JButton btnRegistrarProducto;  
     private Usuario usuarioActual;
     private JButton btnClientes;
 
@@ -26,20 +26,19 @@ public class MenuPrincipalGUI extends JFrame {
     }
 
     private void iniciarComponentes() {
-        JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));  // Cambié a 7 filas para el nuevo botón
+        JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));  
 
         btnClientes = new JButton("Clientes");
         btnCerrarSesion = new JButton("Cerrar sesión");
-        btnRegistrarProducto = new JButton("Registrar Producto");  // Nuevo botón
-
-        // Establecer los ActionCommands para cada botón
+        btnRegistrarProducto = new JButton("Registrar Producto");  
+    
         btnClientes.setActionCommand("ABRIR_CLIENTES");
         btnCerrarSesion.setActionCommand("CERRAR_SESION");
-        btnRegistrarProducto.setActionCommand("REGISTRAR_PRODUCTO");  // Acción para el botón de registrar producto
+        btnRegistrarProducto.setActionCommand("REGISTRAR_PRODUCTO"); 
 
-        // Agregar los botones al panel
+  
         panel.add(btnClientes);
-        panel.add(btnRegistrarProducto);  // Agregamos el nuevo botón al panel
+        panel.add(btnRegistrarProducto); 
         panel.add(btnCerrarSesion);
 
         add(panel);
@@ -51,7 +50,6 @@ public class MenuPrincipalGUI extends JFrame {
         }
     }
 
-    // Métodos para obtener los botones (en caso de que necesites usarlos desde el controlador)
     public JButton getBtnClientes() {
         return btnClientes;
     }
@@ -61,6 +59,6 @@ public class MenuPrincipalGUI extends JFrame {
     }
 
     public JButton getBtnRegistrarProducto() {
-        return btnRegistrarProducto;  // Método para obtener el nuevo botón
-    }
+        return btnRegistrarProducto;  
+ }
 }
