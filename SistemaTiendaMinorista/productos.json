@@ -24,7 +24,7 @@
     "precioVenta": 1.0,
     "stockActual": 1,
     "stockMinimo": 1,
-    "activo": true
+    "activo": false
   },
   {
     "codigo": "PRD4",
@@ -33,7 +33,7 @@
     "precioVenta": 12.0,
     "stockActual": 12,
     "stockMinimo": 12,
-    "activo": true
+    "activo": false
   },
   {
     "codigo": "PRD5",
@@ -55,7 +55,7 @@
   },
   {
     "codigo": "fghfghfgh",
-    "nombre": "fghfghfghfghfghfgh",
+    "nombre": "34564564",
     "categoria": "GRANOS",
     "precioCompra": 678678.0,
     "precioVenta": 678678.0,
@@ -71,6 +71,16 @@
     "precioVenta": 6.45456456E8,
     "stockActual": 456456,
     "stockMinimo": 456564,
-    "activo": true
+    "activo": false
+  },
+  {
+    "codigo": "PRD9",
+    "nombre": "cxzczxc",
+    "categoria": "EMBUTIDOS",
+    "precioCompra": 543453.0,
+    "precioVenta": 5.43345453E8,
+    "stockActual": 534534,
+    "stockMinimo": 435543345,
+    "activo": false
   }
 ]

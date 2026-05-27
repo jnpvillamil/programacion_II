@@ -23,13 +23,6 @@ SistemaTiendaMinorista/
         └── administrador/        Paneles del módulo administrador
 ```
 
-## Cómo ejecutar
-
-```bash
-mvn clean package
-java -jar target/SistemaTiendaMinorista-1.0.0.jar
-```
-
 ## Dependencias
 
 - Java 21

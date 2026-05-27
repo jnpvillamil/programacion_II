@@ -15,7 +15,7 @@ import java.util.List;
 
 public class PanelProductos extends JPanel {
 
-    // Campos del formulario
+    // campos del formulario
     private JTextField txtCodigo;
     private JTextField txtNombre;
     private JComboBox<CategoriaProducto> comboCategorias;
@@ -25,18 +25,20 @@ public class PanelProductos extends JPanel {
     private JTextField txtStockMinimo;
     private JTextField txtBuscar;
 
-    // Tabla
+    // tabla de productos
     private JTable tabla;
     private DefaultTableModel modeloTabla;
 
-    // Botones
+    // botones de accion
     private JButton btnAgregar;
     private JButton btnModificar;
     private JButton btnEliminar;
+    private JButton btnActivar;
     private JButton btnLimpiar;
     private JButton btnReporteJSON;
+    private JButton btnStockBajo;
 
-    // Negocio
+    // capa de negocio
     private GestionProducto gestionProducto;
 
     public PanelProductos(Evento e) {
@@ -56,7 +58,7 @@ public class PanelProductos extends JPanel {
         this(null);
     }
 
-    // ─────────────────── CONSTRUCCIÓN DE UI ───────────────────
+    // ───────── CONSTRUCCION DE PANTALLA ─────────
 
     private JPanel crearPanelTitulo() {
         JPanel panelTitulo = new JPanel(new BorderLayout());
@@ -64,12 +66,14 @@ public class PanelProductos extends JPanel {
         titulo.setFont(new Font("SansSerif", Font.BOLD, 18));
 
         JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelBusqueda.add(new JLabel("Buscar por código:"));
+        panelBusqueda.add(new JLabel("Buscar:"));
         txtBuscar = new JTextField(15);
         panelBusqueda.add(txtBuscar);
+
         JButton btnBuscar = new JButton("Buscar");
         btnBuscar.addActionListener(ev -> buscarProducto());
         panelBusqueda.add(btnBuscar);
+
         JButton btnVerTodos = new JButton("Ver todos");
         btnVerTodos.addActionListener(ev -> {
             txtBuscar.setText("");
@@ -85,6 +89,7 @@ public class PanelProductos extends JPanel {
     private JPanel crearPanelCentral() {
         JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
 
+        // formulario de datos
         JPanel panelForm = new JPanel(new GridBagLayout());
         panelForm.setBorder(BorderFactory.createTitledBorder("Datos del producto"));
         panelForm.setPreferredSize(new Dimension(320, 0));
@@ -118,7 +123,8 @@ public class PanelProductos extends JPanel {
             panelForm.add((Component) campos[i][1], gbc);
         }
 
-        String[] columnas = {"Código", "Nombre", "Categoría", "P. Compra", "P. Venta", "Stock", "Stock Mín.", "Estado"};
+        // tabla con columnas del caso de estudio
+        String[] columnas = {"Código", "Nombre", "Categoría", "P.Compra", "P.Venta", "Stock", "StockMín.", "Estado"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -140,11 +146,13 @@ public class PanelProductos extends JPanel {
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         panelBotones.setBorder(BorderFactory.createTitledBorder("Acciones"));
 
-        btnAgregar    = new JButton("Agregar");
-        btnModificar  = new JButton("Modificar");
-        btnEliminar   = new JButton("Eliminar");
-        btnLimpiar    = new JButton("Limpiar campos");
-        btnReporteJSON = new JButton("Generar reporte JSON");
+        btnAgregar     = new JButton("Agregar");
+        btnModificar   = new JButton("Modificar");
+        btnEliminar    = new JButton("Inactivar");
+        btnActivar     = new JButton("Activar");
+        btnLimpiar     = new JButton("Limpiar");
+        btnReporteJSON = new JButton("Reporte JSON");
+        btnStockBajo   = new JButton("Stock bajo");
 
         btnAgregar.setBackground(new Color(70, 130, 180));
         btnAgregar.setForeground(Color.WHITE);
@@ -152,20 +160,27 @@ public class PanelProductos extends JPanel {
         btnModificar.setForeground(Color.WHITE);
         btnEliminar.setBackground(new Color(205, 92, 92));
         btnEliminar.setForeground(Color.WHITE);
+        btnActivar.setBackground(new Color(255, 165, 0));
+        btnActivar.setForeground(Color.WHITE);
         btnReporteJSON.setBackground(new Color(148, 103, 189));
         btnReporteJSON.setForeground(Color.WHITE);
+        btnStockBajo.setBackground(new Color(255, 99, 71));
+        btnStockBajo.setForeground(Color.WHITE);
 
         panelBotones.add(btnAgregar);
         panelBotones.add(btnModificar);
         panelBotones.add(btnEliminar);
+        panelBotones.add(btnActivar);
         panelBotones.add(btnLimpiar);
         panelBotones.add(btnReporteJSON);
+        panelBotones.add(btnStockBajo);
         return panelBotones;
     }
 
-    // ─────────────────── LISTENERS ───────────────────
+    // ───────── LISTENERS / EVENTOS ─────────
 
     private void configurarListeners(Evento evento) {
+        // al hacer click en la tabla se cargan los datos en el formulario
         tabla.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent ev) {
@@ -174,11 +189,14 @@ public class PanelProductos extends JPanel {
                     txtCodigo.setText(modeloTabla.getValueAt(fila, 0).toString());
                     txtNombre.setText(modeloTabla.getValueAt(fila, 1).toString());
                     String cat = modeloTabla.getValueAt(fila, 2).toString();
-                    try { comboCategorias.setSelectedItem(CategoriaProducto.valueOf(cat)); } catch (Exception ignored) {}
+                    try {
+                        comboCategorias.setSelectedItem(CategoriaProducto.valueOf(cat));
+                    } catch (Exception ignored) {}
                     txtPrecioCompra.setText(modeloTabla.getValueAt(fila, 3).toString());
                     txtPrecioVenta.setText(modeloTabla.getValueAt(fila, 4).toString());
                     txtStockActual.setText(modeloTabla.getValueAt(fila, 5).toString());
                     txtStockMinimo.setText(modeloTabla.getValueAt(fila, 6).toString());
+                    // no dejar editar el codigo al modificar
                     txtCodigo.setEditable(false);
                 }
             }
@@ -186,36 +204,48 @@ public class PanelProductos extends JPanel {
 
         btnAgregar.addActionListener(ev -> agregarProducto());
         btnModificar.addActionListener(ev -> modificarProducto());
-        btnEliminar.addActionListener(ev -> eliminarProducto());
+        btnEliminar.addActionListener(ev -> inactivarProducto());
+        btnActivar.addActionListener(ev -> activarProducto());
         btnLimpiar.addActionListener(ev -> limpiarCampos());
         btnReporteJSON.addActionListener(ev -> generarReporteJSON());
+        btnStockBajo.addActionListener(ev -> mostrarProductosBajoStock());
     }
 
-    // ─────────────────── OPERACIONES CRUD ───────────────────
+    // ───────── OPERACIONES CRUD ─────────
 
     private void agregarProducto() {
         if (!validarCampos()) return;
 
         String codigo = txtCodigo.getText().trim();
-        // Verificar si ya existe el código
-        List<Producto> lista = gestionProducto.listarProductos();
-        for (Producto p : lista) {
-            if (p.getCodigo().equals(codigo)) {
-                JOptionPane.showMessageDialog(this, "Ya existe un producto con ese código.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+
+        // verificar que no exista ya ese codigo en la BD
+        Producto existente = gestionProducto.buscarPorCodigo(codigo);
+        if (existente != null) {
+            JOptionPane.showMessageDialog(this,
+                "Ya existe un producto con el código: " + codigo,
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         Producto p = construirProductoDesdeFormulario();
-        gestionProducto.registrarProducto(p);
-        cargarTabla();
-        limpiarCampos();
-        JOptionPane.showMessageDialog(this, "Producto agregado y guardado en JSON.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            gestionProducto.registrarProducto(p);
+            cargarTabla();
+            limpiarCampos();
+            JOptionPane.showMessageDialog(this,
+                "Producto guardado en la base de datos.",
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void modificarProducto() {
-        if (tabla.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione un producto de la tabla.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        int fila = tabla.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(this,
+                "Primero seleccione un producto de la tabla.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (!validarCampos()) return;
@@ -224,69 +254,143 @@ public class PanelProductos extends JPanel {
         gestionProducto.actualizarProducto(p);
         cargarTabla();
         limpiarCampos();
-        JOptionPane.showMessageDialog(this, "Producto actualizado y guardado en JSON.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+            "Producto actualizado en la base de datos.",
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void eliminarProducto() {
+    // inactivar - no borra el registro, solo cambia el estado a inactivo
+    private void inactivarProducto() {
         int fila = tabla.getSelectedRow();
         if (fila < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione un producto de la tabla.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "Seleccione un producto de la tabla para inactivar.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
         String codigo = modeloTabla.getValueAt(fila, 0).toString();
+        String estado = modeloTabla.getValueAt(fila, 7).toString();
+
+        if ("Inactivo".equals(estado)) {
+            JOptionPane.showMessageDialog(this,
+                "El producto ya está inactivo. Use 'Activar' para reactivarlo.",
+                "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         int confirmar = JOptionPane.showConfirmDialog(this,
-                "¿Eliminar el producto con código " + codigo + "?",
-                "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+            "¿Inactivar el producto con código " + codigo + "?\n"
+            + "El producto quedará registrado pero no estará disponible.",
+            "Confirmar inactivación", JOptionPane.YES_NO_OPTION);
+
         if (confirmar == JOptionPane.YES_OPTION) {
             gestionProducto.desactivarProducto(codigo);
             cargarTabla();
             limpiarCampos();
-            JOptionPane.showMessageDialog(this, "Producto eliminado.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "Producto inactivado correctamente.",
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
+    // activar un producto que estaba inactivo
+    private void activarProducto() {
+        int fila = tabla.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(this,
+                "Seleccione un producto de la tabla para activar.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String codigo = modeloTabla.getValueAt(fila, 0).toString();
+        String estado = modeloTabla.getValueAt(fila, 7).toString();
+
+        if ("Activo".equals(estado)) {
+            JOptionPane.showMessageDialog(this,
+                "El producto ya está activo.",
+                "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        gestionProducto.activarProducto(codigo);
+        cargarTabla();
+        limpiarCampos();
+        JOptionPane.showMessageDialog(this,
+            "Producto activado correctamente.",
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // buscar en la tabla por codigo o nombre
     private void buscarProducto() {
-        String busqueda = txtBuscar.getText().trim();
-        if (busqueda.isEmpty()) { cargarTabla(); return; }
+        String busqueda = txtBuscar.getText().trim().toLowerCase();
+        if (busqueda.isEmpty()) {
+            cargarTabla();
+            return;
+        }
         modeloTabla.setRowCount(0);
         for (Producto p : gestionProducto.listarProductos()) {
-            if (p.getCodigo().contains(busqueda) || p.getNombre().toLowerCase().contains(busqueda.toLowerCase())) {
+            if (p.getCodigo().toLowerCase().contains(busqueda)
+                    || p.getNombre().toLowerCase().contains(busqueda)) {
                 agregarFilaTabla(p);
             }
         }
     }
 
-    // ─────────────────── REPORTE JSON ───────────────────
+    // mostrar productos con stock por debajo del minimo
+    private void mostrarProductosBajoStock() {
+        List<Producto> bajos = gestionProducto.listarProductosBajoStock();
+        if (bajos.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                "Todos los productos tienen stock suficiente.",
+                "Stock OK", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        modeloTabla.setRowCount(0);
+        for (Producto p : bajos) {
+            agregarFilaTabla(p);
+        }
+        JOptionPane.showMessageDialog(this,
+            "Se encontraron " + bajos.size() + " producto(s) bajo el stock mínimo.",
+            "Alerta de stock", JOptionPane.WARNING_MESSAGE);
+    }
+
+    // ───────── REPORTE JSON ─────────
 
     private void generarReporteJSON() {
         List<Producto> lista = gestionProducto.listarProductos();
         if (lista.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay productos para exportar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "No hay productos para exportar.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         com.google.gson.Gson gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(lista);
-
-        String rutaArchivo = "productos.json";
+        String rutaArchivo = "reporte_productos.json";
 
         try (java.io.FileWriter fw = new java.io.FileWriter(rutaArchivo, false)) {
             fw.write(json);
-            double totalInventario = lista.stream()
-                .mapToDouble(p -> p.getPrecioVenta() * p.getStockActual())
-                .sum();
+            double totalInventario = gestionProducto.calcularValorInventario();
+            long productosActivos = lista.stream().filter(Producto::isActivo).count();
             JOptionPane.showMessageDialog(this,
-                "Archivo actualizado exitosamente:\n" + rutaArchivo
-                + "\n\nProductos: " + lista.size()
-                + "\nValor total inventario: $" + String.format("%.2f", totalInventario),
-                "Guardado exitoso", JOptionPane.INFORMATION_MESSAGE);
+                "Reporte exportado a: " + rutaArchivo
+                + "\n\nTotal productos: " + lista.size()
+                + "\nProductos activos: " + productosActivos
+                + "\nValor total inventario: $" + String.format("%,.2f", totalInventario),
+                "Reporte generado", JOptionPane.INFORMATION_MESSAGE);
         } catch (java.io.IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "Error al guardar el reporte: " + ex.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // ─────────────────── UTILIDADES ───────────────────
+    // ───────── UTILIDADES ─────────
 
+    // construir objeto Producto a partir de lo que el usuario ingreso
     private Producto construirProductoDesdeFormulario() {
         Producto p = new Producto();
         p.setCodigo(txtCodigo.getText().trim());
@@ -300,6 +404,7 @@ public class PanelProductos extends JPanel {
         return p;
     }
 
+    // validar que todos los campos requeridos esten llenos y sean validos
     private boolean validarCampos() {
         if (txtCodigo.getText().trim().isEmpty()
                 || txtNombre.getText().trim().isEmpty()
@@ -307,7 +412,9 @@ public class PanelProductos extends JPanel {
                 || txtPrecioVenta.getText().trim().isEmpty()
                 || txtStockActual.getText().trim().isEmpty()
                 || txtStockMinimo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "Todos los campos son obligatorios.",
+                "Campos incompletos", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
@@ -316,16 +423,21 @@ public class PanelProductos extends JPanel {
             int sa   = Integer.parseInt(txtStockActual.getText().trim());
             int sm   = Integer.parseInt(txtStockMinimo.getText().trim());
             if (pc < 0 || pv < 0 || sa < 0 || sm < 0) {
-                JOptionPane.showMessageDialog(this, "Los valores numéricos no pueden ser negativos.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                    "Los valores numéricos no pueden ser negativos.",
+                    "Error de valores", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Precios y stocks deben ser valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "Precios y stocks deben ser números válidos.",
+                "Error de formato", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
     }
 
+    // cargar todos los productos en la tabla
     public void cargarTabla() {
         modeloTabla.setRowCount(0);
         for (Producto p : gestionProducto.listarProductos()) {
@@ -333,20 +445,22 @@ public class PanelProductos extends JPanel {
         }
     }
 
+    // agregar una fila a la tabla con los datos del producto
     private void agregarFilaTabla(Producto p) {
         String estado = p.isActivo() ? "Activo" : "Inactivo";
         modeloTabla.addRow(new Object[]{
             p.getCodigo(),
             p.getNombre(),
             p.getCategoria() != null ? p.getCategoria().name() : "",
-            p.getPrecioCompra(),
-            p.getPrecioVenta(),
+            String.format("%.2f", p.getPrecioCompra()),
+            String.format("%.2f", p.getPrecioVenta()),
             p.getStockActual(),
             p.getStockMinimo(),
             estado
         });
     }
 
+    // limpiar todos los campos del formulario
     private void limpiarCampos() {
         txtCodigo.setText("");
         txtNombre.setText("");
