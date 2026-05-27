@@ -5,8 +5,10 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 import co.edu.uptc.Tiendaminorista.Gui.Evento;
 import co.edu.uptc.Tiendaminorista.modelo.Proveedor;
 
@@ -23,25 +25,20 @@ public class PanelActualizarProveedor extends JPanel {
     public PanelActualizarProveedor(Evento e) {
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        JPanel contenedor = new JPanel();
-        contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
-        contenedor.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 40));
 
         JLabel titulo = new JLabel("Actualizar proveedor");
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contenedor.add(titulo);
+        titulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(titulo);
 
-        contenedor.add(Box.createVerticalStrut(20));
+        add(Box.createVerticalStrut(20));
 
         JPanel informacion = new JPanel();
         informacion.setLayout(new BoxLayout(informacion, BoxLayout.Y_AXIS));
-        informacion.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         comboProveedores = new JComboBox<>();
         comboProveedores.setMaximumSize(new Dimension(300, 40));
-        comboProveedores.setAlignmentX(Component.CENTER_ALIGNMENT);
+        comboProveedores.setAlignmentX(Component.LEFT_ALIGNMENT);
         comboProveedores.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e1) {
@@ -50,49 +47,47 @@ public class PanelActualizarProveedor extends JPanel {
         });
 
         informacion.add(new JLabel("Seleccionar proveedor:"));
-        ((JLabel) informacion.getComponent(informacion.getComponentCount() - 1)).setAlignmentX(Component.CENTER_ALIGNMENT);
         informacion.add(Box.createVerticalStrut(5));
         informacion.add(comboProveedores);
         informacion.add(Box.createVerticalStrut(10));
 
         JLabel Razonpro = new JLabel("Razon social");
-        Razonpro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Razonpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         razonpro = new JTextField();
         razonpro.setMaximumSize(new Dimension(300, 40));
-        razonpro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        razonpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel Nitpro = new JLabel("NIT");
-        Nitpro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Nitpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         nitpro = new JTextField();
         nitpro.setMaximumSize(new Dimension(300, 40));
-        nitpro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nitpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel Direccionpro = new JLabel("Direccion de la residencia");
-        Direccionpro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Direccionpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         direccionpro = new JTextField();
         direccionpro.setMaximumSize(new Dimension(300, 40));
-        direccionpro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        direccionpro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel Telefonopro = new JLabel("Numero de telefono");
-        Telefonopro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel Telefonopro = new JLabel("numero de telefono");
+        Telefonopro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         telefonopro = new JTextField();
         telefonopro.setMaximumSize(new Dimension(300, 25));
-        telefonopro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        telefonopro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel Correopro = new JLabel("Correo Electronico");
-        Correopro.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Correopro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         correopro1 = new JTextField();
         correopro1.setMaximumSize(new Dimension(300, 25));
-        correopro1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        correopro1.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel butones = new JPanel();
         butones.setBorder(new EmptyBorder(20, 0, 0, 0));
-        butones.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton btncalcelarpro = new JButton(Evento.CANCELAR);
         btncalcelarpro.addActionListener(e);
@@ -140,10 +135,8 @@ public class PanelActualizarProveedor extends JPanel {
         butones.add(btndesactivarpro);
         butones.add(btnActivarpro);
 
-        contenedor.add(informacion);
-        contenedor.add(butones);
-
-        add(contenedor);
+        add(informacion);
+        add(butones);
     }
 
     public void setProveedores(java.util.List<Proveedor> proveedores) {

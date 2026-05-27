@@ -145,10 +145,6 @@ public class PanelPrincipal extends JFrame {
         panelInicial.mostrarActualizarProveedor();
     }
 
-    public void mostrarComprasPro() {
-        panelInicial.mostrarComprasProveedor();
-    }
-    
     public void registrarCliente() {
         try {
             Cliente cliente = new Cliente();
@@ -269,17 +265,5 @@ public class PanelPrincipal extends JFrame {
         JOptionPane.showMessageDialog(this, "Proveedor activado correctamente");
         panelInicial.cargarProveedores(gestionProveedor.listarProveedores());
         panelInicial.getPanelActualizarProveedor().refreshProveedorSeleccionado();
-    }
-    
-    public void registrarVenta(String producto, double valor, String idCliente) {
-        panelInicial.getPanelGestionContable().getGestionContable().registrarIngreso(producto, valor, idCliente);
-        panelInicial.getPanelGestionContable().actualizarDatos();
-        JOptionPane.showMessageDialog(this, String.format("Venta registrada: %s por $%,.0f", producto, valor));
-    }
-
-    public void registrarCompra(String producto, double valor, String nitProveedor) {
-        panelInicial.getPanelGestionContable().getGestionContable().registrarEgreso(producto, valor, nitProveedor);
-        panelInicial.getPanelGestionContable().actualizarDatos();
-        JOptionPane.showMessageDialog(this, String.format("Compra registrada: %s por $%,.0f", producto, valor));
     }
 }
