@@ -54,6 +54,39 @@ public class GestionInventario {
         return true;
     }
 
+    public boolean registrarMovimientoInventario(
+    		String codigo,int cantidad,String tipo){
+
+    		    Producto producto =
+    		    repositorioProducto.buscarPorId(codigo);
+
+    		    if(producto == null){
+    		        return false;
+    		    }
+
+    		    if(tipo.equalsIgnoreCase("ENTRADA")){
+
+    		        producto.setStockActual(
+    		        producto.getStockActual()+cantidad);
+
+    		    }
+
+    		    else if(tipo.equalsIgnoreCase("SALIDA")){
+
+    		        if(producto.getStockActual()<cantidad){
+    		            return false;
+    		        }
+
+    		        producto.setStockActual(
+    		        producto.getStockActual()-cantidad);
+    		    }
+
+    		    repositorioProducto.actualizar(producto);
+
+    		    return true;
+    		}
+    
+    
     public boolean descontarStock(String codigoProducto, int cantidad) {
         Producto producto = repositorioProducto.buscarPorId(codigoProducto);
         if (producto != null && producto.isActivo()) {

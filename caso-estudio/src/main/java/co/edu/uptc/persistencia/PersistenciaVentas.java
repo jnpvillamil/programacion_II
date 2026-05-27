@@ -27,6 +27,145 @@ public class PersistenciaVentas {
         }
     }
 
+    public List<Venta> consultarHistorialCliente(String identificacion){
+
+        List<Venta> lista = new ArrayList<>();
+
+        try(BufferedReader br = new BufferedReader(new FileReader(RUTA_ARCHIVO))){
+
+            String linea;
+
+            while((linea = br.readLine()) != null){
+
+                String[] partes = linea.split("\\|");
+                String[] cab = partes[0].split(SEPARADOR_CABECERA);
+
+                String idCliente = cab[2];
+
+                if(idCliente.equals(identificacion)){
+
+                    Venta v = new Venta();
+                    v.setNumeroFactura(cab[0]);
+
+                    lista.add(v);
+                }
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+    
+    public boolean anularVenta(String factura){
+
+        List<String> nuevasLineas = new ArrayList<>();
+        boolean encontrada = false;
+
+        try(BufferedReader br = new BufferedReader(new FileReader(RUTA_ARCHIVO))){
+
+            String linea;
+
+            while((linea = br.readLine()) != null){
+
+                if(linea.startsWith(factura + ";")){
+                    nuevasLineas.add(linea + ";ANULADA");
+                    encontrada = true;
+                }else{
+                    nuevasLineas.add(linea);
+                }
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        try(PrintWriter pw = new PrintWriter(new FileWriter(RUTA_ARCHIVO))){
+
+            for(String l : nuevasLineas){
+                pw.println(l);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return encontrada;
+    }
+    
+    
+    
+    
+    public List<Venta> consultarVentasPorFecha(String fecha){
+
+        List<Venta> lista = new ArrayList<>();
+
+        try(BufferedReader br = new BufferedReader(new FileReader(RUTA_ARCHIVO))){
+
+            String linea;
+
+            while((linea = br.readLine()) != null){
+
+                String[] partes = linea.split("\\|");
+                String[] cab = partes[0].split(SEPARADOR_CABECERA);
+
+                String fechaVenta = cab[1];
+
+                if(fechaVenta.equals(fecha)){
+
+                    Venta v = new Venta();
+                    v.setNumeroFactura(cab[0]);
+
+                    lista.add(v);
+                }
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+    
+    public Venta buscarVentaPorFactura(String numeroFactura){
+
+        try(BufferedReader br =
+            new BufferedReader(new FileReader(RUTA_ARCHIVO))){
+
+            String linea;
+
+            while((linea = br.readLine()) != null){
+
+                String[] partes = linea.split("\\|");
+
+                String[] cabecera =
+                partes[0].split(SEPARADOR_CABECERA);
+
+                if(cabecera[0].equals(numeroFactura)){
+
+                    Venta v = new Venta();
+
+                    v.setNumeroFactura(cabecera[0]);
+                    v.setSubtotal(Double.parseDouble(cabecera[3]));
+                    v.setIvaAplicado(Double.parseDouble(cabecera[4]));
+                    v.setTotalVenta(Double.parseDouble(cabecera[5]));
+                    v.setFormaPago(cabecera[6]);
+
+                    return v;
+                }
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    
+   
+    
     public void guardarVenta(Venta venta) {
         try (PrintWriter escritor = new PrintWriter(new FileWriter(RUTA_ARCHIVO, true))) {
             StringBuilder sb = new StringBuilder();
@@ -60,4 +199,6 @@ public class PersistenciaVentas {
             System.err.println("Error al escribir la venta: " + e.getMessage());
         }
     }
+
+	
 }
