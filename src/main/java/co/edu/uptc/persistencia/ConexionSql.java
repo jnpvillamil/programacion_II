@@ -1,34 +1,43 @@
 package co.edu.uptc.persistencia;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Punto único de acceso JDBC hacia MySQL Cloud (Aiven).
+ * Punto único de acceso JDBC hacia MySQL en Aiven Cloud mediante pool HikariCP.
  */
 public final class ConexionSql {
 
-    private static final String URL =
-            "jdbc:mysql://mysql-tiendaminorista26-uptc-2026.e.aivencloud.com:19414/defaultdb"
-            + "?useSSL=true&trustServerCertificate=true&serverTimezone=UTC";
-    private static final String USER = "avnadmin";
-    private static final String PASSWORD = "AVNS_XgqVf9CJ12bcfuHOTGa";
+    private static final HikariDataSource FUENTE_DATO;
+
+    static {
+        HikariConfig configuracion = new HikariConfig();
+        configuracion.setJdbcUrl(CargadorConfiguracionBd.obtenerUrlJdbc());
+        configuracion.setUsername(CargadorConfiguracionBd.obtenerUsuario());
+        configuracion.setPassword(CargadorConfiguracionBd.obtenerContrasena());
+        configuracion.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        configuracion.setMaximumPoolSize(10);
+        configuracion.setMinimumIdle(2);
+        configuracion.setConnectionTimeout(30_000);
+        configuracion.setIdleTimeout(600_000);
+        configuracion.setMaxLifetime(1_800_000);
+        configuracion.setPoolName("PoolTiendaMinorista");
+        FUENTE_DATO = new HikariDataSource(configuracion);
+    }
 
     private ConexionSql() {
     }
 
     public static Connection getConexion() throws SQLException {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new SQLException("Driver de MySQL no encontrado en el classpath.", e);
-        }
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        return FUENTE_DATO.getConnection();
     }
 
-    /** Alias de compatibilidad; preferir {@link #getConexion()}. */
-    public static Connection obtenerConexion() throws SQLException {
-        return getConexion();
+    public static void cerrarPool() {
+        if (FUENTE_DATO != null && !FUENTE_DATO.isClosed()) {
+            FUENTE_DATO.close();
+        }
     }
 }

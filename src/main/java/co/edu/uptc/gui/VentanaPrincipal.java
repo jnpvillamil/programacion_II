@@ -56,6 +56,7 @@ public class VentanaPrincipal extends JFrame {
         co.edu.uptc.negocio.GestionCliente gestionCliente = new co.edu.uptc.negocio.GestionCliente(persistenciaCliente);
         co.edu.uptc.controlador.ControladorCliente controladorCliente = new co.edu.uptc.controlador.ControladorCliente(gestionCliente);
         
+        
         co.edu.uptc.persistencia.PersistenciaProveedor persistenciaProveedor = new co.edu.uptc.persistencia.PersistenciaProveedor();
         co.edu.uptc.negocio.GestionProveedor gestionProveedor = new co.edu.uptc.negocio.GestionProveedor(persistenciaProveedor);
         co.edu.uptc.controlador.ControladorProveedor controladorProveedor = new co.edu.uptc.controlador.ControladorProveedor(gestionProveedor); 
@@ -63,6 +64,7 @@ public class VentanaPrincipal extends JFrame {
         co.edu.uptc.persistencia.PersistenciaProducto persistenciaProducto = new co.edu.uptc.persistencia.PersistenciaProducto();
         co.edu.uptc.negocio.GestionProducto gestionProducto = new co.edu.uptc.negocio.GestionProducto(persistenciaProducto);
         co.edu.uptc.controlador.ControladorProducto controladorProducto = new co.edu.uptc.controlador.ControladorProducto(gestionProducto);
+<<<<<<< HEAD
      // Instanciar dependencias para el módulo Compras
         co.edu.uptc.persistencia.PersistenciaContable persistenciaContable = new co.edu.uptc.persistencia.PersistenciaContable();
         co.edu.uptc.negocio.GestionContable gestionContable = new co.edu.uptc.negocio.GestionContable(persistenciaContable);
@@ -70,6 +72,15 @@ public class VentanaPrincipal extends JFrame {
         co.edu.uptc.negocio.GestionCompra gestionCompra = new co.edu.uptc.negocio.GestionCompra(persistenciaCompra, gestionProducto, gestionContable);
         co.edu.uptc.controlador.ControladorCompra controladorCompra = new co.edu.uptc.controlador.ControladorCompra(gestionCompra);
         
+=======
+        
+        co.edu.uptc.persistencia.PersistenciaContable persistenciaContable = new co.edu.uptc.persistencia.PersistenciaContable();
+        co.edu.uptc.negocio.GestionContable gestionContable = new co.edu.uptc.negocio.GestionContable(persistenciaContable);
+        co.edu.uptc.persistencia.PersistenciaVenta persistenciaVenta = new co.edu.uptc.persistencia.PersistenciaVenta();
+        co.edu.uptc.negocio.GestionVenta gestionVenta = new co.edu.uptc.negocio.GestionVenta(
+                persistenciaVenta, gestionProducto, gestionContable, gestionCliente);
+        co.edu.uptc.controlador.ControladorVenta controladorVenta = new co.edu.uptc.controlador.ControladorVenta(gestionVenta);
+>>>>>>> 1b22656311a9c634f243c258cd1c14e071eaf18c
         
         //Agregar los paneles al contenedor
         panelContenedor.add(new PanelHome(), "Home");
@@ -78,8 +89,13 @@ public class VentanaPrincipal extends JFrame {
         panelContenedor.add(new PanelProducto(controladorProducto), "Prod"); 
         
         
+<<<<<<< HEAD
         panelContenedor.add(new PanelVenta(), "Vent");
         panelContenedor.add(new PanelCompra(controladorCompra, controladorProducto, controladorProveedor), "Comp");
+=======
+        panelContenedor.add(new PanelVenta(controladorVenta, controladorProducto, controladorCliente), "Vent");
+        panelContenedor.add(new PanelCompra(), "Comp");
+>>>>>>> 1b22656311a9c634f243c258cd1c14e071eaf18c
         panelContenedor.add(new PanelContabilidad(), "Cont");
 
         // Agregar a la ventana

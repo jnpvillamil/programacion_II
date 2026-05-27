@@ -7,166 +7,268 @@ import co.edu.uptc.enums.TipoIdentificacion;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
 import co.edu.uptc.utilidades.ConstructorComponentes;
+import co.edu.uptc.utilidades.ValidadorEntradas;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
 public class PanelCliente extends JPanel {
-    private ControladorCliente controlador;
-    private JTextField txtIdentificacion, txtNombres, txtApellidos, txtDireccion, txtTelefono, txtCodigo;
-    private JComboBox<TipoIdentificacion> cbTipoId;
-    private JComboBox<TipoCliente> cbTipoCliente;
+
+    private static final Color COLOR_FONDO_PANEL = new Color(0xECF0F1);
+    private static final Color COLOR_BOTON_AZUL = new Color(0x1A5274);
+
+    private final ControladorCliente controlador;
+
+    private JTextField txtCodigo;
+    private JTextField txtIdentificacion;
+    private JTextField txtNombre;
+    private JTextField txtApellido;
+    private JTextField txtDireccion;
+    private JTextField txtTelefono;
+    private JComboBox<TipoIdentificacion> comboTipoIdentificacion;
+    private JComboBox<TipoCliente> comboTipoCliente;
     private DefaultTableModel modeloTabla;
-    private JTable tablaClientes;
+    private JTable tablaCliente;
 
     public PanelCliente(ControladorCliente controlador) {
         this.controlador = controlador;
         setLayout(new BorderLayout(20, 20));
-        setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
+        setBackground(COLOR_FONDO_PANEL);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        add(ConstructorComponentes.crearEtiquetaNegrita("GESTIÓN DE CLIENTES"), BorderLayout.NORTH);
-        
+        JLabel titulo = ConstructorComponentes.crearEtiquetaNegrita("GESTIÓN DE CLIENTES");
+        titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        add(titulo, BorderLayout.NORTH);
+
         inicializarFormulario();
         inicializarTabla();
-        
-  
-        // Va a la base de datos y llena la JTable inmediatamente al iniciar la app
-        actualizarTabla(); 
+        actualizarTabla();
     }
 
     private void inicializarFormulario() {
-        JPanel panelContenedorForm = new JPanel(new BorderLayout());
-        panelContenedorForm.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
+        JPanel panelContenedorFormulario = new JPanel(new BorderLayout());
+        panelContenedorFormulario.setBackground(COLOR_FONDO_PANEL);
 
-        JPanel panelForm = new JPanel(new GridBagLayout());
-        panelForm.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(8, 10, 8, 10);
-        gbc.weightx = 0.5;
+        JPanel panelFormulario = new JPanel(new GridBagLayout());
+        panelFormulario.setBackground(COLOR_FONDO_PANEL);
+        GridBagConstraints restriccion = new GridBagConstraints();
+        restriccion.fill = GridBagConstraints.HORIZONTAL;
+        restriccion.insets = new Insets(8, 10, 8, 10);
+        restriccion.weightx = 0.5;
 
-        // Instanciar campos
         txtCodigo = ConstructorComponentes.crearCampoTexto();
-        cbTipoId = new JComboBox<>(TipoIdentificacion.values());
+        comboTipoIdentificacion = new JComboBox<>(TipoIdentificacion.values());
         txtIdentificacion = ConstructorComponentes.crearCampoTexto();
-        txtNombres = ConstructorComponentes.crearCampoTexto();
-        txtApellidos = ConstructorComponentes.crearCampoTexto();
+        txtNombre = ConstructorComponentes.crearCampoTexto();
+        txtApellido = ConstructorComponentes.crearCampoTexto();
         txtDireccion = ConstructorComponentes.crearCampoTexto();
         txtTelefono = ConstructorComponentes.crearCampoTexto();
-        cbTipoCliente = new JComboBox<>(TipoCliente.values());
+        comboTipoCliente = new JComboBox<>(TipoCliente.values());
 
-        // Fila 1
-        gbc.gridy = 0; gbc.gridx = 0; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Código Cliente:"), gbc);
-        gbc.gridx = 1; panelForm.add(txtCodigo, gbc);
-        gbc.gridx = 2; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Tipo ID:"), gbc);
-        gbc.gridx = 3; panelForm.add(cbTipoId, gbc);
+        estilizarCombo(comboTipoIdentificacion);
+        estilizarCombo(comboTipoCliente);
 
-        // Fila 2
-        gbc.gridy = 1; gbc.gridx = 0; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Identificación:"), gbc);
-        gbc.gridx = 1; panelForm.add(txtIdentificacion, gbc);
-        gbc.gridx = 2; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Nombres:"), gbc);
-        gbc.gridx = 3; panelForm.add(txtNombres, gbc);
+        restriccion.gridy = 0;
+        restriccion.gridx = 0;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Código Cliente:"), restriccion);
+        restriccion.gridx = 1;
+        panelFormulario.add(txtCodigo, restriccion);
+        restriccion.gridx = 2;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Tipo ID:"), restriccion);
+        restriccion.gridx = 3;
+        panelFormulario.add(comboTipoIdentificacion, restriccion);
 
-        // Fila 3
-        gbc.gridy = 2; gbc.gridx = 0; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Apellidos:"), gbc);
-        gbc.gridx = 1; panelForm.add(txtApellidos, gbc);
-        gbc.gridx = 2; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Teléfono:"), gbc);
-        gbc.gridx = 3; panelForm.add(txtTelefono, gbc);
+        restriccion.gridy = 1;
+        restriccion.gridx = 0;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Identificación:"), restriccion);
+        restriccion.gridx = 1;
+        panelFormulario.add(txtIdentificacion, restriccion);
+        restriccion.gridx = 2;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Nombres:"), restriccion);
+        restriccion.gridx = 3;
+        panelFormulario.add(txtNombre, restriccion);
 
-        // Fila 4
-        gbc.gridy = 3; gbc.gridx = 0; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Dirección:"), gbc);
-        gbc.gridx = 1; panelForm.add(txtDireccion, gbc);
-        gbc.gridx = 2; panelForm.add(ConstructorComponentes.crearEtiquetaNegrita("Tipo Cliente:"), gbc);
-        gbc.gridx = 3; panelForm.add(cbTipoCliente, gbc);
+        restriccion.gridy = 2;
+        restriccion.gridx = 0;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Apellidos:"), restriccion);
+        restriccion.gridx = 1;
+        panelFormulario.add(txtApellido, restriccion);
+        restriccion.gridx = 2;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Teléfono:"), restriccion);
+        restriccion.gridx = 3;
+        panelFormulario.add(txtTelefono, restriccion);
 
-        // Botones de acción
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelBotones.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-        
-        JButton btnGuardar = ConstructorComponentes.crearBotonAccion("Guardar", ConstructorComponentes.COLOR_AZUL_ACCION);
-        JButton btnBuscar = ConstructorComponentes.crearBotonAccion("Buscar", ConstructorComponentes.COLOR_AZUL_ACCION);
-        JButton btnEditar = ConstructorComponentes.crearBotonAccion("Editar", ConstructorComponentes.COLOR_AZUL_ACCION);
-        JButton btnInactivar = ConstructorComponentes.crearBotonAccion("Inactivar", ConstructorComponentes.COLOR_AZUL_ACCION);
+        restriccion.gridy = 3;
+        restriccion.gridx = 0;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Dirección:"), restriccion);
+        restriccion.gridx = 1;
+        panelFormulario.add(txtDireccion, restriccion);
+        restriccion.gridx = 2;
+        panelFormulario.add(ConstructorComponentes.crearEtiquetaNegrita("Tipo Cliente:"), restriccion);
+        restriccion.gridx = 3;
+        panelFormulario.add(comboTipoCliente, restriccion);
 
-        btnGuardar.addActionListener(e -> guardarCliente());
-        btnBuscar.addActionListener(e -> buscarCliente());
-        btnEditar.addActionListener(e -> editarCliente());
-        btnInactivar.addActionListener(e -> inactivarCliente());
+        JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        panelBoton.setBackground(COLOR_FONDO_PANEL);
 
-        panelBotones.add(btnBuscar);
-        panelBotones.add(btnEditar);
-        panelBotones.add(btnInactivar);
-        panelBotones.add(btnGuardar);
+        JButton botonBuscar = ConstructorComponentes.crearBotonAccion("Buscar", COLOR_BOTON_AZUL);
+        JButton botonEditar = ConstructorComponentes.crearBotonAccion("Editar", COLOR_BOTON_AZUL);
+        JButton botonInactivar = ConstructorComponentes.crearBotonAccion("Inactivar", COLOR_BOTON_AZUL);
+        JButton botonActivar = ConstructorComponentes.crearBotonAccion("Activar", COLOR_BOTON_AZUL);
+        JButton botonLimpiar = ConstructorComponentes.crearBotonAccion("Limpiar", COLOR_BOTON_AZUL);
+        JButton botonGuardar = ConstructorComponentes.crearBotonAccion("Guardar", COLOR_BOTON_AZUL);
 
-        panelContenedorForm.add(panelForm, BorderLayout.CENTER);
-        panelContenedorForm.add(panelBotones, BorderLayout.SOUTH);
-        add(panelContenedorForm, BorderLayout.CENTER);
+        botonBuscar.addActionListener(evento -> buscarCliente());
+        botonEditar.addActionListener(evento -> editarCliente());
+        botonInactivar.addActionListener(evento -> inactivarCliente());
+        botonActivar.addActionListener(evento -> activarCliente());
+        botonLimpiar.addActionListener(evento -> limpiarFormulario());
+        botonGuardar.addActionListener(evento -> guardarCliente());
+
+        panelBoton.add(botonBuscar);
+        panelBoton.add(botonEditar);
+        panelBoton.add(botonInactivar);
+        panelBoton.add(botonActivar);
+        panelBoton.add(botonLimpiar);
+        panelBoton.add(botonGuardar);
+
+        panelContenedorFormulario.add(panelFormulario, BorderLayout.CENTER);
+        panelContenedorFormulario.add(panelBoton, BorderLayout.SOUTH);
+        add(panelContenedorFormulario, BorderLayout.CENTER);
     }
 
     private void inicializarTabla() {
-        String[] columnas = {"Código", "Nombre Completo", "Teléfono", "Estado"};
-        modeloTabla = new DefaultTableModel(columnas, 0);
-        tablaClientes = new JTable(modeloTabla);
-        ConstructorComponentes.darEstiloTabla(tablaClientes);
-        
-        JScrollPane scroll = new JScrollPane(tablaClientes);
+        String[] columna = {"Código", "Nombre Completo", "Teléfono", "Estado"};
+        modeloTabla = new DefaultTableModel(columna, 0) {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {
+                return false;
+            }
+        };
+        tablaCliente = new JTable(modeloTabla);
+        ConstructorComponentes.darEstiloTabla(tablaCliente);
+        tablaCliente.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablaCliente.getSelectionModel().addListSelectionListener(evento -> {
+            if (!evento.getValueIsAdjusting() && tablaCliente.getSelectedRow() >= 0) {
+                cargarFilaSeleccionada(tablaCliente.getSelectedRow());
+            }
+        });
+
+        JScrollPane scroll = new JScrollPane(tablaCliente);
         scroll.setPreferredSize(new Dimension(0, 250));
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(0xBDC3C7)));
         add(scroll, BorderLayout.SOUTH);
     }
 
+    private void estilizarCombo(JComboBox<?> combo) {
+        combo.setBackground(Color.WHITE);
+        combo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+    }
+
+    private Cliente extraerClienteFormulario() {
+        Cliente cliente = new Cliente(
+                txtNombre.getText().trim(),
+                txtApellido.getText().trim(),
+                txtIdentificacion.getText().trim(),
+                txtDireccion.getText().trim(),
+                txtTelefono.getText().trim(),
+                txtCodigo.getText().trim(),
+                (TipoIdentificacion) comboTipoIdentificacion.getSelectedItem(),
+                (TipoCliente) comboTipoCliente.getSelectedItem()
+        );
+        cliente.setActivo(true);
+        return cliente;
+    }
+
     private void guardarCliente() {
-        Cliente nuevo = new Cliente(txtNombres.getText(), txtApellidos.getText(), txtIdentificacion.getText(), 
-                                    txtDireccion.getText(), txtTelefono.getText(), txtCodigo.getText(), 
-                                    (TipoIdentificacion) cbTipoId.getSelectedItem(), (TipoCliente) cbTipoCliente.getSelectedItem());
-        String msj = controlador.registrarCliente(nuevo);
-        JOptionPane.showMessageDialog(this, msj);
-        actualizarTabla();
-        limpiarFormulario();
+        if (!validarFormularioBasico()) {
+            return;
+        }
+        String mensaje = controlador.registrarCliente(extraerClienteFormulario());
+        JOptionPane.showMessageDialog(this, mensaje);
+        if (mensaje.startsWith("Cliente registrado")) {
+            actualizarTabla();
+            limpiarFormulario();
+        }
     }
 
     private void buscarCliente() {
-        String id = JOptionPane.showInputDialog(this, "Ingrese la identificación a buscar:");
-        if (id != null && !id.trim().isEmpty()) {
-            try {
-                Cliente c = controlador.buscarCliente(id.trim());
-                if (c != null) {
-                    txtCodigo.setText(c.getCodigoCliente());
-                    cbTipoId.setSelectedItem(c.getTipoIdentificacion());
-                    txtIdentificacion.setText(c.getIdentificacion());
-                    txtNombres.setText(c.getNombre());
-                    txtApellidos.setText(c.getApellido());
-                    txtDireccion.setText(c.getDireccion());
-                    txtTelefono.setText(c.getTelefono());
-                    cbTipoCliente.setSelectedItem(c.getTipoCliente());
-                } else {
-                    JOptionPane.showMessageDialog(this, "Cliente no encontrado.");
-                }
-            } catch (ExcepcionAccesoDatos e) {
-                mostrarErrorBaseDatos(e);
+        String identificacion = txtIdentificacion.getText().trim();
+        if (ValidadorEntradas.esNuloOVacio(identificacion)) {
+            identificacion = JOptionPane.showInputDialog(this, "Ingrese la identificación a buscar:");
+            if (ValidadorEntradas.esNuloOVacio(identificacion)) {
+                return;
             }
+        }
+
+        try {
+            Cliente cliente = controlador.buscarPorIdentificacion(identificacion.trim());
+            if (cliente != null) {
+                cargarClienteEnFormulario(cliente);
+            } else {
+                JOptionPane.showMessageDialog(this, "Cliente no encontrado.");
+            }
+        } catch (ExcepcionAccesoDatos excepcion) {
+            mostrarErrorBaseDatos(excepcion);
         }
     }
 
     private void editarCliente() {
-        Cliente c = new Cliente(txtNombres.getText(), txtApellidos.getText(), txtIdentificacion.getText(), 
-                                txtDireccion.getText(), txtTelefono.getText(), txtCodigo.getText(), 
-                                (TipoIdentificacion) cbTipoId.getSelectedItem(), (TipoCliente) cbTipoCliente.getSelectedItem());
-        String msj = controlador.modificarCliente(c);
-        JOptionPane.showMessageDialog(this, msj);
-        actualizarTabla();
+        if (!validarFormularioBasico()) {
+            return;
+        }
+        String mensaje = controlador.modificarCliente(extraerClienteFormulario());
+        JOptionPane.showMessageDialog(this, mensaje);
+        if (mensaje.startsWith("Cliente actualizado")) {
+            actualizarTabla();
+        }
     }
 
     private void inactivarCliente() {
-        String id = txtIdentificacion.getText();
-        if (!id.isEmpty()) {
-            String msj = controlador.inactivarCliente(id);
-            JOptionPane.showMessageDialog(this, msj);
+        String identificacion = txtIdentificacion.getText().trim();
+        if (ValidadorEntradas.esNuloOVacio(identificacion)) {
+            JOptionPane.showMessageDialog(this, "Busque un cliente primero o ingrese la identificación.");
+            return;
+        }
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Desea inactivar al cliente con identificación " + identificacion + "?",
+                "Confirmar inactivación",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+        String mensaje = controlador.inactivarCliente(identificacion);
+        JOptionPane.showMessageDialog(this, mensaje);
+        if (mensaje.startsWith("Cliente inactivado")) {
             actualizarTabla();
             limpiarFormulario();
-        } else {
-            JOptionPane.showMessageDialog(this, "Busque un cliente primero para inactivarlo.");
+        }
+    }
+
+    private void activarCliente() {
+        String identificacion = txtIdentificacion.getText().trim();
+        if (ValidadorEntradas.esNuloOVacio(identificacion)) {
+            JOptionPane.showMessageDialog(this, "Busque un cliente inactivo primero o ingrese la identificación.");
+            return;
+        }
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Desea activar al cliente con identificación " + identificacion + "?",
+                "Confirmar activación",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+        String mensaje = controlador.activarCliente(identificacion);
+        JOptionPane.showMessageDialog(this, mensaje);
+        if (mensaje.startsWith("Cliente activado")) {
+            actualizarTabla();
+            limpiarFormulario();
         }
     }
 
@@ -174,28 +276,84 @@ public class PanelCliente extends JPanel {
         modeloTabla.setRowCount(0);
         try {
             List<ClienteResumenDTO> lista = controlador.obtenerListadoResumen();
-            for (ClienteResumenDTO dto : lista) {
+            for (ClienteResumenDTO resumen : lista) {
                 modeloTabla.addRow(new Object[]{
-                        dto.getCodigo(), dto.getNombreCompleto(), dto.getTelefono(), dto.getEstado()
+                        resumen.getCodigo(),
+                        resumen.getNombreCompleto(),
+                        resumen.getTelefono(),
+                        resumen.getEstado()
                 });
             }
-        } catch (ExcepcionAccesoDatos e) {
-            mostrarErrorBaseDatos(e);
+        } catch (ExcepcionAccesoDatos excepcion) {
+            mostrarErrorBaseDatos(excepcion);
         }
     }
 
-    private void mostrarErrorBaseDatos(ExcepcionAccesoDatos e) {
+    private void cargarFilaSeleccionada(int fila) {
+        String codigo = String.valueOf(modeloTabla.getValueAt(fila, 0));
+        try {
+            Cliente cliente = controlador.buscarPorCodigo(codigo);
+            if (cliente != null) {
+                cargarClienteEnFormulario(cliente);
+            }
+        } catch (ExcepcionAccesoDatos excepcion) {
+            mostrarErrorBaseDatos(excepcion);
+        }
+    }
+
+    private void cargarClienteEnFormulario(Cliente cliente) {
+        txtCodigo.setText(cliente.getCodigoCliente());
+        comboTipoIdentificacion.setSelectedItem(cliente.getTipoIdentificacion());
+        txtIdentificacion.setText(cliente.getIdentificacion());
+        txtNombre.setText(cliente.getNombre());
+        txtApellido.setText(cliente.getApellido());
+        txtDireccion.setText(cliente.getDireccion());
+        txtTelefono.setText(cliente.getTelefono());
+        comboTipoCliente.setSelectedItem(cliente.getTipoCliente());
+    }
+
+    private boolean validarFormularioBasico() {
+        if (ValidadorEntradas.esNuloOVacio(txtCodigo.getText())) {
+            JOptionPane.showMessageDialog(this, "Ingrese el código del cliente.");
+            txtCodigo.requestFocus();
+            return false;
+        }
+        if (ValidadorEntradas.esNuloOVacio(txtIdentificacion.getText())) {
+            JOptionPane.showMessageDialog(this, "Ingrese el número de identificación.");
+            txtIdentificacion.requestFocus();
+            return false;
+        }
+        if (ValidadorEntradas.esNuloOVacio(txtNombre.getText())) {
+            JOptionPane.showMessageDialog(this, "Ingrese los nombres del cliente.");
+            txtNombre.requestFocus();
+            return false;
+        }
+        if (ValidadorEntradas.esNuloOVacio(txtApellido.getText())) {
+            JOptionPane.showMessageDialog(this, "Ingrese los apellidos del cliente.");
+            txtApellido.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    private void mostrarErrorBaseDatos(ExcepcionAccesoDatos excepcion) {
         JOptionPane.showMessageDialog(
                 this,
-                ControladorCliente.mensajeParaUsuario(e),
+                ControladorCliente.mensajeParaUsuario(excepcion),
                 "Error de conexión",
                 JOptionPane.ERROR_MESSAGE
         );
     }
 
     private void limpiarFormulario() {
-        txtCodigo.setText(""); txtIdentificacion.setText("");
-        txtNombres.setText(""); txtApellidos.setText("");
-        txtDireccion.setText(""); txtTelefono.setText("");
+        txtCodigo.setText("");
+        txtIdentificacion.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtDireccion.setText("");
+        txtTelefono.setText("");
+        comboTipoIdentificacion.setSelectedIndex(0);
+        comboTipoCliente.setSelectedIndex(0);
+        tablaCliente.clearSelection();
     }
 }
