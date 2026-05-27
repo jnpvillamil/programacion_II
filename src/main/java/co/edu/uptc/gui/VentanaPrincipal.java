@@ -63,7 +63,12 @@ public class VentanaPrincipal extends JFrame {
         co.edu.uptc.persistencia.PersistenciaProducto persistenciaProducto = new co.edu.uptc.persistencia.PersistenciaProducto();
         co.edu.uptc.negocio.GestionProducto gestionProducto = new co.edu.uptc.negocio.GestionProducto(persistenciaProducto);
         co.edu.uptc.controlador.ControladorProducto controladorProducto = new co.edu.uptc.controlador.ControladorProducto(gestionProducto);
-        
+     // Instanciar dependencias para el módulo Compras
+        co.edu.uptc.persistencia.PersistenciaContable persistenciaContable = new co.edu.uptc.persistencia.PersistenciaContable();
+        co.edu.uptc.negocio.GestionContable gestionContable = new co.edu.uptc.negocio.GestionContable(persistenciaContable);
+        co.edu.uptc.persistencia.PersistenciaCompra persistenciaCompra = new co.edu.uptc.persistencia.PersistenciaCompra();
+        co.edu.uptc.negocio.GestionCompra gestionCompra = new co.edu.uptc.negocio.GestionCompra(persistenciaCompra, gestionProducto, gestionContable);
+        co.edu.uptc.controlador.ControladorCompra controladorCompra = new co.edu.uptc.controlador.ControladorCompra(gestionCompra);
         
         
         //Agregar los paneles al contenedor
@@ -74,7 +79,7 @@ public class VentanaPrincipal extends JFrame {
         
         
         panelContenedor.add(new PanelVenta(), "Vent");
-        panelContenedor.add(new PanelCompra(), "Comp");
+        panelContenedor.add(new PanelCompra(controladorCompra, controladorProducto, controladorProveedor), "Comp");
         panelContenedor.add(new PanelContabilidad(), "Cont");
 
         // Agregar a la ventana

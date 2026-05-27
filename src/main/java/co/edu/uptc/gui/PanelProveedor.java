@@ -99,11 +99,18 @@ public class PanelProveedor extends JPanel {
         modeloTabla = new DefaultTableModel(columnas, 0);
         tablaProveedores = new JTable(modeloTabla);
         ConstructorComponentes.darEstiloTabla(tablaProveedores);
-        
+        tablaProveedores.setFillsViewportHeight(true);
+        tablaProveedores.setBackground(Color.WHITE);
+        tablaProveedores.getTableHeader().setOpaque(false);
+
         JScrollPane scroll = new JScrollPane(tablaProveedores);
+        scroll.getViewport().setBackground(Color.WHITE);
+       
         scroll.setPreferredSize(new Dimension(0, 250));
         add(scroll, BorderLayout.SOUTH);
+        
     }
+    
 
     private void guardarProveedor() {
         Proveedor nuevo = new Proveedor(txtRepresentante.getText(), "", "", txtDireccion.getText(), txtTelefono.getText(), 
