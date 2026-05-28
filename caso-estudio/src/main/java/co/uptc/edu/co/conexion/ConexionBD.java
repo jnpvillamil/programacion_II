@@ -9,7 +9,7 @@ public class ConexionBD {
 	private static final String SERVIDOR = "mysql-224b3750-proyecto-sistema-gestion-contable.e.aivencloud.com";
 	private static final String PUERTO = "19516";
 
-	private static final String NOMBRE_BASE_DATOS =" proyecto_sistema_gestion_contable";
+	private static final String NOMBRE_BASE_DATOS = "proyecto_sistema_gestion_contable";
 
 	private static final String URL = "jdbc:mysql://" + SERVIDOR + ":" + PUERTO + "/" + NOMBRE_BASE_DATOS
 			+ "?useSSL=false&allowPublicKeyRetrieval=true";

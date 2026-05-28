@@ -555,12 +555,7 @@ public class Evento implements ActionListener {
 			mostrarError("No se pudo generar el código del proveedor: " + ex.getMessage());
 		}
 
-		try {
-			dialog.cargarNitGenerado(gestionProveedor.generarNIT());
-		} catch (Exception ex) {
-			mostrarError("No se pudo generar el NIT automático: " + ex.getMessage());
-		}
-
+		
 		dialog.setVisible(true);
 	}
 

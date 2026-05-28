@@ -16,6 +16,4 @@ public interface IGestionProveedor {
     void cambiarEstadoProveedor(String codigo) throws Exception;
 
 	String generarCodigoProveedor();
-
-	 String generarNIT();
 }
