@@ -17,8 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import co.uptc.edu.co.gui.Evento;
+import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.Producto;
+import co.uptc.edu.co.modelo.Venta;
 
 public class DialogDevolucionVenta extends JDialog {
 
@@ -36,6 +41,7 @@ public class DialogDevolucionVenta extends JDialog {
 
 	private JButton botonConfirmarDevolucion;
 	private JButton botonCancelar;
+	private Venta venta;
 
 	public DialogDevolucionVenta(Frame propietario) {
 		this(propietario, null);
@@ -173,6 +179,23 @@ public class DialogDevolucionVenta extends JDialog {
 
 	private void inicializarEventos(Evento evento) {
 		botonCancelar.addActionListener(e -> dispose());
+		comboProducto.addActionListener(e -> actualizarValorDevolucion());
+		campoCantidadDevolucion.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				actualizarValorDevolucion();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				actualizarValorDevolucion();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				actualizarValorDevolucion();
+			}
+		});
 
 		if (evento != null) {
 			botonConfirmarDevolucion.setActionCommand(Evento.CMD_GUARDAR_DEVOLUCION_VENTA);
@@ -186,6 +209,32 @@ public class DialogDevolucionVenta extends JDialog {
 		campoFecha.setText(fecha);
 		campoTotalVenta.setText(totalVenta);
 		campoEstado.setText(estado);
+	}
+
+	public void cargarVenta(Venta venta) {
+		this.venta = venta;
+		cargarVenta(
+				venta.getNumeroFactura(),
+				venta.getCliente(),
+				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
+				String.valueOf(venta.getTotal()),
+				venta.getEstado() != null ? venta.getEstado().name() : "");
+
+		comboProducto.removeAllItems();
+		comboProducto.addItem("Seleccione producto");
+
+		if (venta.getDetalles() != null) {
+			for (DetalleVenta detalle : venta.getDetalles()) {
+				Producto producto = detalle.getProducto();
+				if (producto != null) {
+					String nombre = producto.getNombreProducto();
+					if (nombre == null || nombre.trim().isEmpty()) {
+						nombre = producto.getCodigoProducto();
+					}
+					comboProducto.addItem(producto.getCodigoProducto() + " - " + nombre);
+				}
+			}
+		}
 	}
 
 	public void cargarProductos(String[] productos) {
@@ -207,6 +256,20 @@ public class DialogDevolucionVenta extends JDialog {
 		return comboProducto.getSelectedItem() != null ? comboProducto.getSelectedItem().toString() : "";
 	}
 
+	public String obtenerCodigoProductoSeleccionado() {
+		String productoSeleccionado = obtenerProductoSeleccionado();
+		if (productoSeleccionado.equals("Seleccione producto") || productoSeleccionado.trim().isEmpty()) {
+			return "";
+		}
+
+		int separador = productoSeleccionado.indexOf(" - ");
+		if (separador == -1) {
+			return productoSeleccionado.trim();
+		}
+
+		return productoSeleccionado.substring(0, separador).trim();
+	}
+
 	public String obtenerCantidad() {
 		return campoCantidadDevolucion.getText().trim();
 	}
@@ -221,5 +284,41 @@ public class DialogDevolucionVenta extends JDialog {
 
 	public void setValorDevolucion(String valor) {
 		campoValorDevolucion.setText(valor);
+	}
+
+	private void actualizarValorDevolucion() {
+		DetalleVenta detalle = obtenerDetalleSeleccionado();
+		if (detalle == null) {
+			campoValorDevolucion.setText("");
+			return;
+		}
+
+		try {
+			int cantidad = Integer.parseInt(campoCantidadDevolucion.getText().trim());
+			if (cantidad <= 0) {
+				campoValorDevolucion.setText("");
+				return;
+			}
+
+			campoValorDevolucion.setText(String.valueOf(cantidad * detalle.getPrecioUnitario()));
+		} catch (NumberFormatException e) {
+			campoValorDevolucion.setText("");
+		}
+	}
+
+	private DetalleVenta obtenerDetalleSeleccionado() {
+		String codigoProducto = obtenerCodigoProductoSeleccionado();
+		if (venta == null || codigoProducto.isEmpty() || venta.getDetalles() == null) {
+			return null;
+		}
+
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			if (detalle.getProducto() != null
+					&& codigoProducto.equals(detalle.getProducto().getCodigoProducto())) {
+				return detalle;
+			}
+		}
+
+		return null;
 	}
 }

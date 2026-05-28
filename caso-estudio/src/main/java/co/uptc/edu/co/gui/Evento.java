@@ -26,10 +26,12 @@ import co.uptc.edu.co.gui.dialog.DialogProveedor;
 import co.uptc.edu.co.gui.dialog.DialogVenta;
 import co.uptc.edu.co.interfaces.IGestionCliente;
 import co.uptc.edu.co.interfaces.IGestionCompra;
+import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.IGestionProducto;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.Compra;
+import co.uptc.edu.co.interfaces.IGestionFactura;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.Producto;
@@ -100,6 +102,8 @@ public class Evento implements ActionListener {
 	private IGestionProveedor gestionProveedor;
 	private IGestionVenta gestionVenta;
 	private IGestionCompra gestionCompra;
+	private IGestionDevolucionVenta gestionDevolucionVenta;
+	private IGestionFactura gestionFactura;
 
 	// CONSTRUCTOR
 	public Evento(VentanaPrincipal ventana, TiendaConfig config) {
@@ -109,6 +113,8 @@ public class Evento implements ActionListener {
 		this.gestionProveedor = config.getGestionProveedor();
 		this.gestionVenta = config.getGestionVenta();
 		this.gestionCompra = config.getGestionCompra();
+		this.gestionDevolucionVenta = config.getGestionDevolucionVenta();
+		this.gestionFactura = config.getGestionFactura();
 	}
 
 	// METODO PRINCIPAL DE EVENTOS
@@ -676,6 +682,7 @@ public class Evento implements ActionListener {
 
 	private void abrirDialogoNuevaVenta() {
 		DialogVenta dialog = new DialogVenta(ventana, this);
+		dialog.cargarNumeroFactura(gestionVenta.generarNumeroFactura());
 		dialog.cargarClientes(gestionCliente.obtenerClientes());
 		dialog.cargarProductos(gestionProducto.obtenerProductos());
 		dialog.setVisible(true);
@@ -730,8 +737,10 @@ public class Evento implements ActionListener {
 			DialogAnularVenta dialog = obtenerDialogAnularVenta(e);
 
 			String numeroFactura = dialog.obtenerNumeroFactura();
+			String motivo = dialog.obtenerMotivoAnulacion();
 
-			gestionVenta.anularVenta(numeroFactura);
+			gestionVenta.anularVenta(numeroFactura, motivo);
+			gestionProducto.recargar();
 
 			mostrarInformacion("Venta anulada exitosamente.");
 			refrescarTablaVentas();
@@ -743,22 +752,97 @@ public class Evento implements ActionListener {
 	}
 
 	private void abrirDialogoDevolucionVenta() {
-		DialogDevolucionVenta dialog = new DialogDevolucionVenta(ventana, this);
-		dialog.setVisible(true);
+		try {
+			PanelVenta panelVenta = ventana.getPanelVenta();
+
+			if (!panelVenta.haySeleccion()) {
+				throw new Exception("Debe seleccionar una venta.");
+			}
+
+			String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
+			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
+
+			if (venta == null) {
+				throw new Exception("No se encontro la venta seleccionada.");
+			}
+
+			DialogDevolucionVenta dialog = new DialogDevolucionVenta(ventana, this);
+			dialog.cargarVenta(venta);
+			dialog.setVisible(true);
+
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
 	}
 
 	private void guardarDevolucionVenta(ActionEvent e) {
-		mostrarInformacion("Devolucion de venta pendiente de implementacion.");
+		try {
+			DialogDevolucionVenta dialog = obtenerDialogDevolucionVenta(e);
+			String numeroFactura = dialog.obtenerNumeroFactura();
+			String codigoProducto = dialog.obtenerCodigoProductoSeleccionado();
+			int cantidad = Integer.parseInt(dialog.obtenerCantidad());
+			String motivo = dialog.obtenerMotivoDevolucion();
+
+			gestionDevolucionVenta.devolverVenta(numeroFactura, codigoProducto, cantidad, motivo);
+			gestionProducto.recargar();
+
+			mostrarInformacion("Devolucion registrada exitosamente.");
+			refrescarTablaVentas();
+			dialog.dispose();
+
+		} catch (NumberFormatException ex) {
+			mostrarError("La cantidad a devolver debe ser un numero entero.");
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
 	}
 
 	private void abrirDialogoDetalleVenta() {
-		DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
-		dialog.setVisible(true);
+		try {
+			PanelVenta panelVenta = ventana.getPanelVenta();
+
+			if (!panelVenta.haySeleccion()) {
+				throw new Exception("Debe seleccionar una venta.");
+			}
+
+			String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
+			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
+
+			if (venta == null) {
+				throw new Exception("No se encontro la venta seleccionada.");
+			}
+
+			DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
+			dialog.cargarVenta(venta);
+			dialog.setVisible(true);
+
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
 	}
 
 	private void abrirDialogoFacturaVenta() {
-		DialogFacturaVenta dialog = new DialogFacturaVenta(ventana);
-		dialog.setVisible(true);
+		try {
+			PanelVenta panelVenta = ventana.getPanelVenta();
+
+			if (!panelVenta.haySeleccion()) {
+				throw new Exception("Debe seleccionar una venta.");
+			}
+
+			String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
+			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
+
+			if (venta == null) {
+				throw new Exception("No se encontro la venta seleccionada.");
+			}
+
+			String rutaFactura = gestionFactura.generarFactura(venta);
+
+			mostrarInformacion("Factura generada correctamente en: " + rutaFactura);
+
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
 	}
 
 	private void refrescarTablaVentas() {
@@ -999,5 +1083,15 @@ public class Evento implements ActionListener {
 		}
 
 		return (DialogCompra) ventanaPadre;
+	}
+
+	private DialogDevolucionVenta obtenerDialogDevolucionVenta(ActionEvent e) throws Exception {
+		Window ventanaPadre = obtenerVentanaPadre(e);
+
+		if (!(ventanaPadre instanceof DialogDevolucionVenta)) {
+			throw new Exception("Error interno: no se pudo identificar el formulario de devolucion.");
+		}
+
+		return (DialogDevolucionVenta) ventanaPadre;
 	}
 }

@@ -13,10 +13,13 @@ import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
 public class GestionVenta implements IGestionVenta {
 
+	private static final String PREFIJO_FACTURA = "factura_";
+	private static final String CARACTERES_CODIGO_FACTURA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	private static final int LONGITUD_CODIGO_FACTURA = 6;
+
 	private List<Venta> ventas;
 	private final VentaDAO ventaDAO;
 	private final IGestionInventario gestionInventario;
-
 
 	public GestionVenta(VentaDAO ventaDAO, IGestionInventario gestionInventario) {
 
@@ -24,7 +27,7 @@ public class GestionVenta implements IGestionVenta {
 
 			throw new IllegalArgumentException("La ventaDAO no puede ser nulo");
 		}
-		if(gestionInventario == null) {
+		if (gestionInventario == null) {
 			throw new IllegalArgumentException("La gestionInventario no puede ser nula");
 		}
 		this.ventaDAO = ventaDAO;
@@ -73,6 +76,16 @@ public class GestionVenta implements IGestionVenta {
 
 	@Override
 	public Venta buscarVentaPorNumero(String numeroFactura) throws Exception {
+		if (numeroFactura == null) {
+			return null;
+		}
+
+		for (Venta venta : ventas) {
+			if (numeroFactura.equals(venta.getNumeroFactura())) {
+				return venta;
+			}
+		}
+
 		return ventaDAO.buscarVentaPorNumero(numeroFactura);
 	}
 
@@ -135,11 +148,11 @@ public class GestionVenta implements IGestionVenta {
 			double subtotalDetalle = detalle.getCantidad() * detalle.getPrecioUnitario();
 			detalle.setSubtotal(subtotalDetalle);
 			subtotal += subtotalDetalle;
-		} 
-		
+		}
+
 		double impuestos = subtotal * 0.19;
 		double total = subtotal + impuestos;
-		
+
 		venta.setSubTotal(subtotal);
 		venta.setImpuestos(impuestos);
 		venta.setTotal(total);
@@ -147,21 +160,44 @@ public class GestionVenta implements IGestionVenta {
 	}
 
 	@Override
-	public void anularVenta(String numeroFactura) throws Exception {
+	public void anularVenta(String numeroFactura, String motivo) throws Exception {
 		Venta venta = buscarVentaPorNumero(numeroFactura);
-		if(venta == null) {
-			 throw new Exception("Nose encontro la venta a anular.");
+		if (venta == null) {
+			throw new Exception("No se encontro la venta a anular.");
 		}
-		
-		if(venta.getEstado() == EstadoVentaEnum.ANULADA) {
-			 throw new Exception("La venta ya esta anulada.");
+
+		if (venta.getEstado() == EstadoVentaEnum.ANULADA) {
+			throw new Exception("La venta ya esta anulada.");
 		}
-		
+
+		if (venta.getEstado() == EstadoVentaEnum.DEVUELTA) {
+			throw new Exception("No se puede anular una venta que ya tiene devolucion registrada.");
+		}
+
+		if (motivo == null || motivo.trim().isEmpty()) {
+			throw new Exception("Debe ingresar un motivo de anulacion");
+		}
+
 		venta.setEstado(EstadoVentaEnum.ANULADA);
 		ventaDAO.actualizarVenta(venta);
+		gestionInventario.registrarEntradaPorAnulacion(venta, motivo.trim());
 		recargarVentas();
 	}
-	
-	
+
+	@Override
+	public String generarNumeroFactura() {
+		return PREFIJO_FACTURA + generarCodigoAleatorio();
+	}
+
+	private String generarCodigoAleatorio() {
+		StringBuilder codigo = new StringBuilder();
+
+		for (int i = 0; i < LONGITUD_CODIGO_FACTURA; i++) {
+			int posicion = (int) (Math.random() * CARACTERES_CODIGO_FACTURA.length());
+			codigo.append(CARACTERES_CODIGO_FACTURA.charAt(posicion));
+		}
+
+		return codigo.toString();
+	}
 
 }

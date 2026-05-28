@@ -6,6 +6,8 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,176 +19,219 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.Venta;
 
-public class DialogDetalleVenta extends JDialog{
-	
-	 private JTextField campoNumeroFactura;
-	 private JTextField campoFecha;
-	 private JTextField campoHora;
-	 private JTextField campoCliente;
-	 private JTextField campoFormaPago;
-	 private JTextField campoImpuestos;
-	 private JTextField campoTotal;
-	 private JTextField campoEstado;
+public class DialogDetalleVenta extends JDialog {
 
-	 private JTable tablaDetalle;
-	 private DefaultTableModel modeloTabla;
-	 private JButton botonCerrar;
-	 
+	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
-	 public DialogDetalleVenta(Frame propietario) {
-	        super(propietario, "Detalle de Venta", true);
-	        inicializarComponentes();
-	        configurarDialogo();
-	        agregarComponentes();
-	        inicializarEventos();
-	 }
-	 
+	private JTextField campoNumeroFactura;
+	private JTextField campoFecha;
+	private JTextField campoHora;
+	private JTextField campoCliente;
+	private JTextField campoFormaPago;
+	private JTextField campoImpuestos;
+	private JTextField campoTotal;
+	private JTextField campoEstado;
 
-	 private void inicializarComponentes() {
-		 
-	     campoNumeroFactura = new JTextField(15);
-	     campoFecha = new JTextField(15);
-	     campoHora = new JTextField(15);
-	     campoCliente = new JTextField(15);
-	     campoFormaPago = new JTextField(15);
-	     campoImpuestos = new JTextField(15);
-	     campoTotal = new JTextField(15);
-	     campoEstado = new JTextField(15);
+	private JTable tablaDetalle;
+	private DefaultTableModel modeloTabla;
+	private JButton botonCerrar;
 
-	     campoNumeroFactura.setEditable(false);
-	     campoFecha.setEditable(false);
-	     campoHora.setEditable(false);
-	     campoCliente.setEditable(false);
-	     campoFormaPago.setEditable(false);
-	     campoImpuestos.setEditable(false);
-	     campoTotal.setEditable(false);
-	     campoEstado.setEditable(false);
+	public DialogDetalleVenta(Frame propietario) {
+		super(propietario, "Detalle de Venta", true);
+		inicializarComponentes();
+		configurarDialogo();
+		agregarComponentes();
+		inicializarEventos();
+	}
 
-	     modeloTabla = new DefaultTableModel(
-	    		 
-	            new Object[] { "Producto", "Cantidad", "Precio Unitario", "Impuestos", "Subtotal" }, 0) {
-	            @Override
-	            public boolean isCellEditable(int row, int column) {
-	                return false;
-	            }
-	        };
+	private static DecimalFormat crearFormatoMoneda() {
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator('.');
+		simbolos.setDecimalSeparator(',');
 
-	        tablaDetalle = new JTable(modeloTabla);
+		DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+		formato.setGroupingUsed(true);
+		return formato;
+	}
 
-	        botonCerrar = new JButton("Cerrar");
-	    }
+	private void inicializarComponentes() {
 
-	    private void configurarDialogo() {
-	        setSize(700, 480);
-	        setLocationRelativeTo(getOwner());
-	        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	        setResizable(false);
-	    }
+		campoNumeroFactura = new JTextField(15);
+		campoFecha = new JTextField(15);
+		campoHora = new JTextField(15);
+		campoCliente = new JTextField(15);
+		campoFormaPago = new JTextField(15);
+		campoImpuestos = new JTextField(15);
+		campoTotal = new JTextField(15);
+		campoEstado = new JTextField(15);
 
-	    private void agregarComponentes() {
-	        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
-	        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+		campoNumeroFactura.setEditable(false);
+		campoFecha.setEditable(false);
+		campoHora.setEditable(false);
+		campoCliente.setEditable(false);
+		campoFormaPago.setEditable(false);
+		campoImpuestos.setEditable(false);
+		campoTotal.setEditable(false);
+		campoEstado.setEditable(false);
 
-	        JPanel panelDatos = new JPanel(new GridBagLayout());
-	        panelDatos.setBorder(BorderFactory.createTitledBorder("Datos de la Venta"));
+		modeloTabla = new DefaultTableModel(
 
-	        GridBagConstraints gbc = new GridBagConstraints();
-	        gbc.insets = new Insets(6, 6, 6, 6);
-	        gbc.anchor = GridBagConstraints.WEST;
-	        gbc.fill = GridBagConstraints.HORIZONTAL;
+				new Object[] { "Producto", "Cantidad", "Precio Unitario", "Impuestos", "Subtotal" }, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 
-	        gbc.gridx = 0;
-	        gbc.gridy = 0;
-	        panelDatos.add(new JLabel("N° Factura:"), gbc);
-	        gbc.gridx = 1;
-	        panelDatos.add(campoNumeroFactura, gbc);
+		tablaDetalle = new JTable(modeloTabla);
 
-	        gbc.gridx = 2;
-	        panelDatos.add(new JLabel("Fecha:"), gbc);
-	        gbc.gridx = 3;
-	        panelDatos.add(campoFecha, gbc);
+		botonCerrar = new JButton("Cerrar");
+	}
 
-	        gbc.gridx = 0;
-	        gbc.gridy = 1;
-	        panelDatos.add(new JLabel("Hora:"), gbc);
-	        gbc.gridx = 1;
-	        panelDatos.add(campoHora, gbc);
+	private void configurarDialogo() {
+		setSize(700, 480);
+		setLocationRelativeTo(getOwner());
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setResizable(false);
+	}
 
-	        gbc.gridx = 2;
-	        panelDatos.add(new JLabel("Cliente:"), gbc);
-	        gbc.gridx = 3;
-	        panelDatos.add(campoCliente, gbc);
+	private void agregarComponentes() {
+		JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
+		panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-	        gbc.gridx = 0;
-	        gbc.gridy = 2;
-	        panelDatos.add(new JLabel("Forma de Pago:"), gbc);
-	        gbc.gridx = 1;
-	        panelDatos.add(campoFormaPago, gbc);
+		JPanel panelDatos = new JPanel(new GridBagLayout());
+		panelDatos.setBorder(BorderFactory.createTitledBorder("Datos de la Venta"));
 
-	        gbc.gridx = 2;
-	        panelDatos.add(new JLabel("Impuestos:"), gbc);
-	        gbc.gridx = 3;
-	        panelDatos.add(campoImpuestos, gbc);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(6, 6, 6, 6);
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-	        gbc.gridx = 0;
-	        gbc.gridy = 3;
-	        panelDatos.add(new JLabel("Total:"), gbc);
-	        gbc.gridx = 1;
-	        panelDatos.add(campoTotal, gbc);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		panelDatos.add(new JLabel("N° Factura:"), gbc);
+		gbc.gridx = 1;
+		panelDatos.add(campoNumeroFactura, gbc);
 
-	        gbc.gridx = 2;
-	        panelDatos.add(new JLabel("Estado:"), gbc);
-	        gbc.gridx = 3;
-	        panelDatos.add(campoEstado, gbc);
+		gbc.gridx = 2;
+		panelDatos.add(new JLabel("Fecha:"), gbc);
+		gbc.gridx = 3;
+		panelDatos.add(campoFecha, gbc);
 
-	        JScrollPane scrollTabla = new JScrollPane(tablaDetalle);
-	        scrollTabla.setBorder(BorderFactory.createTitledBorder("Productos Vendidos"));
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		panelDatos.add(new JLabel("Hora:"), gbc);
+		gbc.gridx = 1;
+		panelDatos.add(campoHora, gbc);
 
-	        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-	        panelBotones.add(botonCerrar);
+		gbc.gridx = 2;
+		panelDatos.add(new JLabel("Cliente:"), gbc);
+		gbc.gridx = 3;
+		panelDatos.add(campoCliente, gbc);
 
-	        panelPrincipal.add(panelDatos, BorderLayout.NORTH);
-	        panelPrincipal.add(scrollTabla, BorderLayout.CENTER);
-	        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		panelDatos.add(new JLabel("Forma de Pago:"), gbc);
+		gbc.gridx = 1;
+		panelDatos.add(campoFormaPago, gbc);
 
-	        add(panelPrincipal);
-	    }
+		gbc.gridx = 2;
+		panelDatos.add(new JLabel("Impuestos:"), gbc);
+		gbc.gridx = 3;
+		panelDatos.add(campoImpuestos, gbc);
 
-	    private void inicializarEventos() {
-	        botonCerrar.addActionListener(e -> dispose());
-	    }
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		panelDatos.add(new JLabel("Total:"), gbc);
+		gbc.gridx = 1;
+		panelDatos.add(campoTotal, gbc);
 
-	    public void cargarVenta(String numeroFactura, String fecha, String hora, String cliente,
-	            String formaPago, String impuestos, String total, String estado) {
+		gbc.gridx = 2;
+		panelDatos.add(new JLabel("Estado:"), gbc);
+		gbc.gridx = 3;
+		panelDatos.add(campoEstado, gbc);
 
-	        campoNumeroFactura.setText(numeroFactura);
-	        campoFecha.setText(fecha);
-	        campoHora.setText(hora);
-	        campoCliente.setText(cliente);
-	        campoFormaPago.setText(formaPago);
-	        campoImpuestos.setText(impuestos);
-	        campoTotal.setText(total);
-	        campoEstado.setText(estado);
-	    }
+		JScrollPane scrollTabla = new JScrollPane(tablaDetalle);
+		scrollTabla.setBorder(BorderFactory.createTitledBorder("Productos Vendidos"));
 
-	    public void agregarDetalle(String producto, String cantidad, String precioUnitario,
-	            String impuestos, String subtotal) {
-	        modeloTabla.addRow(new Object[] { producto, cantidad, precioUnitario, impuestos, subtotal });
-	    }
+		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+		panelBotones.add(botonCerrar);
 
-	    public void limpiarTabla() {
-	        modeloTabla.setRowCount(0);
-	    }
+		panelPrincipal.add(panelDatos, BorderLayout.NORTH);
+		panelPrincipal.add(scrollTabla, BorderLayout.CENTER);
+		panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
 
-	    public void limpiarCampos() {
-	        campoNumeroFactura.setText("");
-	        campoFecha.setText("");
-	        campoHora.setText("");
-	        campoCliente.setText("");
-	        campoFormaPago.setText("");
-	        campoImpuestos.setText("");
-	        campoTotal.setText("");
-	        campoEstado.setText("");
-	    }
+		add(panelPrincipal);
+	}
+
+	private void inicializarEventos() {
+		botonCerrar.addActionListener(e -> dispose());
+	}
+
+	public void cargarVenta(String numeroFactura, String fecha, String hora, String cliente, String formaPago,
+			String impuestos, String total, String estado) {
+
+		campoNumeroFactura.setText(numeroFactura);
+		campoFecha.setText(fecha);
+		campoHora.setText(hora);
+		campoCliente.setText(cliente);
+		campoFormaPago.setText(formaPago);
+		campoImpuestos.setText(impuestos);
+		campoTotal.setText(total);
+		campoEstado.setText(estado);
+	}
+
+	public void cargarVenta(Venta venta) {
+		cargarVenta(venta.getNumeroFactura(),
+				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
+				venta.getFechaHora() != null ? venta.getFechaHora().toLocalTime().toString() : "", venta.getCliente(),
+				venta.getFormaPago(), formatearMoneda(venta.getImpuestos()), formatearMoneda(venta.getTotal()),
+				venta.getEstado() != null ? venta.getEstado().name() : "");
+
+		limpiarTabla();
+
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			agregarDetalle(detalle);
+		}
+	}
+
+	private void agregarDetalle(DetalleVenta detalle) {
+		String producto = detalle.getProducto().getNombreProducto();
+
+		if (producto == null || producto.trim().isEmpty()) {
+			producto = detalle.getProducto().getCodigoProducto();
+		}
+
+		double impuestoDetalle = detalle.getSubtotal() * 0.19;
+
+		agregarDetalle(producto, String.valueOf(detalle.getCantidad()), formatearMoneda(detalle.getPrecioUnitario()),
+				formatearMoneda(impuestoDetalle), formatearMoneda(detalle.getSubtotal()));
+	}
+
+	public void agregarDetalle(String producto, String cantidad, String precioUnitario, String impuestos,
+			String subtotal) {
+		modeloTabla.addRow(new Object[] { producto, cantidad, precioUnitario, impuestos, subtotal });
+	}
+
+	public void limpiarTabla() {
+		modeloTabla.setRowCount(0);
+	}
+
+	public void limpiarCampos() {
+		campoNumeroFactura.setText("");
+		campoFecha.setText("");
+		campoHora.setText("");
+		campoCliente.setText("");
+		campoFormaPago.setText("");
+		campoImpuestos.setText("");
+		campoTotal.setText("");
+		campoEstado.setText("");
+	}
+
+	private String formatearMoneda(double valor) {
+		return FORMATO_MONEDA.format(valor);
+	}
 }

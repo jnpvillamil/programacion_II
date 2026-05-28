@@ -7,17 +7,17 @@ import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.modelo.Venta;
 
 public interface IGestionInventario {
-	
 
-    void validarStockDisponible(List<DetalleVenta> detalles) throws Exception;
+	void validarStockDisponible(List<DetalleVenta> detalles) throws Exception;
 
-    void registrarSalidaPorVenta(Venta venta) throws Exception;
+	void registrarSalidaPorVenta(Venta venta) throws Exception;
 
-    void registrarEntrada(String codigoProducto, int cantidad, String descripcion) throws Exception;
+	void registrarEntrada(String codigoProducto, int cantidad, String descripcion) throws Exception;
 
-    void registrarSalida(String codigoProducto, int cantidad, String descripcion) throws Exception;
+	void registrarSalida(String codigoProducto, int cantidad, String descripcion) throws Exception;
 
-    List<MovimientoInventario> obtenerMovimientos();
+	void registrarEntradaPorAnulacion(Venta venta, String motivo) throws Exception;
 
+	List<MovimientoInventario> obtenerMovimientos();
 
 }

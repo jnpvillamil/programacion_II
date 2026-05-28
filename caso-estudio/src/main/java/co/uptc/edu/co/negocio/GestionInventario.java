@@ -47,9 +47,8 @@ public class GestionInventario implements IGestionInventario {
 			}
 
 			if (detalle.getCantidad() > producto.getStockActual()) {
-				throw new Exception("Stock insuficiente para " + producto.getNombreProducto()
-						+ ". Disponible: " + producto.getStockActual()
-						+ ", solicitado: " + detalle.getCantidad() + ".");
+				throw new Exception("Stock insuficiente para " + producto.getNombreProducto() + ". Disponible: "
+						+ producto.getStockActual() + ", solicitado: " + detalle.getCantidad() + ".");
 			}
 		}
 	}
@@ -143,6 +142,25 @@ public class GestionInventario implements IGestionInventario {
 		if (detalle.getCantidad() <= 0) {
 			throw new Exception("La cantidad debe ser mayor que cero.");
 		}
+	}
+
+	@Override
+	public void registrarEntradaPorAnulacion(Venta venta, String motivo) throws Exception {
+		if (venta == null) {
+			throw new Exception("La venta no puede ser nula");
+		}
+
+		if (venta.getDetalles() == null || venta.getDetalles().isEmpty()) {
+			throw new Exception("La venta no tiene productos para devolver el inventario");
+		}
+
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			String codigoProducto = detalle.getProducto().getCodigoProducto();
+
+			registrarEntrada(codigoProducto, detalle.getCantidad(),
+					"Entrada por anulacion de venta: " + venta.getNumeroFactura() + ".Motivo " + motivo);
+		}
+
 	}
 
 }

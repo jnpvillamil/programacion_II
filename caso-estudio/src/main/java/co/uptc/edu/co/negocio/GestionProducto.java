@@ -233,11 +233,6 @@ public class GestionProducto implements IGestionProducto {
 
     @Override
     public String generarCodigoProducto() {
-        try {
-            recargarProductos();
-        } catch (Exception e) {
-            System.out.println("Error al recargar productos para generar codigo: " + e.getMessage());
-        }
     	
     	int mayor = 0;
     	

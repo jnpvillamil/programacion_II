@@ -122,6 +122,8 @@ public class DialogVenta extends JDialog {
 		campoSubtotal.setEditable(false);
 		campoIva.setEditable(false);
 		campoTotal.setEditable(false);
+		campoPrecioUnitario.setEditable(false);
+		campoNumeroFactura.setEditable(false);
 
 		campoFecha.setText(LocalDate.now().format(FORMATO_FECHA));
 		campoHora.setText(LocalTime.now().format(FORMATO_HORA));
@@ -275,6 +277,7 @@ public class DialogVenta extends JDialog {
 		botonCancelar.addActionListener(e -> dispose());
 		botonAgregarProducto.addActionListener(e -> agregarProductoSeleccionado());
 		botonQuitarProducto.addActionListener(e -> quitarProductoSeleccionado());
+		comboProducto.addActionListener(e -> cargarPrecioProductoSeleccionado());
 
 		if (evento != null) {
 			botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_VENTA);
@@ -298,6 +301,12 @@ public class DialogVenta extends JDialog {
 				comboProducto.addItem(producto);
 			}
 		}
+
+		cargarPrecioProductoSeleccionado();
+	}
+
+	public void cargarNumeroFactura(String numeroFactura) {
+		campoNumeroFactura.setText(numeroFactura);
 	}
 
 	public Venta obtenerVenta() throws Exception {
@@ -347,10 +356,7 @@ public class DialogVenta extends JDialog {
 			}
 
 			int cantidad = convertirEntero(campoCantidad.getText().trim(), "La cantidad debe ser numerica.");
-			double precioUnitario = convertirDouble(
-					campoPrecioUnitario.getText().trim(),
-					"El precio unitario debe ser numerico."
-			);
+			double precioUnitario = producto.getPrecioVenta();
 
 			if (cantidad <= 0) {
 				throw new Exception("La cantidad debe ser mayor que cero.");
@@ -431,7 +437,18 @@ public class DialogVenta extends JDialog {
 
 	private void limpiarCamposProducto() {
 		campoCantidad.setText("");
-		campoPrecioUnitario.setText("");
+		cargarPrecioProductoSeleccionado();
+	}
+
+	private void cargarPrecioProductoSeleccionado() {
+		Producto producto = (Producto) comboProducto.getSelectedItem();
+
+		if (producto == null) {
+			campoPrecioUnitario.setText("");
+			return;
+		}
+
+		campoPrecioUnitario.setText(String.valueOf(producto.getPrecioVenta()));
 	}
 
 	private int convertirEntero(String texto, String mensajeError) throws Exception {

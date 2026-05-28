@@ -1,5 +1,7 @@
 package co.uptc.edu.co.gui;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import javax.swing.JTextField;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
+
 
 public class PanelProducto extends PanelCentral {
 
@@ -22,6 +25,8 @@ public class PanelProducto extends PanelCentral {
     private static final String TEXTO_BOTON_ACTIVAR = "Activar";
 
     private static final String OPCION_TODOS = "Todos";
+    private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
+    
 
     private static final Object[] COLUMNAS = {
             "Código",
@@ -47,6 +52,16 @@ public class PanelProducto extends PanelCentral {
     private JComboBox<String> comboCategoria;
 
     private List<Producto> productosCargados;
+
+    private static DecimalFormat crearFormatoMoneda() {
+        DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+        simbolos.setGroupingSeparator('.');
+        simbolos.setDecimalSeparator(',');
+
+        DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+        formato.setGroupingUsed(true);
+        return formato;
+    }
 
     public PanelProducto() {
         super();
@@ -158,8 +173,8 @@ public class PanelProducto extends PanelCentral {
                         producto.getCodigoProducto(),
                         producto.getNombreProducto(),
                         producto.getCategoria(),
-                        producto.getPrecioCompra(),
-                        producto.getPrecioVenta(),
+                        formatearMoneda(producto.getPrecioCompra()),
+                        formatearMoneda(producto.getPrecioVenta()),
                         producto.getStockActual(),
                         producto.getStockMinimo(),
                         producto.getStockMaximo(),
@@ -201,5 +216,9 @@ public class PanelProducto extends PanelCentral {
 
     public String obtenerCodigoSeleccionado() {
     	 return obtenerTextoSeleccionado(COLUMNA_CODIGO);
+    }
+
+    private String formatearMoneda(double valor) {
+        return FORMATO_MONEDA.format(valor);
     }
 }

@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.interfaces.VentaDAO;
@@ -26,24 +28,29 @@ public class VentaBDDAO implements VentaDAO {
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_INSERTAR_DETALLE = "INSERT INTO " + TABLA_DETALLE_VENTAS
-			+ " (numero_factura, codigo_producto, cantidad, precio_unitario, subtotal)"
-			+ " VALUES (?, ?, ?, ?, ?)";
+			+ " (numero_factura, codigo_producto, cantidad, precio_unitario, subtotal)" + " VALUES (?, ?, ?, ?, ?)";
 
 	private static final String SQL_ACTUALIZAR_VENTA = "UPDATE " + TABLA_VENTAS
 			+ " SET fecha_hora = ?, cliente = ?, forma_pago = ?, subtotal = ?, impuestos = ?, total = ?, estado = ?"
 			+ " WHERE numero_factura = ?";
 
 	private static final String SQL_BUSCAR_VENTA = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado"
-			+ " FROM " + TABLA_VENTAS
-			+ " WHERE numero_factura = ?";
+			+ " FROM " + TABLA_VENTAS + " WHERE numero_factura = ?";
 
 	private static final String SQL_LISTAR_VENTAS = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado"
-			+ " FROM " + TABLA_VENTAS
-			+ " ORDER BY fecha_hora DESC";
+			+ " FROM " + TABLA_VENTAS + " ORDER BY fecha_hora DESC";
 
-	private static final String SQL_LISTAR_DETALLES = "SELECT codigo_producto, cantidad, precio_unitario, subtotal"
-			+ " FROM " + TABLA_DETALLE_VENTAS
-			+ " WHERE numero_factura = ?";
+	private static final String SQL_LISTAR_VENTAS_CON_DETALLES =
+			"SELECT v.numero_factura, v.fecha_hora, v.cliente, v.forma_pago, v.subtotal, v.impuestos, v.total, v.estado,"
+			+ " dv.codigo_producto, p.nombreProducto, dv.cantidad, dv.precio_unitario, dv.subtotal AS subtotal_detalle"
+			+ " FROM " + TABLA_VENTAS + " v"
+			+ " LEFT JOIN " + TABLA_DETALLE_VENTAS + " dv ON v.numero_factura = dv.numero_factura"
+			+ " LEFT JOIN productos p ON dv.codigo_producto = p.codigoProducto"
+			+ " ORDER BY v.fecha_hora DESC";
+
+	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigo_producto, p.nombreProducto, dv.cantidad, dv.precio_unitario, dv.subtotal"
+			+ " FROM " + TABLA_DETALLE_VENTAS + " dv"
+			+ " LEFT JOIN productos p ON dv.codigo_producto = p.codigoProducto" + " WHERE dv.numero_factura = ?";
 
 	private static final String SQL_ELIMINAR_DETALLES = "DELETE FROM " + TABLA_DETALLE_VENTAS
 			+ " WHERE numero_factura = ?";
@@ -113,19 +120,27 @@ public class VentaBDDAO implements VentaDAO {
 
 	@Override
 	public List<Venta> listarVentas() throws Exception {
-		List<Venta> ventas = new ArrayList<>();
+		Map<String, Venta> ventas = new LinkedHashMap<>();
 
 		try (Connection conexion = ConexionBD.getConexion();
-				PreparedStatement sentencia = conexion.prepareStatement(SQL_LISTAR_VENTAS);
+				PreparedStatement sentencia = conexion.prepareStatement(SQL_LISTAR_VENTAS_CON_DETALLES);
 				ResultSet resultado = sentencia.executeQuery()) {
 
 			while (resultado.next()) {
-				Venta venta = construirVenta(resultado);
-				venta.setDetalles(listarDetallesVenta(conexion, venta.getNumeroFactura()));
-				ventas.add(venta);
+				String numeroFactura = resultado.getString("numero_factura");
+				Venta venta = ventas.get(numeroFactura);
+
+				if (venta == null) {
+					venta = construirVenta(resultado);
+					ventas.put(numeroFactura, venta);
+				}
+
+				if (resultado.getString("codigo_producto") != null) {
+					venta.getDetalles().add(construirDetalleVentaListado(resultado));
+				}
 			}
 
-			return ventas;
+			return new ArrayList<>(ventas.values());
 
 		} catch (SQLException e) {
 			throw new Exception("Error al listar las ventas: " + e.getMessage(), e);
@@ -196,12 +211,26 @@ public class VentaBDDAO implements VentaDAO {
 	private DetalleVenta construirDetalleVenta(ResultSet resultado) throws SQLException {
 		Producto producto = new Producto();
 		producto.setCodigoProducto(resultado.getString("codigo_producto"));
+		producto.setNombreProducto(resultado.getString("nombreProducto"));
 
 		DetalleVenta detalle = new DetalleVenta();
 		detalle.setProducto(producto);
 		detalle.setCantidad(resultado.getInt("cantidad"));
 		detalle.setPrecioUnitario(resultado.getDouble("precio_unitario"));
 		detalle.setSubtotal(resultado.getDouble("subtotal"));
+		return detalle;
+	}
+
+	private DetalleVenta construirDetalleVentaListado(ResultSet resultado) throws SQLException {
+		Producto producto = new Producto();
+		producto.setCodigoProducto(resultado.getString("codigo_producto"));
+		producto.setNombreProducto(resultado.getString("nombreProducto"));
+
+		DetalleVenta detalle = new DetalleVenta();
+		detalle.setProducto(producto);
+		detalle.setCantidad(resultado.getInt("cantidad"));
+		detalle.setPrecioUnitario(resultado.getDouble("precio_unitario"));
+		detalle.setSubtotal(resultado.getDouble("subtotal_detalle"));
 		return detalle;
 	}
 

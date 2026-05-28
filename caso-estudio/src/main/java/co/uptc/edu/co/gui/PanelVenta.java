@@ -3,6 +3,8 @@ package co.uptc.edu.co.gui;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ public class PanelVenta extends PanelCentral {
 	private static final String TEXTO_TOTAL = "Total de ventas: ";
 
 	private static final String OPCION_TODOS = "Todos";
+	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");
@@ -29,7 +32,7 @@ public class PanelVenta extends PanelCentral {
 	private JButton botonAnularVenta;
 	private JButton botonRegistrarDevolucion;
 	private JButton botonVerDetalle;
-	private JButton botonFactura;
+	private JButton botonGenerarFactura;
 
 	private JTextField campoBuscarFactura;
 
@@ -38,6 +41,16 @@ public class PanelVenta extends PanelCentral {
 	private JComboBox<String> comboEstado;
 
 	private List<Venta> ventasCargadas;
+	private boolean actualizandoComboClientes;
+
+	private static DecimalFormat crearFormatoMoneda() {
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator('.');
+		simbolos.setDecimalSeparator(',');
+		DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+		formato.setGroupingUsed(true);
+		return formato;
+	}
 
 	public PanelVenta() {
 		super();
@@ -66,9 +79,9 @@ public class PanelVenta extends PanelCentral {
 	private void inicializarComponentesVenta() {
 		botonNuevaVenta = new JButton("Nueva Venta");
 		botonAnularVenta = new JButton("Anular");
-		botonRegistrarDevolucion = new JButton("Devolución");
+		botonRegistrarDevolucion = new JButton("Registrar Devolución");
 		botonVerDetalle = new JButton("Ver Detalle");
-		botonFactura = new JButton("Factura");
+		botonGenerarFactura = new JButton("Generar Factura");
 
 		campoBuscarFactura = new JTextField(20);
 
@@ -94,7 +107,7 @@ public class PanelVenta extends PanelCentral {
 		configurarBotonBase(botonAnularVenta);
 		configurarBotonBase(botonRegistrarDevolucion);
 		configurarBotonBase(botonVerDetalle);
-		configurarBotonBase(botonFactura);
+		configurarBotonBase(botonGenerarFactura);
 
 	}
 
@@ -103,7 +116,7 @@ public class PanelVenta extends PanelCentral {
 		panelBotones.add(botonAnularVenta);
 		panelBotones.add(botonRegistrarDevolucion);
 		panelBotones.add(botonVerDetalle);
-		panelBotones.add(botonFactura);
+		panelBotones.add(botonGenerarFactura);
 
 		agregarFiltro("Buscar Factura:", campoBuscarFactura);
 		agregarFiltro("Cliente:", comboCliente);
@@ -132,17 +145,58 @@ public class PanelVenta extends PanelCentral {
 		botonVerDetalle.setActionCommand(Evento.CMD_VER_DETALLE_VENTA);
 		botonVerDetalle.addActionListener(evento);
 
-		botonFactura.setActionCommand(Evento.CMD_FACTURA_VENTA);
-		botonFactura.addActionListener(evento);
+		botonGenerarFactura.setActionCommand(Evento.CMD_FACTURA_VENTA);
+		botonGenerarFactura.addActionListener(evento);
 
 	}
 
 	public void cargarVentas(List<Venta> ventas) {
 		ventasCargadas = new ArrayList<>(ventas);
+		actualizarComboClientes();
 		aplicarFiltros();
 	}
 
+	private void actualizarComboClientes() {
+		actualizandoComboClientes = true;
+
+		String clienteSeleccionado = comboCliente.getSelectedItem() != null ? comboCliente.getSelectedItem().toString()
+				: OPCION_TODOS;
+
+		comboCliente.removeAllItems();
+		comboCliente.addItem(OPCION_TODOS);
+
+		for (Venta venta : ventasCargadas) {
+			String cliente = venta.getCliente();
+
+			if (cliente != null && !cliente.trim().isEmpty() && !existeClienteEnCombo(cliente)) {
+				comboCliente.addItem(cliente);
+			}
+		}
+
+		comboCliente.setSelectedItem(clienteSeleccionado);
+
+		if (comboCliente.getSelectedItem() == null) {
+			comboCliente.setSelectedItem(OPCION_TODOS);
+		}
+
+		actualizandoComboClientes = false;
+	}
+
+	private boolean existeClienteEnCombo(String cliente) {
+		for (int i = 0; i < comboCliente.getItemCount(); i++) {
+			if (cliente.equalsIgnoreCase(comboCliente.getItemAt(i))) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private void aplicarFiltros() {
+		if (actualizandoComboClientes) {
+			return;
+		}
+
 		limpiarTabla();
 
 		String textoBusqueda = campoBuscarFactura.getText().trim().toLowerCase();
@@ -170,7 +224,8 @@ public class PanelVenta extends PanelCentral {
 				Object[] fila = { venta.getNumeroFactura(),
 						venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_FECHA) : "",
 						venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "",
-						venta.getCliente(), venta.getFormaPago(), venta.getImpuestos(), venta.getTotal(), estadoVenta };
+						venta.getCliente(), venta.getFormaPago(), formatearMoneda(venta.getImpuestos()),
+						formatearMoneda(venta.getTotal()), estadoVenta };
 
 				modeloTabla.addRow(fila);
 				totalFiltradas++;
@@ -186,6 +241,10 @@ public class PanelVenta extends PanelCentral {
 
 	public void actualizarTotalVentas(int total) {
 		actualizarTextoTotal(TEXTO_TOTAL, total);
+	}
+
+	private String formatearMoneda(double valor) {
+		return FORMATO_MONEDA.format(valor);
 	}
 
 }

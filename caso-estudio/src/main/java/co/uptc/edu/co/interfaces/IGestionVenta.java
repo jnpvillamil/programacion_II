@@ -17,7 +17,8 @@ public interface IGestionVenta {
     
     List<Venta> obtenerVentas();
     
-    void anularVenta(String numeroFactura) throws Exception;
+    void anularVenta(String numeroFactura, String motivo) throws Exception;
 
+    String generarNumeroFactura();
 
 }
