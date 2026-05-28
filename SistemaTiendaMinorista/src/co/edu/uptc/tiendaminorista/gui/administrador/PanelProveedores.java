@@ -42,7 +42,7 @@ public class PanelProveedores extends JPanel {
         
         JPanel motor = new JPanel();
         add(motor);
-        JLabel motorcli = new JLabel("Motor de busqueda cliente");
+        JLabel motorcli = new JLabel("Motor de busqueda Proveedor");
         motor.setAlignmentX(RIGHT_ALIGNMENT);
         motor.add(motorcli);
         JTextField Motolcli = new JTextField(20);

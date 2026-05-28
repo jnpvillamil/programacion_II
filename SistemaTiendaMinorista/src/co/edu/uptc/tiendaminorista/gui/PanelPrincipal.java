@@ -1,6 +1,7 @@
 package co.edu.uptc.tiendaminorista.gui;
 
 import java.awt.BorderLayout;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -9,6 +10,7 @@ import co.edu.uptc.tiendaminorista.gui.administrador.PanelInicial;
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelRegistrosEmpleados;
 import co.edu.uptc.tiendaminorista.enums.TipoDocumentoEnum;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
+import co.edu.uptc.tiendaminorista.modelo.Empleado;
 import co.edu.uptc.tiendaminorista.modelo.Proveedor;
 import co.edu.uptc.tiendaminorista.negocio.GestionCliente;
 import co.edu.uptc.tiendaminorista.negocio.GestionProducto;
@@ -17,6 +19,8 @@ import co.edu.uptc.tiendaminorista.negocio.SistemaSeguridad;
 import co.edu.uptc.tiendaminorista.persistencia.LocalCliente;
 import co.edu.uptc.tiendaminorista.persistencia.LocalProducto;
 import co.edu.uptc.tiendaminorista.persistencia.LocalProveedor;
+import co.edu.uptc.tiendaminorista.negocio.GestionEmpleado;
+import co.edu.uptc.tiendaminorista.persistencia.LocalEmpleado;
 
 public class PanelPrincipal extends JFrame {
 
@@ -24,7 +28,7 @@ public class PanelPrincipal extends JFrame {
 
     private PanelLogin panelLogin;
     private PanelInicial panelInicial;
-
+    private GestionEmpleado gestionEmpleado;
     private GestionCliente gestionCliente;
     private GestionProveedor gestionProveedor;
     private GestionProducto gestionProducto;
@@ -35,12 +39,11 @@ public class PanelPrincipal extends JFrame {
     public PanelPrincipal() {
 
         seguridad = new SistemaSeguridad();
-
+        gestionEmpleado = new GestionEmpleado(new LocalEmpleado());
         gestionCliente = new GestionCliente(new LocalCliente());
         gestionProveedor = new GestionProveedor(new LocalProveedor());
         gestionProducto = new GestionProducto(new LocalProducto());
         
-    
         evento = new Evento(this); 
         empleados = new PanelRegistrosEmpleados(evento);
         
@@ -53,48 +56,33 @@ public class PanelPrincipal extends JFrame {
         iniciarPaneles();
 
         add(panelLogin, BorderLayout.CENTER);
+
+        if (panelInicial.getPanelRegistrosEmpleados() != null) {
+            panelInicial.getPanelRegistrosEmpleados().cargarEmpleados(gestionEmpleado.listarEmpleados());
+        }
     }
 
     private void iniciarPaneles() {
-
         panelLogin = new PanelLogin(evento);
-
- 
         panelInicial = new PanelInicial(evento, gestionProducto, gestionCliente, gestionProveedor, empleados);
     }
 
     public void cambiarPanel(JPanel panel) {
-
         getContentPane().removeAll();
-
         add(panel, BorderLayout.CENTER);
-
         revalidate();
         repaint();
     }
 
     public void loguear() {
-
         try {
-
             if (seguridad.validarInicio(panelLogin.getCredencialusuario())) {
-
                 cambiarPanel(panelInicial);
-
             } else {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Credenciales incorrectas"
-                );
+                JOptionPane.showMessageDialog(this, "Credenciales incorrectas");
             }
-
         } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage()
-            );
+            JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
 
@@ -115,9 +103,7 @@ public class PanelPrincipal extends JFrame {
     }
 
     public static void main(String[] args) {
-
         PanelPrincipal ventana = new PanelPrincipal();
-
         ventana.setVisible(true);
     }
 
@@ -281,5 +267,72 @@ public class PanelPrincipal extends JFrame {
 
     public void mostrarComprasPro() {
         panelInicial.mostrarComprasProveedor();
+    }
+
+    public void registrarEmpleado() {
+        PanelRegistrosEmpleados panelEmp = panelInicial.getPanelRegistrosEmpleados();
+        String correo = panelEmp.getCorreo();
+        String password = panelEmp.getContraseña();
+
+        if (correo.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.");
+            return;
+        }
+
+        Empleado nuevoEmpleado = new Empleado();
+        nuevoEmpleado.setCorreo(correo);
+        nuevoEmpleado.setPassword(password);
+
+        gestionEmpleado.guardar(nuevoEmpleado);
+        JOptionPane.showMessageDialog(this, "Empleado registrado de forma correcta.");
+        
+        panelEmp.cargarEmpleados(gestionEmpleado.listarEmpleados());
+        panelEmp.limpiarCampos();
+    }
+
+    public void actualizarEmpleado() {
+        PanelRegistrosEmpleados panelEmp = panelInicial.getPanelRegistrosEmpleados();
+        String correo = panelEmp.getCorreo();
+        String password = panelEmp.getContraseña();
+
+        if (correo.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Complete los campos para poder actualizar.");
+            return;
+        }
+
+        Empleado empleadoModificado = new Empleado();
+        empleadoModificado.setCorreo(correo);
+        empleadoModificado.setPassword(password);
+
+        gestionEmpleado.actualizar(empleadoModificado);
+        JOptionPane.showMessageDialog(this, "Empleado modificado con éxito.");
+        
+        panelEmp.cargarEmpleados(gestionEmpleado.listarEmpleados());
+        panelEmp.limpiarCampos();
+    }
+
+    // 📍 LÓGICA SIMPLIFICADA Y FUNCIONAL PARA ELIMINAR EMPLEADO
+    public void eliminarEmpleado() {
+        PanelRegistrosEmpleados panelEmp = panelInicial.getPanelRegistrosEmpleados();
+        String correo = panelEmp.getCorreo();
+
+        if (correo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un empleado de la tabla para eliminar.");
+            return;
+        }
+
+        int confirmar = JOptionPane.showConfirmDialog(this, 
+            "¿Desea eliminar al empleado: " + correo + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (confirmar == JOptionPane.YES_OPTION) {
+            Empleado emp = new Empleado();
+            emp.setCorreo(correo);
+
+            gestionEmpleado.eliminar(emp);
+            JOptionPane.showMessageDialog(this, "Empleado eliminado.");
+
+            panelEmp.cargarEmpleados(gestionEmpleado.listarEmpleados());
+            panelEmp.limpiarCampos();
+        }
     }
 }

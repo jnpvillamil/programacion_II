@@ -26,6 +26,9 @@ public class Evento implements ActionListener {
     public final static String ACTUALIZARPRO1 = "Actualizar Proveedor";
     public final static String DESACTIVARPRO = "Desactivar proveedor";
     public final static String ACTIVARPRO = "Activar proveedor";
+    public final static String REGISTRAREM = "Registar Empleado";
+    public final static String ACTUALIZAREM = "Actualizar Empleado";
+    public final static String ELIMINAREM= "Eliminar";
 
     private PanelPrincipal ventana;
     private PanelProductos panelProductos;
@@ -106,7 +109,16 @@ public class Evento implements ActionListener {
 
             ventana.regresarAlInicial();
 
-        }
+        }else if (evento.equals(REGISTRAREM)) {
+            
+            ventana.registrarEmpleado();
 
-    }
+        } else if (evento.equals(ACTUALIZAREM)) {
+
+            ventana.actualizarEmpleado();
+
+        } else if (evento.equals(Evento.ELIMINAREM)) { 
+            ventana.eliminarEmpleado();
+        }
+}
 }
