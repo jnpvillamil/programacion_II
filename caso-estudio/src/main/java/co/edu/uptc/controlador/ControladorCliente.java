@@ -1,6 +1,9 @@
 
 package co.edu.uptc.controlador;
 
+import co.edu.uptc.dto.ClienteResumenDTO;
+import co.edu.uptc.enums.TipoCliente;
+import co.edu.uptc.enums.TipoIdentificacion;
 import co.edu.uptc.gui.PanelClientes;
 import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Cliente;
@@ -10,25 +13,11 @@ import co.edu.uptc.utilidades.ValidadorEntradas;
 import javax.swing.*;
 import java.util.List;
 
-/**
- * Controlador para la gestión de clientes.
- * 
- * APLICACIÓN DE PRINCIPIOS SOLID:
- * - S (Single Responsibility): Solo coordina interacción entre GUI y negocio
- * - D (Dependency Inversion): Depende de Repositorio<Cliente> (interfaz), no de implementación
- * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia sin modificar este código
- */
 public class ControladorCliente {
 
     private PanelClientes vista;
     private GestionClientes negocio;
 
-    /**
-     * Constructor con inyección de dependencias (DIP).
-     * 
-     * @param vista El panel GUI de clientes
-     * @param repositorioCliente Implementación de Repositorio<Cliente>
-     */
     public ControladorCliente(PanelClientes vista, Repositorio<Cliente> repositorioCliente) {
         this.vista = vista;
         this.negocio = new GestionClientes(repositorioCliente);
@@ -36,19 +25,10 @@ public class ControladorCliente {
         this.actualizarTabla();
     }
 
-    /**
-     * Constructor convenencia: usa PersistenciaCliente por defecto.
-     * 
-     * @param vista El panel GUI de clientes
-     */
     public ControladorCliente(PanelClientes vista) {
         this(vista, new PersistenciaCliente());
     }
 
-    /**
-     * Constructor alternativo si aún se recibe GestionClientes instanciada.
-     * Se mantiene para máxima compatibilidad.
-     */
     public ControladorCliente(PanelClientes vista, GestionClientes negocio) {
         this.vista = vista;
         this.negocio = negocio;
@@ -80,7 +60,7 @@ public class ControladorCliente {
         } else {
             JOptionPane.showMessageDialog(vista, "Error: La identificación ya existe.");
         }
-    }//
+    }
 
     private void buscar() {
         String criterio = vista.getTxtIdentificacion().getText();
@@ -112,11 +92,10 @@ public class ControladorCliente {
 
     private void actualizarTabla() {
         vista.getModeloTabla().setRowCount(0);
-        List<Cliente> lista = negocio.obtenerTodosLosClientes();
-        for (Cliente c : lista) {
+        List<ClienteResumenDTO> lista = negocio.listarResumen();
+        for (ClienteResumenDTO c : lista) {
             vista.getModeloTabla().addRow(new Object[]{
-                c.getCodigoCliente(), c.getNombre(), c.getIdentificacion(),
-                c.getTelefono(), c.getTipoCliente(), c.isActivo() ? "Activo" : "Inactivo"
+                c.getCodigo(), c.getNombreCompleto(), c.getTelefono()
             });
         }
     }
@@ -146,8 +125,9 @@ public class ControladorCliente {
         return new Cliente(
             vista.getTxtNombre().getText(), vista.getTxtIdentificacion().getText(),
             vista.getTxtDireccion().getText(), vista.getTxtTelefono().getText(),
-            vista.getTxtCodigo().getText(), vista.getCbTipoIdentificacion().getSelectedItem().toString(),
-            vista.getCbTipoCliente().getSelectedItem().toString(), true
+            vista.getTxtCodigo().getText(),
+            (TipoIdentificacion) vista.getCbTipoIdentificacion().getSelectedItem(),
+            (TipoCliente) vista.getCbTipoCliente().getSelectedItem(), true
         );
     }
 

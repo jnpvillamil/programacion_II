@@ -1,9 +1,11 @@
 package co.edu.uptc.modelo;
 
+import co.edu.uptc.enums.CategoriaProducto;
+
 public class Producto {
     private String codigoProducto;
     private String nombreProducto;
-    private String categoria;
+    private CategoriaProducto categoria;
     private double precioCompra;
     private double precioVenta;
     private int stockActual;
@@ -11,7 +13,9 @@ public class Producto {
     private int stockMaximo;
     private boolean activo;
 
-    public Producto(String codigoProducto, String nombreProducto, String categoria, double precioCompra, double precioVenta, int stockActual, int stockMinimo, int stockMaximo, boolean activo) {
+    public Producto(String codigoProducto, String nombreProducto, CategoriaProducto categoria,
+                    double precioCompra, double precioVenta, int stockActual,
+                    int stockMinimo, int stockMaximo, boolean activo) {
         this.codigoProducto = codigoProducto;
         this.nombreProducto = nombreProducto;
         this.categoria = categoria;
@@ -42,11 +46,11 @@ public class Producto {
         this.nombreProducto = nombreProducto;
     }
 
-    public String getCategoria() {
+    public CategoriaProducto getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(CategoriaProducto categoria) {
         this.categoria = categoria;
     }
 

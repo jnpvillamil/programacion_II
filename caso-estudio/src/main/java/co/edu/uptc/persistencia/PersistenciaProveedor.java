@@ -46,10 +46,10 @@ public class PersistenciaProveedor implements IPersistenciaProveedor {
             while (rs.next()) {
                 Proveedor p = new Proveedor();
                 p.setCodigoProveedor(rs.getString("codigo_proveedor"));
-                p.setNombre(rs.getString("razon_social")); // Heredado de Persona
-                p.setIdentificacion(rs.getString("nit")); // Heredado de Persona
-                p.setDireccion(rs.getString("direccion")); // Heredado de Persona
-                p.setTelefono(rs.getString("telefono")); // Heredado de Persona
+                p.setNombre(rs.getString("razon_social"));
+                p.setIdentificacion(rs.getString("nit"));
+                p.setDireccion(rs.getString("direccion"));
+                p.setTelefono(rs.getString("telefono"));
                 p.setCorreoElectronico(rs.getString("email"));
                 p.setActivo(rs.getBoolean("estado"));
                 

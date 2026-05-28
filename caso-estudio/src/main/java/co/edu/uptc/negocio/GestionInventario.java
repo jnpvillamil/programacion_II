@@ -1,46 +1,30 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.dto.ProductoResumenDTO;
 import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.persistencia.PersistenciaProducto;
 
 import java.util.List;
 
-/**
- * Capa de negocio para la gestión de inventario/productos.
- * 
- * APLICACIÓN DE PRINCIPIOS SOLID:
- * - S (Single Responsibility): Solo gestiona lógica de negocio de productos
- * - D (Dependency Inversion): Depende de Repositorio<Producto>, no de implementación concreta
- * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia
- */
 public class GestionInventario {
 
     private Repositorio<Producto> repositorioProducto;
 
-    /**
-     * Constructor con inyección de dependencias.
-     * 
-     * @param repositorioProducto Implementación de Repositorio<Producto>
-     */
     public GestionInventario(Repositorio<Producto> repositorioProducto) {
         this.repositorioProducto = repositorioProducto;
     }
 
-    /**
-     * Constructor por defecto: usa PersistenciaProducto.
-     * Mantiene compatibilidad con código existente.
-     */
     public GestionInventario() {
         this(new PersistenciaProducto());
     }
 
     public boolean registrarProducto(Producto producto) {
         if (repositorioProducto.buscarPorId(producto.getCodigoProducto()) != null) {
-            return false; 
+            return false;
         }
         if (producto.getStockMinimo() >= producto.getStockMaximo()) {
-            return false; 
+            return false;
         }
         repositorioProducto.guardar(producto);
         return true;
@@ -48,8 +32,33 @@ public class GestionInventario {
 
     public boolean actualizarProducto(Producto producto) {
         if (repositorioProducto.buscarPorId(producto.getCodigoProducto()) == null) {
-            return false; 
+            return false;
         }
+        repositorioProducto.actualizar(producto);
+        return true;
+    }
+
+    public boolean registrarMovimientoInventario(String codigo, int cantidad, String tipo) {
+        if (cantidad <= 0) {
+            return false;
+        }
+
+        Producto producto = repositorioProducto.buscarPorId(codigo);
+        if (producto == null) {
+            return false;
+        }
+
+        if ("ENTRADA".equalsIgnoreCase(tipo)) {
+            producto.setStockActual(producto.getStockActual() + cantidad);
+        } else if ("SALIDA".equalsIgnoreCase(tipo)) {
+            if (producto.getStockActual() < cantidad) {
+                return false;
+            }
+            producto.setStockActual(producto.getStockActual() - cantidad);
+        } else {
+            return false;
+        }
+
         repositorioProducto.actualizar(producto);
         return true;
     }
@@ -63,7 +72,7 @@ public class GestionInventario {
                 return true;
             }
         }
-        return false; 
+        return false;
     }
 
     public Producto buscarProducto(String codigoProducto) {
@@ -72,5 +81,17 @@ public class GestionInventario {
 
     public List<Producto> obtenerTodosLosProductos() {
         return repositorioProducto.listar();
+    }
+
+    public List<ProductoResumenDTO> listarResumen() {
+        return repositorioProducto.listar().stream()
+                .filter(Producto::isActivo)
+                .map(p -> new ProductoResumenDTO(
+                        p.getCodigoProducto(),
+                        p.getNombreProducto(),
+                        p.getCategoria() != null ? p.getCategoria().name() : "",
+                        p.getPrecioVenta(),
+                        p.getStockActual()))
+                .toList();
     }
 }

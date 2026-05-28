@@ -1,9 +1,11 @@
 package co.edu.uptc.modelo;
 
+import co.edu.uptc.interfaces.Calculable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Compra {
+public class Compra implements Calculable {
     private String facturaProveedor;
     private LocalDateTime fecha;
     private Proveedor proveedor;
@@ -11,7 +13,8 @@ public class Compra {
     private double totalCompra;
     private double iva;
 
-    public Compra(String facturaProveedor, LocalDateTime fecha, Proveedor proveedor, List<DetalleVenta> productosComprados, double totalCompra, double iva) {
+    public Compra(String facturaProveedor, LocalDateTime fecha, Proveedor proveedor,
+                  List<DetalleVenta> productosComprados, double totalCompra, double iva) {
         this.facturaProveedor = facturaProveedor;
         this.fecha = fecha;
         this.proveedor = proveedor;
@@ -21,6 +24,26 @@ public class Compra {
     }
 
     public Compra() {
+    }
+
+    @Override
+    public double calcularSubtotal() {
+        if (productosComprados != null && !productosComprados.isEmpty()) {
+            return productosComprados.stream()
+                    .mapToDouble(d -> d.getCantidad() * d.getPrecioUnitario())
+                    .sum();
+        }
+        return totalCompra - iva;
+    }
+
+    @Override
+    public double calcularIVA() {
+        return calcularSubtotal() * 0.19;
+    }
+
+    @Override
+    public double calcularTotal() {
+        return calcularSubtotal() + calcularIVA();
     }
 
     public String getFacturaProveedor() {

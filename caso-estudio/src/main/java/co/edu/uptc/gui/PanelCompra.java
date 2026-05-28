@@ -32,47 +32,47 @@ public class PanelCompra extends PanelBase {
     public void initComponents() {
         this.setLayout(new BorderLayout(0, 15));
 
-        JLabel lblTitulo = ConstructorComponentes.crearLabelTitulo("Ingreso de Mercancía (Compras)");
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(lblTitulo, BorderLayout.NORTH);
+        this.add(ConstructorComponentes.crearLabelTitulo("Compras"), BorderLayout.NORTH);
 
         JPanel panelBusqueda = new JPanel(new GridLayout(2, 1, 0, 10));
         panelBusqueda.setOpaque(false);
 
-        JPanel panelProveedor = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        JPanel panelProveedor = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
         panelProveedor.setOpaque(false);
-        panelProveedor.add(new JLabel("No. Factura:"));
+        panelProveedor.setBorder(ConstructorComponentes.crearBordeSeccion("Proveedor"));
+        panelProveedor.add(ConstructorComponentes.crearLabelFormulario("No. Factura:"));
         txtFacturaProveedor = ConstructorComponentes.crearCampoTexto();
-        txtFacturaProveedor.setPreferredSize(new Dimension(100, 25));
+        txtFacturaProveedor.setPreferredSize(new Dimension(120, ConstructorComponentes.ALTURA_CAMPO));
         panelProveedor.add(txtFacturaProveedor);
 
-        panelProveedor.add(new JLabel("NIT Proveedor:"));
+        panelProveedor.add(ConstructorComponentes.crearLabelFormulario("NIT Proveedor:"));
         txtIdentificacionProveedor = ConstructorComponentes.crearCampoTexto();
-        txtIdentificacionProveedor.setPreferredSize(new Dimension(120, 25));
+        txtIdentificacionProveedor.setPreferredSize(new Dimension(140, ConstructorComponentes.ALTURA_CAMPO));
         panelProveedor.add(txtIdentificacionProveedor);
         
         btnBuscarProveedor = ConstructorComponentes.crearBotonPrimario("Buscar");
         panelProveedor.add(btnBuscarProveedor);
         
         lblNombreProveedor = new JLabel("Proveedor: NO SELECCIONADO");
-        lblNombreProveedor.setFont(new Font("SansSerif", Font.ITALIC, 14));
+        lblNombreProveedor.setFont(new Font(ConstructorComponentes.FUENTE_UI, Font.ITALIC, ConstructorComponentes.TAMANIO_LABEL));
         panelProveedor.add(lblNombreProveedor);
 
-        JPanel panelProducto = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        JPanel panelProducto = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
         panelProducto.setOpaque(false);
-        panelProducto.add(new JLabel("Cód. Producto:"));
+        panelProducto.setBorder(ConstructorComponentes.crearBordeSeccion("Producto"));
+        panelProducto.add(ConstructorComponentes.crearLabelFormulario("Cód. Producto:"));
         txtCodigoProducto = ConstructorComponentes.crearCampoTexto();
-        txtCodigoProducto.setPreferredSize(new Dimension(100, 25));
+        txtCodigoProducto.setPreferredSize(new Dimension(120, ConstructorComponentes.ALTURA_CAMPO));
         panelProducto.add(txtCodigoProducto);
 
-        panelProducto.add(new JLabel("Costo Unitario ($):"));
+        panelProducto.add(ConstructorComponentes.crearLabelFormulario("Costo Unitario ($):"));
         txtCostoUnitario = ConstructorComponentes.crearCampoTexto();
-        txtCostoUnitario.setPreferredSize(new Dimension(100, 25));
+        txtCostoUnitario.setPreferredSize(new Dimension(120, ConstructorComponentes.ALTURA_CAMPO));
         panelProducto.add(txtCostoUnitario);
 
-        panelProducto.add(new JLabel("Cantidad:"));
+        panelProducto.add(ConstructorComponentes.crearLabelFormulario("Cantidad:"));
         txtCantidad = ConstructorComponentes.crearCampoTexto();
-        txtCantidad.setPreferredSize(new Dimension(60, 25));
+        txtCantidad.setPreferredSize(new Dimension(80, ConstructorComponentes.ALTURA_CAMPO));
         panelProducto.add(txtCantidad);
 
         btnAgregarProducto = ConstructorComponentes.crearBotonPrimario("Agregar Mercancía");
@@ -101,10 +101,10 @@ public class PanelCompra extends PanelBase {
 
         lblTotalCompra = new JLabel("TOTAL COMPRA: $ 0.00");
         lblTotalCompra.setFont(new Font("SansSerif", Font.BOLD, 22));
-        lblTotalCompra.setForeground(Color.decode("#2E7D32")); // Verde oscuro para ingresos a inventario
+        lblTotalCompra.setForeground(Color.decode("#2E7D32"));
         panelCierre.add(lblTotalCompra);
         
-        btnFinalizarCompra = ConstructorComponentes.crearBotonPrimario("REGISTRAR COMPRA");
+        btnFinalizarCompra = ConstructorComponentes.crearBotonGuardar("REGISTRAR COMPRA");
         btnFinalizarCompra.setPreferredSize(new Dimension(220, 40));
         panelCierre.add(btnFinalizarCompra);
 

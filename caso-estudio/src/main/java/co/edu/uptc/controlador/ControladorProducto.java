@@ -1,5 +1,7 @@
 package co.edu.uptc.controlador;
 
+import co.edu.uptc.dto.ProductoResumenDTO;
+import co.edu.uptc.enums.CategoriaProducto;
 import co.edu.uptc.gui.PanelProducto;
 import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Producto;
@@ -9,25 +11,11 @@ import co.edu.uptc.utilidades.ValidadorEntradas;
 import javax.swing.*;
 import java.util.List;
 
-/**
- * Controlador para la gestión de productos/inventario.
- * 
- * APLICACIÓN DE PRINCIPIOS SOLID:
- * - S (Single Responsibility): Solo coordina interacción entre GUI y negocio
- * - D (Dependency Inversion): Depende de Repositorio<Producto> (interfaz), no de implementación
- * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia sin modificar este código
- */
 public class ControladorProducto {
 
     private PanelProducto vista;
     private GestionInventario negocio;
 
-    /**
-     * Constructor con inyección de dependencias (DIP).
-     * 
-     * @param vista El panel GUI de productos
-     * @param repositorioProducto Implementación de Repositorio<Producto>
-     */
     public ControladorProducto(PanelProducto vista, Repositorio<Producto> repositorioProducto) {
         this.vista = vista;
         this.negocio = new GestionInventario(repositorioProducto);
@@ -35,19 +23,10 @@ public class ControladorProducto {
         this.actualizarTabla();
     }
 
-    /**
-     * Constructor convenencia: usa PersistenciaProducto por defecto.
-     * 
-     * @param vista El panel GUI de productos
-     */
     public ControladorProducto(PanelProducto vista) {
         this(vista, new PersistenciaProducto());
     }
 
-    /**
-     * Constructor alternativo si aún se recibe GestionInventario instanciada.
-     * Se mantiene para máxima compatibilidad.
-     */
     public ControladorProducto(PanelProducto vista, GestionInventario negocio) {
         this.vista = vista;
         this.negocio = negocio;
@@ -60,8 +39,8 @@ public class ControladorProducto {
         vista.getBtnBuscar().addActionListener(e -> buscar());
         vista.getBtnEditar().addActionListener(e -> editar());
         vista.getBtnInactivar().addActionListener(e -> inactivar());
+        vista.getBtnRegistrarMovimiento().addActionListener(e -> registrarMovimiento());
         
-
         vista.getTablaProductos().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && vista.getTablaProductos().getSelectedRow() != -1) {
                 cargarDesdeTabla();
@@ -75,7 +54,7 @@ public class ControladorProducto {
         if (negocio.registrarProducto(p)) {
             actualizarTabla();
             limpiar();
-            JOptionPane.showMessageDialog(vista, "Producto Guardado.");
+            JOptionPane.showMessageDialog(vista, "Producto guardado.");
         } else {
             JOptionPane.showMessageDialog(vista, "Error: El código ya existe.");
         }
@@ -87,7 +66,7 @@ public class ControladorProducto {
         if (p != null) {
             cargarEnForm(p);
         } else {
-            JOptionPane.showMessageDialog(vista, "No se encontró el producto.");
+            JOptionPane.showMessageDialog(vista, "No se encontró el código de Producto.");
         }
     }
 
@@ -96,9 +75,9 @@ public class ControladorProducto {
         Producto p = crearDesdeForm();
         if (negocio.actualizarProducto(p)) {
             actualizarTabla();
-            JOptionPane.showMessageDialog(vista, "Producto Actualizado.");
+            JOptionPane.showMessageDialog(vista, "Producto actualizado.");
         }
-    }//prueba commit
+    }
 
     private void inactivar() {
         String cod = vista.getTxtCodigo().getText();
@@ -108,20 +87,46 @@ public class ControladorProducto {
             negocio.actualizarProducto(p);
             actualizarTabla();
             limpiar();
-            JOptionPane.showMessageDialog(vista, "Producto Inactivado.");
+            JOptionPane.showMessageDialog(vista, "Producto inactivado.");
+        }
+    }
+
+    private void registrarMovimiento() {
+        String codigo = vista.getTxtCodMovimiento().getText();
+        String cantidadTexto = vista.getTxtCantMovimiento().getText();
+        String tipo = (String) vista.getCbTipoMovimiento().getSelectedItem();
+
+        if (ValidadorEntradas.esVacio(codigo) || ValidadorEntradas.esVacio(cantidadTexto)) {
+            JOptionPane.showMessageDialog(vista, "Ingrese código y cantidad.", "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!ValidadorEntradas.esNumero(cantidadTexto)) {
+            JOptionPane.showMessageDialog(vista, "La cantidad debe ser numérica.", "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int cantidad = Integer.parseInt(cantidadTexto);
+        if (negocio.registrarMovimientoInventario(codigo.trim(), cantidad, tipo)) {
+            actualizarTabla();
+            vista.getTxtCodMovimiento().setText("");
+            vista.getTxtCantMovimiento().setText("");
+            JOptionPane.showMessageDialog(vista, "Movimiento de inventario registrado.");
+        } else {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo registrar el movimiento. Verifique código, stock y cantidad.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void actualizarTabla() {
         vista.getModeloTabla().setRowCount(0);
-        List<Producto> lista = negocio.obtenerTodosLosProductos();
-        for (Producto p : lista) {
-            if (p.isActivo()) {
-                vista.getModeloTabla().addRow(new Object[]{
-                    p.getCodigoProducto(), p.getNombreProducto(), p.getCategoria(),
-                    p.getPrecioVenta(), p.getStockActual(), p.getStockMinimo()
-                });
-            }
+        List<ProductoResumenDTO> lista = negocio.listarResumen();
+        for (ProductoResumenDTO p : lista) {
+            vista.getModeloTabla().addRow(new Object[]{
+                p.getCodigo(), p.getNombre(), p.getCategoria() != null ? p.getCategoria() : "",
+                p.getPrecioVenta(), p.getStockActual()
+            });
         }
     }
 
@@ -139,7 +144,7 @@ public class ControladorProducto {
     private void cargarEnForm(Producto p) {
         vista.getTxtCodigo().setText(p.getCodigoProducto());
         vista.getTxtNombre().setText(p.getNombreProducto());
-        vista.getTxtCategoria().setText(p.getCategoria());
+        vista.getCbCategoria().setSelectedItem(p.getCategoria());
         vista.getTxtPrecioCompra().setText(String.valueOf(p.getPrecioCompra()));
         vista.getTxtPrecioVenta().setText(String.valueOf(p.getPrecioVenta()));
         vista.getTxtStockActual().setText(String.valueOf(p.getStockActual()));
@@ -150,7 +155,8 @@ public class ControladorProducto {
     private Producto crearDesdeForm() {
         return new Producto(
             vista.getTxtCodigo().getText(), vista.getTxtNombre().getText(),
-            vista.getTxtCategoria().getText(), Double.parseDouble(vista.getTxtPrecioCompra().getText()),
+            (CategoriaProducto) vista.getCbCategoria().getSelectedItem(),
+            Double.parseDouble(vista.getTxtPrecioCompra().getText()),
             Double.parseDouble(vista.getTxtPrecioVenta().getText()), Integer.parseInt(vista.getTxtStockActual().getText()),
             Integer.parseInt(vista.getTxtStockMinimo().getText()), Integer.parseInt(vista.getTxtStockMaximo().getText()), true
         );
@@ -158,6 +164,6 @@ public class ControladorProducto {
 
     private void limpiar() {
         vista.getTxtCodigo().setText(""); vista.getTxtNombre().setText("");
-        vista.getTxtCategoria().setText(""); vista.getTxtPrecioVenta().setText("");
+        vista.getCbCategoria().setSelectedIndex(0); vista.getTxtPrecioVenta().setText("");
     }
 }

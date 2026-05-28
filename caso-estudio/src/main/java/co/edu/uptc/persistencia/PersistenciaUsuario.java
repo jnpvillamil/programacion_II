@@ -26,12 +26,17 @@ public class PersistenciaUsuario implements IPersistenciaUsuario {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    String usuario = rs.getString("usuario");
+                    if ("cajero".equalsIgnoreCase(usuario)) {
+                        return new co.edu.uptc.modelo.Cajero(
+                                usuario, "", "", "", usuario, claveIngresada);
+                    }
                     return new Administrador(
-                        nombreUsuario,
+                        usuario,
                         "",
                         "",
                         "",
-                        nombreUsuario,
+                        usuario,
                         claveIngresada
                     );
                 }

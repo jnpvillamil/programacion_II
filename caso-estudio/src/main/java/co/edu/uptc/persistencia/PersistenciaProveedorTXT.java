@@ -62,7 +62,6 @@ public class PersistenciaProveedorTXT implements IPersistenciaProveedor {
     public boolean actualizar(Proveedor objeto) {
         List<Proveedor> todos = new ArrayList<>();
         
-        // Leer todos los proveedores
         try (BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
@@ -84,7 +83,6 @@ public class PersistenciaProveedorTXT implements IPersistenciaProveedor {
             return false;
         }
         
-        // Actualizar el proveedor encontrado
         boolean encontrado = false;
         for (Proveedor p : todos) {
             if (p.getCodigoProveedor().equals(objeto.getCodigoProveedor())) {
@@ -101,7 +99,6 @@ public class PersistenciaProveedorTXT implements IPersistenciaProveedor {
         
         if (!encontrado) return false;
         
-        // Reescribir el archivo
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO))) {
             for (Proveedor p : todos) {
                 String linea = p.getCodigoProveedor() + "|" 
@@ -123,7 +120,6 @@ public class PersistenciaProveedorTXT implements IPersistenciaProveedor {
 
     @Override
     public boolean eliminar(String id) {
-        // Marcar como inactivo
         Proveedor p = buscarPorId(id);
         if (p != null) {
             p.setActivo(false);

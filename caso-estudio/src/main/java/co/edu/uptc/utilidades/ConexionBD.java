@@ -22,12 +22,8 @@ public class ConexionBD {
             if (conexion == null || conexion.isClosed()) {
          
             	
-                Class.forName("com.mysql.cj.jdbc.Driver");
                 conexion = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("¡Conexión exitosa a Clever Cloud (Europa)!");
             }
-        } catch (ClassNotFoundException e) {
-            System.err.println("Error: No se encontró el conector de MySQL en el POM.xml. " + e.getMessage());
         } catch (SQLException e) {
             System.err.println("Error al conectar a la BD: " + e.getMessage());
         }
@@ -38,7 +34,6 @@ public class ConexionBD {
         try {
             if (conexion != null && !conexion.isClosed()) {
                 conexion.close();
-                System.out.println("Conexión con la BD cerrada.");
             }
         } catch (SQLException e) {
             System.err.println("Error al cerrar la conexión: " + e.getMessage());

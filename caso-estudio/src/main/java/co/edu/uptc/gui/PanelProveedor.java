@@ -20,9 +20,7 @@ public class PanelProveedor extends PanelBase {
     public void initComponents() {
         this.setLayout(new BorderLayout(20, 20));
 
-        JLabel lblTitulo = ConstructorComponentes.crearLabelTitulo("GESTIÓN DE PROVEEDORES");
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(lblTitulo, BorderLayout.NORTH);
+        this.add(ConstructorComponentes.crearLabelTitulo("Proveedores"), BorderLayout.NORTH);
 
         JPanel panelIzquierdo = new JPanel(new BorderLayout(0, 15));
         panelIzquierdo.setOpaque(false);
@@ -31,37 +29,36 @@ public class PanelProveedor extends PanelBase {
         JPanel panelForm = new JPanel(new GridLayout(12, 1, 0, 5));
         panelForm.setOpaque(false);
 
-        panelForm.add(new JLabel("Código Proveedor:")); 
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Código Proveedor:")); 
         txtCodigo = ConstructorComponentes.crearCampoTexto(); 
         panelForm.add(txtCodigo);
 
-        panelForm.add(new JLabel("Razón Social:")); 
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Razón Social:")); 
         txtRazonSocial = ConstructorComponentes.crearCampoTexto(); 
         panelForm.add(txtRazonSocial);
 
-        panelForm.add(new JLabel("NIT:")); 
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("NIT:")); 
         txtNit = ConstructorComponentes.crearCampoTexto(); 
         panelForm.add(txtNit);
 
-        panelForm.add(new JLabel("Dirección:")); 
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Dirección:")); 
         txtDireccion = ConstructorComponentes.crearCampoTexto(); 
         panelForm.add(txtDireccion);
 
-        panelForm.add(new JLabel("Teléfono:")); 
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Teléfono:")); 
         txtTelefono = ConstructorComponentes.crearCampoTexto(); 
         panelForm.add(txtTelefono);
 
-        panelForm.add(new JLabel("Correo Electrónico:")); 
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Correo Electrónico:")); 
         txtCorreo = ConstructorComponentes.crearCampoTexto(); 
         panelForm.add(txtCorreo);
 
         JPanel panelBotones = new JPanel(new GridLayout(2, 2, 10, 10));
         panelBotones.setOpaque(false);
-        btnRegistrar = ConstructorComponentes.crearBotonPrimario("REGISTRAR");
+        btnRegistrar = ConstructorComponentes.crearBotonGuardar("REGISTRAR");
         btnEditar = ConstructorComponentes.crearBotonPrimario("EDITAR");
         btnBuscar = ConstructorComponentes.crearBotonPrimario("BUSCAR");
-        btnInactivar = ConstructorComponentes.crearBotonPrimario("INACTIVAR");
-        btnInactivar.setBackground(new Color(198, 40, 40)); // Rojo para inactivar lógica [cite: 503]
+        btnInactivar = ConstructorComponentes.crearBotonPeligro("INACTIVAR");
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(btnEditar);

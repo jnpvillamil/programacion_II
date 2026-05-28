@@ -1,9 +1,12 @@
 package co.edu.uptc.modelo;
 
+import co.edu.uptc.enums.FormaPago;
+import co.edu.uptc.interfaces.Calculable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Venta {
+public class Venta implements Calculable {
     private String numeroFactura;
     private LocalDateTime fechaHora;
     private Cliente cliente;
@@ -11,9 +14,11 @@ public class Venta {
     private double subtotal;
     private double ivaAplicado;
     private double totalVenta;
-    private String formaPago;
+    private FormaPago formaPago;
 
-    public Venta(String numeroFactura, LocalDateTime fechaHora, Cliente cliente, List<DetalleVenta> productosVendidos, double subtotal, double ivaAplicado, double totalVenta, String formaPago) {
+    public Venta(String numeroFactura, LocalDateTime fechaHora, Cliente cliente,
+                 List<DetalleVenta> productosVendidos, double subtotal, double ivaAplicado,
+                 double totalVenta, FormaPago formaPago) {
         this.numeroFactura = numeroFactura;
         this.fechaHora = fechaHora;
         this.cliente = cliente;
@@ -25,6 +30,26 @@ public class Venta {
     }
 
     public Venta() {
+    }
+
+    @Override
+    public double calcularSubtotal() {
+        if (productosVendidos != null && !productosVendidos.isEmpty()) {
+            return productosVendidos.stream()
+                    .mapToDouble(d -> d.getCantidad() * d.getPrecioUnitario())
+                    .sum();
+        }
+        return subtotal;
+    }
+
+    @Override
+    public double calcularIVA() {
+        return calcularSubtotal() * 0.19;
+    }
+
+    @Override
+    public double calcularTotal() {
+        return calcularSubtotal() + calcularIVA();
     }
 
     public String getNumeroFactura() {
@@ -83,11 +108,11 @@ public class Venta {
         this.totalVenta = totalVenta;
     }
 
-    public String getFormaPago() {
+    public FormaPago getFormaPago() {
         return formaPago;
     }
 
-    public void setFormaPago(String formaPago) {
+    public void setFormaPago(FormaPago formaPago) {
         this.formaPago = formaPago;
     }
 }

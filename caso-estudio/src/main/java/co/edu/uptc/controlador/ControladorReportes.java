@@ -1,132 +1,215 @@
 package co.edu.uptc.controlador;
 
-import co.edu.uptc.gui.PanelReporteInventario;
-import co.edu.uptc.gui.PanelReporteMejorCliente;
-import co.edu.uptc.gui.PanelReporteMetodoPago;
-import co.edu.uptc.gui.PanelReporteProductoMasVendido;
-import co.edu.uptc.persistencia.PersistenciaReportes;
+import co.edu.uptc.dto.ReporteConsolidadoDiarioDTO;
+import co.edu.uptc.dto.ReportesDTO;
+import co.edu.uptc.gui.PanelReportes;
+import co.edu.uptc.negocio.GestionReportes;
+import co.edu.uptc.utilidades.ExportadorDatos;
 
-import java.sql.ResultSet;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Map;
 
 public class ControladorReportes {
 
-    private PersistenciaReportes persistencia;
+    private final PanelReportes vista;
+    private final GestionReportes negocio;
+    private String reporteActual;
+    private ReporteConsolidadoDiarioDTO consolidadoActual;
 
-    public ControladorReportes() {
-
-        persistencia =
-                new PersistenciaReportes();
+    public ControladorReportes(PanelReportes vista, GestionReportes negocio) {
+        this.vista = vista;
+        this.negocio = negocio;
+        this.inicializarEventos();
     }
 
-    // CUS22
-    public void cargarReporteProductoMasVendido(
-            PanelReporteProductoMasVendido panel) {
+    private void inicializarEventos() {
+        vista.getCbTipoReporte().addActionListener(e -> actualizarControlesFecha());
+        vista.getBtnGenerar().addActionListener(e -> generarReporteDinamico());
+        vista.getBtnGenerarJSON().addActionListener(e -> exportarJSON());
+        actualizarControlesFecha();
+    }
 
-        try {
-
-            ResultSet rs =
-                    persistencia
-                    .reporteProductoMasVendido();
-
-            while(rs.next()) {
-
-                Object[] fila = {
-
-                        rs.getString("nombre"),
-                        rs.getInt("stock_actual")
-                };
-
-                panel.getModeloTabla()
-                        .addRow(fila);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
+    private void actualizarControlesFecha() {
+        boolean esConsolidado = esReporteConsolidado();
+        vista.getLblFechaReporte().setVisible(esConsolidado);
+        vista.getSpFechaReporte().setVisible(esConsolidado);
+        if (!esConsolidado) {
+            consolidadoActual = null;
         }
     }
 
-    // CUS23
-    public void cargarReporteMejorCliente(
-            PanelReporteMejorCliente panel) {
+    private boolean esReporteConsolidado() {
+        Object seleccion = vista.getCbTipoReporte().getSelectedItem();
+        return PanelReportes.REPORTE_CONSOLIDADO.equals(seleccion);
+    }
 
-        try {
+    private LocalDate obtenerFechaSeleccionada() {
+        Date fecha = (Date) vista.getSpFechaReporte().getValue();
+        Instant instante = fecha.toInstant();
+        return instante.atZone(ZoneId.systemDefault()).toLocalDate();
+    }
 
-            ResultSet rs =
-                    persistencia
-                    .reporteMejorCliente();
+    private void generarReporteDinamico() {
+        String seleccion = vista.getCbTipoReporte().getSelectedItem().toString();
+        reporteActual = seleccion;
+        consolidadoActual = null;
+        DefaultTableModel modelo = vista.getModeloTabla();
 
-            while(rs.next()) {
+        modelo.setRowCount(0);
+        modelo.setColumnCount(0);
 
-                Object[] fila = {
+        if (esReporteConsolidado()) {
+            generarVistaConsolidado(modelo);
+            return;
+        }
 
-                        rs.getString("nombre"),
-                        rs.getString("correo")
-                };
-
-                panel.getModeloTabla()
-                        .addRow(fila);
+        switch (seleccion) {
+            case "Mejor Cliente" -> {
+                modelo.setColumnIdentifiers(new String[]{"Cédula", "Nombre", "Total Comprado"});
+                for (ReportesDTO.MejorClienteItem item : negocio.obtenerReporteMejorCliente()) {
+                    modelo.addRow(new Object[]{
+                            item.getIdentificacion(),
+                            item.getNombre(),
+                            item.getTotalComprado()
+                    });
+                }
             }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
+            case "Producto Más Vendido" -> {
+                modelo.setColumnIdentifiers(new String[]{"Código", "Producto", "Unidades Vendidas"});
+                for (ReportesDTO.ProductoVendidoItem item : negocio.obtenerReporteProductoMasVendido()) {
+                    modelo.addRow(new Object[]{
+                            item.getCodigo(),
+                            item.getNombre(),
+                            item.getCantidad()
+                    });
+                }
+            }
+            case "Ventas por Método de Pago" -> {
+                modelo.setColumnIdentifiers(new String[]{"Método de Pago", "Ingresos Totales"});
+                for (ReportesDTO.VentaMetodoPagoItem item : negocio.obtenerReporteVentasPorMetodoPago()) {
+                    modelo.addRow(new Object[]{
+                            item.getFormaPago(),
+                            item.getTotalVenta()
+                    });
+                }
+            }
+            case "Estado de Inventario" -> {
+                modelo.setColumnIdentifiers(new String[]{"Código", "Producto", "Stock Actual", "Valorización Bodega"});
+                for (ReportesDTO.InventarioItem item : negocio.obtenerReporteEstadoInventario()) {
+                    modelo.addRow(new Object[]{
+                            item.getCodigo(),
+                            item.getNombre(),
+                            item.getStockActual(),
+                            item.getValorizacion()
+                    });
+                }
+            }
+            default -> {
+            }
         }
     }
 
-    // CUS24
-    public void cargarReporteMetodoPago(
-            PanelReporteMetodoPago panel) {
+    private void generarVistaConsolidado(DefaultTableModel modelo) {
+        consolidadoActual = negocio.generarConsolidadoDiario(obtenerFechaSeleccionada());
+        if (consolidadoActual == null) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo generar el resumen consolidado.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        try {
+        modelo.setColumnIdentifiers(new String[]{"Indicador", "Valor"});
 
-            ResultSet rs =
-                    persistencia
-                    .reporteMetodoPago();
+        modelo.addRow(new Object[]{"Fecha", consolidadoActual.getFecha()});
+        modelo.addRow(new Object[]{"Total ventas", consolidadoActual.getTotalVentas()});
+        modelo.addRow(new Object[]{"Total compras", consolidadoActual.getTotalCompras()});
+        modelo.addRow(new Object[]{"Utilidad bruta", consolidadoActual.getUtilidadBruta()});
 
-            while(rs.next()) {
+        for (ReporteConsolidadoDiarioDTO.VentaFormaPagoItem item : consolidadoActual.getVentasPorFormaPago()) {
+            modelo.addRow(new Object[]{
+                    "Ventas " + item.getFormaPago(),
+                    item.getTotal()
+            });
+        }
 
-                Object[] fila = {
+        for (ReporteConsolidadoDiarioDTO.ProductoMasVendidoItem item : consolidadoActual.getProductosMasVendidos()) {
+            modelo.addRow(new Object[]{
+                    "Top producto: " + item.getNombre(),
+                    item.getCantidad() + " unidades"
+            });
+        }
 
-                        rs.getString("forma_pago"),
-                        rs.getDouble("total")
-                };
-
-                panel.getModeloTabla()
-                        .addRow(fila);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
+        for (Map.Entry<String, Double> cuenta : consolidadoActual.getResumenContable().entrySet()) {
+            modelo.addRow(new Object[]{
+                    "Contabilidad: " + cuenta.getKey(),
+                    cuenta.getValue()
+            });
         }
     }
 
-    // CUS25
-    public void cargarReporteInventario(
-            PanelReporteInventario panel) {
+    private void exportarJSON() {
+        if (esReporteConsolidado()) {
+            exportarConsolidadoJSON();
+            return;
+        }
 
-        try {
+        DefaultTableModel modelo = vista.getModeloTabla();
+        if (modelo.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(vista,
+                    "No hay datos para exportar. Genere un reporte primero.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            ResultSet rs =
-                    persistencia
-                    .reporteInventario();
+        String nombreReporte = reporteActual != null
+                ? reporteActual
+                : vista.getCbTipoReporte().getSelectedItem().toString();
+        String ruta = "reporte_" + nombreReporte.toLowerCase()
+                .replace(" ", "_")
+                .replace("á", "a")
+                .replace("é", "e")
+                .replace("í", "i")
+                .replace("ó", "o")
+                .replace("ú", "u")
+                + ".json";
 
-            while(rs.next()) {
+        boolean exito = ExportadorDatos.exportarTablaAJson(modelo, nombreReporte, ruta);
+        if (exito) {
+            JOptionPane.showMessageDialog(vista,
+                    "Reporte exportado correctamente en:\n" + ruta,
+                    "Exportación exitosa",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo exportar el reporte a JSON.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-                Object[] fila = {
+    private void exportarConsolidadoJSON() {
+        LocalDate fecha = obtenerFechaSeleccionada();
+        Date fechaJava = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        String ruta = "reporte_consolidado_" + fecha + ".json";
 
-                        rs.getString("nombre"),
-                        rs.getInt("stock_actual")
-                };
-
-                panel.getModeloTabla()
-                        .addRow(fila);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
+        boolean exito = negocio.generarResumenDiarioJSON(fechaJava, ruta);
+        if (exito) {
+            JOptionPane.showMessageDialog(vista,
+                    "Resumen diario JSON exportado en:\n" + ruta,
+                    "Exportación exitosa",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo exportar el resumen diario JSON.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

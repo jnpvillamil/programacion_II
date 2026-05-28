@@ -1,36 +1,20 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.dto.ClienteResumenDTO;
 import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.persistencia.PersistenciaCliente;
 
 import java.util.List;
 
-/**
- * Capa de negocio para la gestión de clientes.
- * 
- * APLICACIÓN DE PRINCIPIOS SOLID:
- * - S (Single Responsibility): Solo gestiona lógica de negocio de clientes
- * - D (Dependency Inversion): Depende de Repositorio<Cliente>, no de implementación concreta
- * - O (Open/Closed): Abierto a nuevas implementaciones de persistencia
- */
 public class GestionClientes {
 
     private Repositorio<Cliente> repositorioCliente;
 
-    /**
-     * Constructor con inyección de dependencias.
-     * 
-     * @param repositorioCliente Implementación de Repositorio<Cliente>
-     */
     public GestionClientes(Repositorio<Cliente> repositorioCliente) {
         this.repositorioCliente = repositorioCliente;
     }
 
-    /**
-     * Constructor por defecto: usa PersistenciaCliente.
-     * Mantiene compatibilidad con código existente.
-     */
     public GestionClientes() {
         this(new PersistenciaCliente());
     }
@@ -67,5 +51,14 @@ public class GestionClientes {
 
     public List<Cliente> obtenerTodosLosClientes() {
         return repositorioCliente.listar();
+    }
+
+    public List<ClienteResumenDTO> listarResumen() {
+        return repositorioCliente.listar().stream()
+                .map(c -> new ClienteResumenDTO(
+                        c.getCodigoCliente(),
+                        c.getNombre(),
+                        c.getTelefono()))
+                .toList();
     }
 }

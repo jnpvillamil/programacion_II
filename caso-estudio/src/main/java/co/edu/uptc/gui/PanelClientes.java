@@ -1,5 +1,7 @@
 package co.edu.uptc.gui;
 
+import co.edu.uptc.enums.TipoCliente;
+import co.edu.uptc.enums.TipoIdentificacion;
 import co.edu.uptc.utilidades.ConstructorComponentes;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -8,7 +10,8 @@ import java.awt.*;
 public class PanelClientes extends PanelBase {
 
     private JTextField txtCodigo, txtNombre, txtIdentificacion, txtDireccion, txtTelefono;
-    private JComboBox<String> cbTipoIdentificacion, cbTipoCliente;
+    private JComboBox<TipoIdentificacion> cbTipoIdentificacion;
+    private JComboBox<TipoCliente> cbTipoCliente;
     private JButton btnRegistrar, btnEditar, btnBuscar, btnInactivar;
     private JTable tablaClientes;
     private DefaultTableModel modeloTabla;
@@ -22,9 +25,7 @@ public class PanelClientes extends PanelBase {
         this.setLayout(new BorderLayout(20, 20));
 
 
-        JLabel lblTitulo = ConstructorComponentes.crearLabelTitulo("GESTIÓN DE CLIENTES");
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(lblTitulo, BorderLayout.NORTH);
+        this.add(ConstructorComponentes.crearLabelTitulo("Clientes"), BorderLayout.NORTH);
 
 
         JPanel panelIzquierdo = new JPanel(new BorderLayout(0, 15));
@@ -34,30 +35,28 @@ public class PanelClientes extends PanelBase {
         JPanel panelForm = new JPanel(new GridLayout(14, 1, 0, 5));
         panelForm.setOpaque(false);
 
-        panelForm.add(new JLabel("Código Cliente:")); txtCodigo = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtCodigo);
-        panelForm.add(new JLabel("Nombre Completo:")); txtNombre = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtNombre);
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Código Cliente:")); txtCodigo = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtCodigo);
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Nombre Completo:")); txtNombre = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtNombre);
         
-        panelForm.add(new JLabel("Tipo Identificación:"));
-        cbTipoIdentificacion = new JComboBox<>(new String[]{"CC", "NIT", "CE", "PA"});
-        cbTipoIdentificacion.setBackground(Color.WHITE);
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Tipo Identificación:"));
+        cbTipoIdentificacion = ConstructorComponentes.crearComboBoxEnum(TipoIdentificacion.values());
         panelForm.add(cbTipoIdentificacion);
 
-        panelForm.add(new JLabel("Número Identificación:")); txtIdentificacion = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtIdentificacion);
-        panelForm.add(new JLabel("Dirección:")); txtDireccion = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtDireccion);
-        panelForm.add(new JLabel("Teléfono:")); txtTelefono = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtTelefono);
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Número Identificación:")); txtIdentificacion = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtIdentificacion);
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Dirección:")); txtDireccion = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtDireccion);
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Teléfono:")); txtTelefono = ConstructorComponentes.crearCampoTexto(); panelForm.add(txtTelefono);
 
-        panelForm.add(new JLabel("Tipo Cliente:"));
-        cbTipoCliente = new JComboBox<>(new String[]{"MINORISTA", "MAYORISTA"});
-        cbTipoCliente.setBackground(Color.WHITE);
+        panelForm.add(ConstructorComponentes.crearLabelFormulario("Tipo Cliente:"));
+        cbTipoCliente = ConstructorComponentes.crearComboBoxEnum(TipoCliente.values());
         panelForm.add(cbTipoCliente);
 
 
         JPanel panelBotones = new JPanel(new GridLayout(2, 2, 10, 10));
         panelBotones.setOpaque(false);
-        btnRegistrar = ConstructorComponentes.crearBotonPrimario("REGISTRAR");
+        btnRegistrar = ConstructorComponentes.crearBotonGuardar("REGISTRAR");
         btnEditar = ConstructorComponentes.crearBotonPrimario("EDITAR");
         btnBuscar = ConstructorComponentes.crearBotonPrimario("BUSCAR");
-        btnInactivar = ConstructorComponentes.crearBotonPrimario("INACTIVAR");
+        btnInactivar = ConstructorComponentes.crearBotonPeligro("INACTIVAR");
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(btnEditar);
@@ -68,7 +67,7 @@ public class PanelClientes extends PanelBase {
         panelIzquierdo.add(panelBotones, BorderLayout.SOUTH);
 
 
-        String[] columnas = {"Código", "Nombre", "ID", "Teléfono", "Tipo", "Estado"};
+        String[] columnas = {"Código", "Nombre", "Teléfono"};
         modeloTabla = new DefaultTableModel(columnas, 0);
         tablaClientes = new JTable(modeloTabla);
         tablaClientes.setRowHeight(25);
@@ -84,8 +83,8 @@ public class PanelClientes extends PanelBase {
     public JTextField getTxtIdentificacion() { return txtIdentificacion; }
     public JTextField getTxtDireccion() { return txtDireccion; }
     public JTextField getTxtTelefono() { return txtTelefono; }
-    public JComboBox<String> getCbTipoIdentificacion() { return cbTipoIdentificacion; }
-    public JComboBox<String> getCbTipoCliente() { return cbTipoCliente; }
+    public JComboBox<TipoIdentificacion> getCbTipoIdentificacion() { return cbTipoIdentificacion; }
+    public JComboBox<TipoCliente> getCbTipoCliente() { return cbTipoCliente; }
     public JButton getBtnRegistrar() { return btnRegistrar; }
     public JButton getBtnEditar() { return btnEditar; }
     public JButton getBtnBuscar() { return btnBuscar; }

@@ -3,23 +3,24 @@ package co.edu.uptc.negocio;
 import co.edu.uptc.interfaces.IPersistenciaProveedor;
 import co.edu.uptc.modelo.Proveedor;
 import co.edu.uptc.persistencia.PersistenciaProveedor;
-import java.util.List;
 
+import java.util.List;
 
 public class GestionProveedor {
     private IPersistenciaProveedor repo;
 
-  
-    public GestionProveedor(IPersistenciaProveedor repo) { 
-        this.repo = repo; 
+    public GestionProveedor(IPersistenciaProveedor repo) {
+        this.repo = repo;
     }
- 
-    public GestionProveedor() { 
+
+    public GestionProveedor() {
         this(new PersistenciaProveedor());
     }
 
     public boolean registrar(Proveedor p) {
-        if (repo.buscarPorId(p.getCodigoProveedor()) != null) return false;
+        if (repo.buscarPorId(p.getCodigoProveedor()) != null) {
+            return false;
+        }
         repo.guardar(p);
         return true;
     }
@@ -28,11 +29,25 @@ public class GestionProveedor {
         repo.actualizar(p);
     }
 
-    public List<Proveedor> listar() { 
-        return repo.listar(); 
+    public List<Proveedor> listar() {
+        return repo.listar();
     }
 
-    public Proveedor buscar(String criterio) { 
-        return repo.buscarPorId(criterio); 
+    public Proveedor buscar(String criterio) {
+        return repo.buscarPorId(criterio);
+    }
+
+    public Proveedor buscarPorIdentificacion(String criterio) {
+        Proveedor porCodigo = repo.buscarPorId(criterio);
+        if (porCodigo != null) {
+            return porCodigo;
+        }
+
+        for (Proveedor proveedor : repo.listar()) {
+            if (criterio.equals(proveedor.getIdentificacion())) {
+                return proveedor;
+            }
+        }
+        return null;
     }
 }

@@ -1,12 +1,17 @@
 package co.edu.uptc.modelo;
 
+import co.edu.uptc.enums.TipoCliente;
+import co.edu.uptc.enums.TipoIdentificacion;
+
 public class Cliente extends Persona {
     private String codigoCliente;
-    private String tipoIdentificacion;
-    private String tipoCliente;
+    private TipoIdentificacion tipoIdentificacion;
+    private TipoCliente tipoCliente;
     private boolean activo;
 
-    public Cliente(String nombre, String identificacion, String direccion, String telefono, String codigoCliente, String tipoIdentificacion, String tipoCliente, boolean activo) {
+    public Cliente(String nombre, String identificacion, String direccion, String telefono,
+                   String codigoCliente, TipoIdentificacion tipoIdentificacion,
+                   TipoCliente tipoCliente, boolean activo) {
         super(nombre, identificacion, direccion, telefono);
         this.codigoCliente = codigoCliente;
         this.tipoIdentificacion = tipoIdentificacion;
@@ -26,19 +31,19 @@ public class Cliente extends Persona {
         this.codigoCliente = codigoCliente;
     }
 
-    public String getTipoIdentificacion() {
+    public TipoIdentificacion getTipoIdentificacion() {
         return tipoIdentificacion;
     }
 
-    public void setTipoIdentificacion(String tipoIdentificacion) {
+    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
         this.tipoIdentificacion = tipoIdentificacion;
     }
 
-    public String getTipoCliente() {
+    public TipoCliente getTipoCliente() {
         return tipoCliente;
     }
 
-    public void setTipoCliente(String tipoCliente) {
+    public void setTipoCliente(TipoCliente tipoCliente) {
         this.tipoCliente = tipoCliente;
     }
 
