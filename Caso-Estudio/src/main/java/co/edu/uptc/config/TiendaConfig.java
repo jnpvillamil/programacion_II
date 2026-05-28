@@ -4,25 +4,47 @@ import co.edu.uptc.interfaces.*;
 import co.edu.uptc.persistencia.*;
 
 public class TiendaConfig {
-
-
     
     private static TiendaConfig instancia;
+    
+    // Cambia a true cuando quieras usar base de datos
+    private static final boolean USAR_BASE_DATOS = true;  // ← AHORA EN TRUE
     
     private GestionProducto gestionProducto;
     private GestionCliente gestionCliente;
     private GestionProveedor gestionProveedor;
     private GestionVenta gestionVenta;
     private GestionCompra gestionCompra;
-    private GestionContable gestionContable;  
+    private GestionContable gestionContable;
     
     private TiendaConfig() {
-        gestionProducto = new LocalProducto();
-        gestionCliente = new LocalCliente();
-        gestionProveedor = new LocalProveedor();
-        gestionVenta = new LocalVenta();
-        gestionCompra = new LocalCompra();
-        gestionContable = new LocalContable();  
+        if (USAR_BASE_DATOS) {
+            
+            gestionProducto = new DatabaseProducto();
+            gestionCliente = new DatabaseCliente();   
+            gestionProveedor = new DatabaseProveedor(); 
+            gestionVenta = new DatabaseVenta();         
+            gestionCompra = new DatabaseCompra();       
+            gestionContable = new DatabaseContable();   
+            
+           
+           
+           
+            
+            
+            
+            
+            
+        } else {
+            
+            gestionProducto = new LocalProducto();
+            gestionCliente = new LocalCliente();
+            gestionProveedor = new LocalProveedor();
+            gestionVenta = new LocalVenta();
+            gestionCompra = new LocalCompra();
+            gestionContable = new LocalContable();
+            System.out.println("✅ Usando persistencia en MEMORIA");
+        }
     }
     
     public static TiendaConfig getInstancia() {
@@ -37,5 +59,5 @@ public class TiendaConfig {
     public GestionProveedor getGestionProveedor() { return gestionProveedor; }
     public GestionVenta getGestionVenta() { return gestionVenta; }
     public GestionCompra getGestionCompra() { return gestionCompra; }
-    public GestionContable getGestionContable() { return gestionContable; }  
+    public GestionContable getGestionContable() { return gestionContable; }
 }
