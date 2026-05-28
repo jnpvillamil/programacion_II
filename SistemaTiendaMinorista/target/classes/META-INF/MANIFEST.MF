@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Build-Jdk-Spec: 22
-Main-Class: co.edu.uptc.tiendaminorista.gui.PanelPrincipal
-Created-By: Maven Integration for Eclipse
-
