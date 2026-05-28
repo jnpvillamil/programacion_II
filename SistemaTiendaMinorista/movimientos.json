@@ -1,0 +1,42 @@
+[
+  {
+    "codigo": "MOV00001",
+    "fecha": "2026-05-27",
+    "tipo": "Egreso",
+    "cuentaContable": "Compra de mercancía",
+    "debito": 24000.0,
+    "credito": 0.0,
+    "descripcion": "Compra de Agua",
+    "documentoRelacionado": "1"
+  },
+  {
+    "codigo": "MOV00002",
+    "fecha": "2026-05-27",
+    "tipo": "Egreso",
+    "cuentaContable": "Compra de mercancía",
+    "debito": 24000.0,
+    "credito": 0.0,
+    "descripcion": "Compra de Agua",
+    "documentoRelacionado": "1"
+  },
+  {
+    "codigo": "MOV00003",
+    "fecha": "2026-05-27",
+    "tipo": "Egreso",
+    "cuentaContable": "Compra de mercancía",
+    "debito": 22000.0,
+    "credito": 0.0,
+    "descripcion": "Compra de Agua",
+    "documentoRelacionado": "1"
+  },
+  {
+    "codigo": "MOV00004",
+    "fecha": "2026-05-27",
+    "tipo": "Egreso",
+    "cuentaContable": "Compra de mercancía",
+    "debito": 2000.0,
+    "credito": 0.0,
+    "descripcion": "Compra de Agua",
+    "documentoRelacionado": "1"
+  }
+]

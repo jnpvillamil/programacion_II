@@ -270,4 +270,16 @@ public class PanelPrincipal extends JFrame {
         panelInicial.cargarProveedores(gestionProveedor.listarProveedores());
         panelInicial.getPanelActualizarProveedor().refreshProveedorSeleccionado();
     }
+    
+    public void registrarCompra(String producto, double valor, String nitProveedor) {
+        if (panelInicial.getPanelGestionContable() != null) {
+            panelInicial.getPanelGestionContable().getGestionContable().registrarEgreso(producto, valor, nitProveedor);
+            panelInicial.getPanelGestionContable().actualizarDatos();
+            JOptionPane.showMessageDialog(this, "Compra registrada: " + producto + " por $" + valor);
+        }
+    }
+
+    public void mostrarComprasPro() {
+        panelInicial.mostrarComprasProveedor();
+    }
 }

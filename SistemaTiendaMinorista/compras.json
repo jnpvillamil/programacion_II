@@ -1,0 +1,10 @@
+[
+  {
+    "fecha": "2026-05-27",
+    "proveedor": "1",
+    "producto": "Agua",
+    "cantidad": 1,
+    "precioUnitario": 2000.0,
+    "total": 2000.0
+  }
+]

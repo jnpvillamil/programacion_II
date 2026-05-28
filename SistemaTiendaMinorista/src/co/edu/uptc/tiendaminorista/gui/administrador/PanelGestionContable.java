@@ -2,7 +2,6 @@ package co.edu.uptc.tiendaminorista.gui.administrador;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -13,6 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -71,7 +71,7 @@ public class PanelGestionContable extends JPanel {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Mostrar
+        //Mostrar
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -99,7 +99,7 @@ public class PanelGestionContable extends JPanel {
 
         panelFiltros.add(panelRadios, gbc);
 
-        // Cuenta contable
+        //CuentaContable
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -110,7 +110,7 @@ public class PanelGestionContable extends JPanel {
         txtCuentaContable = new JTextField(25);
         panelFiltros.add(txtCuentaContable, gbc);
 
-        // Fechas
+        //Fechas
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
@@ -129,7 +129,7 @@ public class PanelGestionContable extends JPanel {
         txtHasta.setText(LocalDate.now().format(formatter));
         panelFiltros.add(txtHasta, gbc);
 
-        // Botones
+        //Botones
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 4;
@@ -148,7 +148,7 @@ public class PanelGestionContable extends JPanel {
 
         panelPrincipal.add(panelFiltros, BorderLayout.CENTER);
 
-        // Acciones
+        //Acciones
         btnGenerar.addActionListener(e -> generarReporte());
         btnFiltrar.addActionListener(e -> aplicarFiltros());
         btnBuscar.addActionListener(e -> buscarPorCuenta());
@@ -173,7 +173,6 @@ public class PanelGestionContable extends JPanel {
         tablaMovimientos.getTableHeader().setReorderingAllowed(false);
         tablaMovimientos.setRowHeight(25);
 
-        // Centrar contenido
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 0; i < columnas.length; i++) {
@@ -223,27 +222,57 @@ public class PanelGestionContable extends JPanel {
 
     private void aplicarFiltros() {
         List<MovimientoContable> resultado = gestionContable.listarMovimientos();
+        List<MovimientoContable> filtrados = new ArrayList<>(resultado);
 
+        //FiltroPortTipo
         if (rbCadaVenta.isSelected()) {
-            resultado = gestionContable.filtrarPorTipo("Ingreso");
+            filtrados.clear();
+            for (MovimientoContable m : resultado) {
+                if ("Ingreso".equals(m.getTipo())) {
+                    filtrados.add(m);
+                }
+            }
         } else if (rbCadaCompra.isSelected()) {
-            resultado = gestionContable.filtrarPorTipo("Egreso");
+            filtrados.clear();
+            for (MovimientoContable m : resultado) {
+                if ("Egreso".equals(m.getTipo())) {
+                    filtrados.add(m);
+                }
+            }
         }
 
+        //FiltroPorFechas
         try {
             String desdeStr = txtDesde.getText().trim();
             String hastaStr = txtHasta.getText().trim();
-
             if (!desdeStr.isEmpty() && !hastaStr.isEmpty()) {
                 LocalDate desde = LocalDate.parse(desdeStr, formatter);
                 LocalDate hasta = LocalDate.parse(hastaStr, formatter);
-                resultado = gestionContable.filtrarPorRangoFechas(desde, hasta);
+                List<MovimientoContable> fechaFiltrados = new ArrayList<>();
+                for (MovimientoContable m : filtrados) {
+                    if (m.getFecha() != null && !m.getFecha().isBefore(desde) && !m.getFecha().isAfter(hasta)) {
+                        fechaFiltrados.add(m);
+                    }
+                }
+                filtrados = fechaFiltrados;
             }
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(this, "Error en formato de fecha. Use dd/mm/aaaa");
         }
 
-        cargarTabla(resultado);
+        //FiltroPorCuentaContable
+        String cuenta = txtCuentaContable.getText().trim();
+        if (!cuenta.isEmpty()) {
+            List<MovimientoContable> cuentaFiltrados = new ArrayList<>();
+            for (MovimientoContable m : filtrados) {
+                if (m.getCuentaContable() != null && m.getCuentaContable().toLowerCase().contains(cuenta.toLowerCase())) {
+                    cuentaFiltrados.add(m);
+                }
+            }
+            filtrados = cuentaFiltrados;
+        }
+
+        cargarTabla(filtrados);
     }
 
     private void buscarPorCuenta() {
@@ -261,12 +290,11 @@ public class PanelGestionContable extends JPanel {
 
     private void generarReporte() {
         StringBuilder reporte = new StringBuilder();
-        reporte.append("=== REPORTE DE GESTIÓN CONTABLE ===\n");
-        reporte.append("===================================\n\n");
+        reporte.append("-REPORTE DE GESTION CONTABLE-\n");
         reporte.append(String.format("Total Ingresos: $%,.0f\n", gestionContable.getTotalIngresos()));
         reporte.append(String.format("Total Egresos: $%,.0f\n", gestionContable.getTotalEgresos()));
         reporte.append(String.format("Saldo Actual: $%,.0f\n\n", gestionContable.getSaldoActual()));
-        reporte.append("=== ÚLTIMOS MOVIMIENTOS ===\n");
+        reporte.append("-ULTIMOS MOVIMIENTOS-\n");
         
         List<MovimientoContable> movs = gestionContable.listarMovimientos();
         int inicio = Math.max(0, movs.size() - 10);

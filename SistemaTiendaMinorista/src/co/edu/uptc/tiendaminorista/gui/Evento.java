@@ -99,6 +99,9 @@ public class Evento implements ActionListener {
 
             ventana.activarProveedor();
 
+        } else if (evento.equals(COMPRASPRO)) {
+            ventana.mostrarComprasPro();    
+        
         } else if (evento.equals(CANCELARPRO)) {
 
             ventana.regresarAlInicial();
