@@ -783,7 +783,6 @@ public class Evento implements ActionListener {
 			return true;
 
 		case CMD_CONFIRMAR_REGISTRO_COMPRA:
-			// Soporta el comando usado por el diálogo al crear una nueva compra
 			registrarCompra(e);
 			return true;
 
@@ -806,7 +805,6 @@ public class Evento implements ActionListener {
 		dialog.cargarProveedores(gestionProveedor.obtenerProveedores());
 		dialog.getCampoNumeroFactura().setText(gestionCompra.generarNumeroFactura());
 		dialog.getCampoFecha().setText(LocalDate.now().toString());
-		// El diálogo ya registra el listener y comando en inicializarEventos(evento).
 		dialog.setVisible(true);
 	}
 
@@ -819,7 +817,6 @@ public class Evento implements ActionListener {
 			mostrarInformacion("Compra registrada con número " + compra.getNumeroFacturaProveedor() + ".");
 			dialog.dispose();
 			refrescarTablaCompras();
-			// Volver a leer productos para que la tabla muestre el stock ya actualizado.
 			refrescarTablaProductos();
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
@@ -874,7 +871,6 @@ public class Evento implements ActionListener {
 			if (dialog.isCompraAnulada()) {
 				gestionCompra.anularCompra(compra.getNumeroFacturaProveedor(), dialog.getMotivoAnulacion());
 				refrescarTablaCompras();
-				// La tabla de productos se refresca para reflejar la reversa de stock.
 				refrescarTablaProductos();
 				mostrarInformacion("Compra anulada exitosamente.");
 			}
@@ -906,7 +902,6 @@ public class Evento implements ActionListener {
 		try {
 			panelCompra.cargarProveedores(gestionProveedor.obtenerProveedores());
 		} catch (Exception e) {
-			// Si falla obtener proveedores, simplemente ignorar la carga del combo
 		}
 	}
 
