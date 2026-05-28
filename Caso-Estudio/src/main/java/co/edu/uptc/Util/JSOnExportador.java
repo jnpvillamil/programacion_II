@@ -31,9 +31,9 @@ public class JSOnExportador {
     public static void exportar(Object objeto, String archivo) {
         try (FileWriter writer = new FileWriter(archivo)) {
             gson.toJson(objeto, writer);
-            System.out.println("✅ Archivo JSON generado: " + archivo);
+            System.out.println(" Archivo JSON generado: " + archivo);
         } catch (IOException e) {
-            System.err.println("❌ Error al generar JSON: " + e.getMessage());
+            System.err.println(" Error al generar JSON: " + e.getMessage());
         }
     }
     
@@ -43,7 +43,7 @@ public class JSOnExportador {
         exportar(objeto, rutaCompleta);
     }
     
-    // Exportar a carpeta JSON
+  
     public static void exportarJSON(Object objeto, String nombreArchivo) {
         String rutaCompleta = RUTA_JSON + nombreArchivo;
         exportar(objeto, rutaCompleta);
@@ -54,7 +54,7 @@ public class JSOnExportador {
         try (FileReader reader = new FileReader(archivo)) {
             return gson.fromJson(reader, clase);
         } catch (IOException e) {
-            System.err.println("❌ Error al leer JSON: " + e.getMessage());
+            System.err.println(" Error al leer JSON: " + e.getMessage());
             return null;
         }
     }

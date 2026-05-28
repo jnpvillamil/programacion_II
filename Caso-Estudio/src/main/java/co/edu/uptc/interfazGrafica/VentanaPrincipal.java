@@ -629,7 +629,8 @@ public void generarReporteCombined() {
      " Ventas por Forma de Pago",
      " Inventario Valorizado",
      " Utilidad Bruta",
-     " Resumen Contable"
+     " Resumen Contable",
+     "Generar JSON Diario" 
  };
  
  String seleccion = (String) JOptionPane.showInputDialog(this,
@@ -660,50 +661,82 @@ public void generarReporteCombined() {
      generarReporteUtilidadBruta();
  } else if(seleccion.equals(opciones[8])) {
      generarReporteResumenContable();
+ } else if(seleccion.equals(opciones[9])) {   
+     generarJSONDiario();
  }
 }
 
 
 public void generarReporteVentasDiarias() {
- String fechaStr = JOptionPane.showInputDialog(this, 
-     "Ingrese la fecha (YYYY-MM-DD):", 
-     LocalDate.now().toString());
- 
- if(fechaStr != null) {
-     try {
-         LocalDate fecha = LocalDate.parse(fechaStr);
-         var reporte = TiendaConfig.getInstancia()
-             .getGestionVenta().generarReporteVentasDiarias(fecha);
-         
-         StringBuilder sb = new StringBuilder();
-         sb.append("=== REPORTE DE VENTAS DIARIAS ===\n");
-         sb.append("Fecha: ").append(fecha).append("\n");
-         sb.append("Total Ventas: $").append(String.format("%,.2f", reporte.getTotalVentas())).append("\n");
-         sb.append("Total IVA: $").append(String.format("%,.2f", reporte.getTotalIVA())).append("\n");
-         sb.append("Número Facturas: ").append(reporte.getNumeroFacturas()).append("\n\n");
-         
-         sb.append("--- Ventas por Forma de Pago ---\n");
-         for(Map.Entry<String, Double> entry : reporte.getVentasPorFormaPago().entrySet()) {
-             sb.append("  ").append(entry.getKey()).append(": $")
-               .append(String.format("%,.2f", entry.getValue())).append("\n");
-         }
-         
-         sb.append("\n--- Top 10 Productos Más Vendidos ---\n");
-         for(Object[] p : reporte.getProductosMasVendidos()) {
-             sb.append("  ").append(p[0]).append(": ").append(p[1]).append(" unidades\n");
-         }
-         
-         sb.append("\n--- Top 10 Clientes ---\n");
-         for(Object[] c : reporte.getClientesTop()) {
-             sb.append("  ").append(c[0]).append(": $").append(String.format("%,.2f", c[1])).append("\n");
-         }
-         
-         mostrarReporte(sb.toString(), "Reporte de Ventas Diarias");
-         
-     } catch(Exception e) {
-         JOptionPane.showMessageDialog(this, "Fecha inválida. Use formato YYYY-MM-DD");
-     }
- }
+   
+    String fechaStr = JOptionPane.showInputDialog(this, 
+        "Ingrese la fecha :\n" +
+        LocalDate.now().toString());
+    
+    if (fechaStr == null || fechaStr.trim().isEmpty()) {
+        return;
+    }
+    
+    try {
+       
+        fechaStr = fechaStr.trim();
+        
+      
+        LocalDate fecha = LocalDate.parse(fechaStr);
+        
+        
+        if (fecha.isAfter(LocalDate.now())) {
+            JOptionPane.showMessageDialog(this, 
+                "La fecha no puede ser futura", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        
+        var reporte = TiendaConfig.getInstancia()
+            .getGestionVenta().generarReporteVentasDiarias(fecha);
+        
+       
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== REPORTE DE VENTAS DIARIAS ===\n");
+        sb.append("Fecha: ").append(fecha).append("\n");
+        sb.append("Total Ventas: $").append(String.format("%,.2f", reporte.getTotalVentas())).append("\n");
+        sb.append("Total IVA: $").append(String.format("%,.2f", reporte.getTotalIVA())).append("\n");
+        sb.append("Número Facturas: ").append(reporte.getNumeroFacturas()).append("\n\n");
+        
+        if (reporte.getVentasPorFormaPago() != null && !reporte.getVentasPorFormaPago().isEmpty()) {
+            sb.append("--- Ventas por Forma de Pago ---\n");
+            for (Map.Entry<String, Double> entry : reporte.getVentasPorFormaPago().entrySet()) {
+                sb.append("  ").append(entry.getKey()).append(": $")
+                  .append(String.format("%,.2f", entry.getValue())).append("\n");
+            }
+        } else {
+            sb.append("--- Ventas por Forma de Pago ---\n");
+            sb.append("  No hay datos\n");
+        }
+        
+        if (reporte.getProductosMasVendidos() != null && !reporte.getProductosMasVendidos().isEmpty()) {
+            sb.append("\n--- Top 10 Productos Más Vendidos ---\n");
+            for (Object[] p : reporte.getProductosMasVendidos()) {
+                sb.append("  ").append(p[0]).append(": ").append(p[1]).append(" unidades\n");
+            }
+        }
+        
+        mostrarReporte(sb.toString(), "Reporte de Ventas Diarias");
+        
+    } catch (java.time.format.DateTimeParseException e) {
+        JOptionPane.showMessageDialog(this, 
+            "❌ Formato de fecha inválido.\n" +
+            "Use el formato: AAAA-MM-DD\n" +
+            "Ejemplo: 2025-05-26\n" +
+            "Error: " + e.getMessage(),
+            "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "❌ Error al generar el reporte: " + e.getMessage(),
+            "Error", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
 }
 
 
@@ -789,91 +822,159 @@ public void generarReporteVentasAnuales() {
 
 
 public void generarReporteProductosMasVendidos() {
- JPanel panel = new JPanel(new GridLayout(3, 2));
- JTextField txtInicio = new JTextField(LocalDate.now().withDayOfMonth(1).toString());
- JTextField txtFin = new JTextField(LocalDate.now().toString());
- JTextField txtTop = new JTextField("10");
+    JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+    
+    LocalDate hoy = LocalDate.now();
+    LocalDate primerDiaMes = hoy.withDayOfMonth(1);
+    
+    JTextField txtInicio = new JTextField(primerDiaMes.toString());
+    JTextField txtFin = new JTextField(hoy.toString());
+    JTextField txtTop = new JTextField("10");
+    
+    panel.add(new JLabel("Fecha Inicio :"));
+    panel.add(txtInicio);
+    panel.add(new JLabel("Fecha Fin :"));
+    panel.add(txtFin);
+    panel.add(new JLabel("Top N productos:"));
+    panel.add(txtTop);
+    
+    int result = JOptionPane.showConfirmDialog(this, panel, "Productos Más Vendidos", 
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    
+    if (result == JOptionPane.OK_OPTION) {
+        try {
+            String inicioStr = txtInicio.getText().trim();
+            String finStr = txtFin.getText().trim();
+            String topStr = txtTop.getText().trim();
+            
  
- panel.add(new JLabel("Fecha Inicio:"));
- panel.add(txtInicio);
- panel.add(new JLabel("Fecha Fin:"));
- panel.add(txtFin);
- panel.add(new JLabel("Top N:"));
- panel.add(txtTop);
- 
- int result = JOptionPane.showConfirmDialog(this, panel, "Productos Más Vendidos", 
-     JOptionPane.OK_CANCEL_OPTION);
- 
- if(result == JOptionPane.OK_OPTION) {
-     try {
-         LocalDate inicio = LocalDate.parse(txtInicio.getText());
-         LocalDate fin = LocalDate.parse(txtFin.getText());
-         int top = Integer.parseInt(txtTop.getText());
-         
-         var productos = TiendaConfig.getInstancia()
-             .getGestionVenta().obtenerProductosMasVendidos(top, inicio, fin);
-         
-         StringBuilder sb = new StringBuilder();
-         sb.append("=== TOP ").append(top).append(" PRODUCTOS MÁS VENDIDOS ===\n");
-         sb.append("Período: ").append(inicio).append(" al ").append(fin).append("\n\n");
-         sb.append("Código | Producto | Cantidad | Precio | Total\n");
-         sb.append("-----------------------------------------------\n");
-         
-         for(Object[] p : productos) {
-             sb.append(String.format("%s | %s | %d | $%,.2f | $%,.2f\n", 
-                 p[0], p[1], p[2], p[3], p[4]));
-         }
-         
-         mostrarReporte(sb.toString(), "Productos Más Vendidos");
-         
-     } catch(Exception e) {
-         JOptionPane.showMessageDialog(this, "Datos inválidos");
-     }
- }
+            if (inicioStr.isEmpty() || finStr.isEmpty() || topStr.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            LocalDate inicio = LocalDate.parse(inicioStr);
+            LocalDate fin = LocalDate.parse(finStr);
+            int top = Integer.parseInt(topStr);
+            
+
+            if (inicio.isAfter(fin)) {
+                JOptionPane.showMessageDialog(this, "La fecha inicio no puede ser mayor a la fecha fin", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if (top <= 0) {
+                JOptionPane.showMessageDialog(this, "El top debe ser mayor a 0", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            var productos = TiendaConfig.getInstancia()
+                .getGestionVenta().obtenerProductosMasVendidos(top, inicio, fin);
+            
+            if (productos == null || productos.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No hay datos en el período seleccionado", 
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== TOP ").append(top).append(" PRODUCTOS MÁS VENDIDOS ===\n");
+            sb.append("Período: ").append(inicio).append(" al ").append(fin).append("\n\n");
+            sb.append("Código | Producto | Cantidad Vendida\n");
+            sb.append("----------------------------------------\n");
+            
+            for (Object[] p : productos) {
+                sb.append(String.format("%s | %s | %d\n", p[0], p[1], p[2]));
+            }
+            
+            mostrarReporte(sb.toString(), "Productos Más Vendidos");
+            
+        } catch (java.time.format.DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, 
+                "❌ Formato de fecha inválido.\nUse formato: AAAA-MM-DD\nEjemplo: 2025-05-26",
+                "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "❌ El valor 'Top' debe ser un número válido",
+                "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "❌ Error al generar el reporte: " + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
 }
 
 
 public void generarReporteClientesTop() {
- JPanel panel = new JPanel(new GridLayout(3, 2));
- JTextField txtInicio = new JTextField(LocalDate.now().withDayOfMonth(1).toString());
- JTextField txtFin = new JTextField(LocalDate.now().toString());
- JTextField txtTop = new JTextField("10");
- 
- panel.add(new JLabel("Fecha Inicio:"));
- panel.add(txtInicio);
- panel.add(new JLabel("Fecha Fin:"));
- panel.add(txtFin);
- panel.add(new JLabel("Top N:"));
- panel.add(txtTop);
- 
- int result = JOptionPane.showConfirmDialog(this, panel, "Clientes Top Compradores", 
-     JOptionPane.OK_CANCEL_OPTION);
- 
- if(result == JOptionPane.OK_OPTION) {
-     try {
-         LocalDate inicio = LocalDate.parse(txtInicio.getText());
-         LocalDate fin = LocalDate.parse(txtFin.getText());
-         int top = Integer.parseInt(txtTop.getText());
-         
-         var clientes = TiendaConfig.getInstancia()
-             .getGestionVenta().obtenerClientesTopCompradores(top, inicio, fin);
-         
-         StringBuilder sb = new StringBuilder();
-         sb.append("=== TOP ").append(top).append(" CLIENTES COMPRADORES ===\n");
-         sb.append("Período: ").append(inicio).append(" al ").append(fin).append("\n\n");
-         sb.append("Código | Cliente | Tipo | Total Comprado\n");
-         sb.append("---------------------------------------------\n");
-         
-         for(Object[] c : clientes) {
-             sb.append(String.format("%s | %s | %s | $%,.2f\n", c[0], c[1], c[2], c[3]));
-         }
-         
-         mostrarReporte(sb.toString(), "Clientes Top Compradores");
-         
-     } catch(Exception e) {
-         JOptionPane.showMessageDialog(this, "Datos inválidos");
-     }
- }
+    JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+    
+    LocalDate hoy = LocalDate.now();
+    LocalDate primerDiaMes = hoy.withDayOfMonth(1);
+    
+    JTextField txtInicio = new JTextField(primerDiaMes.toString());
+    JTextField txtFin = new JTextField(hoy.toString());
+    JTextField txtTop = new JTextField("10");
+    
+    panel.add(new JLabel("Fecha Inicio (AAAA-MM-DD):"));
+    panel.add(txtInicio);
+    panel.add(new JLabel("Fecha Fin (AAAA-MM-DD):"));
+    panel.add(txtFin);
+    panel.add(new JLabel("Top N clientes:"));
+    panel.add(txtTop);
+    
+    int result = JOptionPane.showConfirmDialog(this, panel, "Clientes Top Compradores", 
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    
+    if (result == JOptionPane.OK_OPTION) {
+        try {
+            LocalDate inicio = LocalDate.parse(txtInicio.getText().trim());
+            LocalDate fin = LocalDate.parse(txtFin.getText().trim());
+            int top = Integer.parseInt(txtTop.getText().trim());
+            
+            if (inicio.isAfter(fin)) {
+                JOptionPane.showMessageDialog(this, "La fecha inicio no puede ser mayor a la fecha fin", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            var clientes = TiendaConfig.getInstancia()
+                .getGestionVenta().obtenerClientesTopCompradores(top, inicio, fin);
+            
+            if (clientes == null || clientes.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No hay datos en el período seleccionado", 
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== TOP ").append(top).append(" CLIENTES COMPRADORES ===\n");
+            sb.append("Período: ").append(inicio).append(" al ").append(fin).append("\n\n");
+            sb.append("Código | Cliente | Tipo | Total Comprado\n");
+            sb.append("---------------------------------------------\n");
+            
+            for (Object[] c : clientes) {
+                sb.append(String.format("%s | %s | %s | $%,.2f\n", c[0], c[1], c[2], c[3]));
+            }
+            
+            mostrarReporte(sb.toString(), "Clientes Top Compradores");
+            
+        } catch (java.time.format.DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, 
+                "❌ Formato de fecha inválido.\nUse formato: AAAA-MM-DD\nEjemplo: 2025-05-26",
+                "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El top debe ser un número válido", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
 
 
@@ -1015,7 +1116,61 @@ public void generarReporteResumenContable() {
  }
 }
 
-
+public void generarJSONDiario() {
+    // Diálogo para seleccionar fecha
+    String fechaStr = JOptionPane.showInputDialog(this, 
+        "Ingrese la fecha para el reporte JSON (YYYY-MM-DD):\n" +
+        "Ejemplo: 2025-05-26\n" +
+        "Fecha actual: " + LocalDate.now(),
+        LocalDate.now().toString());
+    
+    if (fechaStr == null || fechaStr.trim().isEmpty()) {
+        return;
+    }
+    
+    try {
+        LocalDate fecha = LocalDate.parse(fechaStr.trim());
+        
+        // Validar que la fecha no sea futura
+        if (fecha.isAfter(LocalDate.now())) {
+            JOptionPane.showMessageDialog(this, 
+                "La fecha no puede ser futura", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Generar los datos del reporte
+        var reporte = TiendaConfig.getInstancia()
+            .getGestionVenta().generarDatosJSONDiario(fecha);
+        
+        // Nombre del archivo
+        String nombreArchivo = "reporte_diario_" + fecha.toString() + ".json";
+        
+        // Exportar a JSON usando JSOnExportador
+        co.edu.uptc.Util.JSOnExportador.exportarReporte(reporte, nombreArchivo);
+        
+        // Mostrar mensaje de éxito con la ubicación
+        String rutaCompleta = System.getProperty("user.dir") + "/reportes/" + nombreArchivo;
+        
+        JOptionPane.showMessageDialog(this, 
+            "✅ JSON generado exitosamente!\n" +
+            "📁 Ubicación: " + rutaCompleta + "\n" +
+            "📄 Archivo: " + nombreArchivo,
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        
+    } catch (java.time.format.DateTimeParseException e) {
+        JOptionPane.showMessageDialog(this, 
+            "❌ Formato de fecha inválido.\n" +
+            "Use el formato: AAAA-MM-DD\n" +
+            "Ejemplo: 2025-05-26",
+            "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "❌ Error al generar JSON: " + e.getMessage(),
+            "Error", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
 private void mostrarReporte(String contenido, String titulo) {
  JTextArea textArea = new JTextArea(contenido);
  textArea.setEditable(false);
