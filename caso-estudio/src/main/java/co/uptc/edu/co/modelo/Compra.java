@@ -1,31 +1,37 @@
 package co.uptc.edu.co.modelo;
 
 import java.time.LocalDate;
-
+import java.util.ArrayList;
+import java.util.List;
+import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
 public class Compra {
 	private String numeroFacturaProveedor;
 	private LocalDate fecha;
 	private String codigoProveedor;
-	private String producto;
-	private int cantidad;
-	private double costoUnitario;
+	private List<DetalleCompra> detalles;
+	private double subtotal;
 	private double impuestos;
 	private double totalCompra;
+	private EstadoCompraEnum estado;
+	private String motivoAnulacion;
 
 	public Compra() {
+		this.detalles = new ArrayList<>();
+		this.estado = EstadoCompraEnum.ACTIVA;
 	}
 
-	public Compra(String numeroFacturaProveedor, LocalDate fecha, String codigoProveedor,
-			String producto, int cantidad, double costoUnitario, double impuestos, double totalCompra) {
+	    public Compra(String numeroFacturaProveedor, LocalDate fecha, String codigoProveedor, double subtotal,
+		    double costoUnitario, double impuestos, double totalCompra, EstadoCompraEnum estado) {
 		this.numeroFacturaProveedor = numeroFacturaProveedor;
 		this.fecha = fecha;
 		this.codigoProveedor = codigoProveedor;
-		this.producto = producto;
-		this.cantidad = cantidad;
-		this.costoUnitario = costoUnitario;
+		this.subtotal = subtotal;
 		this.impuestos = impuestos;
 		this.totalCompra = totalCompra;
+		this.estado = estado;
 	}
+
+
 
 	public String getNumeroFacturaProveedor() {
 		return numeroFacturaProveedor;
@@ -51,30 +57,6 @@ public class Compra {
 		this.codigoProveedor = codigoProveedor;
 	}
 
-	public String getProducto() {
-		return producto;
-	}
-
-	public void setProducto(String producto) {
-		this.producto = producto;
-	}
-
-	public int getCantidad() {
-		return cantidad;
-	}
-
-	public void setCantidad(int cantidad) {
-		this.cantidad = cantidad;
-	}
-
-	public double getCostoUnitario() {
-		return costoUnitario;
-	}
-
-	public void setCostoUnitario(double costoUnitario) {
-		this.costoUnitario = costoUnitario;
-	}
-
 	public double getImpuestos() {
 		return impuestos;
 	}
@@ -91,12 +73,45 @@ public class Compra {
 		this.totalCompra = totalCompra;
 	}
 
+	public List<DetalleCompra> getDetalles() {
+		return detalles;
+	}
+
+	public void setDetalles(List<DetalleCompra> detalles) {
+		this.detalles = detalles;
+	}
+
+	public double getSubtotal() {
+		return subtotal;
+	}
+
+	public void setSubtotal(double subtotal) {
+		this.subtotal = subtotal;
+	}
+
+	public EstadoCompraEnum getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoCompraEnum estado) {
+		this.estado = estado;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
 	@Override
 	public String toString() {
 		return "Compra [numeroFacturaProveedor=" + numeroFacturaProveedor + ", fecha=" + fecha
-				+ ", codigoProveedor=" + codigoProveedor + ", producto=" + producto + "]";
+				+ ", codigoProveedor=" + codigoProveedor + ", estado=" + getEstado()
+				+ ", motivoAnulacion=" + motivoAnulacion
+				+ ", detalles=" + (detalles != null ? detalles.size() : 0)
+				+ "]";
 	
 
 }
-
 }

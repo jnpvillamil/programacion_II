@@ -57,7 +57,7 @@ public class DialogDetalleCompra extends JDialog {
 
 		modeloTabla = new DefaultTableModel();
 		modeloTabla.setColumnIdentifiers(
-				new Object[] { "Código", "Producto", "Cantidad", "Costo Unitario", "Impuesto", "Subtotal" });
+				new Object[] {  "Código", "Producto", "Cantidad", "Costo Unitario", "IVA", "Subtotal", "Total" });
 
 		tablaDetalleCompra = new JTable(modeloTabla);
 		tablaDetalleCompra.setEnabled(false);
@@ -182,10 +182,12 @@ public class DialogDetalleCompra extends JDialog {
 		campoTotal.setText(total);
 	}
 
-	public void agregarDetalle(String codigo, String producto, String cantidad, String costoUnitario, String impuesto,
-			String subtotal) {
-		modeloTabla.addRow(new Object[] { codigo, producto, cantidad, costoUnitario, impuesto, subtotal });
-	}
+	public void agregarDetalle(String codigo, String producto, String cantidad,
+            String costoUnitario, String iva, String subtotal, String total) {
+        modeloTabla.addRow(new Object[] {
+                codigo, producto, cantidad, costoUnitario, iva, subtotal, total
+        });
+    }
 
 	public void limpiarTabla() {
 		modeloTabla.setRowCount(0);

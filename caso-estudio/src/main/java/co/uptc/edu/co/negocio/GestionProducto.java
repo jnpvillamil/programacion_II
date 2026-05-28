@@ -54,6 +54,13 @@ public class GestionProducto implements IGestionProducto {
 
     @Override
     public List<Producto> obtenerProductos() {
+        // Recargar antes de devolver la lista para mostrar el stock persistido más reciente.
+        try {
+            recargarProductos();
+        } catch (Exception e) {
+            System.out.println("Error al recargar productos: " + e.getMessage());
+        }
+
         return new ArrayList<>(productos);
     }
 

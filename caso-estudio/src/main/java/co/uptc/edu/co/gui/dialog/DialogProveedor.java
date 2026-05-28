@@ -142,6 +142,7 @@ public class DialogProveedor extends JDialog {
 		botonGuardar.setText("Actualizar");
 		botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_EDICION_PROVEEDOR);
 		campoCodigo.setEditable(false);
+		campoNit.setEditable(false);
 	}
 
 	public Proveedor obtenerProveedor() throws Exception {
@@ -194,5 +195,10 @@ public class DialogProveedor extends JDialog {
 		 campoCodigo.setText(codigoGenerado);
 			campoCodigo.setEditable(false);
 		
+	}
+
+	public void cargarNitGenerado(String nitGenerado) {
+		campoNit.setText(nitGenerado);
+		campoNit.setEditable(false);
 	}
 }

@@ -8,7 +8,7 @@ public class DetalleCompra {
     private double impuestos;        
     private double totalCompra;
 	
-	public DetalleCompra() {
+    public DetalleCompra() {
 	}
 	
 	public DetalleCompra(Producto producto, int cantidad, double costoUnitario, double subtotal, double impuestos,

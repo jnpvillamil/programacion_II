@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -28,7 +29,9 @@ import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.interfaces.IGestionProducto;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.interfaces.IGestionVenta;
+import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.Cliente;
+import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.Venta;
@@ -167,6 +170,7 @@ public class Evento implements ActionListener {
 
 		case COMPRAS:
 			ventana.irCompras();
+			refrescarTablaCompras();
 			return true;
 
 		case CONTABILIDAD:
@@ -544,8 +548,19 @@ public class Evento implements ActionListener {
 
 	private void abrirDialogoNuevoProveedor() {
 		DialogProveedor dialog = new DialogProveedor(ventana, this);
-		String codigoGenerado = gestionProveedor.generarCodigoProveedor();
-		dialog.cargarCodigoGenerado(codigoGenerado);
+		try {
+			
+			dialog.cargarCodigoGenerado(gestionProveedor.generarCodigoProveedor());
+		} catch (Exception ex) {
+			mostrarError("No se pudo generar el código del proveedor: " + ex.getMessage());
+		}
+
+		try {
+			dialog.cargarNitGenerado(gestionProveedor.generarNIT());
+		} catch (Exception ex) {
+			mostrarError("No se pudo generar el NIT automático: " + ex.getMessage());
+		}
+
 		dialog.setVisible(true);
 	}
 
@@ -767,6 +782,11 @@ public class Evento implements ActionListener {
 			registrarCompra(e);
 			return true;
 
+		case CMD_CONFIRMAR_REGISTRO_COMPRA:
+			// Soporta el comando usado por el diálogo al crear una nueva compra
+			registrarCompra(e);
+			return true;
+
 		case CMD_VER_DETALLE_COMPRA:
 			abrirDialogoDetalleCompra();
 			return true;
@@ -782,21 +802,112 @@ public class Evento implements ActionListener {
 
 	private void abrirDialogoNuevaCompra() {
 		DialogCompra dialog = new DialogCompra(ventana, this);
+		dialog.cargarProductos(gestionProducto.obtenerProductos());
+		dialog.cargarProveedores(gestionProveedor.obtenerProveedores());
+		dialog.getCampoNumeroFactura().setText(gestionCompra.generarNumeroFactura());
+		dialog.getCampoFecha().setText(LocalDate.now().toString());
+		// El diálogo ya registra el listener y comando en inicializarEventos(evento).
 		dialog.setVisible(true);
 	}
 
 	private void registrarCompra(ActionEvent e) {
-		mostrarInformacion("Modulo de compra pendiente de implementacion.");
+		try {
+			DialogCompra dialog = obtenerDialogCompra(e);
+			Compra compra = dialog.obtenerCompra();
+
+			gestionCompra.registrarCompra(compra);
+			mostrarInformacion("Compra registrada con número " + compra.getNumeroFacturaProveedor() + ".");
+			dialog.dispose();
+			refrescarTablaCompras();
+			// Volver a leer productos para que la tabla muestre el stock ya actualizado.
+			refrescarTablaProductos();
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
 	}
 
 	private void abrirDialogoDetalleCompra() {
-		DialogDetalleCompra dialog = new DialogDetalleCompra(ventana);
-		dialog.setVisible(true);
+		try {
+			Compra compra = obtenerCompraSeleccionada();
+			DialogDetalleCompra dialog = new DialogDetalleCompra(ventana);
+
+			dialog.cargarCompra(
+				compra.getNumeroFacturaProveedor(),
+				compra.getFecha() != null ? compra.getFecha().toString() : "",
+				compra.getCodigoProveedor(),
+				String.valueOf(compra.getSubtotal()),
+				String.valueOf(compra.getImpuestos()),
+				String.valueOf(compra.getTotalCompra()));
+
+			dialog.limpiarTabla();
+			if (compra.getDetalles() != null) {
+				for (DetalleCompra detalle : compra.getDetalles()) {
+					dialog.agregarDetalle(
+						detalle.getProducto().getCodigoProducto(),
+						detalle.getProducto().getNombreProducto(),
+						String.valueOf(detalle.getCantidad()),
+						String.valueOf(detalle.getCostoUnitario()),
+						String.valueOf(detalle.getImpuestos()),
+						String.valueOf(detalle.getSubtotal()),
+						String.valueOf(detalle.getTotalCompra()));
+				}
+			}
+
+			dialog.setVisible(true);
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
 	}
 
 	private void abrirDialogoAnularCompra() {
-		DialogAnularCompra dialog = new DialogAnularCompra(ventana);
-		dialog.setVisible(true);
+		try {
+			Compra compra = obtenerCompraSeleccionada();
+			DialogAnularCompra dialog = new DialogAnularCompra(ventana);
+			dialog.cargarCompra(
+				compra.getNumeroFacturaProveedor(),
+				compra.getFecha() != null ? compra.getFecha().toString() : "",
+				compra.getCodigoProveedor(),
+				String.valueOf(compra.getTotalCompra()));
+
+			dialog.setVisible(true);
+
+			if (dialog.isCompraAnulada()) {
+				gestionCompra.anularCompra(compra.getNumeroFacturaProveedor(), dialog.getMotivoAnulacion());
+				refrescarTablaCompras();
+				// La tabla de productos se refresca para reflejar la reversa de stock.
+				refrescarTablaProductos();
+				mostrarInformacion("Compra anulada exitosamente.");
+			}
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
+	}
+
+	private Compra obtenerCompraSeleccionada() throws Exception {
+		PanelCompra panelCompra = ventana.getPanelCompra();
+
+		if (!panelCompra.haySeleccion()) {
+			throw new Exception("Debe seleccionar una compra.");
+		}
+
+		String numeroFactura = panelCompra.obtenerFacturaSeleccionada();
+		Compra compra = gestionCompra.buscarCompraPorNumero(numeroFactura);
+
+		if (compra == null) {
+			throw new Exception("No se encontró la compra seleccionada.");
+		}
+
+		return compra;
+	}
+
+	private void refrescarTablaCompras() {
+		PanelCompra panelCompra = ventana.getPanelCompra();
+		panelCompra.cargarCompras(gestionCompra.obtenerCompras());
+		try {
+			panelCompra.cargarProveedores(gestionProveedor.obtenerProveedores());
+		} catch (Exception e) {
+			// Si falla obtener proveedores, simplemente ignorar la carga del combo
+		}
 	}
 
 	// EVENTOS DE CONTABILIDAD
@@ -888,5 +999,15 @@ public class Evento implements ActionListener {
 		}
 
 		return (DialogAnularVenta) ventanaPadre;
+	}
+
+	private DialogCompra obtenerDialogCompra(ActionEvent e) throws Exception {
+		Window ventanaPadre = obtenerVentanaPadre(e);
+
+		if (!(ventanaPadre instanceof DialogCompra)) {
+			throw new Exception("Error interno: no se pudo identificar el formulario de compra.");
+		}
+
+		return (DialogCompra) ventanaPadre;
 	}
 }

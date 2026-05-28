@@ -206,8 +206,14 @@ public class VentanaPrincipal extends JFrame {
         return panelVenta;
     }
 
+    public PanelCompra getPanelCompra() {
+		// TODO Auto-generated method stub
+		return panelCompra;
+	}
     public static void main(String[] args) {
         VentanaPrincipal ventana = new VentanaPrincipal();
         ventana.setVisible(true);
     }
+
+	
 }

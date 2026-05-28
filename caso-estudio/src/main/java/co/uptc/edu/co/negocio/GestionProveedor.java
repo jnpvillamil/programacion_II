@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
+import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
@@ -77,6 +77,28 @@ public class GestionProveedor implements IGestionProveedor {
 		proveedorExistente.setTelefono(proveedorActualizado.getTelefono());
 		proveedorExistente.setCorreoElectronico(proveedorActualizado.getCorreoElectronico());
 		proveedorDAO.actualizarProveedor(proveedorExistente);
+	}
+
+	@Override
+	public String generarNIT() {
+
+		Random random = new Random();
+
+		StringBuilder base = new StringBuilder();
+		for (int i = 0; i < 9; i++) {
+			base.append(random.nextInt(10));
+		}
+
+		int[] pesos = { 71, 67, 59, 53, 47, 43, 41, 37, 29, 23, 19, 17, 13, 7, 3 };
+		int suma = 0;
+		for (int i = 0; i < base.length(); i++) {
+			int digito = Character.getNumericValue(base.charAt(base.length() - 1 - i));
+			suma += digito * pesos[i];
+		}
+		int resto = suma % 11;
+		int digitoVerificacion = (resto > 1) ? (11 - resto) : resto;
+
+		return base.toString() + "-" + digitoVerificacion;
 	}
 
 	@Override
