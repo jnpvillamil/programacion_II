@@ -170,50 +170,6 @@ public class GestionVentas implements IContabilizable {
         return true;
     }
 
-    public String generarFactura(Venta venta){
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("===== FACTURA =====\n");
-        sb.append("Factura: ").append(venta.getNumeroFactura()).append("\n");
-        sb.append("Cliente: ").append(venta.getCliente().getNombre()).append("\n");
-        sb.append("Total: ").append(venta.getTotalVenta()).append("\n");
-        sb.append("Pago: ").append(venta.getFormaPago()).append("\n");
-
-        return sb.toString();
-    }
-    
-      
-    public String reimprimirComprobante(
-            String numeroFactura){
-
-        Venta venta =
-                persistenciaVenta
-                .buscarVentaPorFactura(numeroFactura);
-
-        if(venta == null){
-
-            return "Venta no encontrada";
-        }
-
-        return "===== COMPROBANTE =====\n" +
-               "Factura: " +
-               venta.getNumeroFactura() + "\n" +
-
-               "Subtotal: " +
-               venta.getSubtotal() + "\n" +
-
-               "IVA: " +
-               venta.getIvaAplicado() + "\n" +
-
-               "Total: " +
-               venta.getTotalVenta() + "\n" +
-
-               "Forma Pago: " +
-               venta.getFormaPago();
-    }    
-   
-    
     public String generarNumeroFactura() {
         return "FAC-" + System.currentTimeMillis();
     }
