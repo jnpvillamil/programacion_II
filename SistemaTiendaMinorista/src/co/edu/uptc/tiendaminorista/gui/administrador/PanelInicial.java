@@ -48,8 +48,6 @@ public class PanelInicial extends JPanel {
         pestanas.addTab("Cliente", clienteCards);
         pestanas.addTab("Producto", new PanelProductos(e));
         pestanas.addTab("Proveedores", proveedorCards);
-        
-      
         pestanas.addTab("Empleados", this.Empleados); 
 
         add(pestanas, BorderLayout.CENTER);

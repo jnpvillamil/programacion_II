@@ -120,5 +120,11 @@ public class Evento implements ActionListener {
         } else if (evento.equals(Evento.ELIMINAREM)) { 
             ventana.eliminarEmpleado();
         }
-}
+        
+    }public PanelPrincipal getVentana() {
+        return this.ventana;
+    
+
+    }
+    
 }

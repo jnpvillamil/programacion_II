@@ -189,7 +189,7 @@ public class PanelPrincipal extends JFrame {
             cliente.setNumeroIdentificacion(panelInicial.getPanelActualizarCliente().getNumeroDoc());
             cliente.setTipoCliente(panelInicial.getPanelActualizarCliente().getTipoCliente());
             
-            // La lógica de negocio valida si el documento modificado interfiere con otro
+
             gestionCliente.actualizarCliente(cliente);
             
             JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente");

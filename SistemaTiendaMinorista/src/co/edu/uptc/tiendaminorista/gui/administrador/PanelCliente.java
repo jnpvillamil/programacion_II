@@ -18,7 +18,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import co.edu.uptc.tiendaminorista.gui.Evento;
-import co.edu.uptc.tiendaminorista.gui.PanelPrincipal;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
 
 public class PanelCliente extends JPanel {
@@ -40,30 +39,29 @@ public class PanelCliente extends JPanel {
 
         add(Box.createVerticalStrut(20));
 
-        
         JPanel panelBotones = new JPanel();
         panelBotones.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // 🟢 CORREGIDO: Vinculados a las constantes correctas de la clase Evento
         JButton btnRegistrar = new JButton("Registrar cliente");
         btnRegistrar.addActionListener(evento);
-        btnRegistrar.setActionCommand("MOSTRAR_REGISTRO_CLIENTE");
+        btnRegistrar.setActionCommand(Evento.REGISTRARCLIENTE); 
         panelBotones.add(btnRegistrar);
 
         JButton btnModificar = new JButton("Modificar cliente");
         btnModificar.addActionListener(evento);
-        btnModificar.setActionCommand("MOSTRAR_ACTUALIZAR_CLIENTE");
+        btnModificar.setActionCommand(Evento.MODIFICARCLIENTE); 
         panelBotones.add(btnModificar);
 
         JButton btnHistorial = new JButton("Historial de compra cliente");
         btnHistorial.addActionListener(evento);
-        btnHistorial.setActionCommand("HISTORIAL_COMPRA_CLIENTE");
+        btnHistorial.setActionCommand(Evento.HISTORIALCLIENTE);
         panelBotones.add(btnHistorial);
 
         add(panelBotones);
 
         add(Box.createVerticalStrut(10));
 
-      
         JPanel motor = new JPanel();
         motor.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -76,7 +74,6 @@ public class PanelCliente extends JPanel {
 
         add(Box.createVerticalStrut(20));
 
-       
         String[] columnas = {"Nombre", "Tipo de documento", "Número de documento", "Tipo de cliente", "Estado"};
         modelo = new DefaultTableModel(columnas, 0) {
             @Override
@@ -90,6 +87,8 @@ public class PanelCliente extends JPanel {
         scrollPane.setMaximumSize(new Dimension(850, 350));
         scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(scrollPane);
+
+        // Listener del Motor de Búsqueda
         Motolcli.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent de) { ejecutarFiltro(); }
@@ -103,10 +102,9 @@ public class PanelCliente extends JPanel {
             private void ejecutarFiltro() {
                 SwingUtilities.invokeLater(() -> {
                     String texto = Motolcli.getText();
-                    PanelPrincipal marcoPrincipal = (PanelPrincipal) SwingUtilities.getWindowAncestor(PanelCliente.this);
-                    
-                    if (marcoPrincipal != null) {
-                        marcoPrincipal.filtrarClientes(texto);
+                    // 🟢 CORREGIDO: Acceso seguro a través del controlador sin romper el CardLayout
+                    if (evento != null && evento.getVentana() != null) {
+                        evento.getVentana().filtrarClientes(texto);
                     }
                 });
             }
