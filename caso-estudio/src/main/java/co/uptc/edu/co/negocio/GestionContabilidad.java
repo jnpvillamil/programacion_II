@@ -1,9 +1,11 @@
 package co.uptc.edu.co.negocio;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.MovimientoContableDAO;
 import co.uptc.edu.co.modelo.Compra;
@@ -46,23 +48,26 @@ public class GestionContabilidad implements IGestionContabilidad {
 
 	@Override
 	public void registrarIngresoPorVenta(Venta venta) throws Exception {
+		TransaccionBD.ejecutar(conexion -> registrarIngresoPorVenta(conexion, venta));
+		recargarMovimientos();
+	}
+
+	public void registrarIngresoPorVenta(Connection conexion, Venta venta) throws Exception {
 		validarVenta(venta);
 
 		LocalDate fecha = venta.getFechaHora().toLocalDate();
 		String cuentaIngreso = obtenerCuentaIngreso(venta.getFormaPago());
 
-		guardarMovimiento(crearMovimiento(fecha, cuentaIngreso, venta.getTotal(),
+		guardarMovimiento(conexion, crearMovimiento(fecha, cuentaIngreso, venta.getTotal(),
 				"Ingreso por venta " + venta.getNumeroFactura(), venta.getNumeroFactura()));
 
-		guardarMovimiento(crearMovimiento(fecha, CUENTA_INGRESOS, venta.getSubTotal(),
+		guardarMovimiento(conexion, crearMovimiento(fecha, CUENTA_INGRESOS, venta.getSubTotal(),
 				"Venta " + venta.getNumeroFactura(), venta.getNumeroFactura()));
 
 		if (venta.getImpuestos() > 0) {
-			guardarMovimiento(crearMovimiento(fecha, CUENTA_IVA_GENERADO, venta.getImpuestos(),
+			guardarMovimiento(conexion, crearMovimiento(fecha, CUENTA_IVA_GENERADO, venta.getImpuestos(),
 					"IVA generado venta " + venta.getNumeroFactura(), venta.getNumeroFactura()));
 		}
-
-		recargarMovimientos();
 	}
 
 	@Override
@@ -120,31 +125,42 @@ public class GestionContabilidad implements IGestionContabilidad {
 
 	@Override
 	public void registrarReversoPorAnulacionVenta(Venta venta, String motivo) throws Exception {
+		TransaccionBD.ejecutar(conexion -> registrarReversoPorAnulacionVenta(conexion, venta, motivo));
+		recargarMovimientos();
+	}
+
+	public void registrarReversoPorAnulacionVenta(Connection conexion, Venta venta, String motivo) throws Exception {
 		validarVenta(venta);
 
 		LocalDate fecha = LocalDate.now();
 		String cuentaIngreso = obtenerCuentaIngreso(venta.getFormaPago());
 		String referencia = venta.getNumeroFactura();
 
-		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, cuentaIngreso, venta.getTotal(),
+		guardarMovimiento(conexion, crearMovimiento(fecha, TipoMovimientoContable.EGRESO, cuentaIngreso, venta.getTotal(),
 				"Reverso ingreso por anulacion venta " + referencia + ". Motivo: " + motivo,
 				ORIGEN_ANULACION_VENTA, referencia));
 
-		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_INGRESOS, venta.getSubTotal(),
-				"Reverso venta " + referencia + ". Motivo: " + motivo, ORIGEN_ANULACION_VENTA, referencia));
+		guardarMovimiento(conexion, crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_INGRESOS,
+				venta.getSubTotal(), "Reverso venta " + referencia + ". Motivo: " + motivo,
+				ORIGEN_ANULACION_VENTA, referencia));
 
 		if (venta.getImpuestos() > 0) {
-			guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_IVA_GENERADO,
+			guardarMovimiento(conexion, crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_IVA_GENERADO,
 					venta.getImpuestos(), "Reverso IVA generado venta " + referencia + ". Motivo: " + motivo,
 					ORIGEN_ANULACION_VENTA, referencia));
 		}
-
-		recargarMovimientos();
 	}
 
 	@Override
 	public void registrarReversoPorDevolucionVenta(Venta venta, double subtotalDevuelto, double ivaDevuelto,
 			String motivo) throws Exception {
+		TransaccionBD.ejecutar(
+				conexion -> registrarReversoPorDevolucionVenta(conexion, venta, subtotalDevuelto, ivaDevuelto, motivo));
+		recargarMovimientos();
+	}
+
+	public void registrarReversoPorDevolucionVenta(Connection conexion, Venta venta, double subtotalDevuelto,
+			double ivaDevuelto, String motivo) throws Exception {
 		validarVenta(venta);
 
 		if (subtotalDevuelto <= 0) {
@@ -160,21 +176,19 @@ public class GestionContabilidad implements IGestionContabilidad {
 		String referencia = venta.getNumeroFactura();
 		double totalDevuelto = subtotalDevuelto + ivaDevuelto;
 
-		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, cuentaIngreso, totalDevuelto,
+		guardarMovimiento(conexion, crearMovimiento(fecha, TipoMovimientoContable.EGRESO, cuentaIngreso, totalDevuelto,
 				"Reverso ingreso por devolucion venta " + referencia + ". Motivo: " + motivo,
 				ORIGEN_DEVOLUCION_VENTA, referencia));
 
-		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_INGRESOS, subtotalDevuelto,
-				"Reverso devolucion venta " + referencia + ". Motivo: " + motivo, ORIGEN_DEVOLUCION_VENTA,
-				referencia));
+		guardarMovimiento(conexion, crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_INGRESOS,
+				subtotalDevuelto, "Reverso devolucion venta " + referencia + ". Motivo: " + motivo,
+				ORIGEN_DEVOLUCION_VENTA, referencia));
 
 		if (ivaDevuelto > 0) {
-			guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_IVA_GENERADO, ivaDevuelto,
-					"Reverso IVA devolucion venta " + referencia + ". Motivo: " + motivo,
+			guardarMovimiento(conexion, crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_IVA_GENERADO,
+					ivaDevuelto, "Reverso IVA devolucion venta " + referencia + ". Motivo: " + motivo,
 					ORIGEN_DEVOLUCION_VENTA, referencia));
 		}
-
-		recargarMovimientos();
 	}
 
 	@Override
@@ -216,6 +230,11 @@ public class GestionContabilidad implements IGestionContabilidad {
 
 	private void guardarMovimiento(MovimientoContable movimiento) throws Exception {
 		movimientoContableDAO.guardarMovimiento(movimiento);
+		movimientos.add(movimiento);
+	}
+
+	private void guardarMovimiento(Connection conexion, MovimientoContable movimiento) throws Exception {
+		movimientoContableDAO.guardarMovimiento(conexion, movimiento);
 		movimientos.add(movimiento);
 	}
 

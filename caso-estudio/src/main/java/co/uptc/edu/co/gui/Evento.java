@@ -30,6 +30,7 @@ import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.IGestionProducto;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.interfaces.IGestionVenta;
+import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.interfaces.IGestionFactura;
 import co.uptc.edu.co.modelo.Cliente;
@@ -107,6 +108,7 @@ public class Evento implements ActionListener {
 	private IGestionDevolucionVenta gestionDevolucionVenta;
 	private IGestionFactura gestionFactura;
 	private IGestionContabilidad gestionContabilidad;
+	private IGestionInventario gestionInventario;
 
 	// CONSTRUCTOR
 	public Evento(VentanaPrincipal ventana, TiendaConfig config) {
@@ -119,6 +121,7 @@ public class Evento implements ActionListener {
 		this.gestionDevolucionVenta = config.getGestionDevolucionVenta();
 		this.gestionFactura = config.getGestionFactura();
 		this.gestionContabilidad = config.getGestionContabilidad();
+		this.gestionInventario = config.getGestionInventario();
 	}
 
 	// METODO PRINCIPAL DE EVENTOS
@@ -307,8 +310,15 @@ public class Evento implements ActionListener {
 
 	private void cambiarEstadoProductoSeleccionado() {
 		try {
-			Producto producto = obtenerProductoSeleccionado();
-			boolean estabaActivo = producto.estaActivo();
+			PanelProducto panelProducto = ventana.getPanelProducto();
+
+			if (!panelProducto.haySeleccion()) {
+				throw new Exception("Debe seleccionar un producto.");
+			}
+
+			String codigo = panelProducto.obtenerCodigoSeleccionado();
+			String estado = panelProducto.obtenerEstadoSeleccionado();
+			boolean estabaActivo = "ACTIVO".equalsIgnoreCase(estado) || "Activo".equalsIgnoreCase(estado);
 
 			String mensaje = estabaActivo ? "Esta seguro de inactivar este producto?"
 					: "Esta seguro de activar este producto?";
@@ -320,7 +330,7 @@ public class Evento implements ActionListener {
 				return;
 			}
 
-			gestionProducto.cambiarEstadoProducto(producto.getCodigoProducto());
+			gestionProducto.cambiarEstadoProducto(codigo);
 
 			mostrarInformacion(estabaActivo ? "Producto inactivado exitosamente." : "Producto activado exitosamente.");
 
@@ -352,9 +362,16 @@ public class Evento implements ActionListener {
 			String tipoMovimiento = dialog.obtenerTipoMovimiento();
 			int cantidad = dialog.obtenerCantidad();
 
-			gestionProducto.registrarMovimientoInventario(codigo, tipoMovimiento, cantidad);
+			if ("ENTRADA".equalsIgnoreCase(tipoMovimiento)) {
+				gestionInventario.registrarEntrada(codigo, cantidad, "Movimiento manual de inventario");
+			} else if ("SALIDA".equalsIgnoreCase(tipoMovimiento)) {
+				gestionInventario.registrarSalida(codigo, cantidad, "Movimiento manual de inventario");
+			} else {
+				throw new Exception("Tipo de movimiento no valido.");
+			}
 
 			mostrarInformacion("Movimiento de inventario registrado exitosamente.");
+			gestionProducto.recargar();
 			refrescarTablaProductos();
 			dialog.dispose();
 
@@ -712,18 +729,7 @@ public class Evento implements ActionListener {
 
 	private void abrirDialogoAnularVenta() {
 		try {
-			PanelVenta panelVenta = ventana.getPanelVenta();
-
-			if (!panelVenta.haySeleccion()) {
-				throw new Exception("Debe seleccionar una venta.");
-			}
-
-			String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
-			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
-
-			if (venta == null) {
-				throw new Exception("No se encontro la venta seleccionada.");
-			}
+			Venta venta = obtenerVentaSeleccionada();
 
 			DialogAnularVenta dialog = new DialogAnularVenta(ventana, this);
 			dialog.cargarVenta(venta.getNumeroFactura(), venta.getCliente(),
@@ -758,18 +764,7 @@ public class Evento implements ActionListener {
 
 	private void abrirDialogoDevolucionVenta() {
 		try {
-			PanelVenta panelVenta = ventana.getPanelVenta();
-
-			if (!panelVenta.haySeleccion()) {
-				throw new Exception("Debe seleccionar una venta.");
-			}
-
-			String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
-			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
-
-			if (venta == null) {
-				throw new Exception("No se encontro la venta seleccionada.");
-			}
+			Venta venta = obtenerVentaSeleccionada();
 
 			DialogDevolucionVenta dialog = new DialogDevolucionVenta(ventana, this);
 			dialog.cargarVenta(venta);
@@ -790,6 +785,7 @@ public class Evento implements ActionListener {
 
 			gestionDevolucionVenta.devolverVenta(numeroFactura, codigoProducto, cantidad, motivo);
 			gestionProducto.recargar();
+			gestionVenta.recargar();
 
 			mostrarInformacion("Devolucion registrada exitosamente.");
 			refrescarTablaVentas();
@@ -804,18 +800,7 @@ public class Evento implements ActionListener {
 
 	private void abrirDialogoDetalleVenta() {
 		try {
-			PanelVenta panelVenta = ventana.getPanelVenta();
-
-			if (!panelVenta.haySeleccion()) {
-				throw new Exception("Debe seleccionar una venta.");
-			}
-
-			String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
-			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
-
-			if (venta == null) {
-				throw new Exception("No se encontro la venta seleccionada.");
-			}
+			Venta venta = obtenerVentaSeleccionada();
 
 			DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
 			dialog.cargarVenta(venta);
@@ -828,18 +813,7 @@ public class Evento implements ActionListener {
 
 	private void abrirDialogoFacturaVenta() {
 		try {
-			PanelVenta panelVenta = ventana.getPanelVenta();
-
-			if (!panelVenta.haySeleccion()) {
-				throw new Exception("Debe seleccionar una venta.");
-			}
-
-			String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
-			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
-
-			if (venta == null) {
-				throw new Exception("No se encontro la venta seleccionada.");
-			}
+			Venta venta = obtenerVentaSeleccionada();
 
 			String rutaFactura = gestionFactura.generarFactura(venta);
 
@@ -853,6 +827,23 @@ public class Evento implements ActionListener {
 	private void refrescarTablaVentas() {
 		PanelVenta panelVenta = ventana.getPanelVenta();
 		panelVenta.cargarVentas(gestionVenta.obtenerVentas());
+	}
+
+	private Venta obtenerVentaSeleccionada() throws Exception {
+		PanelVenta panelVenta = ventana.getPanelVenta();
+
+		if (!panelVenta.haySeleccion()) {
+			throw new Exception("Debe seleccionar una venta.");
+		}
+
+		String numeroFactura = panelVenta.obtenerFacturaSeleccionada();
+		Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
+
+		if (venta == null) {
+			throw new Exception("No se encontro la venta seleccionada.");
+		}
+
+		return venta;
 	}
 
 	// EVENTOS DE COMPRA

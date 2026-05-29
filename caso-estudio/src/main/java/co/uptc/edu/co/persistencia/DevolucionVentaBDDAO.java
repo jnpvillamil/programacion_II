@@ -39,8 +39,16 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 
 			prepararInsert(sentencia, devolucion);
-			sentencia.executeUpdate();
 
+		} catch (SQLException e) {
+			throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void guardarDevolucion(Connection conexion, DevolucionVenta devolucion) throws Exception {
+		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
+			prepararInsert(sentencia, devolucion);
 		} catch (SQLException e) {
 			throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
 		}
@@ -116,6 +124,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 		sentencia.setBigDecimal(6, BigDecimal.valueOf(devolucion.getValorDevuelto()));
 		sentencia.setTimestamp(7, Timestamp.valueOf(devolucion.getFechaHora()));
 		sentencia.setString(8, devolucion.getMotivo());
+		sentencia.executeUpdate();
 	}
 
 	private DevolucionVenta construirDevolucion(ResultSet resultado) throws SQLException {

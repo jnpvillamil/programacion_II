@@ -1,10 +1,13 @@
 package co.uptc.edu.co.negocio;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionInventario;
+import co.uptc.edu.co.interfaces.MovimientoInventarioDAO;
 import co.uptc.edu.co.interfaces.ProductoDAO;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.MovimientoInventario;
@@ -15,67 +18,68 @@ import co.uptc.edu.co.modelo.enums.TipoMovimientoInventarioEnum;
 public class GestionInventario implements IGestionInventario {
 
 	private final ProductoDAO productoDAO;
+	private final MovimientoInventarioDAO movimientoInventarioDAO;
 	private List<MovimientoInventario> movimientos;
 
-	public GestionInventario(ProductoDAO productoDAO) {
+	public GestionInventario(ProductoDAO productoDAO, MovimientoInventarioDAO movimientoInventarioDAO) {
 		if (productoDAO == null) {
 			throw new IllegalArgumentException("El ProductoDAO no puede ser nulo.");
 		}
+		if (movimientoInventarioDAO == null) {
+			throw new IllegalArgumentException("El MovimientoInventarioDAO no puede ser nulo.");
+		}
 
 		this.productoDAO = productoDAO;
+		this.movimientoInventarioDAO = movimientoInventarioDAO;
 		this.movimientos = new ArrayList<>();
 	}
 
 	@Override
 	public void validarStockDisponible(List<DetalleVenta> detalles) throws Exception {
-		if (detalles == null || detalles.isEmpty()) {
-			throw new Exception("Debe existir al menos un producto para validar stock.");
-		}
-
-		for (DetalleVenta detalle : detalles) {
-			validarDetalle(detalle);
-
-			String codigoProducto = detalle.getProducto().getCodigoProducto();
-			Producto producto = productoDAO.buscarPorCodigo(codigoProducto);
-
-			if (producto == null) {
-				throw new Exception("No existe el producto " + codigoProducto + ".");
-			}
-
-			if (!producto.estaActivo()) {
-				throw new Exception("El producto " + producto.getNombreProducto() + " esta inactivo.");
-			}
-
-			if (detalle.getCantidad() > producto.getStockActual()) {
-				throw new Exception("Stock insuficiente para " + producto.getNombreProducto() + ". Disponible: "
-						+ producto.getStockActual() + ", solicitado: " + detalle.getCantidad() + ".");
-			}
-		}
+		TransaccionBD.ejecutar(conexion -> validarStockDisponible(conexion, detalles));
 	}
 
 	@Override
 	public void registrarSalidaPorVenta(Venta venta) throws Exception {
+		TransaccionBD.ejecutar(conexion -> registrarSalidaPorVenta(conexion, venta));
+	}
+
+	public void registrarSalidaPorVenta(Connection conexion, Venta venta) throws Exception {
 		if (venta == null) {
 			throw new Exception("La venta no puede ser nula.");
 		}
 
-		validarStockDisponible(venta.getDetalles());
+		validarStockDisponible(conexion, venta.getDetalles());
 
 		for (DetalleVenta detalle : venta.getDetalles()) {
 			String codigoProducto = detalle.getProducto().getCodigoProducto();
 
-			registrarSalida(codigoProducto, detalle.getCantidad(), "Salida por venta " + venta.getNumeroFactura());
+			registrarSalida(conexion, codigoProducto, detalle.getCantidad(), "Salida por venta " + venta.getNumeroFactura());
 		}
 	}
 
 	@Override
 	public void registrarEntrada(String codigoProducto, int cantidad, String descripcion) throws Exception {
-		registrarMovimiento(codigoProducto, cantidad, descripcion, TipoMovimientoInventarioEnum.ENTRADA);
+		TransaccionBD.ejecutar(
+				conexion -> registrarMovimiento(conexion, codigoProducto, cantidad, descripcion,
+						TipoMovimientoInventarioEnum.ENTRADA));
 	}
 
 	@Override
 	public void registrarSalida(String codigoProducto, int cantidad, String descripcion) throws Exception {
-		registrarMovimiento(codigoProducto, cantidad, descripcion, TipoMovimientoInventarioEnum.SALIDA);
+		TransaccionBD.ejecutar(
+				conexion -> registrarMovimiento(conexion, codigoProducto, cantidad, descripcion,
+						TipoMovimientoInventarioEnum.SALIDA));
+	}
+
+	public void registrarEntrada(Connection conexion, String codigoProducto, int cantidad, String descripcion)
+			throws Exception {
+		registrarMovimiento(conexion, codigoProducto, cantidad, descripcion, TipoMovimientoInventarioEnum.ENTRADA);
+	}
+
+	public void registrarSalida(Connection conexion, String codigoProducto, int cantidad, String descripcion)
+			throws Exception {
+		registrarMovimiento(conexion, codigoProducto, cantidad, descripcion, TipoMovimientoInventarioEnum.SALIDA);
 	}
 
 	@Override
@@ -83,7 +87,7 @@ public class GestionInventario implements IGestionInventario {
 		return new ArrayList<>(movimientos);
 	}
 
-	private void registrarMovimiento(String codigoProducto, int cantidad, String descripcion,
+	private void registrarMovimiento(Connection conexion, String codigoProducto, int cantidad, String descripcion,
 			TipoMovimientoInventarioEnum tipoMovimiento) throws Exception {
 
 		if (codigoProducto == null || codigoProducto.trim().isEmpty()) {
@@ -94,7 +98,7 @@ public class GestionInventario implements IGestionInventario {
 			throw new Exception("La cantidad debe ser mayor que cero.");
 		}
 
-		Producto producto = productoDAO.buscarPorCodigo(codigoProducto);
+		Producto producto = productoDAO.buscarPorCodigo(conexion, codigoProducto);
 
 		if (producto == null) {
 			throw new Exception("No se encontro el producto.");
@@ -121,8 +125,34 @@ public class GestionInventario implements IGestionInventario {
 				LocalDate.now(), descripcion);
 
 		movimientos.add(movimiento);
-		productoDAO.actualizarProducto(producto);
-		productoDAO.registrarMovimiento(movimiento);
+		productoDAO.actualizarProducto(conexion, producto);
+		movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
+	}
+
+	public void validarStockDisponible(Connection conexion, List<DetalleVenta> detalles) throws Exception {
+		if (detalles == null || detalles.isEmpty()) {
+			throw new Exception("Debe existir al menos un producto para validar stock.");
+		}
+
+		for (DetalleVenta detalle : detalles) {
+			validarDetalle(detalle);
+
+			String codigoProducto = detalle.getProducto().getCodigoProducto();
+			Producto producto = productoDAO.buscarPorCodigo(conexion, codigoProducto);
+
+			if (producto == null) {
+				throw new Exception("No existe el producto " + codigoProducto + ".");
+			}
+
+			if (!producto.estaActivo()) {
+				throw new Exception("El producto " + producto.getNombreProducto() + " esta inactivo.");
+			}
+
+			if (detalle.getCantidad() > producto.getStockActual()) {
+				throw new Exception("Stock insuficiente para " + producto.getNombreProducto() + ". Disponible: "
+						+ producto.getStockActual() + ", solicitado: " + detalle.getCantidad() + ".");
+			}
+		}
 	}
 
 	private void validarDetalle(DetalleVenta detalle) throws Exception {
@@ -146,6 +176,10 @@ public class GestionInventario implements IGestionInventario {
 
 	@Override
 	public void registrarEntradaPorAnulacion(Venta venta, String motivo) throws Exception {
+		TransaccionBD.ejecutar(conexion -> registrarEntradaPorAnulacion(conexion, venta, motivo));
+	}
+
+	public void registrarEntradaPorAnulacion(Connection conexion, Venta venta, String motivo) throws Exception {
 		if (venta == null) {
 			throw new Exception("La venta no puede ser nula");
 		}
@@ -157,10 +191,9 @@ public class GestionInventario implements IGestionInventario {
 		for (DetalleVenta detalle : venta.getDetalles()) {
 			String codigoProducto = detalle.getProducto().getCodigoProducto();
 
-			registrarEntrada(codigoProducto, detalle.getCantidad(),
+			registrarEntrada(conexion, codigoProducto, detalle.getCantidad(),
 					"Entrada por anulacion de venta: " + venta.getNumeroFactura() + ".Motivo " + motivo);
 		}
-
 	}
 
 }

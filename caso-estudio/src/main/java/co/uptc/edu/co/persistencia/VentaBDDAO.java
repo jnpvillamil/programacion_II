@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
+import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.VentaDAO;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
@@ -47,43 +48,25 @@ public class VentaBDDAO implements VentaDAO {
 
 	@Override
 	public void guardarVenta(Venta venta) throws Exception {
-		try (Connection conexion = ConexionBD.getConexion()) {
-			conexion.setAutoCommit(false);
+		TransaccionBD.ejecutar(conexion -> guardarVenta(conexion, venta));
+	}
 
-			try {
-				guardarCabeceraVenta(conexion, venta);
-				guardarDetallesVenta(conexion, venta);
-				conexion.commit();
-
-			} catch (Exception e) {
-				conexion.rollback();
-				throw e;
-			}
-
-		} catch (SQLException e) {
-			throw new Exception("Error al guardar la venta en el servidor remoto: " + e.getMessage(), e);
-		}
+	@Override
+	public void guardarVenta(Connection conexion, Venta venta) throws Exception {
+		guardarCabeceraVenta(conexion, venta);
+		guardarDetallesVenta(conexion, venta);
 	}
 
 	@Override
 	public void actualizarVenta(Venta venta) throws Exception {
-		try (Connection conexion = ConexionBD.getConexion()) {
-			conexion.setAutoCommit(false);
+		TransaccionBD.ejecutar(conexion -> actualizarVenta(conexion, venta));
+	}
 
-			try {
-				actualizarCabeceraVenta(conexion, venta);
-				eliminarDetallesVenta(conexion, venta.getNumeroFactura());
-				guardarDetallesVenta(conexion, venta);
-				conexion.commit();
-
-			} catch (Exception e) {
-				conexion.rollback();
-				throw e;
-			}
-
-		} catch (SQLException e) {
-			throw new Exception("Error al actualizar la venta en el servidor remoto: " + e.getMessage(), e);
-		}
+	@Override
+	public void actualizarVenta(Connection conexion, Venta venta) throws Exception {
+		actualizarCabeceraVenta(conexion, venta);
+		eliminarDetallesVenta(conexion, venta.getNumeroFactura());
+		guardarDetallesVenta(conexion, venta);
 	}
 
 	@Override
@@ -137,7 +120,11 @@ public class VentaBDDAO implements VentaDAO {
 	private void actualizarCabeceraVenta(Connection conexion, Venta venta) throws SQLException {
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_ACTUALIZAR_VENTA)) {
 			prepararUpdateVenta(sentencia, venta);
-			sentencia.executeUpdate();
+			int filasActualizadas = sentencia.executeUpdate();
+
+			if (filasActualizadas == 0) {
+				throw new SQLException("No se encontro la venta a actualizar.");
+			}
 		}
 	}
 

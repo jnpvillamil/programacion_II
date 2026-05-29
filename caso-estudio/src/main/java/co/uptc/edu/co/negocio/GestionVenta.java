@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.interfaces.IGestionInventario;
@@ -54,6 +55,11 @@ public class GestionVenta implements IGestionVenta {
 	}
 
 	@Override
+	public void recargar() throws Exception {
+		recargarVentas();
+	}
+
+	@Override
 	public void registrarVenta(Venta venta) throws Exception {
 		validarVenta(venta);
 
@@ -70,10 +76,11 @@ public class GestionVenta implements IGestionVenta {
 		}
 
 		calcularTotales(venta);
-		gestionInventario.validarStockDisponible(venta.getDetalles());
-		ventaDAO.guardarVenta(venta);
-		gestionInventario.registrarSalidaPorVenta(venta);
-		gestionContabilidad.registrarIngresoPorVenta(venta);
+		TransaccionBD.ejecutar(conexion -> {
+			ventaDAO.guardarVenta(conexion, venta);
+			gestionInventario.registrarSalidaPorVenta(conexion, venta);
+			gestionContabilidad.registrarIngresoPorVenta(conexion, venta);
+		});
 		recargarVentas();
 	}
 
@@ -91,8 +98,7 @@ public class GestionVenta implements IGestionVenta {
 		return ventaDAO.buscarVentaPorNumero(numeroFactura);
 	}
 
-	@Override
-	public void validarVenta(Venta venta) throws Exception {
+	private void validarVenta(Venta venta) throws Exception {
 
 		if (venta == null) {
 			throw new Exception("La venta no puede ser nula");
@@ -120,8 +126,7 @@ public class GestionVenta implements IGestionVenta {
 		}
 	}
 
-	@Override
-	public void validarDetalleVenta(DetalleVenta detalle) throws Exception {
+	private void validarDetalleVenta(DetalleVenta detalle) throws Exception {
 
 		if (detalle == null) {
 			throw new Exception("El detalle de venta no puede ser nulo");
@@ -181,9 +186,11 @@ public class GestionVenta implements IGestionVenta {
 		}
 
 		venta.setEstado(EstadoVentaEnum.ANULADA);
-		ventaDAO.actualizarVenta(venta);
-		gestionInventario.registrarEntradaPorAnulacion(venta, motivo.trim());
-		gestionContabilidad.registrarReversoPorAnulacionVenta(venta, motivo.trim());
+		TransaccionBD.ejecutar(conexion -> {
+			ventaDAO.actualizarVenta(conexion, venta);
+			gestionInventario.registrarEntradaPorAnulacion(conexion, venta, motivo.trim());
+			gestionContabilidad.registrarReversoPorAnulacionVenta(conexion, venta, motivo.trim());
+		});
 		recargarVentas();
 	}
 

@@ -13,6 +13,7 @@ import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
 import co.uptc.edu.co.interfaces.FacturaDAO;
 import co.uptc.edu.co.interfaces.MovimientoContableDAO;
+import co.uptc.edu.co.interfaces.MovimientoInventarioDAO;
 import co.uptc.edu.co.interfaces.ProductoDAO;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
 import co.uptc.edu.co.interfaces.ClienteDAO;
@@ -32,6 +33,7 @@ import co.uptc.edu.co.persistencia.ComprasBDDAO;
 import co.uptc.edu.co.persistencia.DevolucionVentaBDDAO;
 import co.uptc.edu.co.persistencia.FacturaTxtDAO;
 import co.uptc.edu.co.persistencia.MovimientoContableBDDAO;
+import co.uptc.edu.co.persistencia.MovimientoInventarioBDDAO;
 import co.uptc.edu.co.persistencia.ProductoBDDAO;
 import co.uptc.edu.co.persistencia.ProveedorBDDAO;
 import co.uptc.edu.co.persistencia.VentaBDDAO;
@@ -55,8 +57,9 @@ public class TiendaConfig {
 	private void inicializarGestiones() {
 
 		ProductoDAO productoDAO = new ProductoBDDAO();
+		MovimientoInventarioDAO movimientoInventarioDAO = new MovimientoInventarioBDDAO();
 		gestionProducto = new GestionProducto(productoDAO);
-		gestionInventario = new GestionInventario(productoDAO);
+		gestionInventario = new GestionInventario(productoDAO, movimientoInventarioDAO);
 
 		ProveedorDAO proveedorDAO = new ProveedorBDDAO();
 		gestionProveedor = new GestionProveedor(proveedorDAO);

@@ -1,5 +1,6 @@
 package co.uptc.edu.co.interfaces;
 
+import java.sql.Connection;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.DevolucionVenta;
@@ -7,6 +8,8 @@ import co.uptc.edu.co.modelo.DevolucionVenta;
 public interface DevolucionVentaDAO {
 
 	void guardarDevolucion(DevolucionVenta devolucion) throws Exception;
+
+	void guardarDevolucion(Connection conexion, DevolucionVenta devolucion) throws Exception;
 	
 	DevolucionVenta buscarPorCodigo(String codigoDevolucion) throws Exception;
 	

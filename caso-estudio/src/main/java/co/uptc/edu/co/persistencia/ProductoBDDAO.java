@@ -10,7 +10,6 @@ import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.interfaces.ProductoDAO;
-import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
@@ -32,8 +31,6 @@ public class ProductoBDDAO implements ProductoDAO {
 	private static final String SQL_ACTUALIZAR = "UPDATE " + TABLA_PRODUCTOS + " SET "
 			+ "nombreProducto = ?, categoria = ?, precioCompra = ?, precioVenta = ?, "
 			+ "stockActual = ?, stockMinimo = ?, stockMaximo = ?, estado = ? " + "WHERE codigoProducto = ?";
-	private static final String SQL_INSERTAR_MOVIMIENTO = "INSERT INTO movimientos_inventario (codigoProducto, tipoMovimiento, cantidad, fecha, descripcion) "
-			+ "VALUES (?, ?, ?, ?, ?)";
 
 	@Override
 	public void guardarProducto(Producto producto) throws Exception {
@@ -53,9 +50,17 @@ public class ProductoBDDAO implements ProductoDAO {
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_ACTUALIZAR)) {
 
-			prepararActualizar(preparedStatement, producto);
-			preparedStatement.executeUpdate();
+			ejecutarActualizacion(preparedStatement, producto);
 
+		} catch (SQLException e) {
+			throw new Exception("Error al actualizar el producto en el servidor remoto: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void actualizarProducto(Connection conexion, Producto producto) throws Exception {
+		try (PreparedStatement preparedStatement = conexion.prepareStatement(SQL_ACTUALIZAR)) {
+			ejecutarActualizacion(preparedStatement, producto);
 		} catch (SQLException e) {
 			throw new Exception("Error al actualizar el producto en el servidor remoto: " + e.getMessage(), e);
 		}
@@ -66,16 +71,19 @@ public class ProductoBDDAO implements ProductoDAO {
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
 
-			preparedStatement.setString(1, codigo);
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return construirProducto(resultSet);
-				}
-			}
+			return ejecutarBusquedaPorCodigo(preparedStatement, codigo);
 		} catch (SQLException e) {
 			throw new Exception("Error al buscar el producto solicitado: " + e.getMessage(), e);
 		}
-		return null;
+	}
+
+	@Override
+	public Producto buscarPorCodigo(Connection conexion, String codigo) throws Exception {
+		try (PreparedStatement preparedStatement = conexion.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
+			return ejecutarBusquedaPorCodigo(preparedStatement, codigo);
+		} catch (SQLException e) {
+			throw new Exception("Error al buscar el producto solicitado: " + e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -94,22 +102,23 @@ public class ProductoBDDAO implements ProductoDAO {
 		return lista;
 	}
 
-	@Override
-	public void registrarMovimiento(MovimientoInventario movimiento) throws Exception {
-		try (Connection conn = ConexionBD.getConexion()) {
+	private void ejecutarActualizacion(PreparedStatement preparedStatement, Producto producto) throws Exception {
+		prepararActualizar(preparedStatement, producto);
+		int filasActualizadas = preparedStatement.executeUpdate();
 
-			try (PreparedStatement psMov = conn.prepareStatement(SQL_INSERTAR_MOVIMIENTO)) {
-				psMov.setString(1, movimiento.getCodigoProducto());
-				psMov.setString(2, movimiento.getTipoMovimiento().name());
-				psMov.setInt(3, movimiento.getCantidad());
-				psMov.setDate(4, java.sql.Date.valueOf(movimiento.getFechaMovimiento()));
-				psMov.setString(5, movimiento.getDescripcion());
-				psMov.executeUpdate();
-			}
-
-		} catch (SQLException e) {
-			throw new Exception("Error al registrar movimiento: " + e.getMessage(), e);
+		if (filasActualizadas == 0) {
+			throw new Exception("No se encontro el producto a actualizar.");
 		}
+	}
+
+	private Producto ejecutarBusquedaPorCodigo(PreparedStatement preparedStatement, String codigo) throws SQLException {
+		preparedStatement.setString(1, codigo);
+		try (ResultSet resultSet = preparedStatement.executeQuery()) {
+			if (resultSet.next()) {
+				return construirProducto(resultSet);
+			}
+		}
+		return null;
 	}
 
 	private Producto construirProducto(ResultSet resultSet) throws SQLException {

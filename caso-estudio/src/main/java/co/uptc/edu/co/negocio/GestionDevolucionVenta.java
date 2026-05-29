@@ -3,6 +3,7 @@ package co.uptc.edu.co.negocio;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
@@ -66,18 +67,19 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		}
 
 		DevolucionVenta devolucion = crearDevolucion(venta, detalleDevuelto, cantidad, motivo.trim());
-
-		gestionInventario.registrarEntrada(codigoProducto, cantidad,
-				"Entrada por devolucion de venta " + venta.getNumeroFactura() + ". Motivo: " + motivo.trim());
-
-		devolucionVentaDAO.guardarDevolucion(devolucion);
-
-		venta.setEstado(EstadoVentaEnum.DEVUELTA);
-		ventaDAO.actualizarVenta(venta);
-
 		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
 		double ivaDevuelto = subtotalDevuelto * 0.19;
-		gestionContabilidad.registrarReversoPorDevolucionVenta(venta, subtotalDevuelto, ivaDevuelto, motivo.trim());
+
+		venta.setEstado(EstadoVentaEnum.DEVUELTA);
+
+		TransaccionBD.ejecutar(conexion -> {
+			gestionInventario.registrarEntrada(conexion, codigoProducto, cantidad,
+					"Entrada por devolucion de venta " + venta.getNumeroFactura() + ". Motivo: " + motivo.trim());
+			devolucionVentaDAO.guardarDevolucion(conexion, devolucion);
+			ventaDAO.actualizarVenta(conexion, venta);
+			gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta, subtotalDevuelto, ivaDevuelto,
+					motivo.trim());
+		});
 	}
 
 	@Override
