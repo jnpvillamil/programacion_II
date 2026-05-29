@@ -21,7 +21,7 @@ public class PanelInicial extends JPanel {
     private CardLayout proveedorLayout;
 
     private PanelCliente panelCliente;
-    private PanelRegistrosEmpleados Empleados; // Mantenido correctamente como atributo global
+    private PanelRegistrosEmpleados Empleados; 
     private PanelResgistroCli panelRegistroCliente;
     private PanelActualizarCliente panelActualizarCliente;
     private PanelProveedores panelProveedores;
@@ -186,5 +186,9 @@ public class PanelInicial extends JPanel {
     public void cargarProveedores(List<Proveedor> proveedores) {
         panelProveedores.cargarProveedores(proveedores);
         panelActualizarProveedor.setProveedores(proveedores);
+    }public void mostrarClienteLista1() {
+        pestanas.setSelectedIndex(0);
+        clienteLayout.show(clienteCards, "CLIENTE_LIST");
     }
+    
 }

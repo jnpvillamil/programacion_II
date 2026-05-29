@@ -16,11 +16,8 @@ import co.edu.uptc.tiendaminorista.negocio.GestionCliente;
 import co.edu.uptc.tiendaminorista.negocio.GestionProducto;
 import co.edu.uptc.tiendaminorista.negocio.GestionProveedor;
 import co.edu.uptc.tiendaminorista.negocio.SistemaSeguridad;
-import co.edu.uptc.tiendaminorista.persistencia.LocalCliente;
-import co.edu.uptc.tiendaminorista.persistencia.LocalProducto;
-import co.edu.uptc.tiendaminorista.persistencia.LocalProveedor;
 import co.edu.uptc.tiendaminorista.negocio.GestionEmpleado;
-import co.edu.uptc.tiendaminorista.persistencia.LocalEmpleado;
+import co.edu.uptc.tiendaminorista.negocio.TiendaConfig;
 
 public class PanelPrincipal extends JFrame {
 
@@ -35,14 +32,20 @@ public class PanelPrincipal extends JFrame {
     private PanelRegistrosEmpleados empleados; 
 
     private SistemaSeguridad seguridad;
+    private TiendaConfig tiendaConfig;
 
     public PanelPrincipal() {
 
         seguridad = new SistemaSeguridad();
-        gestionEmpleado = new GestionEmpleado(new LocalEmpleado());
-        gestionCliente = new GestionCliente(new LocalCliente());
-        gestionProveedor = new GestionProveedor(new LocalProveedor());
-        gestionProducto = new GestionProducto(new LocalProducto());
+        
+      
+        this.tiendaConfig = new TiendaConfig();
+        
+      
+        this.gestionEmpleado = tiendaConfig.getGestionEmpleado();
+        this.gestionCliente = tiendaConfig.getGestionCliente();
+        this.gestionProveedor = tiendaConfig.getGestionProveedor();
+        this.gestionProducto = tiendaConfig.getGestionProducto();
         
         evento = new Evento(this); 
         empleados = new PanelRegistrosEmpleados(evento);
@@ -144,12 +147,16 @@ public class PanelPrincipal extends JFrame {
             cliente.setTipodoc(TipoDocumentoEnum.valueOf(panelInicial.getPanelRegistroCliente().getTipoDoc()));
             cliente.setNumeroIdentificacion(panelInicial.getPanelRegistroCliente().getNumeroDoc());
             cliente.setTipoCliente(panelInicial.getPanelRegistroCliente().getTipoCliente());
+            
+           
             gestionCliente.agregarCliente(cliente);
+            
             JOptionPane.showMessageDialog(this, "Cliente registrado correctamente");
             panelInicial.cargarClientes(gestionCliente.listarClientes());
             mostrarPanelCliente();
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, "Tipo de documento inválido");
+           
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -181,12 +188,15 @@ public class PanelPrincipal extends JFrame {
             cliente.setTipodoc(TipoDocumentoEnum.valueOf(panelInicial.getPanelActualizarCliente().getTipoDoc()));
             cliente.setNumeroIdentificacion(panelInicial.getPanelActualizarCliente().getNumeroDoc());
             cliente.setTipoCliente(panelInicial.getPanelActualizarCliente().getTipoCliente());
+            
+            // La lógica de negocio valida si el documento modificado interfiere con otro
             gestionCliente.actualizarCliente(cliente);
+            
             JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente");
             panelInicial.cargarClientes(gestionCliente.listarClientes());
             mostrarPanelCliente();
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, "Tipo de documento inválido");
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -196,10 +206,14 @@ public class PanelPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente para desactivar");
             return;
         }
-        gestionCliente.desactivarCliente(codigo);
-        JOptionPane.showMessageDialog(this, "Cliente desactivado correctamente");
-        panelInicial.cargarClientes(gestionCliente.listarClientes());
-        panelInicial.getPanelActualizarCliente().refreshClienteSeleccionado();
+        try {
+            gestionCliente.desactivarCliente(codigo);
+            JOptionPane.showMessageDialog(this, "Cliente desactivado correctamente");
+            panelInicial.cargarClientes(gestionCliente.listarClientes());
+            panelInicial.getPanelActualizarCliente().refreshClienteSeleccionado();
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void activarCliente() {
@@ -208,10 +222,14 @@ public class PanelPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente para activar");
             return;
         }
-        gestionCliente.activarCliente(codigo);
-        JOptionPane.showMessageDialog(this, "Cliente activado correctamente");
-        panelInicial.cargarClientes(gestionCliente.listarClientes());
-        panelInicial.getPanelActualizarCliente().refreshClienteSeleccionado();
+        try {
+            gestionCliente.activarCliente(codigo);
+            JOptionPane.showMessageDialog(this, "Cliente activado correctamente");
+            panelInicial.cargarClientes(gestionCliente.listarClientes());
+            panelInicial.getPanelActualizarCliente().refreshClienteSeleccionado();
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void actualizarProveedor() {
@@ -273,6 +291,7 @@ public class PanelPrincipal extends JFrame {
         PanelRegistrosEmpleados panelEmp = panelInicial.getPanelRegistrosEmpleados();
         String correo = panelEmp.getCorreo();
         String password = panelEmp.getContraseña();
+        String rol = panelEmp.getTipoEmpleado(); 
 
         if (correo.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.");
@@ -282,6 +301,7 @@ public class PanelPrincipal extends JFrame {
         Empleado nuevoEmpleado = new Empleado();
         nuevoEmpleado.setCorreo(correo);
         nuevoEmpleado.setPassword(password);
+        nuevoEmpleado.setTipoEmpleado(rol);
 
         gestionEmpleado.guardar(nuevoEmpleado);
         JOptionPane.showMessageDialog(this, "Empleado registrado de forma correcta.");
@@ -294,6 +314,7 @@ public class PanelPrincipal extends JFrame {
         PanelRegistrosEmpleados panelEmp = panelInicial.getPanelRegistrosEmpleados();
         String correo = panelEmp.getCorreo();
         String password = panelEmp.getContraseña();
+        String rol = panelEmp.getTipoEmpleado(); 
 
         if (correo.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Complete los campos para poder actualizar.");
@@ -303,7 +324,8 @@ public class PanelPrincipal extends JFrame {
         Empleado empleadoModificado = new Empleado();
         empleadoModificado.setCorreo(correo);
         empleadoModificado.setPassword(password);
-
+        empleadoModificado.setTipoEmpleado(rol); 
+        
         gestionEmpleado.actualizar(empleadoModificado);
         JOptionPane.showMessageDialog(this, "Empleado modificado con éxito.");
         
@@ -311,7 +333,6 @@ public class PanelPrincipal extends JFrame {
         panelEmp.limpiarCampos();
     }
 
-    // 📍 LÓGICA SIMPLIFICADA Y FUNCIONAL PARA ELIMINAR EMPLEADO
     public void eliminarEmpleado() {
         PanelRegistrosEmpleados panelEmp = panelInicial.getPanelRegistrosEmpleados();
         String correo = panelEmp.getCorreo();
@@ -334,5 +355,10 @@ public class PanelPrincipal extends JFrame {
             panelEmp.cargarEmpleados(gestionEmpleado.listarEmpleados());
             panelEmp.limpiarCampos();
         }
+    }public void filtrarClientes(String texto) {
+        List<Cliente> filtrados = gestionCliente.consultarClientes(texto);
+        
+    
+        panelInicial.getPanelCliente().cargarClientes(filtrados);
     }
 }

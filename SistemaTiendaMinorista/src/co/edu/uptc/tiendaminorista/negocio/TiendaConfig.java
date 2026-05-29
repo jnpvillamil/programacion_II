@@ -12,16 +12,19 @@ public class TiendaConfig {
     private final GestionProveedor gestionProveedor;
     private final GestionProducto gestionProducto;
     private final GestionContable gestionContable;
+    private final GestionEmpleado gestionEmpleado; 
 
     public TiendaConfig() {
         this.gestionCliente   = new GestionCliente(new LocalCliente());
         this.gestionProveedor = new GestionProveedor(new LocalProveedor());
         this.gestionProducto  = new GestionProducto(new LocalProducto());
         this.gestionContable  = new GestionContable(new LocalContable());
+        this.gestionEmpleado  = new GestionEmpleado(new LocalEmpleado()); 
     }
 
     public GestionCliente getGestionCliente()     { return gestionCliente; }
     public GestionProveedor getGestionProveedor() { return gestionProveedor; }
     public GestionProducto getGestionProducto()   { return gestionProducto; }
     public GestionContable getGestionContable()   { return gestionContable; }
+    public GestionEmpleado getGestionEmpleado()   { return gestionEmpleado; } 
 }

@@ -20,7 +20,7 @@ public class GestionEmpleado {
         this.persistence.actualizar(empleado);
     }
     
-    // 📍 Corregido: Ahora sí llama al método eliminar de la persistencia
+   
     public void eliminar(Empleado empleado) {
         this.persistence.eliminar(empleado); 
     }

@@ -9,4 +9,5 @@ public interface IGestionCliente {
     List<Cliente> listar();
     void desactivar(String codigo);
     void activar(String codigo);
+    List<Cliente> buscar(String texto);
 }

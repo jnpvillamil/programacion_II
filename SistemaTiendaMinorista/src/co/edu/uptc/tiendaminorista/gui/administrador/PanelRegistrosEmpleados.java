@@ -87,7 +87,7 @@ public class PanelRegistrosEmpleados extends JPanel {
         panelFormulario.add(Box.createVerticalStrut(5));
         panelFormulario.add(combot);
 
-        String[] columnas = {"Correo", "Contraseña"}; 
+        String[] columnas = {"Correo", "Contraseña", "rol"}; 
 
         modelo = new DefaultTableModel(columnas, 0) {
             @Override
@@ -105,9 +105,11 @@ public class PanelRegistrosEmpleados extends JPanel {
                 if (filaSeleccionada >= 0) {
                     String correo = tabla.getValueAt(filaSeleccionada, 0).toString();
                     String password = tabla.getValueAt(filaSeleccionada, 1).toString();
+                    String tipo = tabla.getValueAt(filaSeleccionada, 2).toString(); // Recupera el tipo
                     
                     txtCorreo.setText(correo);
                     txtPassword.setText(password);
+                    combot.setSelectedItem(tipo); // 📍 Pone el JComboBox en el rol de la fila seleccionada
                     txtCorreo.setEditable(false);
                 }
             }
@@ -149,7 +151,8 @@ public class PanelRegistrosEmpleados extends JPanel {
         return txtPassword.getText().trim();
     }
 
-    public String getRol() {
+    
+    public String getTipoEmpleado() {
         return (String) combot.getSelectedItem();
     }
 
@@ -164,7 +167,8 @@ public class PanelRegistrosEmpleados extends JPanel {
         modelo.setRowCount(0); 
         if (listaEmpleados != null) {
             for (Empleado emp : listaEmpleados) {
-                Object[] fila = { emp.getCorreo(), emp.getPassword() }; 
+                
+                Object[] fila = { emp.getCorreo(), emp.getPassword(), emp.getTipoEmpleado() }; 
                 modelo.addRow(fila);
             }
         }

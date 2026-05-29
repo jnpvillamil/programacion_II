@@ -71,5 +71,27 @@ public class LocalCliente implements IGestionCliente {
             }
         }
         escribir(lista);
+        
+        
+        
+    }
+
+    @Override
+    public List<Cliente> buscar(String texto) {
+        List<Cliente> todos = leer(); 
+        if (texto == null || texto.trim().isEmpty()) {
+            return todos;
+        }
+        
+        List<Cliente> filtrados = new ArrayList<>();
+        String query = texto.trim().toLowerCase();
+        
+        for (Cliente c : todos) {
+            if ((c.getNombre() != null && c.getNombre().toLowerCase().contains(query)) ||
+                (c.getNumeroIdentificacion() != null && c.getNumeroIdentificacion().contains(query))) {
+                filtrados.add(c);
+            }
+        }
+        return filtrados;
     }
 }

@@ -1,44 +1,29 @@
 package co.edu.uptc.tiendaminorista.persistencia;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import co.edu.uptc.tiendaminorista.interfaces.IGestionEmpleado;
 import co.edu.uptc.tiendaminorista.modelo.Empleado;
 
 public class LocalEmpleado implements IGestionEmpleado {
+    private static final String RUTA = "empleados.json";
+    private final Gson gson = new Gson();
 
-    private static final String RUTA_ARCHIVO = "target/empleados.json";
-    private Gson gson;
-
-    public LocalEmpleado() {
-        this.gson = new Gson();
-        verificarArchivo();
-    }
-
-    private void verificarArchivo() {
-        try {
-            File archivo = new File(RUTA_ARCHIVO);
-            if (!archivo.exists()) {
-                archivo.getParentFile().mkdirs(); 
-                archivo.createNewFile();
-                escribirLista(new ArrayList<>());
-            }
+    private List<Empleado> leer() {
+        try (FileReader reader = new FileReader(RUTA)) {
+            Type tipo = new TypeToken<List<Empleado>>() {}.getType();
+            List<Empleado> lista = gson.fromJson(reader, tipo);
+            return lista != null ? lista : new ArrayList<>();
         } catch (IOException e) {
-            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 
-    private void escribirLista(List<Empleado> lista) {
-        try (FileWriter writer = new FileWriter(RUTA_ARCHIVO)) {
+    private void escribir(List<Empleado> lista) {
+        try (FileWriter writer = new FileWriter(RUTA)) {
             gson.toJson(lista, writer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,53 +32,51 @@ public class LocalEmpleado implements IGestionEmpleado {
 
     @Override
     public void guardar(Empleado empleado) {
-        List<Empleado> listaActual = listar();
-        listaActual.add(empleado);
-        escribirLista(listaActual);
+        List<Empleado> lista = leer();
+        
+    
+        Empleado nuevoEmpleado = new Empleado();
+        nuevoEmpleado.setCorreo(empleado.getCorreo());
+        nuevoEmpleado.setPassword(empleado.getPassword());
+        nuevoEmpleado.setTipoEmpleado(empleado.getTipoEmpleado()); 
+        
+        lista.add(nuevoEmpleado);
+        escribir(lista);
     }
 
     @Override
-    public void actualizar(Empleado empleadoModificado) {
-        List<Empleado> listaActual = listar();
-        for (int i = 0; i < listaActual.size(); i++) {
-            Empleado emp = listaActual.get(i);
-            if (emp.getCorreo().equals(empleadoModificado.getCorreo())) {
-                listaActual.set(i, empleadoModificado);
+    public List<Empleado> listar() { 
+        return leer(); 
+    }
+
+    @Override
+    public void actualizar(Empleado empleado) {
+        List<Empleado> lista = leer();
+        for (int i = 0; i < lista.size(); i++) {
+          
+            if (lista.get(i).getCorreo().equalsIgnoreCase(empleado.getCorreo())) {
+                
+                Empleado empActualizado = new Empleado();
+                empActualizado.setCorreo(empleado.getCorreo());
+                empActualizado.setPassword(empleado.getPassword());
+                empActualizado.setTipoEmpleado(empleado.getTipoEmpleado());
+                
+                lista.set(i, empActualizado);
                 break;
             }
         }
-        escribirLista(listaActual);
+        escribir(lista);
     }
-
-    @Override
-    public List<Empleado> listar() {
-        File archivo = new File(RUTA_ARCHIVO);
-        if (archivo.length() == 0) {
-            return new ArrayList<>();
-        }
-
-        try (FileReader reader = new FileReader(RUTA_ARCHIVO)) {
-            Type tipoLista = new TypeToken<ArrayList<Empleado>>() {}.getType();
-            List<Empleado> lista = gson.fromJson(reader, tipoLista);
-            
-            return lista != null ? lista : new ArrayList<>();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
 
     @Override
     public void eliminar(Empleado empleado) {
-        List<Empleado> lista = listar(); 
-        
-        if (lista != null) {
-          
-            lista.removeIf(emp -> emp.getCorreo().equalsIgnoreCase(empleado.getCorreo()));
-            
-     
-            escribirLista(lista); 
+        List<Empleado> lista = leer();
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).getCorreo().equalsIgnoreCase(empleado.getCorreo())) {
+                lista.remove(i);
+                break;
+            }
         }
+        escribir(lista);
     }
 }
