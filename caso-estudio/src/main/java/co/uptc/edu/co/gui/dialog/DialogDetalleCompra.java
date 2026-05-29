@@ -23,6 +23,7 @@ public class DialogDetalleCompra extends JDialog {
 	private JTextField campoNumeroFactura;
 	private JTextField campoFecha;
 	private JTextField campoProveedor;
+	private JTextField campoFormaPago;
 	private JTextField campoSubtotal;
 	private JTextField campoImpuestos;
 	private JTextField campoTotal;
@@ -44,6 +45,7 @@ public class DialogDetalleCompra extends JDialog {
 		campoNumeroFactura = new JTextField(15);
 		campoFecha = new JTextField(15);
 		campoProveedor = new JTextField(25);
+		campoFormaPago = new JTextField(15);
 		campoSubtotal = new JTextField(15);
 		campoImpuestos = new JTextField(15);
 		campoTotal = new JTextField(15);
@@ -51,6 +53,7 @@ public class DialogDetalleCompra extends JDialog {
 		campoNumeroFactura.setEditable(false);
 		campoFecha.setEditable(false);
 		campoProveedor.setEditable(false);
+		campoFormaPago.setEditable(false);
 		campoSubtotal.setEditable(false);
 		campoImpuestos.setEditable(false);
 		campoTotal.setEditable(false);
@@ -111,8 +114,14 @@ public class DialogDetalleCompra extends JDialog {
 		panelDatos.add(new JLabel("Proveedor:"), gbc);
 
 		gbc.gridx = 1;
-		gbc.gridwidth = 3;
+		gbc.gridwidth = 1;
 		panelDatos.add(campoProveedor, gbc);
+
+		gbc.gridx = 2;
+		panelDatos.add(new JLabel("Forma de pago:"), gbc);
+
+		gbc.gridx = 3;
+		panelDatos.add(campoFormaPago, gbc);
 
 		return panelDatos;
 	}
@@ -172,11 +181,12 @@ public class DialogDetalleCompra extends JDialog {
 		botonCerrar.addActionListener(e -> dispose());
 	}
 
-	public void cargarCompra(String numeroFactura, String fecha, String proveedor, String subtotal, String impuestos,
-			String total) {
+	public void cargarCompra(String numeroFactura, String fecha, String proveedor, String formaPago, String subtotal,
+			String impuestos, String total) {
 		campoNumeroFactura.setText(numeroFactura);
 		campoFecha.setText(fecha);
 		campoProveedor.setText(proveedor);
+		campoFormaPago.setText(formaPago);
 		campoSubtotal.setText(subtotal);
 		campoImpuestos.setText(impuestos);
 		campoTotal.setText(total);

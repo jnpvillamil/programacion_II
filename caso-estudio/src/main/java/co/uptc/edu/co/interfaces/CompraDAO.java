@@ -9,6 +9,8 @@ public interface CompraDAO {
 
 	void actualizarCompra(Compra compra) throws Exception;
 
+	void eliminarCompra(String numeroFactura) throws Exception;
+
 	Compra buscarComprarpornumero(String numeroFactura) throws Exception;
 	
 	List<Compra> listarCompra()throws Exception;

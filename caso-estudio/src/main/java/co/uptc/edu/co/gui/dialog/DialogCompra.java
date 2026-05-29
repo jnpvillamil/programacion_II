@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -28,12 +29,14 @@ import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
 public class DialogCompra extends JDialog {
 	private JTextField campoNumeroFactura;
 	private JTextField campoFecha;
 	private JComboBox<Proveedor> comboProveedor;
+	private JComboBox<FormaPago> comboFormaPago;
 
 	private JComboBox<Producto> comboProducto;
 	private JTextField campoCantidad;
@@ -69,6 +72,10 @@ public class DialogCompra extends JDialog {
 
 		comboProveedor = new JComboBox<>();
 		comboProveedor.addItem(null);
+		comboFormaPago = new JComboBox<>();
+		for (FormaPago formaPago : FormaPago.values()) {
+			comboFormaPago.addItem(formaPago);
+		}
 		comboProducto = new JComboBox<>();
 		comboProducto.addItem(null);
 
@@ -154,8 +161,14 @@ public class DialogCompra extends JDialog {
 		panelDatos.add(new JLabel("Proveedor:"), gbc);
 
 		gbc.gridx = 1;
-		gbc.gridwidth = 3;
+		gbc.gridwidth = 1;
 		panelDatos.add(comboProveedor, gbc);
+
+		gbc.gridx = 2;
+		panelDatos.add(new JLabel("Forma de pago:"), gbc);
+
+		gbc.gridx = 3;
+		panelDatos.add(comboFormaPago, gbc);
 
 		return panelDatos;
 	}
@@ -437,6 +450,7 @@ public class DialogCompra extends JDialog {
 	public Compra obtenerCompra() throws Exception {
 		String numeroFactura = campoNumeroFactura.getText().trim();
 		Proveedor proveedor = (Proveedor) comboProveedor.getSelectedItem();
+		FormaPago formaPago = (FormaPago) comboFormaPago.getSelectedItem();
 
 		if (numeroFactura.isEmpty()) {
 			throw new Exception("El número de factura es obligatorio.");
@@ -444,6 +458,10 @@ public class DialogCompra extends JDialog {
 
 		if (proveedor == null) {
 			throw new Exception("Debe seleccionar un proveedor.");
+		}
+
+		if (formaPago == null) {
+			throw new Exception("Debe seleccionar una forma de pago.");
 		}
 
 		if (modeloTabla.getRowCount() == 0) {
@@ -473,6 +491,8 @@ public class DialogCompra extends JDialog {
 		compra.setNumeroFacturaProveedor(numeroFactura);
 		compra.setFecha(LocalDate.now());
 		compra.setCodigoProveedor(proveedor.getCodigoProveedor());
+		compra.setProveedor(proveedor.toString());
+		compra.setFormaPago(formaPago.toString());
 		compra.setDetalles(detalles);
 		compra.setSubtotal(subtotalCompra);
 		compra.setImpuestos(impuestosCompra);
@@ -505,6 +525,10 @@ public class DialogCompra extends JDialog {
 		return proveedorSeleccionado != null ? ((Proveedor) proveedorSeleccionado).getCodigoProveedor() : "";
 	}
 
+	public FormaPago obtenerFormaPago() {
+		return (FormaPago) comboFormaPago.getSelectedItem();
+	}
+
 	public Proveedor obtenerProveedorObjeto() {
 		return (Proveedor) comboProveedor.getSelectedItem();
 	}
@@ -519,6 +543,10 @@ public class DialogCompra extends JDialog {
 
 	public String obtenerTotalCompra() {
 		return campoTotalCompra.getText().trim();
+	}
+
+	public JComboBox<FormaPago> getComboFormaPago() {
+		return comboFormaPago;
 	}
 
 }

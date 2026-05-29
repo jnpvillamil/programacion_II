@@ -6,6 +6,7 @@ import java.util.List;
 
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.MovimientoContableDAO;
+import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.TipoMovimientoContable;
@@ -14,12 +15,16 @@ public class GestionContabilidad implements IGestionContabilidad {
 
 	private static final String PREFIJO_MOVIMIENTO = "MC";
 	private static final String ORIGEN_VENTA = "VENTA";
+	private static final String ORIGEN_COMPRA = "COMPRA";
+	private static final String ORIGEN_ANULACION_COMPRA = "ANULACION_COMPRA";
 	private static final String ORIGEN_ANULACION_VENTA = "ANULACION_VENTA";
 	private static final String ORIGEN_DEVOLUCION_VENTA = "DEVOLUCION_VENTA";
 	private static final String CUENTA_CAJA = "Caja";
 	private static final String CUENTA_BANCOS = "Bancos";
 	private static final String CUENTA_INGRESOS = "Ingresos por Ventas";
+	private static final String CUENTA_COMPRAS = "Compras";
 	private static final String CUENTA_IVA_GENERADO = "IVA Generado";
+	private static final String CUENTA_IVA_COMPRAS = "IVA en Compras";
 
 	private final MovimientoContableDAO movimientoContableDAO;
 	private List<MovimientoContable> movimientos;
@@ -55,6 +60,59 @@ public class GestionContabilidad implements IGestionContabilidad {
 		if (venta.getImpuestos() > 0) {
 			guardarMovimiento(crearMovimiento(fecha, CUENTA_IVA_GENERADO, venta.getImpuestos(),
 					"IVA generado venta " + venta.getNumeroFactura(), venta.getNumeroFactura()));
+		}
+
+		recargarMovimientos();
+	}
+
+	@Override
+	public void registrarEgresoPorCompra(Compra compra) throws Exception {
+		validarCompra(compra);
+
+		LocalDate fecha = compra.getFecha();
+		String cuentaEgreso = obtenerCuentaPago(compra.getFormaPago());
+
+		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, cuentaEgreso, compra.getTotalCompra(),
+				"Egreso por compra " + compra.getNumeroFacturaProveedor(), ORIGEN_COMPRA,
+				compra.getNumeroFacturaProveedor()));
+
+		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_COMPRAS,
+				compra.getSubtotal(), "Compra " + compra.getNumeroFacturaProveedor(), ORIGEN_COMPRA,
+				compra.getNumeroFacturaProveedor()));
+
+		if (compra.getImpuestos() > 0) {
+			guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.EGRESO, CUENTA_IVA_COMPRAS,
+					compra.getImpuestos(), "IVA compra " + compra.getNumeroFacturaProveedor(), ORIGEN_COMPRA,
+					compra.getNumeroFacturaProveedor()));
+		}
+
+		recargarMovimientos();
+	}
+
+	@Override
+	public void registrarReversoPorAnulacionCompra(Compra compra, String motivo) throws Exception {
+		validarCompra(compra);
+
+		if (motivo == null || motivo.trim().isEmpty()) {
+			throw new Exception("Debe ingresar un motivo de anulacion.");
+		}
+
+		LocalDate fecha = LocalDate.now();
+		String cuentaPago = obtenerCuentaPago(compra.getFormaPago());
+		String referencia = compra.getNumeroFacturaProveedor();
+
+		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.INGRESO, cuentaPago, compra.getTotalCompra(),
+				"Reverso egreso por anulacion compra " + referencia + ". Motivo: " + motivo,
+				ORIGEN_ANULACION_COMPRA, referencia));
+
+		guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.INGRESO, CUENTA_COMPRAS,
+				compra.getSubtotal(), "Reverso compra " + referencia + ". Motivo: " + motivo,
+				ORIGEN_ANULACION_COMPRA, referencia));
+
+		if (compra.getImpuestos() > 0) {
+			guardarMovimiento(crearMovimiento(fecha, TipoMovimientoContable.INGRESO, CUENTA_IVA_COMPRAS,
+					compra.getImpuestos(), "Reverso IVA compra " + referencia + ". Motivo: " + motivo,
+					ORIGEN_ANULACION_COMPRA, referencia));
 		}
 
 		recargarMovimientos();
@@ -169,6 +227,14 @@ public class GestionContabilidad implements IGestionContabilidad {
 		return CUENTA_CAJA;
 	}
 
+	private String obtenerCuentaPago(String formaPago) {
+		if (formaPago != null && formaPago.equalsIgnoreCase("Transferencia")) {
+			return CUENTA_BANCOS;
+		}
+
+		return CUENTA_CAJA;
+	}
+
 	private String generarCodigoMovimiento() {
 		int mayor = 0;
 
@@ -206,6 +272,28 @@ public class GestionContabilidad implements IGestionContabilidad {
 
 		if (venta.getTotal() <= 0) {
 			throw new Exception("La venta no tiene valor contable.");
+		}
+	}
+
+	private void validarCompra(Compra compra) throws Exception {
+		if (compra == null) {
+			throw new Exception("La compra no puede ser nula.");
+		}
+
+		if (compra.getNumeroFacturaProveedor() == null || compra.getNumeroFacturaProveedor().trim().isEmpty()) {
+			throw new Exception("La compra no tiene número de factura.");
+		}
+
+		if (compra.getFecha() == null) {
+			throw new Exception("La compra no tiene fecha.");
+		}
+
+		if (compra.getTotalCompra() <= 0) {
+			throw new Exception("La compra no tiene valor contable.");
+		}
+
+		if (compra.getFormaPago() == null || compra.getFormaPago().trim().isEmpty()) {
+			throw new Exception("La compra no tiene forma de pago.");
 		}
 	}
 }

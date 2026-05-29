@@ -77,7 +77,7 @@ public class TiendaConfig {
 		gestionFactura = new GestionFactura(facturaDAO);
 
 		CompraDAO compraDAO = new ComprasBDDAO();
-		gestionCompra = new GestionCompra(compraDAO, gestionInventario);
+		gestionCompra = new GestionCompra(compraDAO, gestionInventario, gestionContabilidad);
 	}
 
 	public IGestionProducto getGestionProducto() {

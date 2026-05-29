@@ -3,11 +3,16 @@ package co.uptc.edu.co.interfaces;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.MovimientoContable;
+import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.Venta;
 
 public interface IGestionContabilidad {
 
 	void registrarIngresoPorVenta(Venta venta) throws Exception;
+
+	void registrarEgresoPorCompra(Compra compra) throws Exception;
+
+	void registrarReversoPorAnulacionCompra(Compra compra, String motivo) throws Exception;
 
 	void registrarReversoPorAnulacionVenta(Venta venta, String motivo) throws Exception;
 

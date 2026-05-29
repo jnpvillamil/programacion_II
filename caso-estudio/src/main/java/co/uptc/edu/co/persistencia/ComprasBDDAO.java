@@ -21,24 +21,24 @@ public class ComprasBDDAO implements CompraDAO {
     private static final String TABLA_DETALLE_COMPRAS = "detalle_compras";
 
     private static final String SQL_INSERTAR_COMPRA = "INSERT INTO " + TABLA_COMPRAS
-            + " (numeroFacturaProveedor, fecha, codigo_proveedor, subtotal, impuestos, totalCompra, estado, motivoAnulacion)"
-            + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            + " (numeroFacturaProveedor, fecha, codigo_proveedor, forma_pago, subtotal, impuestos, totalCompra, estado, motivoAnulacion)"
+            + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_INSERTAR_DETALLE = "INSERT INTO " + TABLA_DETALLE_COMPRAS
             + " (id_compra, codigoProducto, cantidad, costoUnitario, subtotal, impuestos, total)"
             + " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_ACTUALIZAR_COMPRA = "UPDATE " + TABLA_COMPRAS
-            + " SET numeroFacturaProveedor = ?, fecha = ?, codigo_proveedor = ?, subtotal = ?, impuestos = ?, totalCompra = ?, estado = ?, motivoAnulacion = ?"
+            + " SET numeroFacturaProveedor = ?, fecha = ?, codigo_proveedor = ?, forma_pago = ?, subtotal = ?, impuestos = ?, totalCompra = ?, estado = ?, motivoAnulacion = ?"
             + " WHERE numeroFacturaProveedor = ?";
 
-    private static final String SQL_BUSCAR_COMPRA = "SELECT numeroFacturaProveedor, fecha, codigo_proveedor, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
+        private static final String SQL_BUSCAR_COMPRA = "SELECT numeroFacturaProveedor, fecha, codigo_proveedor, forma_pago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
             + " FROM " + TABLA_COMPRAS + " WHERE numeroFacturaProveedor = ?";
 
         private static final String SQL_BUSCAR_ID_COMPRA = "SELECT id_compra FROM " + TABLA_COMPRAS
             + " WHERE numeroFacturaProveedor = ?";
 
-    private static final String SQL_LISTAR_COMPRAS = "SELECT numeroFacturaProveedor, fecha, codigo_proveedor, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
+    private static final String SQL_LISTAR_COMPRAS = "SELECT numeroFacturaProveedor, fecha, codigo_proveedor, forma_pago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
             + " FROM " + TABLA_COMPRAS + " ORDER BY fecha DESC";
 
         private static final String SQL_LISTAR_DETALLES = "SELECT id_detalle, id_compra, codigoProducto, cantidad, costoUnitario, subtotal, impuestos, total"
@@ -89,6 +89,28 @@ public class ComprasBDDAO implements CompraDAO {
     }
 
     @Override
+    public void eliminarCompra(String numeroFactura) throws Exception {
+        try (Connection conexion = ConexionBD.getConexion()) {
+            conexion.setAutoCommit(false);
+
+            try {
+                int idCompra = obtenerIdCompra(conexion, numeroFactura);
+                eliminarDetallescompra(conexion, idCompra);
+
+                try (PreparedStatement sentencia = conexion.prepareStatement(SQL_ELIMINAR_COMPRA)) {
+                    sentencia.setString(1, numeroFactura);
+                    sentencia.executeUpdate();
+                }
+
+                conexion.commit();
+            } catch (Exception e) {
+                conexion.rollback();
+                throw e;
+            }
+        }
+    }
+
+    @Override
     public Compra buscarComprarpornumero(String numeroFactura) throws Exception {
         try (Connection conexion = ConexionBD.getConexion();
                 PreparedStatement sentecia = conexion.prepareStatement(SQL_BUSCAR_COMPRA)) {
@@ -120,7 +142,7 @@ public class ComprasBDDAO implements CompraDAO {
     private void actualizarCabeceraCompra(Connection conexion, Compra compra) throws SQLException {
         try (PreparedStatement sentencia = conexion.prepareStatement(SQL_ACTUALIZAR_COMPRA)) {
             prepararInsertCompra(sentencia, compra);
-            sentencia.setString(9, compra.getNumeroFacturaProveedor());
+            sentencia.setString(10, compra.getNumeroFacturaProveedor());
             sentencia.executeUpdate();
         }
     }
@@ -204,6 +226,7 @@ public class ComprasBDDAO implements CompraDAO {
             compra.setFecha(fechaSql.toLocalDate());
         }
         compra.setCodigoProveedor(resultado.getString("codigo_proveedor"));
+        compra.setFormaPago(resultado.getString("forma_pago"));
         compra.setSubtotal(resultado.getDouble("subtotal"));
         compra.setImpuestos(resultado.getDouble("impuestos"));
         compra.setTotalCompra(resultado.getDouble("totalCompra"));
@@ -244,10 +267,11 @@ public class ComprasBDDAO implements CompraDAO {
         sentencia.setString(1, compra.getNumeroFacturaProveedor());
         sentencia.setDate(2, compra.getFecha() != null ? Date.valueOf(compra.getFecha()) : null);
         sentencia.setString(3, compra.getCodigoProveedor());
-        sentencia.setDouble(4, compra.getSubtotal());
-        sentencia.setDouble(5, compra.getImpuestos());
-        sentencia.setDouble(6, compra.getTotalCompra());
-        sentencia.setString(7, compra.getEstado() != null ? compra.getEstado().name() : null);
-        sentencia.setString(8, compra.getMotivoAnulacion());
+        sentencia.setString(4, compra.getFormaPago());
+        sentencia.setDouble(5, compra.getSubtotal());
+        sentencia.setDouble(6, compra.getImpuestos());
+        sentencia.setDouble(7, compra.getTotalCompra());
+        sentencia.setString(8, compra.getEstado() != null ? compra.getEstado().name() : null);
+        sentencia.setString(9, compra.getMotivoAnulacion());
     }
 }

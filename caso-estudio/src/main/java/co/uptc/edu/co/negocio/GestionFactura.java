@@ -5,7 +5,9 @@ import java.text.DecimalFormatSymbols;
 
 import co.uptc.edu.co.interfaces.FacturaDAO;
 import co.uptc.edu.co.interfaces.IGestionFactura;
+import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 
@@ -36,6 +38,13 @@ public class GestionFactura implements IGestionFactura {
 		return facturaDAO.guardarFactura(venta.getNumeroFactura(), contenidoFactura);
 	}
 
+	@Override
+	public String generarFactura(Compra compra) throws Exception {
+		validarCompra(compra);
+		String contenidoFactura = construirContenidoFactura(compra);
+		return facturaDAO.guardarFactura(compra.getNumeroFacturaProveedor(), contenidoFactura);
+	}
+
 	private void validarVenta(Venta venta) throws Exception {
 		if (venta == null) {
 			throw new Exception("La venta no puede ser nula.");
@@ -57,6 +66,19 @@ public class GestionFactura implements IGestionFactura {
 		escribirDatosVenta(contenido, venta);
 		escribirDetalleProductos(contenido, venta);
 		escribirTotales(contenido, venta);
+		escribirPie(contenido);
+
+		return contenido.toString();
+	}
+
+	private String construirContenidoFactura(Compra compra) {
+		StringBuilder contenido = new StringBuilder();
+
+		// Reutilizar encabezado y pie comunes con el mismo formato de venta
+		escribirEncabezado(contenido);
+		escribirDatosCompra(contenido, compra);
+		escribirDetalleProductosCompra(contenido, compra);
+		escribirTotalesCompra(contenido, compra);
 		escribirPie(contenido);
 
 		return contenido.toString();
@@ -109,6 +131,63 @@ public class GestionFactura implements IGestionFactura {
 		contenido.append("========================================").append(System.lineSeparator());
 		contenido.append("       Gracias por su compra").append(System.lineSeparator());
 		contenido.append("========================================").append(System.lineSeparator());
+	}
+
+	
+
+	private void escribirDatosCompra(StringBuilder contenido, Compra compra) {
+		contenido.append("Factura proveedor: ").append(compra.getNumeroFacturaProveedor()).append(System.lineSeparator());
+		contenido.append("Fecha compra:      ").append(compra.getFecha()).append(System.lineSeparator());
+		contenido.append("Proveedor:         ")
+				.append(compra.getProveedor() != null ? compra.getProveedor() : compra.getCodigoProveedor())
+				.append(System.lineSeparator());
+		contenido.append("Forma de pago:     ").append(compra.getFormaPago()).append(System.lineSeparator());
+		contenido.append("----------------------------------------").append(System.lineSeparator());
+	}
+
+	private void escribirDetalleProductosCompra(StringBuilder contenido, Compra compra) {
+		contenido.append(String.format("%-20s %5s %12s %12s %12s%n", "Producto", "Cant.", "Costo", "IVA", "Subtotal"));
+		contenido.append("----------------------------------------").append(System.lineSeparator());
+
+		for (DetalleCompra detalle : compra.getDetalles()) {
+			Producto producto = detalle.getProducto();
+			String nombreProducto = producto != null ? producto.getNombreProducto() : "Producto";
+
+			contenido.append(String.format("%-20s %5d %12s %12s %12s%n",
+					nombreProducto,
+					detalle.getCantidad(),
+					formatearMoneda(detalle.getCostoUnitario()),
+					formatearMoneda(detalle.getImpuestos()),
+					formatearMoneda(detalle.getSubtotal())));
+		}
+
+		contenido.append("----------------------------------------").append(System.lineSeparator());
+	}
+
+	private void escribirTotalesCompra(StringBuilder contenido, Compra compra) {
+		contenido.append(String.format("%-30s %12s%n", "Subtotal:", formatearMoneda(compra.getSubtotal())));
+		contenido.append(String.format("%-30s %12s%n", "IVA:", formatearMoneda(compra.getImpuestos())));
+		contenido.append(String.format("%-30s %12s%n", "TOTAL:", formatearMoneda(compra.getTotalCompra())));
+	}
+
+	
+
+	private void validarCompra(Compra compra) throws Exception {
+		if (compra == null) {
+			throw new Exception("La compra no puede ser nula.");
+		}
+
+		if (compra.getNumeroFacturaProveedor() == null || compra.getNumeroFacturaProveedor().trim().isEmpty()) {
+			throw new Exception("La compra no tiene número de factura.");
+		}
+
+		if (compra.getDetalles() == null || compra.getDetalles().isEmpty()) {
+			throw new Exception("La compra no tiene productos para facturar.");
+		}
+
+		if (compra.getFormaPago() == null || compra.getFormaPago().trim().isEmpty()) {
+			throw new Exception("La compra no tiene forma de pago para facturar.");
+		}
 	}
 
 	private String formatearMoneda(double valor) {

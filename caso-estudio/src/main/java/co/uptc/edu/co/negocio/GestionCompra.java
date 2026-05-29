@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.CompraDAO;
+import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.modelo.Compra;
@@ -15,18 +16,24 @@ public class GestionCompra implements IGestionCompra {
 	private static final long NUMERO_FACTURA_INICIAL = 708507L;
 	private final CompraDAO compraDAO;
 	private final IGestionInventario gestionInventario;
+	private final IGestionContabilidad gestionContabilidad;
 	private List<Compra> compras;
 
-	public GestionCompra(CompraDAO compraDAO, IGestionInventario gestionInventario) {
+	public GestionCompra(CompraDAO compraDAO, IGestionInventario gestionInventario,
+			IGestionContabilidad gestionContabilidad) {
 		if (compraDAO == null) {
 			throw new IllegalArgumentException("El compraDAO no puede ser nulo.");
 		}
 		if (gestionInventario == null) {
 			throw new IllegalArgumentException("El gestionInventario no puede ser nulo.");
 		}
+		if (gestionContabilidad == null) {
+			throw new IllegalArgumentException("El gestionContabilidad no puede ser nulo.");
+		}
 
 		this.compraDAO = compraDAO;
 		this.gestionInventario = gestionInventario;
+		this.gestionContabilidad = gestionContabilidad;
 		try {
 			compras = compraDAO.listarCompra();
 		} catch (Exception e) {
@@ -50,6 +57,9 @@ public class GestionCompra implements IGestionCompra {
 		compra.setNumeroFacturaProveedor(numeroFactura);
 		compra.setFecha(LocalDate.now());
 		compra.setEstado(EstadoCompraEnum.ACTIVA);
+		if (compra.getFormaPago() == null || compra.getFormaPago().trim().isEmpty()) {
+			throw new Exception("La forma de pago es obligatoria.");
+		}
 		compra.setSubtotal(calcularSubtotal(compra.getDetalles()));
 		compra.setImpuestos(calcularimpuestos(compra.getDetalles()));
 		compra.setTotalCompra(compra.getSubtotal() + compra.getImpuestos());
@@ -58,8 +68,13 @@ public class GestionCompra implements IGestionCompra {
 		registrarEntradaInventario(compra);
 		try {
 			compraDAO.guardarComprar(compra);
+			gestionContabilidad.registrarEgresoPorCompra(compra);
 			compras.add(compra);
 		} catch (Exception e) {
+			try {
+				compraDAO.eliminarCompra(compra.getNumeroFacturaProveedor());
+			} catch (Exception ignored) {
+			}
 			revertirEntradaInventario(compra);
 			throw e;
 		}
@@ -83,7 +98,11 @@ public class GestionCompra implements IGestionCompra {
 			}
 		}
 
-		return null;
+		try {
+			return compraDAO.buscarComprarpornumero(numeroFactura);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -134,11 +153,20 @@ public class GestionCompra implements IGestionCompra {
 			throw new Exception("No se encotro la compra a anular");
 		}
 
+		if (compra.getEstado() == EstadoCompraEnum.ANULADA) {
+			throw new Exception("La compra ya esta anulada.");
+		}
+
+		if (motivoAnulacion == null || motivoAnulacion.trim().isEmpty()) {
+			throw new Exception("Debe ingresar un motivo de anulacion.");
+		}
+
 		revertirEntradaInventario(compra);
 		compra.setEstado(EstadoCompraEnum.ANULADA);
-		compra.setMotivoAnulacion(motivoAnulacion);
+		compra.setMotivoAnulacion(motivoAnulacion.trim());
 		try {
 			compraDAO.actualizarCompra(compra);
+			gestionContabilidad.registrarReversoPorAnulacionCompra(compra, motivoAnulacion.trim());
 		} catch (Exception e) {
 			compra.setEstado(EstadoCompraEnum.ACTIVA);
 			compra.setMotivoAnulacion(null);

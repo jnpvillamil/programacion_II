@@ -92,6 +92,7 @@ public class Evento implements ActionListener {
 	public static final String CMD_AGREGAR_PRODUCTO_COMPRA = "AgregarProductoCompra";
 	public static final String CMD_ANULAR_COMPRA = "AnularCompra";
 	public static final String CMD_CONFIRMAR_REGISTRO_COMPRA = "ConfirmarRegistroCompra";
+	public static final String CMD_FACTURA_COMPRA = "FacturaCompra";
 
 	// CONSTANTES DE COMANDOS - CONTABILIDAD
 	public static final String CMD_VER_DETALLE_CONTABLE = "VerDetalleContable";
@@ -877,6 +878,10 @@ public class Evento implements ActionListener {
 			abrirDialogoAnularCompra();
 			return true;
 
+		case CMD_FACTURA_COMPRA:
+			generarFacturaCompra();
+			return true;
+
 		default:
 			return false;
 		}
@@ -915,6 +920,7 @@ public class Evento implements ActionListener {
 				compra.getNumeroFacturaProveedor(),
 				compra.getFecha() != null ? compra.getFecha().toString() : "",
 				compra.getCodigoProveedor(),
+				compra.getFormaPago() != null ? compra.getFormaPago() : "",
 				String.valueOf(compra.getSubtotal()),
 				String.valueOf(compra.getImpuestos()),
 				String.valueOf(compra.getTotalCompra()));
@@ -957,6 +963,16 @@ public class Evento implements ActionListener {
 				refrescarTablaProductos();
 				mostrarInformacion("Compra anulada exitosamente.");
 			}
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
+	}
+
+	private void generarFacturaCompra() {
+		try {
+			Compra compra = obtenerCompraSeleccionada();
+			String rutaFactura = gestionFactura.generarFactura(compra);
+			mostrarInformacion("Factura de compra generada correctamente en: " + rutaFactura);
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
 		}

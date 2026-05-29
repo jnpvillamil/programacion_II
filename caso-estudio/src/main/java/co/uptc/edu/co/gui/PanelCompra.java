@@ -1,9 +1,13 @@
 package co.uptc.edu.co.gui;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.Proveedor;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 
 import java.awt.*;
 import java.util.List;
@@ -15,16 +19,21 @@ public class PanelCompra extends PanelCentral {
 	private static final String TEXTO_TOTAL = "Total de compras: ";
 
 	private static final String OPCION_TODOS = "Todos";
+	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	private static final String[] COLUMNAS = { "Factura Proveedor", "Fecha", "Proveedor", "Subtotal", "Impuestos",
-			"Total", "Estado" };
+	private static final String[] COLUMNAS = { "Factura Proveedor", "Fecha", "Proveedor", "Forma de Pago",
+			"Subtotal", "Impuestos", "Total", "Estado" };
 
 	private JButton botonNuevaCompra;
 	private JButton botonAnular;
 	private JButton botonDetalle;
+	private JButton botonFactura;
 
 	private JTextField campoBuscar;
 	private JComboBox<String> comboProveedor;
+	private JComboBox<String> comboFormaPago;
+	private JComboBox<String> comboEstado;
 
 	private java.util.List<Compra> comprasCargadas;
 
@@ -56,23 +65,38 @@ public class PanelCompra extends PanelCentral {
 		botonNuevaCompra = new JButton("Nueva Compra");
 		botonAnular = new JButton("Anular");
 		botonDetalle = new JButton("Ver Detalle");
+		botonFactura = new JButton("Generar Factura");
 
 		campoBuscar = new JTextField(20);
 
 		comboProveedor = new JComboBox<>();
 		comboProveedor.addItem(OPCION_TODOS);
 
+		comboFormaPago = new JComboBox<>();
+		comboFormaPago.addItem(OPCION_TODOS);
+		for (FormaPago formaPago : FormaPago.values()) {
+			comboFormaPago.addItem(formaPago.toString());
+		}
+
+		comboEstado = new JComboBox<>();
+		comboEstado.addItem(OPCION_TODOS);
+		comboEstado.addItem("ACTIVA");
+		comboEstado.addItem("ANULADA");
+
 	}
 
 	private void inicializarFiltros() {
 		asignarFiltroTexto(campoBuscar, this::aplicarFiltros);
 		asignarFiltroCombo(comboProveedor, this::aplicarFiltros);
+		asignarFiltroCombo(comboFormaPago, this::aplicarFiltros);
+		asignarFiltroCombo(comboEstado, this::aplicarFiltros);
 	}
 
 	private void configurarPanelCompra() {
 		configurarBotonBase(botonNuevaCompra);
 		configurarBotonBase(botonAnular);
 		configurarBotonBase(botonDetalle);
+		configurarBotonBase(botonFactura);
 
 	}
 
@@ -80,9 +104,12 @@ public class PanelCompra extends PanelCentral {
 		panelBotones.add(botonNuevaCompra);
 		panelBotones.add(botonAnular);
 		panelBotones.add(botonDetalle);
+		panelBotones.add(botonFactura);
 
 		agregarFiltro("Buscar Factura:", campoBuscar);
 		agregarFiltro("Proveedor:", comboProveedor);
+		agregarFiltro("Forma de pago:", comboFormaPago);
+		agregarFiltro("Estado:", comboEstado);
 
 	}
 
@@ -95,6 +122,9 @@ public class PanelCompra extends PanelCentral {
 
 		botonAnular.setActionCommand(Evento.CMD_ANULAR_COMPRA);
 		botonAnular.addActionListener(evento);
+
+		botonFactura.setActionCommand(Evento.CMD_FACTURA_COMPRA);
+		botonFactura.addActionListener(evento);
 
 	}
 
@@ -121,26 +151,36 @@ public class PanelCompra extends PanelCentral {
 
 		String textoBusqueda = campoBuscar.getText().trim().toLowerCase();
 		String proveedorSeleccionado = comboProveedor.getSelectedItem() != null ? comboProveedor.getSelectedItem().toString() : OPCION_TODOS;
+		String formaPagoSeleccionada = comboFormaPago.getSelectedItem() != null ? comboFormaPago.getSelectedItem().toString() : OPCION_TODOS;
+		String estadoSeleccionado = comboEstado.getSelectedItem() != null ? comboEstado.getSelectedItem().toString() : OPCION_TODOS;
 
 		int totalFiltrados = 0;
 
 		for (Compra compra : comprasCargadas) {
+			String estadoCompra = compra.getEstado() != null ? compra.getEstado().name() : "";
+
 			boolean coincideBusqueda = textoBusqueda.isEmpty() ||
 					(compra.getNumeroFacturaProveedor() != null && compra.getNumeroFacturaProveedor().toLowerCase().contains(textoBusqueda));
 
 			boolean coincideProveedor = proveedorSeleccionado.equals(OPCION_TODOS) ||
 					(compra.getCodigoProveedor() != null && proveedorSeleccionado.startsWith(compra.getCodigoProveedor()));
 
-			if (coincideBusqueda && coincideProveedor) {
-				String factura = compra.getNumeroFacturaProveedor();
-				String fecha = compra.getFecha() != null ? compra.getFecha().toString() : "";
-				String proveedor = compra.getCodigoProveedor();
-				double subtotal = compra.getSubtotal();
-				double impuestos = compra.getImpuestos();
-				double total = compra.getTotalCompra();
-				String estado = compra.getEstado() != null ? compra.getEstado().name() : "";
+			boolean coincideFormaPago = formaPagoSeleccionada.equals(OPCION_TODOS) ||
+					(compra.getFormaPago() != null && compra.getFormaPago().equalsIgnoreCase(formaPagoSeleccionada));
 
-				modeloTabla.addRow(new Object[] { factura, fecha, proveedor, subtotal, impuestos, total, estado });
+			boolean coincideEstado = estadoSeleccionado.equals(OPCION_TODOS) || estadoCompra.equalsIgnoreCase(estadoSeleccionado);
+
+			if (coincideBusqueda && coincideProveedor && coincideFormaPago && coincideEstado) {
+				String factura = compra.getNumeroFacturaProveedor();
+				String fecha = compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "";
+				String proveedor = compra.getCodigoProveedor();
+				String formaPago = compra.getFormaPago() != null ? compra.getFormaPago() : "";
+				String subtotal = formatearMoneda(compra.getSubtotal());
+				String impuestos = formatearMoneda(compra.getImpuestos());
+				String total = formatearMoneda(compra.getTotalCompra());
+				String estado = estadoCompra;
+
+				modeloTabla.addRow(new Object[] { factura, fecha, proveedor, formaPago, subtotal, impuestos, total, estado });
 				totalFiltrados++;
 			}
 		}
@@ -161,20 +201,42 @@ public class PanelCompra extends PanelCentral {
 		return obtenerTextoSeleccionado(2);
 	}
 
-	public String obtenerSubtotalSeleccionado() {
+	public String obtenerFormaPagoSeleccionada() {
 		return obtenerTextoSeleccionado(3);
 	}
 
-	public String obtenerImpuestosSeleccionados() {
+	public String obtenerSubtotalSeleccionado() {
 		return obtenerTextoSeleccionado(4);
 	}
 
-	public String obtenerTotalSeleccionado() {
+	public String obtenerImpuestosSeleccionados() {
 		return obtenerTextoSeleccionado(5);
 	}
 
-	public String obtenerEstadoSeleccionadoCompra() {
+	public String obtenerTotalSeleccionado() {
 		return obtenerTextoSeleccionado(6);
+	}
+
+	public String obtenerEstadoSeleccionadoCompra() {
+		return obtenerTextoSeleccionado(7);
+	}
+
+	private static DecimalFormat crearFormatoMoneda() {
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator('.');
+		simbolos.setDecimalSeparator(',');
+
+		DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+		formato.setGroupingUsed(true);
+		return formato;
+	}
+
+	private String formatearMoneda(double valor) {
+		return FORMATO_MONEDA.format(valor);
+	}
+
+	public JButton getBotonFactura() {
+		return botonFactura;
 	}
 
 	public void actualizarTotalCompras(int total) {

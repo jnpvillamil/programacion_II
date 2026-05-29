@@ -8,6 +8,8 @@ public class Compra {
 	private String numeroFacturaProveedor;
 	private LocalDate fecha;
 	private String codigoProveedor;
+	private String proveedor;
+	private String formaPago;
 	private List<DetalleCompra> detalles;
 	private double subtotal;
 	private double impuestos;
@@ -20,11 +22,13 @@ public class Compra {
 		this.estado = EstadoCompraEnum.ACTIVA;
 	}
 
-	    public Compra(String numeroFacturaProveedor, LocalDate fecha, String codigoProveedor, double subtotal,
-		    double costoUnitario, double impuestos, double totalCompra, EstadoCompraEnum estado) {
+	public Compra(String numeroFacturaProveedor, LocalDate fecha, String codigoProveedor, String proveedor,
+			String formaPago, double subtotal, double impuestos, double totalCompra, EstadoCompraEnum estado) {
 		this.numeroFacturaProveedor = numeroFacturaProveedor;
 		this.fecha = fecha;
 		this.codigoProveedor = codigoProveedor;
+		this.proveedor = proveedor;
+		this.formaPago = formaPago;
 		this.subtotal = subtotal;
 		this.impuestos = impuestos;
 		this.totalCompra = totalCompra;
@@ -55,6 +59,22 @@ public class Compra {
 
 	public void setCodigoProveedor(String codigoProveedor) {
 		this.codigoProveedor = codigoProveedor;
+	}
+
+	public String getProveedor() {
+		return proveedor;
+	}
+
+	public void setProveedor(String proveedor) {
+		this.proveedor = proveedor;
+	}
+
+	public String getFormaPago() {
+		return formaPago;
+	}
+
+	public void setFormaPago(String formaPago) {
+		this.formaPago = formaPago;
 	}
 
 	public double getImpuestos() {
@@ -107,11 +127,12 @@ public class Compra {
 	@Override
 	public String toString() {
 		return "Compra [numeroFacturaProveedor=" + numeroFacturaProveedor + ", fecha=" + fecha
-				+ ", codigoProveedor=" + codigoProveedor + ", estado=" + getEstado()
+				+ ", codigoProveedor=" + codigoProveedor + ", proveedor=" + proveedor
+				+ ", formaPago=" + formaPago + ", estado=" + getEstado()
 				+ ", motivoAnulacion=" + motivoAnulacion
 				+ ", detalles=" + (detalles != null ? detalles.size() : 0)
 				+ "]";
-	
+
 
 }
 }
