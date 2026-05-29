@@ -59,6 +59,11 @@ public class Evento implements ActionListener {
 	public static final String CONSULTAR_VENTAS_POR_FECHA = "CONSULTAR_VENTAS_POR_FECHA";
 	public static final String MOSTRAR_TODAS_VENTAS = "MOSTRAR_TODAS_VENTAS";
 	
+	// Contabilidad
+	public static final String MENU_MOV_CONTABLES = "MENU_MOV_CONTABLES";
+	public static final String MENU_REPORTES = "MENU_REPORTES";
+	public static final String MENU_CONSULTAS = "MENU_CONSULTAS";
+	
 	private VentanaPrincipal ventana;
 
 	public Evento(VentanaPrincipal ventana) {
@@ -197,6 +202,18 @@ public class Evento implements ActionListener {
 		case CONSULTAR_VENTAS_POR_FECHA:
 			ventana.consultarVentasPorFecha();		
 			break; 
+		// Contabilidad
+		case MENU_MOV_CONTABLES:
+		    ventana.mostrarMovimientosContables();
+		    break;
+
+		case MENU_REPORTES:
+		    ventana.mostrarReportesContables();
+		    break;
+
+		case MENU_CONSULTAS:
+		    ventana.mostrarConsultasContables();
+		    break;
 		
 		}
 	}

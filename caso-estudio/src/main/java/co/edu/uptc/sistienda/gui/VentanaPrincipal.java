@@ -42,6 +42,7 @@ public class VentanaPrincipal extends JFrame {
 	private static final String TARJETA_PRINCIPAL = "PRINCIPAL";
 	private static final String TARJETA_CAJERO = "CAJERO";
 	private static final String TARJETA_BIENVENIDA = "BIENVENIDA";
+	private static final String TARJETA_CONTADOR = "CONTADOR";
 
 	// Capa de negocio
 	private SistiendaConfig configuracion;
@@ -108,6 +109,14 @@ public class VentanaPrincipal extends JFrame {
 		envCajero.add(construirBarraSuperior(), BorderLayout.NORTH);
 		envCajero.add(panelCajero, BorderLayout.CENTER);
 		panelRaiz.add(envCajero, TARJETA_CAJERO);
+		
+		// Tarjeta CONTADOR
+		JPanel panelContador = new JPanel(new BorderLayout());
+		panelContador.add(construirBarraSuperior(), BorderLayout.NORTH);
+		panelContabilidad = new PanelContabilidad();
+		panelContador.add(panelContabilidad, BorderLayout.CENTER);
+		panelRaiz.add(panelContador, TARJETA_CONTADOR);
+		
 
 		// Tarjeta BIENVENIDA
 		// La verán todos los roles que no sean Administrador
@@ -156,13 +165,13 @@ public class VentanaPrincipal extends JFrame {
 		panelProductos = new PanelProductos(evento);
 		panelClientes = new PanelClientes(evento);
 		panelProveedores = new PanelProveedores(evento);
-		panelContabilidad = new PanelContabilidad();
 		
 		panelContenidoCentral.add(panelDashboard, Evento.MENU_DASHBOARD);
 		panelContenidoCentral.add(panelProductos, Evento.MENU_PRODUCTOS);
 		panelContenidoCentral.add(panelClientes, Evento.MENU_CLIENTES);
 		panelContenidoCentral.add(panelProveedores, Evento.MENU_PROVEEDORES);
-		panelContenidoCentral.add(panelContabilidad, "CONTABILIDAD");
+		
+		
 
 		raiz.add(panelContenidoCentral, BorderLayout.CENTER);
 		return raiz;
@@ -237,12 +246,18 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	public void mostrarPantallaInicial() {
-		if ("Administrador".equals(rolActivo) || "Contador".equals(rolActivo)) {
+		
+		if ("Administrador".equals(rolActivo)) {
 			// Administrador: muestra la tarjeta con menú lateral y el dashboard
-			aplicarPermisos();
 			mostrarDashboard();
-			layoutPrincipal.show(panelRaiz, TARJETA_PRINCIPAL);
-		} else if ("Cajero".equals(rolActivo)) {
+		    layoutPrincipal.show(panelRaiz, TARJETA_PRINCIPAL);
+		    
+		} else if ("Contador".equals(rolActivo)) {
+
+	        mostrarPanelContabilidad();
+	        layoutPrincipal.show(panelRaiz, TARJETA_CONTADOR);
+
+	    } else if ("Cajero".equals(rolActivo)) {
 			// Cajero: muestra la tarjeta del cajeero con el panel de ventas
 			mostrarPanelRegistrarVenta();
 			layoutPrincipal.show(panelRaiz, TARJETA_CAJERO);
@@ -275,14 +290,22 @@ public class VentanaPrincipal extends JFrame {
 	}
 	public void mostrarPanelContabilidad() {
 
-	    List<Venta> ventas =
-	        configuracion.getGestionVenta().obtenerListaVentas();
-
-	    System.out.println("Ventas encontradas: " + ventas.size());
-
-	    panelContabilidad.cargarTotalVentas(ventas);
-
+	    panelContabilidad.cargarVentas(configuracion.getGestionVenta().obtenerListaVentas());
 	    layoutContenido.show(panelContenidoCentral, "CONTABILIDAD");
+	}
+	
+	// Navegación Contabilidad
+	
+	public void mostrarMovimientosContables() {
+	    panelContabilidad.mostrarMovimientos();
+	}
+
+	public void mostrarReportesContables() {
+	    panelContabilidad.mostrarReportes();
+	}
+
+	public void mostrarConsultasContables() {
+	    panelContabilidad.mostrarConsultas();
 	}
 
 	// Navegación Cajero
@@ -712,14 +735,6 @@ public class VentanaPrincipal extends JFrame {
 			dialogoProveedor.setVisible(false);
 			dialogoProveedor = null;
 		}
-	}
-	private void aplicarPermisos() {
-	    if ("Contador".equals(rolActivo)) {
-	        btnProductos.setVisible(false);
-	        btnClientes.setVisible(false);
-	        btnProveedores.setVisible(false);
-	        btnContabilidad.setVisible(true);
-	    }
 	}
 
 	// Cerrar sesión
