@@ -14,13 +14,19 @@ import java.util.List;
 
 public class PersistenciaReportes {
 
+    private static final String FILTRO_VENTAS_ACTIVAS = """
+            WHERE (v.estado IS NULL OR v.estado <> 'ANULADA')
+            """;
+
     public List<ReportesDTO.ProductoVendidoItem> reporteProductoMasVendido() {
         List<ReportesDTO.ProductoVendidoItem> items = new ArrayList<>();
         String sql = """
                 SELECT p.codigo_producto AS codigo, p.nombre_producto AS nombre,
                        SUM(dv.cantidad) AS cantidad
                 FROM detalles_ventas dv
-                JOIN productos p ON dv.codigo_producto = p.codigo_producto
+                JOIN ventas v ON dv.numero_factura = v.numero_factura
+                JOIN productos p ON dv.producto_codigo = p.codigo_producto
+                """ + FILTRO_VENTAS_ACTIVAS + """
                 GROUP BY p.codigo_producto, p.nombre_producto
                 ORDER BY cantidad DESC
                 """;
@@ -35,7 +41,7 @@ public class PersistenciaReportes {
                         rs.getInt("cantidad")));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en reporteProductoMasVendido: " + e.getMessage());
         }
         return items;
     }
@@ -43,14 +49,14 @@ public class PersistenciaReportes {
     public List<ReportesDTO.MejorClienteItem> reporteMejorCliente() {
         List<ReportesDTO.MejorClienteItem> items = new ArrayList<>();
         String sql = """
-                SELECT COALESCE(c.numero_identificacion, v.codigo_cliente) AS identificacion,
-                       COALESCE(c.nombre_completo, v.nombre_cliente, 'Sin nombre') AS nombre,
-                       SUM(v.total) AS total_comprado
+                SELECT COALESCE(c.numero_identificacion, v.cliente_id) AS identificacion,
+                       COALESCE(c.nombre_completo, 'Sin nombre') AS nombre,
+                       SUM(v.total_venta) AS total_comprado
                 FROM ventas v
-                LEFT JOIN clientes c ON v.codigo_cliente = c.codigo_cliente
-                WHERE (v.estado IS NULL OR v.estado <> 'ANULADA')
-                GROUP BY COALESCE(c.numero_identificacion, v.codigo_cliente),
-                         COALESCE(c.nombre_completo, v.nombre_cliente, 'Sin nombre')
+                LEFT JOIN clientes c ON v.cliente_id = c.codigo_cliente
+                """ + FILTRO_VENTAS_ACTIVAS + """
+                GROUP BY COALESCE(c.numero_identificacion, v.cliente_id),
+                         COALESCE(c.nombre_completo, 'Sin nombre')
                 ORDER BY total_comprado DESC
                 """;
 
@@ -64,7 +70,7 @@ public class PersistenciaReportes {
                         rs.getDouble("total_comprado")));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en reporteMejorCliente: " + e.getMessage());
         }
         return items;
     }
@@ -72,7 +78,7 @@ public class PersistenciaReportes {
     public List<ReportesDTO.VentaMetodoPagoItem> reporteMetodoPago() {
         List<ReportesDTO.VentaMetodoPagoItem> items = new ArrayList<>();
         String sql = """
-                SELECT forma_pago, SUM(total) AS total_venta
+                SELECT forma_pago, SUM(total_venta) AS total_venta
                 FROM ventas
                 WHERE (estado IS NULL OR estado <> 'ANULADA')
                 GROUP BY forma_pago
@@ -87,7 +93,7 @@ public class PersistenciaReportes {
                         rs.getDouble("total_venta")));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en reporteMetodoPago: " + e.getMessage());
         }
         return items;
     }
@@ -112,16 +118,16 @@ public class PersistenciaReportes {
                         rs.getDouble("valorizacion")));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en reporteInventario: " + e.getMessage());
         }
         return items;
     }
 
     public double totalVentasPorFecha(LocalDate fecha) {
         String sql = """
-                SELECT COALESCE(SUM(total), 0) AS total
+                SELECT COALESCE(SUM(total_venta), 0) AS total
                 FROM ventas
-                WHERE fecha = ?
+                WHERE DATE(fecha_hora) = ?
                   AND (estado IS NULL OR estado <> 'ANULADA')
                 """;
 
@@ -134,7 +140,7 @@ public class PersistenciaReportes {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en totalVentasPorFecha: " + e.getMessage());
         }
         return 0.0;
     }
@@ -155,7 +161,7 @@ public class PersistenciaReportes {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en totalComprasPorFecha: " + e.getMessage());
         }
         return 0.0;
     }
@@ -163,9 +169,9 @@ public class PersistenciaReportes {
     public List<ReporteConsolidadoDiarioDTO.VentaFormaPagoItem> ventasPorFormaPagoPorFecha(LocalDate fecha) {
         List<ReporteConsolidadoDiarioDTO.VentaFormaPagoItem> items = new ArrayList<>();
         String sql = """
-                SELECT forma_pago, COALESCE(SUM(total), 0) AS total_venta
+                SELECT forma_pago, COALESCE(SUM(total_venta), 0) AS total_venta
                 FROM ventas
-                WHERE fecha = ?
+                WHERE DATE(fecha_hora) = ?
                   AND (estado IS NULL OR estado <> 'ANULADA')
                 GROUP BY forma_pago
                 ORDER BY total_venta DESC
@@ -182,7 +188,7 @@ public class PersistenciaReportes {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en ventasPorFormaPagoPorFecha: " + e.getMessage());
         }
         return items;
     }
@@ -195,8 +201,8 @@ public class PersistenciaReportes {
                        SUM(dv.cantidad) AS cantidad
                 FROM detalles_ventas dv
                 JOIN ventas v ON dv.numero_factura = v.numero_factura
-                JOIN productos p ON dv.codigo_producto = p.codigo_producto
-                WHERE v.fecha = ?
+                JOIN productos p ON dv.producto_codigo = p.codigo_producto
+                WHERE DATE(v.fecha_hora) = ?
                   AND (v.estado IS NULL OR v.estado <> 'ANULADA')
                 GROUP BY p.codigo_producto, p.nombre_producto
                 ORDER BY cantidad DESC
@@ -216,7 +222,7 @@ public class PersistenciaReportes {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en productosMasVendidosPorFecha: " + e.getMessage());
         }
         return items;
     }

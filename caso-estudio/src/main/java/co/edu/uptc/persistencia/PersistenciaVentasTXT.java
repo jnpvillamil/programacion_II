@@ -36,7 +36,7 @@ public class PersistenciaVentasTXT implements IRepositorioVenta {
     }
 
     @Override
-    public void guardarVenta(Venta venta) {
+    public boolean guardarVenta(Venta venta) {
         try (PrintWriter escritor = new PrintWriter(new FileWriter(RUTA_ARCHIVO, true))) {
             StringBuilder sb = new StringBuilder();
             sb.append(venta.getNumeroFactura()).append(SEPARADOR_CABECERA)
@@ -60,8 +60,10 @@ public class PersistenciaVentasTXT implements IRepositorioVenta {
                 }
             }
             escritor.println(sb);
+            return true;
         } catch (IOException e) {
             System.err.println("Error al escribir venta TXT: " + e.getMessage());
+            return false;
         }
     }
 

@@ -66,9 +66,6 @@ public class GestionReportes implements GeneradorReporte {
         System.out.println("Reporte disponible para exportación vía exportarPdf().");
     }
 
-    /**
-     * CUS27: genera el resumen diario consolidado con la estructura JSON exigida por el caso de estudio.
-     */
     public boolean generarResumenDiarioJSON(Date fecha, String rutaDestino) {
         if (fecha == null || rutaDestino == null || rutaDestino.isBlank()) {
             return false;

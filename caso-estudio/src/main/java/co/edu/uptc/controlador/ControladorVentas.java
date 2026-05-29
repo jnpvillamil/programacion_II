@@ -232,7 +232,9 @@ public class ControladorVentas {
                         "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 limpiarTodo();
             } else {
-                JOptionPane.showMessageDialog(vistaVentas, "Hubo un error procesando la venta (Posible problema de stock).", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(vistaVentas,
+                        "No se pudo registrar la venta. Revise conexion a BD, tablas ventas/detalles_ventas y cliente registrado.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (Exception ex) {

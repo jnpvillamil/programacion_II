@@ -3,6 +3,8 @@ package co.edu.uptc.utilidades;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -162,5 +164,29 @@ public class ConstructorComponentes {
         JButton boton = crearBotonEstilizado(texto, AZUL_OSCURO, COLOR_HOVER);
         boton.setHorizontalAlignment(SwingConstants.LEFT);
         return boton;
+    }
+
+    public static void estilizarTabla(JTable tabla) {
+        tabla.setFont(new Font(FUENTE_UI, Font.PLAIN, TAMANIO_CAMPO));
+        tabla.setRowHeight(30);
+        tabla.setBackground(Color.WHITE);
+        tabla.setForeground(Color.BLACK);
+        tabla.setGridColor(Color.LIGHT_GRAY);
+
+        JTableHeader encabezado = tabla.getTableHeader();
+        encabezado.setFont(new Font(FUENTE_UI, Font.BOLD, TAMANIO_LABEL));
+        encabezado.setReorderingAllowed(false);
+        encabezado.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBackground(AZUL_OSCURO);
+                setForeground(Color.WHITE);
+                setOpaque(true);
+                setHorizontalAlignment(SwingConstants.CENTER);
+                return this;
+            }
+        });
     }
 }

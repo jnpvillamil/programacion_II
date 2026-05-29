@@ -166,7 +166,7 @@ public class ControladorCompra {
                 limpiarFormulario();
             } else {
                 JOptionPane.showMessageDialog(vista,
-                        "No se pudo registrar la compra. Verifique productos activos e inventario.",
+                        "No se pudo registrar la compra. Revise conexion a BD, proveedor y tablas compras/detalles_compras.",
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {

@@ -90,6 +90,14 @@ public class ControladorReportes {
         if (generador != null) {
             generador.accept(modelo);
         }
+
+        if (modelo.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(vista,
+                    "No hay datos para el reporte seleccionado.\n"
+                            + "Verifique que existan ventas guardadas en la base de datos.",
+                    "Sin resultados",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void generarMejorCliente(DefaultTableModel modelo) {

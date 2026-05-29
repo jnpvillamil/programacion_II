@@ -25,7 +25,7 @@ public class PersistenciaCompraTXT implements IRepositorioCompra {
     }
 
     @Override
-    public void guardarCompra(Compra compra) {
+    public boolean guardarCompra(Compra compra) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(RUTA, true))) {
             StringBuilder sb = new StringBuilder();
             sb.append(compra.getFacturaProveedor()).append(";")
@@ -41,8 +41,10 @@ public class PersistenciaCompraTXT implements IRepositorioCompra {
                 }
             }
             pw.println(sb);
+            return true;
         } catch (IOException e) {
             System.err.println("Error al escribir compra TXT: " + e.getMessage());
+            return false;
         }
     }
 

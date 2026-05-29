@@ -16,7 +16,7 @@ import java.util.List;
 public class PersistenciaCompra implements IRepositorioCompra {
 
     @Override
-    public void guardarCompra(Compra compra) {
+    public boolean guardarCompra(Compra compra) {
         String sqlCabecera = """
             INSERT INTO compras (factura_proveedor, fecha, codigo_proveedor, total_compra, iva)
             VALUES (?, ?, ?, ?, ?)
@@ -28,7 +28,8 @@ public class PersistenciaCompra implements IRepositorioCompra {
 
         Connection con = ConexionBD.getConexion();
         if (con == null) {
-            return;
+            System.err.println("Error al guardar compra en BD: no hay conexion.");
+            return false;
         }
 
         try {
@@ -58,6 +59,7 @@ public class PersistenciaCompra implements IRepositorioCompra {
             }
 
             con.commit();
+            return true;
         } catch (SQLException e) {
             try {
                 con.rollback();
@@ -65,6 +67,7 @@ public class PersistenciaCompra implements IRepositorioCompra {
                 System.err.println("Error en rollback compra: " + ex.getMessage());
             }
             System.err.println("Error al guardar compra en BD: " + e.getMessage());
+            return false;
         } finally {
             try {
                 con.setAutoCommit(true);

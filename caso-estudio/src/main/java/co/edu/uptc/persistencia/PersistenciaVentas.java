@@ -10,48 +10,55 @@ import co.edu.uptc.modelo.Venta;
 import co.edu.uptc.utilidades.ConexionBD;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PersistenciaVentas implements IRepositorioVenta {
 
+    private static final String SELECT_VENTA = """
+            SELECT v.numero_factura, v.fecha_hora, v.cliente_id AS codigo_cliente,
+                   COALESCE(c.nombre_completo, '') AS nombre_cliente,
+                   v.subtotal, v.iva_aplicado AS iva, v.total_venta AS total, v.forma_pago
+            """;
+
+    private static final String FILTRO_NO_ANULADA = """
+              AND (v.estado IS NULL OR v.estado <> 'ANULADA')
+            """;
+
     @Override
-    public void guardarVenta(Venta venta) {
+    public boolean guardarVenta(Venta venta) {
         String sqlCabecera = """
-            INSERT INTO ventas (numero_factura, fecha, codigo_cliente, nombre_cliente,
-                subtotal, iva, total, forma_pago)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO ventas (numero_factura, fecha_hora, cliente_id,
+                subtotal, iva_aplicado, total_venta, forma_pago, estado)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'ACTIVA')
             """;
         String sqlDetalle = """
-            INSERT INTO detalles_ventas (numero_factura, codigo_producto, cantidad, precio_unitario, subtotal)
+            INSERT INTO detalles_ventas (numero_factura, producto_codigo, cantidad, precio_unitario, subtotal)
             VALUES (?, ?, ?, ?, ?)
             """;
 
         Connection con = ConexionBD.getConexion();
         if (con == null) {
-            return;
+            System.err.println("Error al guardar venta en BD: no hay conexion.");
+            return false;
         }
 
         try {
             con.setAutoCommit(false);
-            Date fecha = Date.valueOf(venta.getFechaHora().toLocalDate());
-            String codigoCliente = venta.getCliente() != null ? venta.getCliente().getCodigoCliente() : null;
-            String nombreCliente = venta.getCliente() != null ? venta.getCliente().getNombre() : "";
+            String clienteId = venta.getCliente() != null ? venta.getCliente().getCodigoCliente() : null;
 
             try (PreparedStatement ps = con.prepareStatement(sqlCabecera)) {
                 ps.setString(1, venta.getNumeroFactura());
-                ps.setDate(2, fecha);
-                ps.setString(3, codigoCliente);
-                ps.setString(4, nombreCliente);
-                ps.setDouble(5, venta.getSubtotal());
-                ps.setDouble(6, venta.getIvaAplicado());
-                ps.setDouble(7, venta.getTotalVenta());
-                ps.setString(8, venta.getFormaPago() != null ? venta.getFormaPago().name() : FormaPago.EFECTIVO.name());
+                ps.setTimestamp(2, Timestamp.valueOf(venta.getFechaHora()));
+                ps.setString(3, clienteId);
+                ps.setDouble(4, venta.getSubtotal());
+                ps.setDouble(5, venta.getIvaAplicado());
+                ps.setDouble(6, venta.getTotalVenta());
+                ps.setString(7, venta.getFormaPago() != null ? venta.getFormaPago().name() : FormaPago.EFECTIVO.name());
                 ps.executeUpdate();
             }
 
@@ -68,6 +75,7 @@ public class PersistenciaVentas implements IRepositorioVenta {
             }
 
             con.commit();
+            return true;
         } catch (SQLException e) {
             try {
                 con.rollback();
@@ -75,6 +83,7 @@ public class PersistenciaVentas implements IRepositorioVenta {
                 System.err.println("Error en rollback venta: " + ex.getMessage());
             }
             System.err.println("Error al guardar venta en BD: " + e.getMessage());
+            return false;
         } finally {
             try {
                 con.setAutoCommit(true);
@@ -87,15 +96,14 @@ public class PersistenciaVentas implements IRepositorioVenta {
     @Override
     public List<Venta> consultarHistorialCliente(String identificacion) {
         List<Venta> lista = new ArrayList<>();
-        String sql = """
-            SELECT v.numero_factura, v.fecha, v.codigo_cliente, v.nombre_cliente,
-                   v.subtotal, v.iva, v.total, v.forma_pago
+        String sql = SELECT_VENTA + """
             FROM ventas v
-            LEFT JOIN clientes c ON v.codigo_cliente = c.codigo_cliente
-            WHERE c.numero_identificacion = ?
+            LEFT JOIN clientes c ON v.cliente_id = c.codigo_cliente
+            WHERE (c.numero_identificacion = ?
                OR c.codigo_cliente = ?
-               OR v.codigo_cliente = ?
-            ORDER BY v.fecha DESC
+               OR v.cliente_id = ?)
+            """ + FILTRO_NO_ANULADA + """
+            ORDER BY v.fecha_hora DESC
             """;
 
         Connection con = ConexionBD.getConexion();
@@ -122,13 +130,12 @@ public class PersistenciaVentas implements IRepositorioVenta {
     @Override
     public List<Venta> consultarVentasPorFecha(String fecha) {
         List<Venta> lista = new ArrayList<>();
-        String sql = """
-            SELECT numero_factura, fecha, codigo_cliente, nombre_cliente,
-                   subtotal, iva, total, forma_pago
-            FROM ventas
-            WHERE DATE_FORMAT(fecha, '%d/%m/%Y') = ?
-              AND (estado IS NULL OR estado <> 'ANULADA')
-            ORDER BY numero_factura
+        String sql = SELECT_VENTA + """
+            FROM ventas v
+            LEFT JOIN clientes c ON v.cliente_id = c.codigo_cliente
+            WHERE DATE_FORMAT(v.fecha_hora, '%d/%m/%Y') = ?
+            """ + FILTRO_NO_ANULADA + """
+            ORDER BY v.numero_factura
             """;
 
         Connection con = ConexionBD.getConexion();
@@ -152,13 +159,11 @@ public class PersistenciaVentas implements IRepositorioVenta {
 
     @Override
     public Venta buscarVentaPorFactura(String numeroFactura) {
-        String sql = """
-            SELECT numero_factura, fecha, codigo_cliente, nombre_cliente,
-                   subtotal, iva, total, forma_pago
-            FROM ventas
-            WHERE numero_factura = ?
-              AND (estado IS NULL OR estado <> 'ANULADA')
-            """;
+        String sql = SELECT_VENTA + """
+            FROM ventas v
+            LEFT JOIN clientes c ON v.cliente_id = c.codigo_cliente
+            WHERE v.numero_factura = ?
+            """ + FILTRO_NO_ANULADA;
 
         Connection con = ConexionBD.getConexion();
         if (con == null) {
@@ -184,10 +189,10 @@ public class PersistenciaVentas implements IRepositorioVenta {
     private List<DetalleVenta> cargarDetallesVenta(Connection con, String numeroFactura) throws SQLException {
         List<DetalleVenta> detalles = new ArrayList<>();
         String sql = """
-            SELECT dv.codigo_producto, dv.cantidad, dv.precio_unitario, dv.subtotal,
+            SELECT dv.producto_codigo AS codigo_producto, dv.cantidad, dv.precio_unitario, dv.subtotal,
                    p.nombre_producto, p.categoria
             FROM detalles_ventas dv
-            JOIN productos p ON dv.codigo_producto = p.codigo_producto
+            JOIN productos p ON dv.producto_codigo = p.codigo_producto
             WHERE dv.numero_factura = ?
             """;
 
@@ -233,10 +238,9 @@ public class PersistenciaVentas implements IRepositorioVenta {
         Venta venta = new Venta();
         venta.setNumeroFactura(rs.getString("numero_factura"));
 
-        Date fecha = rs.getDate("fecha");
-        if (fecha != null) {
-            LocalDate localDate = fecha.toLocalDate();
-            venta.setFechaHora(localDate.atStartOfDay());
+        Timestamp fechaHora = rs.getTimestamp("fecha_hora");
+        if (fechaHora != null) {
+            venta.setFechaHora(fechaHora.toLocalDateTime());
         }
 
         Cliente cliente = new Cliente();

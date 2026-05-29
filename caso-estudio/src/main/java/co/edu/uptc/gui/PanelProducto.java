@@ -85,8 +85,9 @@ public class PanelProducto extends PanelBase {
         String[] columnas = {"Código", "Nombre", "Categoría", "P. Venta", "Stock"};
         modeloTabla = new DefaultTableModel(columnas, 0);
         tablaProductos = new JTable(modeloTabla);
-        tablaProductos.setRowHeight(25);
+        ConstructorComponentes.estilizarTabla(tablaProductos);
         JScrollPane scroll = new JScrollPane(tablaProductos);
+        scroll.getViewport().setBackground(Color.WHITE);
 
         JPanel panelEncabezado = new JPanel(new BorderLayout(0, 10));
         panelEncabezado.setOpaque(false);

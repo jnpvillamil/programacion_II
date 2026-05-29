@@ -89,9 +89,7 @@ public class PanelCompra extends PanelBase {
             }
         };
         tablaCompra = new JTable(modeloTabla);
-        tablaCompra.getTableHeader().setBackground(ConstructorComponentes.AZUL_OSCURO);
-        tablaCompra.getTableHeader().setForeground(Color.WHITE);
-        tablaCompra.setRowHeight(25);
+        ConstructorComponentes.estilizarTabla(tablaCompra);
         JScrollPane scrollTabla = new JScrollPane(tablaCompra);
         scrollTabla.getViewport().setBackground(Color.WHITE);
 

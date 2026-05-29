@@ -15,7 +15,7 @@ public class PersistenciaFinanciera implements IRepositorioFinanciero {
     @Override
     public double calcularTotalIngresosVentas(LocalDateTime inicio, LocalDateTime fin) {
         double totalIngresos = 0.0;
-        String sql = "SELECT SUM(total) AS total FROM ventas WHERE fecha BETWEEN ? AND ?";
+        String sql = "SELECT SUM(total_venta) AS total FROM ventas WHERE fecha_hora BETWEEN ? AND ? AND (estado IS NULL OR estado <> 'ANULADA')";
         
         try (Connection con = ConexionBD.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {

@@ -45,20 +45,23 @@ public class PersistenciaConsultas {
         return lista;
     }
 
-    public List<Compra> comprasPorProveedorEnRango(String codigoProveedor, LocalDate inicio, LocalDate fin) {
+    public List<Compra> comprasPorProveedorEnRango(String criterioProveedor, LocalDate inicio, LocalDate fin) {
         List<Compra> lista = new ArrayList<>();
         String sql = """
-                SELECT factura_proveedor, fecha, total_compra, iva
-                FROM compras
-                WHERE codigo_proveedor = ? AND fecha BETWEEN ? AND ?
-                ORDER BY fecha DESC
+                SELECT co.factura_proveedor, co.fecha, co.total_compra, co.iva
+                FROM compras co
+                LEFT JOIN proveedores p ON co.codigo_proveedor = p.codigo_proveedor
+                WHERE (co.codigo_proveedor = ? OR p.nit = ?)
+                  AND co.fecha BETWEEN ? AND ?
+                ORDER BY co.fecha DESC
                 """;
 
         try (Connection con = ConexionBD.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, codigoProveedor);
-            ps.setDate(2, Date.valueOf(inicio));
-            ps.setDate(3, Date.valueOf(fin));
+            ps.setString(1, criterioProveedor);
+            ps.setString(2, criterioProveedor);
+            ps.setDate(3, Date.valueOf(inicio));
+            ps.setDate(4, Date.valueOf(fin));
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Compra compra = new Compra();
@@ -70,6 +73,7 @@ public class PersistenciaConsultas {
                 }
             }
         } catch (Exception e) {
+            System.err.println("Error en comprasPorProveedorEnRango: " + e.getMessage());
             e.printStackTrace();
         }
         return lista;
@@ -77,9 +81,9 @@ public class PersistenciaConsultas {
 
     public double totalVentasMensual(int anio, int mes) {
         String sql = """
-                SELECT COALESCE(SUM(total), 0) AS total
+                SELECT COALESCE(SUM(total_venta), 0) AS total
                 FROM ventas
-                WHERE YEAR(fecha) = ? AND MONTH(fecha) = ?
+                WHERE YEAR(fecha_hora) = ? AND MONTH(fecha_hora) = ?
                   AND (estado IS NULL OR estado <> 'ANULADA')
                 """;
         return consultarTotal(sql, ps -> {
@@ -90,9 +94,9 @@ public class PersistenciaConsultas {
 
     public double totalVentasAnual(int anio) {
         String sql = """
-                SELECT COALESCE(SUM(total), 0) AS total
+                SELECT COALESCE(SUM(total_venta), 0) AS total
                 FROM ventas
-                WHERE YEAR(fecha) = ?
+                WHERE YEAR(fecha_hora) = ?
                   AND (estado IS NULL OR estado <> 'ANULADA')
                 """;
         return consultarTotal(sql, ps -> {

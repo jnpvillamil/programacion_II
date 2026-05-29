@@ -103,7 +103,7 @@ public final class AppConfig {
         new ControladorProveedor(panelProveedor, gestionProveedor);
         new ControladorCompra(panelCompra, gestionCompra, gestionProveedor, gestionInventario);
         new ControladorReportes(panelReportes, gestionReportes);
-        new ControladorConsultas(panelConsultas, gestionConsultas);
+        new ControladorConsultas(panelConsultas, gestionConsultas, gestionProveedor);
         new ControladorCerrarSesion(ventanaPrincipal, ventanaLogin, gestionUsuarios);
 
         ventanaPrincipal.mostrarPanel(ModuloSistema.INVENTARIO.name());
