@@ -1,67 +1,92 @@
 package co.edu.uptc.negocio.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ventaDto {
 
-    public static int contadorVenta = 400;
+	private int numeroFactura;
+	private String fecha;
+	private int codigoCliente;
+	private String formaPago;
+	private boolean aplicaIva;
+	private double subtotal;
+	private double total;
 
-    private int numeroFactura;
-    private String fechaHora;
-    private String cliente;
-    private String formaPago;
-    private boolean aplicarIva;
-    private double total;
+	// ¡La magia del Maestro-Detalle! Una factura contiene muchos productos.
+	private List<detalleVentaDto> detalles;
 
-    public ventaDto() {
-        this.numeroFactura = contadorVenta++;
-    }
+	public ventaDto() {
+		this.detalles = new ArrayList<>();
+	}
 
-    public ventaDto(int numeroFactura) {
-        this.numeroFactura = numeroFactura;
-    }
+	// --- GETTERS Y SETTERS ---
+	public int getNumeroFactura() {
+		return numeroFactura;
+	}
 
-    public int getNumeroFactura() {
-        return numeroFactura;
-    }
+	public void setNumeroFactura(int numeroFactura) {
+		this.numeroFactura = numeroFactura;
+	}
 
-    public String getFechaHora() {
-        return fechaHora;
-    }
-    public void setFechaHora(String fechaHora) {
-        this.fechaHora = fechaHora;
-    }
+	public String getFecha() {
+		return fecha;
+	}
 
-    public String getCliente() {
-        return cliente;
-    }
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
-    }
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
 
-    public String getFormaPago() {
-        return formaPago;
-    }
-    public void setFormaPago(String formaPago) {
-        this.formaPago = formaPago;
-    }
+	public int getCodigoCliente() {
+		return codigoCliente;
+	}
 
-    public boolean isAplicarIva() {
-        return aplicarIva;
-    }
-    public void setAplicarIva(boolean aplicarIva) {
-        this.aplicarIva = aplicarIva;
-    }
+	public void setCodigoCliente(int codigoCliente) {
+		this.codigoCliente = codigoCliente;
+	}
 
-    public double getTotal() {
-        return total;
-    }
-    public void setTotal(double total) {
-        this.total = total;
-    }
+	public String getFormaPago() {
+		return formaPago;
+	}
 
-    @Override
-    public String toString() {
-        return "ventaDto [numeroFactura=" + numeroFactura + ", fechaHora=" + fechaHora
-                + ", cliente=" + cliente + ", formaPago=" + formaPago
-                + ", aplicarIva=" + aplicarIva + ", total=" + total + "]";
-    }
+	public void setFormaPago(String formaPago) {
+		this.formaPago = formaPago;
+	}
+
+	public boolean isAplicaIva() {
+		return aplicaIva;
+	}
+
+	public void setAplicaIva(boolean aplicaIva) {
+		this.aplicaIva = aplicaIva;
+	}
+
+	public double getSubtotal() {
+		return subtotal;
+	}
+
+	public void setSubtotal(double subtotal) {
+		this.subtotal = subtotal;
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	public List<detalleVentaDto> getDetalles() {
+		return detalles;
+	}
+
+	public void setDetalles(List<detalleVentaDto> detalles) {
+		this.detalles = detalles;
+	}
+
+	// Método útil para agregar productos al carrito del DTO
+	public void agregarDetalle(detalleVentaDto detalle) {
+		this.detalles.add(detalle);
+	}
 }

@@ -1,89 +1,102 @@
 package co.edu.uptc.negocio.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class compraDto {
+	private int idCompra;
+	private String numeroFacturaProv;
+	private int codigoProveedor;
+	private double totalCompra;
+	private double impuestos;
+	private double subtotal;
+	private String fecha;
+	private String razonSocialProveedor;
+	private List<itemCompraDto> detalles;
 
-    public static int contadorCompra = 500;
+	public compraDto() {
+		this.detalles = new ArrayList<>();
+	}
 
-    private int numeroFacturaProveedor;
-    private String fecha;
-    private int codigoProveedor;
-    private String razonSocialProveedor;
-    private List<itemCompraDto> productos;
-    private double subtotal;
-    private double impuestos;
-    private double total;
+	// --- MÉTODOS DE ACCESO ESTÁNDAR (La única API oficial) ---
 
-    public compraDto() {
-        this.numeroFacturaProveedor = contadorCompra++;
-    }
+	// Acceso a Totales
+	public double getTotalCompra() {
+		return totalCompra;
+	}
 
-    public compraDto(int numeroFacturaProveedor) {
-        this.numeroFacturaProveedor = numeroFacturaProveedor;
-    }
+	public void setTotalCompra(double t) {
+		this.totalCompra = t;
+	}
 
-    public int getNumeroFacturaProveedor() {
-        return numeroFacturaProveedor;
-    }
+	public double getSubtotal() {
+		return subtotal;
+	}
 
-    public String getFecha() {
-        return fecha;
-    }
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
+	public void setSubtotal(double s) {
+		this.subtotal = s;
+	}
 
-    public int getCodigoProveedor() {
-        return codigoProveedor;
-    }
-    public void setCodigoProveedor(int codigoProveedor) {
-        this.codigoProveedor = codigoProveedor;
-    }
+	public double getImpuestos() {
+		return impuestos;
+	}
 
-    public String getRazonSocialProveedor() {
-        return razonSocialProveedor;
-    }
-    public void setRazonSocialProveedor(String razonSocialProveedor) {
-        this.razonSocialProveedor = razonSocialProveedor;
-    }
+	public void setImpuestos(double i) {
+		this.impuestos = i;
+	}
 
-    public List<itemCompraDto> getProductos() {
-        return productos;
-    }
-    public void setProductos(List<itemCompraDto> productos) {
-        this.productos = productos;
-    }
+	// Acceso a Datos de Factura/Proveedor
+	public String getNumeroFacturaProv() {
+		return numeroFacturaProv;
+	}
 
-    public double getSubtotal() {
-        return subtotal;
-    }
-    public void setSubtotal(double subtotal) {
-        this.subtotal = subtotal;
-    }
+	public void setNumeroFacturaProv(String n) {
+		this.numeroFacturaProv = n;
+	}
 
-    public double getImpuestos() {
-        return impuestos;
-    }
-    public void setImpuestos(double impuestos) {
-        this.impuestos = impuestos;
-    }
+	public int getCodigoProveedor() {
+		return codigoProveedor;
+	}
 
-    public double getTotal() {
-        return total;
-    }
-    public void setTotal(double total) {
-        this.total = total;
-    }
+	public void setCodigoProveedor(int c) {
+		this.codigoProveedor = c;
+	}
 
-    @Override
-    public String toString() {
-        return "compraDto [numeroFacturaProveedor=" + numeroFacturaProveedor
-                + ", fecha=" + fecha
-                + ", codigoProveedor=" + codigoProveedor
-                + ", razonSocialProveedor=" + razonSocialProveedor
-                + ", subtotal=" + subtotal
-                + ", impuestos=" + impuestos
-                + ", total=" + total + "]";
-    }
+	public String getRazonSocialProveedor() {
+		return razonSocialProveedor;
+	}
+
+	public void setRazonSocialProveedor(String r) {
+		this.razonSocialProveedor = r;
+	}
+
+	// Acceso a Fecha
+	public String getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(String f) {
+		this.fecha = f;
+	}
+
+	// Acceso a Detalles (Items)
+	public List<itemCompraDto> getDetalles() {
+		return detalles;
+	}
+
+	public void setDetalles(List<itemCompraDto> d) {
+		this.detalles = d;
+	}
+
+	// --- MÉTODOS DE INTEGRACIÓN (No son redundantes, son necesarios) ---
+	// Son necesarios porque la Vista usa un nombre, la lógica usa otro.
+	// Es mejor tenerlos aquí que cambiar 20 archivos distintos.
+
+	public void agregarDetalle(itemCompraDto d) {
+		this.detalles.add(d);
+	}
+
+	public void setIdCompra(int idCompra) {
+		this.idCompra = idCompra;
+	}
 }
