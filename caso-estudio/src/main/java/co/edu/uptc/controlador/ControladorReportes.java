@@ -12,19 +12,37 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ControladorReportes {
 
+    private static final String MEJOR_CLIENTE = "Mejor Cliente";
+    private static final String PRODUCTO_MAS_VENDIDO = "Producto Más Vendido";
+    private static final String VENTAS_METODO_PAGO = "Ventas por Método de Pago";
+    private static final String ESTADO_INVENTARIO = "Estado de Inventario";
+
     private final PanelReportes vista;
     private final GestionReportes negocio;
+    private final Map<String, Consumer<DefaultTableModel>> generadoresReporte;
     private String reporteActual;
     private ReporteConsolidadoDiarioDTO consolidadoActual;
 
     public ControladorReportes(PanelReportes vista, GestionReportes negocio) {
         this.vista = vista;
         this.negocio = negocio;
+        this.generadoresReporte = crearGeneradoresReporte();
         this.inicializarEventos();
+    }
+
+    private Map<String, Consumer<DefaultTableModel>> crearGeneradoresReporte() {
+        Map<String, Consumer<DefaultTableModel>> generadores = new HashMap<>();
+        generadores.put(MEJOR_CLIENTE, this::generarMejorCliente);
+        generadores.put(PRODUCTO_MAS_VENDIDO, this::generarProductoMasVendido);
+        generadores.put(VENTAS_METODO_PAGO, this::generarVentasPorMetodoPago);
+        generadores.put(ESTADO_INVENTARIO, this::generarEstadoInventario);
+        return generadores;
     }
 
     private void inicializarEventos() {
@@ -68,49 +86,53 @@ public class ControladorReportes {
             return;
         }
 
-        switch (seleccion) {
-            case "Mejor Cliente" -> {
-                modelo.setColumnIdentifiers(new String[]{"Cédula", "Nombre", "Total Comprado"});
-                for (ReportesDTO.MejorClienteItem item : negocio.obtenerReporteMejorCliente()) {
-                    modelo.addRow(new Object[]{
-                            item.getIdentificacion(),
-                            item.getNombre(),
-                            item.getTotalComprado()
-                    });
-                }
-            }
-            case "Producto Más Vendido" -> {
-                modelo.setColumnIdentifiers(new String[]{"Código", "Producto", "Unidades Vendidas"});
-                for (ReportesDTO.ProductoVendidoItem item : negocio.obtenerReporteProductoMasVendido()) {
-                    modelo.addRow(new Object[]{
-                            item.getCodigo(),
-                            item.getNombre(),
-                            item.getCantidad()
-                    });
-                }
-            }
-            case "Ventas por Método de Pago" -> {
-                modelo.setColumnIdentifiers(new String[]{"Método de Pago", "Ingresos Totales"});
-                for (ReportesDTO.VentaMetodoPagoItem item : negocio.obtenerReporteVentasPorMetodoPago()) {
-                    modelo.addRow(new Object[]{
-                            item.getFormaPago(),
-                            item.getTotalVenta()
-                    });
-                }
-            }
-            case "Estado de Inventario" -> {
-                modelo.setColumnIdentifiers(new String[]{"Código", "Producto", "Stock Actual", "Valorización Bodega"});
-                for (ReportesDTO.InventarioItem item : negocio.obtenerReporteEstadoInventario()) {
-                    modelo.addRow(new Object[]{
-                            item.getCodigo(),
-                            item.getNombre(),
-                            item.getStockActual(),
-                            item.getValorizacion()
-                    });
-                }
-            }
-            default -> {
-            }
+        Consumer<DefaultTableModel> generador = generadoresReporte.get(seleccion);
+        if (generador != null) {
+            generador.accept(modelo);
+        }
+    }
+
+    private void generarMejorCliente(DefaultTableModel modelo) {
+        modelo.setColumnIdentifiers(new String[]{"Cédula", "Nombre", "Total Comprado"});
+        for (ReportesDTO.MejorClienteItem item : negocio.obtenerReporteMejorCliente()) {
+            modelo.addRow(new Object[]{
+                    item.getIdentificacion(),
+                    item.getNombre(),
+                    item.getTotalComprado()
+            });
+        }
+    }
+
+    private void generarProductoMasVendido(DefaultTableModel modelo) {
+        modelo.setColumnIdentifiers(new String[]{"Código", "Producto", "Unidades Vendidas"});
+        for (ReportesDTO.ProductoVendidoItem item : negocio.obtenerReporteProductoMasVendido()) {
+            modelo.addRow(new Object[]{
+                    item.getCodigo(),
+                    item.getNombre(),
+                    item.getCantidad()
+            });
+        }
+    }
+
+    private void generarVentasPorMetodoPago(DefaultTableModel modelo) {
+        modelo.setColumnIdentifiers(new String[]{"Método de Pago", "Ingresos Totales"});
+        for (ReportesDTO.VentaMetodoPagoItem item : negocio.obtenerReporteVentasPorMetodoPago()) {
+            modelo.addRow(new Object[]{
+                    item.getFormaPago(),
+                    item.getTotalVenta()
+            });
+        }
+    }
+
+    private void generarEstadoInventario(DefaultTableModel modelo) {
+        modelo.setColumnIdentifiers(new String[]{"Código", "Producto", "Stock Actual", "Valorización Bodega"});
+        for (ReportesDTO.InventarioItem item : negocio.obtenerReporteEstadoInventario()) {
+            modelo.addRow(new Object[]{
+                    item.getCodigo(),
+                    item.getNombre(),
+                    item.getStockActual(),
+                    item.getValorizacion()
+            });
         }
     }
 

@@ -1,10 +1,12 @@
 package co.edu.uptc.controlador;
 
 import co.edu.uptc.dto.UsuarioDTO;
+import co.edu.uptc.enums.ModuloSistema;
 import co.edu.uptc.enums.RolUsuario;
 import co.edu.uptc.gui.VentanaPrincipal;
 import co.edu.uptc.interfaces.Autorizable;
 import co.edu.uptc.negocio.GestionUsuarios;
+import co.edu.uptc.negocio.ServicioAutorizacion;
 
 import javax.swing.*;
 
@@ -24,41 +26,41 @@ public class ControladorPrincipal {
     }
 
     public ControladorPrincipal(VentanaPrincipal vistaPrincipal) {
-        this(vistaPrincipal, new GestionUsuarios(), new co.edu.uptc.negocio.ServicioAutorizacion());
+        this(vistaPrincipal, new GestionUsuarios(), new ServicioAutorizacion());
     }
 
     private void inicializarNavegacion() {
-        vistaPrincipal.getBtnInventario().addActionListener(e -> navegar("INVENTARIO", "INVENTARIO"));
-        vistaPrincipal.getBtnClientes().addActionListener(e -> navegar("CLIENTES", "CLIENTES"));
-        vistaPrincipal.getBtnVentas().addActionListener(e -> navegar("VENTAS", "VENTAS"));
-        vistaPrincipal.getBtnCompras().addActionListener(e -> navegar("COMPRAS", "COMPRAS"));
-        vistaPrincipal.getBtnProveedores().addActionListener(e -> navegar("PROVEEDORES", "PROVEEDORES"));
-        vistaPrincipal.getBtnReportes().addActionListener(e -> navegar("REPORTES", "REPORTES"));
-        vistaPrincipal.getBtnConsultas().addActionListener(e -> navegar("CONSULTAS", "CONSULTAS"));
+        vistaPrincipal.getBtnInventario().addActionListener(e -> navegar(ModuloSistema.INVENTARIO));
+        vistaPrincipal.getBtnClientes().addActionListener(e -> navegar(ModuloSistema.CLIENTES));
+        vistaPrincipal.getBtnVentas().addActionListener(e -> navegar(ModuloSistema.VENTAS));
+        vistaPrincipal.getBtnCompras().addActionListener(e -> navegar(ModuloSistema.COMPRAS));
+        vistaPrincipal.getBtnProveedores().addActionListener(e -> navegar(ModuloSistema.PROVEEDORES));
+        vistaPrincipal.getBtnReportes().addActionListener(e -> navegar(ModuloSistema.REPORTES));
+        vistaPrincipal.getBtnConsultas().addActionListener(e -> navegar(ModuloSistema.CONSULTAS));
     }
 
-    private void navegar(String modulo, String panel) {
+    private void navegar(ModuloSistema modulo) {
         RolUsuario rol = obtenerRolActual();
-        if (!autorizacion.verificarPermiso(rol, modulo)) {
+        if (!autorizacion.verificarPermiso(rol, modulo.name())) {
             JOptionPane.showMessageDialog(vistaPrincipal,
                     "No tiene permisos para acceder a este módulo.",
                     "Acceso denegado",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        vistaPrincipal.mostrarPanel(panel);
+        vistaPrincipal.mostrarPanel(modulo.name());
     }
 
     public void aplicarPermisosPorRol() {
         RolUsuario rol = obtenerRolActual();
-        vistaPrincipal.getBtnInventario().setEnabled(autorizacion.verificarPermiso(rol, "INVENTARIO"));
-        vistaPrincipal.getBtnClientes().setEnabled(autorizacion.verificarPermiso(rol, "CLIENTES"));
-        vistaPrincipal.getBtnVentas().setEnabled(autorizacion.verificarPermiso(rol, "VENTAS"));
-        vistaPrincipal.getBtnCompras().setEnabled(autorizacion.verificarPermiso(rol, "COMPRAS"));
-        vistaPrincipal.getBtnProveedores().setEnabled(autorizacion.verificarPermiso(rol, "PROVEEDORES"));
-        vistaPrincipal.getBtnReportes().setEnabled(autorizacion.verificarPermiso(rol, "REPORTES"));
-        vistaPrincipal.getBtnConsultas().setEnabled(autorizacion.verificarPermiso(rol, "CONSULTAS"));
-        vistaPrincipal.getBtnCerrarSesion().setEnabled(autorizacion.verificarPermiso(rol, "CERRAR_SESION"));
+        vistaPrincipal.getBtnInventario().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.INVENTARIO.name()));
+        vistaPrincipal.getBtnClientes().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.CLIENTES.name()));
+        vistaPrincipal.getBtnVentas().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.VENTAS.name()));
+        vistaPrincipal.getBtnCompras().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.COMPRAS.name()));
+        vistaPrincipal.getBtnProveedores().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.PROVEEDORES.name()));
+        vistaPrincipal.getBtnReportes().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.REPORTES.name()));
+        vistaPrincipal.getBtnConsultas().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.CONSULTAS.name()));
+        vistaPrincipal.getBtnCerrarSesion().setEnabled(autorizacion.verificarPermiso(rol, ModuloSistema.CERRAR_SESION.name()));
     }
 
     private RolUsuario obtenerRolActual() {

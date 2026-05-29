@@ -2,26 +2,29 @@ package co.edu.uptc.negocio;
 
 import co.edu.uptc.dto.LoginDTO;
 import co.edu.uptc.dto.UsuarioDTO;
+import co.edu.uptc.interfaces.Autenticable;
 import co.edu.uptc.interfaces.IPersistenciaUsuario;
 import co.edu.uptc.modelo.Usuario;
 import co.edu.uptc.persistencia.PersistenciaUsuario;
 import co.edu.uptc.utilidades.LogSistema;
 import co.edu.uptc.utilidades.MapeadorDTO;
 
+public class GestionUsuarios implements Autenticable {
 
-public class GestionUsuarios {
-
-    private IPersistenciaUsuario persistenciaUsuario;
+    private final IPersistenciaUsuario persistenciaUsuario;
     private Usuario usuarioAutenticado;
 
-  
     public GestionUsuarios(IPersistenciaUsuario persistenciaUsuario) {
         this.persistenciaUsuario = persistenciaUsuario;
     }
 
- 
     public GestionUsuarios() {
         this(new PersistenciaUsuario());
+    }
+
+    @Override
+    public boolean iniciarSesion(String usuario, String clave) {
+        return autenticar(usuario, clave);
     }
 
     public boolean autenticar(LoginDTO credenciales) {
@@ -50,6 +53,7 @@ public class GestionUsuarios {
         return usuarioAutenticado;
     }
 
+    @Override
     public void cerrarSesion() {
         this.usuarioAutenticado = null;
     }

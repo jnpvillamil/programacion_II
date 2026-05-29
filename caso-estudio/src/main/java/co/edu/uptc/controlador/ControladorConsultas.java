@@ -14,17 +14,31 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ControladorConsultas {
 
     private final PanelConsultas vista;
     private final GestionConsultas negocio;
+    private final Map<String, Consumer<DefaultTableModel>> estrategiasConsulta;
 
     public ControladorConsultas(PanelConsultas vista, GestionConsultas negocio) {
         this.vista = vista;
         this.negocio = negocio;
+        this.estrategiasConsulta = crearEstrategiasConsulta();
         inicializarEventos();
+    }
+
+    private Map<String, Consumer<DefaultTableModel>> crearEstrategiasConsulta() {
+        Map<String, Consumer<DefaultTableModel>> estrategias = new HashMap<>();
+        estrategias.put(PanelConsultas.STOCK_BAJO, this::consultarStockBajo);
+        estrategias.put(PanelConsultas.COMPRAS_PROVEEDOR, this::consultarComprasProveedor);
+        estrategias.put(PanelConsultas.RESUMEN_CONTABLE, this::consultarResumenContable);
+        estrategias.put(PanelConsultas.TOTAL_VENTAS, this::consultarTotalVentas);
+        estrategias.put(PanelConsultas.UTILIDAD_FINANCIERA, this::consultarUtilidadFinanciera);
+        return estrategias;
     }
 
     private void inicializarEventos() {
@@ -38,14 +52,9 @@ public class ControladorConsultas {
         modelo.setRowCount(0);
         modelo.setColumnCount(0);
 
-        switch (tipo) {
-            case PanelConsultas.STOCK_BAJO -> consultarStockBajo(modelo);
-            case PanelConsultas.COMPRAS_PROVEEDOR -> consultarComprasProveedor(modelo);
-            case PanelConsultas.RESUMEN_CONTABLE -> consultarResumenContable(modelo);
-            case PanelConsultas.TOTAL_VENTAS -> consultarTotalVentas(modelo);
-            case PanelConsultas.UTILIDAD_FINANCIERA -> consultarUtilidadFinanciera(modelo);
-            default -> {
-            }
+        Consumer<DefaultTableModel> estrategia = estrategiasConsulta.get(tipo);
+        if (estrategia != null) {
+            estrategia.accept(modelo);
         }
     }
 

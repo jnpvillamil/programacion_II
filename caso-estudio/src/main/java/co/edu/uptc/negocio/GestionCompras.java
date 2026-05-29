@@ -1,5 +1,6 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.interfaces.Calculable;
 import co.edu.uptc.interfaces.IContabilizable;
 import co.edu.uptc.interfaces.IRepositorioCompra;
 import co.edu.uptc.modelo.Compra;
@@ -77,8 +78,7 @@ public class GestionCompras implements IContabilizable {
             detalle.setSubtotal(subtotalItem);
         }
 
-        compra.setIva(compra.calcularIVA());
-        compra.setTotalCompra(compra.calcularTotal());
+        aplicarTotalesCalculables(compra);
         if (compra.getFecha() == null) {
             compra.setFecha(ManejadorFechas.obtenerFechaActual());
         }
@@ -96,5 +96,11 @@ public class GestionCompras implements IContabilizable {
         repositorioCompra.guardarCompra(compra);
         gestionContable.registrarContabilidadCompra(compra);
         return true;
+    }
+
+    private void aplicarTotalesCalculables(Compra compra) {
+        Calculable calculable = compra;
+        compra.setIva(calculable.calcularIVA());
+        compra.setTotalCompra(calculable.calcularTotal());
     }
 }

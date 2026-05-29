@@ -2,6 +2,7 @@ package co.edu.uptc.negocio;
 
 import co.edu.uptc.dto.VentaDTO;
 import co.edu.uptc.enums.FormaPago;
+import co.edu.uptc.interfaces.Calculable;
 import co.edu.uptc.interfaces.IContabilizable;
 import co.edu.uptc.interfaces.IRepositorioVenta;
 import co.edu.uptc.modelo.Cliente;
@@ -73,8 +74,7 @@ public class GestionVentas implements IContabilizable {
         }
 
         venta.setSubtotal(venta.calcularSubtotal());
-        venta.setIvaAplicado(venta.calcularIVA());
-        venta.setTotalVenta(venta.calcularTotal());
+        aplicarTotalesCalculables(venta);
         venta.setFechaHora(ManejadorFechas.obtenerFechaActual());
 
         for (DetalleVenta detalle : venta.getProductosVendidos()) {
@@ -172,5 +172,11 @@ public class GestionVentas implements IContabilizable {
 
     public String generarNumeroFactura() {
         return "FAC-" + System.currentTimeMillis();
+    }
+
+    private void aplicarTotalesCalculables(Venta venta) {
+        Calculable calculable = venta;
+        venta.setIvaAplicado(calculable.calcularIVA());
+        venta.setTotalVenta(calculable.calcularTotal());
     }
 }

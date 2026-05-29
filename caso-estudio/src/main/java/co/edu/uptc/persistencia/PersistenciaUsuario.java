@@ -2,6 +2,7 @@ package co.edu.uptc.persistencia;
 
 import co.edu.uptc.interfaces.IPersistenciaUsuario;
 import co.edu.uptc.modelo.Administrador;
+import co.edu.uptc.modelo.Cajero;
 import co.edu.uptc.modelo.Usuario;
 import co.edu.uptc.utilidades.ConexionBD;
 
@@ -26,19 +27,7 @@ public class PersistenciaUsuario implements IPersistenciaUsuario {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    String usuario = rs.getString("usuario");
-                    if ("cajero".equalsIgnoreCase(usuario)) {
-                        return new co.edu.uptc.modelo.Cajero(
-                                usuario, "", "", "", usuario, claveIngresada);
-                    }
-                    return new Administrador(
-                        usuario,
-                        "",
-                        "",
-                        "",
-                        usuario,
-                        claveIngresada
-                    );
+                    return crearUsuarioDesdeResultSet(rs);
                 }
             }
         } catch (SQLException e) {
@@ -57,18 +46,20 @@ public class PersistenciaUsuario implements IPersistenciaUsuario {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                usuarios.add(new Administrador(
-                    rs.getString("usuario"),
-                    "",
-                    "",
-                    "",
-                    rs.getString("usuario"),
-                    rs.getString("contrasena")
-                ));
+                usuarios.add(crearUsuarioDesdeResultSet(rs));
             }
         } catch (SQLException e) {
             System.err.println("Error al listar usuarios desde SQL: " + e.getMessage());
         }
         return usuarios;
+    }
+
+    private Usuario crearUsuarioDesdeResultSet(ResultSet rs) throws SQLException {
+        String usuario = rs.getString("usuario");
+        String contrasena = rs.getString("contrasena");
+        if ("cajero".equalsIgnoreCase(usuario)) {
+            return new Cajero(usuario, "", "", "", usuario, contrasena);
+        }
+        return new Administrador(usuario, "", "", "", usuario, contrasena);
     }
 }
