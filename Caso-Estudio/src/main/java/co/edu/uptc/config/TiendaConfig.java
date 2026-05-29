@@ -8,7 +8,7 @@ public class TiendaConfig {
     private static TiendaConfig instancia;
     
     // Cambia a true cuando quieras usar base de datos
-    private static final boolean USAR_BASE_DATOS = true;  // ← AHORA EN TRUE
+    private static final boolean USAR_BASE_DATOS = true;  
     
     private GestionProducto gestionProducto;
     private GestionCliente gestionCliente;
@@ -27,14 +27,7 @@ public class TiendaConfig {
             gestionCompra = new DatabaseCompra();       
             gestionContable = new DatabaseContable();   
             
-           
-           
-           
-            
-            
-            
-            
-            
+          
         } else {
             
             gestionProducto = new LocalProducto();
@@ -43,7 +36,7 @@ public class TiendaConfig {
             gestionVenta = new LocalVenta();
             gestionCompra = new LocalCompra();
             gestionContable = new LocalContable();
-            System.out.println("✅ Usando persistencia en MEMORIA");
+            System.out.println(" Usando persistencia en MEMORIA");
         }
     }
     
