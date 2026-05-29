@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IRepositorioVenta {
 
-    void guardarVenta(Venta venta);
+    boolean guardarVenta(Venta venta);
 
     List<Venta> consultarHistorialCliente(String identificacion);
 

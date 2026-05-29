@@ -100,11 +100,7 @@ public class PanelVentas extends PanelBase {
             }
         };
         tablaCarrito = new JTable(modeloTabla);
-        tablaCarrito.setFont(new Font(ConstructorComponentes.FUENTE_UI, Font.PLAIN, ConstructorComponentes.TAMANIO_CAMPO));
-        tablaCarrito.getTableHeader().setFont(new Font(ConstructorComponentes.FUENTE_UI, Font.BOLD, ConstructorComponentes.TAMANIO_LABEL));
-        tablaCarrito.getTableHeader().setBackground(ConstructorComponentes.AZUL_OSCURO);
-        tablaCarrito.getTableHeader().setForeground(Color.WHITE);
-        tablaCarrito.setRowHeight(30);
+        ConstructorComponentes.estilizarTabla(tablaCarrito);
         JScrollPane scrollTabla = new JScrollPane(tablaCarrito);
         scrollTabla.setBorder(ConstructorComponentes.crearBordeSeccion("Carrito de venta"));
         scrollTabla.getViewport().setBackground(Color.WHITE);
@@ -194,11 +190,7 @@ public class PanelVentas extends PanelBase {
             }
         };
         tablaVentas = new JTable(modeloTablaVentas);
-        tablaVentas.setFont(new Font(ConstructorComponentes.FUENTE_UI, Font.PLAIN, ConstructorComponentes.TAMANIO_CAMPO));
-        tablaVentas.getTableHeader().setFont(new Font(ConstructorComponentes.FUENTE_UI, Font.BOLD, ConstructorComponentes.TAMANIO_LABEL));
-        tablaVentas.getTableHeader().setBackground(ConstructorComponentes.AZUL_OSCURO);
-        tablaVentas.getTableHeader().setForeground(Color.WHITE);
-        tablaVentas.setRowHeight(30);
+        ConstructorComponentes.estilizarTabla(tablaVentas);
         tablaVentas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollVentas = new JScrollPane(tablaVentas);

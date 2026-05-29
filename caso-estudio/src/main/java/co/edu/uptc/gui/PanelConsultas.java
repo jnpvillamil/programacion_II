@@ -65,7 +65,7 @@ public class PanelConsultas extends PanelBase {
         panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         panelFiltros.setOpaque(false);
 
-        lblProveedor = ConstructorComponentes.crearLabelFormulario("Código proveedor:");
+        lblProveedor = ConstructorComponentes.crearLabelFormulario("Código o NIT:");
         txtProveedor = ConstructorComponentes.crearCampoTexto();
         txtProveedor.setColumns(12);
 

@@ -86,10 +86,22 @@ public class GestionVentas implements IContabilizable {
             }
         }
 
-        repositorioVenta.guardarVenta(venta);
+        if (!repositorioVenta.guardarVenta(venta)) {
+            revertirStockVenta(venta);
+            return false;
+        }
         gestionContable.registrarContabilidadVenta(venta);
         LogSistema.ventaRegistrada(venta.getNumeroFactura(), venta.getTotalVenta());
         return true;
+    }
+
+    private void revertirStockVenta(Venta venta) {
+        for (DetalleVenta detalle : venta.getProductosVendidos()) {
+            gestionInventario.registrarMovimientoInventario(
+                    detalle.getProducto().getCodigoProducto(),
+                    detalle.getCantidad(),
+                    "ENTRADA");
+        }
     }
 
     public String generarFactura(Venta venta) {

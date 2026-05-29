@@ -6,7 +6,7 @@ import co.edu.uptc.modelo.Compra;
 
 public interface IRepositorioCompra extends Repositorio<Compra> {
 
-    void guardarCompra(Compra compra);
+    boolean guardarCompra(Compra compra);
 
     List<Compra> consultarPorProveedor(String codigoProveedor);
 }

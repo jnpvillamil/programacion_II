@@ -4,7 +4,9 @@ import co.edu.uptc.dto.ReporteFinancieroDTO;
 import co.edu.uptc.gui.PanelConsultas;
 import co.edu.uptc.modelo.Compra;
 import co.edu.uptc.modelo.Producto;
+import co.edu.uptc.modelo.Proveedor;
 import co.edu.uptc.negocio.GestionConsultas;
+import co.edu.uptc.negocio.GestionProveedor;
 import co.edu.uptc.utilidades.ManejadorFechas;
 import co.edu.uptc.utilidades.ValidadorEntradas;
 
@@ -15,6 +17,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -22,13 +25,19 @@ public class ControladorConsultas {
 
     private final PanelConsultas vista;
     private final GestionConsultas negocio;
+    private final GestionProveedor gestionProveedor;
     private final Map<String, Consumer<DefaultTableModel>> estrategiasConsulta;
 
-    public ControladorConsultas(PanelConsultas vista, GestionConsultas negocio) {
+    public ControladorConsultas(PanelConsultas vista, GestionConsultas negocio, GestionProveedor gestionProveedor) {
         this.vista = vista;
         this.negocio = negocio;
+        this.gestionProveedor = gestionProveedor;
         this.estrategiasConsulta = crearEstrategiasConsulta();
         inicializarEventos();
+    }
+
+    public ControladorConsultas(PanelConsultas vista, GestionConsultas negocio) {
+        this(vista, negocio, new GestionProveedor());
     }
 
     private Map<String, Consumer<DefaultTableModel>> crearEstrategiasConsulta() {
@@ -73,7 +82,7 @@ public class ControladorConsultas {
     private void consultarComprasProveedor(DefaultTableModel modelo) {
         String codigoProveedor = vista.getTxtProveedor().getText();
         if (ValidadorEntradas.esVacio(codigoProveedor)) {
-            mostrarAdvertencia("Ingrese el código del proveedor.");
+            mostrarAdvertencia("Ingrese el código o NIT del proveedor.");
             return;
         }
 
@@ -84,14 +93,26 @@ public class ControladorConsultas {
             return;
         }
 
+        String criterio = codigoProveedor.trim();
+        Proveedor proveedor = gestionProveedor.buscarPorIdentificacion(criterio);
+        if (proveedor == null || !proveedor.isActivo()) {
+            mostrarAdvertencia("Proveedor no encontrado. Verifique el código o NIT ingresado.");
+            return;
+        }
+
         modelo.setColumnIdentifiers(new String[]{"Factura", "Fecha", "Total compra", "IVA"});
-        for (Compra compra : negocio.consultarComprasPorProveedor(codigoProveedor, inicio, fin)) {
+        List<Compra> compras = negocio.consultarComprasPorProveedor(criterio, inicio, fin);
+        for (Compra compra : compras) {
             modelo.addRow(new Object[]{
                     compra.getFacturaProveedor(),
                     ManejadorFechas.formatearFecha(compra.getFecha()),
                     compra.getTotalCompra(),
                     compra.getIva()
             });
+        }
+        if (compras.isEmpty()) {
+            mostrarAdvertencia(
+                    "El proveedor existe, pero no tiene compras en el rango de fechas seleccionado.");
         }
     }
 

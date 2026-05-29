@@ -93,9 +93,21 @@ public class GestionCompras implements IContabilizable {
             }
         }
 
-        repositorioCompra.guardarCompra(compra);
+        if (!repositorioCompra.guardarCompra(compra)) {
+            revertirStockCompra(compra);
+            return false;
+        }
         gestionContable.registrarContabilidadCompra(compra);
         return true;
+    }
+
+    private void revertirStockCompra(Compra compra) {
+        for (DetalleVenta detalle : compra.getProductosComprados()) {
+            inventario.registrarMovimientoInventario(
+                    detalle.getProducto().getCodigoProducto(),
+                    detalle.getCantidad(),
+                    "SALIDA");
+        }
     }
 
     private void aplicarTotalesCalculables(Compra compra) {
