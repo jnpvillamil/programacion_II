@@ -27,8 +27,7 @@ import co.uptc.edu.co.negocio.GestionProveedor;
 import co.uptc.edu.co.negocio.GestionVenta;
 import co.uptc.edu.co.negocio.GestionInventario;
 import co.uptc.edu.co.negocio.GestionFactura;
-
-import co.uptc.edu.co.persistencia.ClienteJSONDAO;
+import co.uptc.edu.co.persistencia.ClienteBDDAO;
 import co.uptc.edu.co.persistencia.ComprasBDDAO;
 import co.uptc.edu.co.persistencia.DevolucionVentaBDDAO;
 import co.uptc.edu.co.persistencia.FacturaTxtDAO;
@@ -62,7 +61,7 @@ public class TiendaConfig {
 		ProveedorDAO proveedorDAO = new ProveedorBDDAO();
 		gestionProveedor = new GestionProveedor(proveedorDAO);
 
-		ClienteDAO clienteDAO = new ClienteJSONDAO();
+		ClienteDAO clienteDAO = new  ClienteBDDAO();
 		gestionCliente = new GestionCliente(clienteDAO);
 
 		VentaDAO ventaDAO = new VentaBDDAO();
