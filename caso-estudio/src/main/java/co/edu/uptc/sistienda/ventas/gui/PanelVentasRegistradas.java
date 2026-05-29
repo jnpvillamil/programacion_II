@@ -76,8 +76,17 @@ public class PanelVentasRegistradas extends JPanel {
         botonAnularVentaSeleccionada.setActionCommand(Evento.ANULAR_VENTA);
         botonAnularVentaSeleccionada.addActionListener(evento);
         grupoBotonesAccion.add(botonAnularVentaSeleccionada);
-
-
+        
+        botonVerFacturaSeleccionada = new JButton ("Ver factura");
+        botonVerFacturaSeleccionada.setActionCommand(Evento.VER_FACTURA);
+        botonVerFacturaSeleccionada.addActionListener(evento);
+        grupoBotonesAccion.add( botonVerFacturaSeleccionada);
+        
+        botonRegistrarDevolucion = new JButton("Registrar devolución");
+        botonRegistrarDevolucion.setActionCommand(Evento.REGISTRAR_DEVOLUCION);
+        botonRegistrarDevolucion.addActionListener(evento);
+        grupoBotonesAccion.add(botonRegistrarDevolucion);
+        
         panelEncabezado.add(grupoBotonesAccion, BorderLayout.SOUTH);
         add(panelEncabezado, BorderLayout.NORTH);
 

@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import co.edu.uptc.sistienda.interfaces.IGestionVenta;
+import co.edu.uptc.sistienda.modelo.DetalleDevolucion;
 import co.edu.uptc.sistienda.modelo.DetalleVenta;
+import co.edu.uptc.sistienda.modelo.Devolucion;
 import co.edu.uptc.sistienda.modelo.Venta;
 
 public class GestionVenta {
@@ -14,6 +16,8 @@ public class GestionVenta {
 	private IGestionVenta repositorioVenta;
 	private GestionProducto gestionProducto;
 	private int correlativoFactura = 1;
+	private int correlativoDevolucion =1;
+	private List<Devolucion> devoluciones = new ArrayList();
 
 	public GestionVenta(IGestionVenta repositorioVenta, GestionProducto gestionProducto) {
 		this.repositorioVenta = repositorioVenta;
@@ -77,5 +81,41 @@ public class GestionVenta {
 		return repositorioVenta.obtenerListaVentas().stream().filter(v -> v.getFechaHora().toLocalDate().equals(fecha))
 				.collect(Collectors.toList());
 	}
+	public String generarNumeroDevolucion() {
+		return String.format("DEV-%05d", correlativoDevolucion++);
+	}
+
+	// Registra una devolución parcial o total de una venta, cada producto devuelto,
+	// se devuelve el stock al inventario
+	public void registrarDevolucion(String numeroFactura, List<DetalleDevolucion> detalles, String motivo)
+			throws Exception {
+		Venta venta = repositorioVenta.buscarVentaPorNumeroFactura(numeroFactura);
+		if (venta == null) {
+			throw new Exception("No se encontró la venta: " + numeroFactura);
+		}
+		if (venta.isAnulada()) {
+			throw new Exception("No se puede devolver sobre una factura anulada");
+		}
+		if (detalles == null || detalles.isEmpty()) {
+			throw new Exception("Selecione al menos un producto para devolver");
+		}
+		if (motivo == null || motivo.trim().isEmpty()) {
+			throw new Exception("Ingrese el motivo de la devolución");
+		}
+
+		// Reintregra al inventario solo las unidades que el cliente está devolviendo
+		for (DetalleDevolucion detalle : detalles) {
+			DetalleVenta itemOriginal = detalle.getVentaOriginal();
+			int stockActual = itemOriginal.getProducto().getStockActual();
+			itemOriginal.getProducto().setStockActual(stockActual + detalle.getCantidadDevuelta());
+			gestionProducto.modificarProducto(itemOriginal.getProducto());
+		}
+		devoluciones.add(new Devolucion(generarNumeroDevolucion(), venta, detalles, motivo));
+	}
+
+	public List<Devolucion> obtenerListaDevoluciones() {
+		return devoluciones;
+	}
 
 }
+

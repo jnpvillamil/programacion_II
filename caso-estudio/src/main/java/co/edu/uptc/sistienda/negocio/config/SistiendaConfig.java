@@ -5,10 +5,10 @@ import co.edu.uptc.sistienda.negocio.GestionDeSeguridad;
 import co.edu.uptc.sistienda.negocio.GestionProducto;
 import co.edu.uptc.sistienda.negocio.GestionProveedor;
 import co.edu.uptc.sistienda.negocio.GestionVenta;
-import co.edu.uptc.sistienda.persistencia.LocalCliente;
-import co.edu.uptc.sistienda.persistencia.LocalProducto;
-import co.edu.uptc.sistienda.persistencia.LocalProveedor;
-import co.edu.uptc.sistienda.persistencia.LocalVenta;
+import co.edu.uptc.sistienda.persistencia.ClienteDAO;
+import co.edu.uptc.sistienda.persistencia.ProductoDAO;
+import co.edu.uptc.sistienda.persistencia.ProveedorDAO;
+import co.edu.uptc.sistienda.persistencia.VentaDAO;
 
 public class SistiendaConfig {
 
@@ -19,11 +19,11 @@ public class SistiendaConfig {
 	private GestionVenta gestionVenta; 
 
 	public SistiendaConfig() {
-		gestionProducto  = new GestionProducto(new LocalProducto());
-		gestionCliente   = new GestionCliente(new LocalCliente());
-		gestionProveedor = new GestionProveedor(new LocalProveedor());
+		gestionProducto  = new GestionProducto(new ProductoDAO());
+		gestionCliente   = new GestionCliente(new ClienteDAO());
+		gestionProveedor = new GestionProveedor(new ProveedorDAO());
 		gestionDeSeguridad = new GestionDeSeguridad();
-		gestionVenta = new GestionVenta(new LocalVenta(), gestionProducto);
+		gestionVenta = new GestionVenta(new VentaDAO(), gestionProducto);
 	}
 
 	public GestionProducto getGestionProducto() {
