@@ -14,7 +14,7 @@ public class ProveedorConfig {
 	public ProveedorConfig() {
 		super();
 		// TODO Auto-generated constructor stub
-		iProveedor = new SqlProveedor();
+		iProveedor = new LocalProveedor();
 		gestProveedor = new GestionProveedor(iProveedor);	
 	}
 

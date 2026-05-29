@@ -364,5 +364,93 @@
     "impuestos": 0.0,
     "total": 52000.0,
     "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-8",
+    "fechaHora": "2026-05-29T13:14:42.386244700",
+    "cliente": {
+      "idCliente": 100,
+      "direccionC": "CALLE 50",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3121214144,
+      "estado": "ACTIVO",
+      "nombreCompleto": "DIANA SUAREZ",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1000432123
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 100,
+          "nombreProducto": "arroz",
+          "precioCompra": 0.0,
+          "precioVenta": 2900.0,
+          "stockActual": 12,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.05
+        },
+        "cantidad": 23,
+        "precioUnitario": 2900.0,
+        "impuestos": 3335.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 3335.0,
+    "total": 70035.0,
+    "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-9",
+    "fechaHora": "2026-05-29T13:14:59.331121200",
+    "cliente": {
+      "idCliente": 101,
+      "direccionC": "CASA",
+      "tipoCliente": "Minorista",
+      "telefonoC": 22,
+      "estado": "ACTIVO",
+      "nombreCompleto": "ANDREA",
+      "tipoDocumento": "RC",
+      "numeroDocumento": 1
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "Pasta",
+          "precioCompra": 0.0,
+          "precioVenta": 8000.0,
+          "stockActual": 98,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 2,
+        "precioUnitario": 8000.0,
+        "impuestos": 0.0
+      },
+      {
+        "producto": {
+          "codigoProducto": 103,
+          "nombreProducto": "Azucar",
+          "precioCompra": 0.0,
+          "precioVenta": 12000.0,
+          "stockActual": 72,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 23,
+        "precioUnitario": 12000.0,
+        "impuestos": 0.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 0.0,
+    "total": 292000.0,
+    "estado": "ACTIVA"
   }
 ]

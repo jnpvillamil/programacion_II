@@ -1,0 +1,38 @@
+[
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-29",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Inventario",
+    "valor": 4400.0,
+    "descripcion": "Compra factura COMP-5",
+    "referenciaFactura": "COMP-5"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-29",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Proveedores",
+    "valor": 4400.0,
+    "descripcion": "Compra factura COMP-5",
+    "referenciaFactura": "COMP-5"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-29",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Inventario",
+    "valor": 26000.0,
+    "descripcion": "Compra factura COMP-6",
+    "referenciaFactura": "COMP-6"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-29",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Proveedores",
+    "valor": 26000.0,
+    "descripcion": "Compra factura COMP-6",
+    "referenciaFactura": "COMP-6"
+  }
+]

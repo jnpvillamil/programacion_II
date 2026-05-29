@@ -1,0 +1,18 @@
+[
+  {
+    "codigoTransaccion": "CONT-1000",
+    "fecha": "2026-05-27",
+    "tipoMovimiento": "ENTRADA",
+    "cuentaContable": "Caja/Bancos",
+    "valor": 21000.0,
+    "descripcion": "Venta factura: FACT-9"
+  },
+  {
+    "codigoTransaccion": "CONT-1001",
+    "fecha": "2026-05-27",
+    "tipoMovimiento": "ENTRADA",
+    "cuentaContable": "Ingresos por Ventas",
+    "valor": 21000.0,
+    "descripcion": "Ingreso venta: FACT-9"
+  }
+]
