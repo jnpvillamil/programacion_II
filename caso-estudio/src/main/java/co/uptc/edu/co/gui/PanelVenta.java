@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class PanelVenta extends PanelCentral {
 
@@ -90,10 +91,9 @@ public class PanelVenta extends PanelCentral {
 
 		comboFormaPago = new JComboBox<>();
 		comboFormaPago.addItem(OPCION_TODOS);
-		comboFormaPago.addItem("Efectivo");
-		comboFormaPago.addItem("Tarjeta");
-		comboFormaPago.addItem("Transferencia");
-		comboFormaPago.addItem("Crédito");
+		for (FormaPago formaPago : FormaPago.values()) {
+			comboFormaPago.addItem(formaPago.toString());
+		}
 
 		comboEstado = new JComboBox<>();
 		comboEstado.addItem(OPCION_TODOS);

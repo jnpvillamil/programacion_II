@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
+import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.VentaDAO;
@@ -17,9 +18,10 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	private final VentaDAO ventaDAO;
 	private final DevolucionVentaDAO devolucionVentaDAO;
 	private final IGestionInventario gestionInventario;
+	private final IGestionContabilidad gestionContabilidad;
 
 	public GestionDevolucionVenta(VentaDAO ventaDAO, DevolucionVentaDAO devolucionVentaDAO,
-			IGestionInventario gestionInventario) {
+			IGestionInventario gestionInventario, IGestionContabilidad gestionContabilidad) {
 
 		if (ventaDAO == null) {
 			throw new IllegalArgumentException("La ventaDAO no puede ser nula.");
@@ -33,9 +35,14 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 			throw new IllegalArgumentException("La gestionInventario no puede ser nula.");
 		}
 
+		if (gestionContabilidad == null) {
+			throw new IllegalArgumentException("La gestionContabilidad no puede ser nula.");
+		}
+
 		this.ventaDAO = ventaDAO;
 		this.devolucionVentaDAO = devolucionVentaDAO;
 		this.gestionInventario = gestionInventario;
+		this.gestionContabilidad = gestionContabilidad;
 	}
 
 	@Override
@@ -67,6 +74,10 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 
 		venta.setEstado(EstadoVentaEnum.DEVUELTA);
 		ventaDAO.actualizarVenta(venta);
+
+		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
+		double ivaDevuelto = subtotalDevuelto * 0.19;
+		gestionContabilidad.registrarReversoPorDevolucionVenta(venta, subtotalDevuelto, ivaDevuelto, motivo.trim());
 	}
 
 	@Override

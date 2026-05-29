@@ -18,7 +18,6 @@ import co.uptc.edu.co.gui.dialog.DialogDetalleCompra;
 import co.uptc.edu.co.gui.dialog.DialogDetalleContable;
 import co.uptc.edu.co.gui.dialog.DialogDetalleVenta;
 import co.uptc.edu.co.gui.dialog.DialogDevolucionVenta;
-import co.uptc.edu.co.gui.dialog.DialogFacturaVenta;
 import co.uptc.edu.co.gui.dialog.DialogHistorialCliente;
 import co.uptc.edu.co.gui.dialog.DialogMovimientoInventario;
 import co.uptc.edu.co.gui.dialog.DialogProducto;
@@ -26,6 +25,7 @@ import co.uptc.edu.co.gui.dialog.DialogProveedor;
 import co.uptc.edu.co.gui.dialog.DialogVenta;
 import co.uptc.edu.co.interfaces.IGestionCliente;
 import co.uptc.edu.co.interfaces.IGestionCompra;
+import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.IGestionProducto;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
@@ -34,6 +34,7 @@ import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.interfaces.IGestionFactura;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.DetalleCompra;
+import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.Venta;
@@ -104,6 +105,7 @@ public class Evento implements ActionListener {
 	private IGestionCompra gestionCompra;
 	private IGestionDevolucionVenta gestionDevolucionVenta;
 	private IGestionFactura gestionFactura;
+	private IGestionContabilidad gestionContabilidad;
 
 	// CONSTRUCTOR
 	public Evento(VentanaPrincipal ventana, TiendaConfig config) {
@@ -115,6 +117,7 @@ public class Evento implements ActionListener {
 		this.gestionCompra = config.getGestionCompra();
 		this.gestionDevolucionVenta = config.getGestionDevolucionVenta();
 		this.gestionFactura = config.getGestionFactura();
+		this.gestionContabilidad = config.getGestionContabilidad();
 	}
 
 	// METODO PRINCIPAL DE EVENTOS
@@ -181,6 +184,7 @@ public class Evento implements ActionListener {
 
 		case CONTABILIDAD:
 			ventana.irContabilidad();
+			refrescarTablaContabilidad();
 			return true;
 
 		case REPORTES:
@@ -997,8 +1001,41 @@ public class Evento implements ActionListener {
 	}
 
 	private void abrirDialogoDetalleContable() {
-		DialogDetalleContable dialog = new DialogDetalleContable(ventana);
-		dialog.setVisible(true);
+		try {
+			PanelContabilidad panelContabilidad = ventana.getPanelContabilidad();
+
+			if (!panelContabilidad.haySeleccion()) {
+				throw new Exception("Debe seleccionar un movimiento contable.");
+			}
+
+			String codigo = panelContabilidad.obtenerCodigoSeleccionado();
+			MovimientoContable movimiento = gestionContabilidad.buscarMovimientoPorCodigo(codigo);
+
+			if (movimiento == null) {
+				throw new Exception("No se encontro el movimiento contable seleccionado.");
+			}
+
+			DialogDetalleContable dialog = new DialogDetalleContable(ventana);
+			dialog.cargarMovimiento(
+					movimiento.getCodigoTransaccion(),
+					movimiento.getFecha() != null ? movimiento.getFecha().toString() : "",
+					movimiento.getTipoMovimientoContable() != null ? movimiento.getTipoMovimientoContable().toString()
+							: "",
+					movimiento.getCuentaContable(),
+					movimiento.getValor() != null ? movimiento.getValor().toString() : "",
+					movimiento.getDescripcion(),
+					movimiento.getOrigen(),
+					movimiento.getReferencia());
+			dialog.setVisible(true);
+
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
+	}
+
+	private void refrescarTablaContabilidad() {
+		PanelContabilidad panelContabilidad = ventana.getPanelContabilidad();
+		panelContabilidad.cargarMovimientos(gestionContabilidad.obtenerMovimientos());
 	}
 
 	// METODOS AUXILIARES GENERALES

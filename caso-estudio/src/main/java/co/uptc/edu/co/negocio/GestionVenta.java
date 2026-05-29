@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.VentaDAO;
@@ -20,8 +21,10 @@ public class GestionVenta implements IGestionVenta {
 	private List<Venta> ventas;
 	private final VentaDAO ventaDAO;
 	private final IGestionInventario gestionInventario;
+	private final IGestionContabilidad gestionContabilidad;
 
-	public GestionVenta(VentaDAO ventaDAO, IGestionInventario gestionInventario) {
+	public GestionVenta(VentaDAO ventaDAO, IGestionInventario gestionInventario,
+			IGestionContabilidad gestionContabilidad) {
 
 		if (ventaDAO == null) {
 
@@ -30,8 +33,12 @@ public class GestionVenta implements IGestionVenta {
 		if (gestionInventario == null) {
 			throw new IllegalArgumentException("La gestionInventario no puede ser nula");
 		}
+		if (gestionContabilidad == null) {
+			throw new IllegalArgumentException("La gestionContabilidad no puede ser nula");
+		}
 		this.ventaDAO = ventaDAO;
 		this.gestionInventario = gestionInventario;
+		this.gestionContabilidad = gestionContabilidad;
 
 		try {
 			ventas = ventaDAO.listarVentas();
@@ -66,6 +73,7 @@ public class GestionVenta implements IGestionVenta {
 		gestionInventario.validarStockDisponible(venta.getDetalles());
 		ventaDAO.guardarVenta(venta);
 		gestionInventario.registrarSalidaPorVenta(venta);
+		gestionContabilidad.registrarIngresoPorVenta(venta);
 		recargarVentas();
 	}
 
@@ -78,12 +86,6 @@ public class GestionVenta implements IGestionVenta {
 	public Venta buscarVentaPorNumero(String numeroFactura) throws Exception {
 		if (numeroFactura == null) {
 			return null;
-		}
-
-		for (Venta venta : ventas) {
-			if (numeroFactura.equals(venta.getNumeroFactura())) {
-				return venta;
-			}
 		}
 
 		return ventaDAO.buscarVentaPorNumero(numeroFactura);
@@ -181,6 +183,7 @@ public class GestionVenta implements IGestionVenta {
 		venta.setEstado(EstadoVentaEnum.ANULADA);
 		ventaDAO.actualizarVenta(venta);
 		gestionInventario.registrarEntradaPorAnulacion(venta, motivo.trim());
+		gestionContabilidad.registrarReversoPorAnulacionVenta(venta, motivo.trim());
 		recargarVentas();
 	}
 

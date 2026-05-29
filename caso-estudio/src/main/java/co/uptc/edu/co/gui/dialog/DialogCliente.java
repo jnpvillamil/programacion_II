@@ -144,7 +144,7 @@ public class DialogCliente extends JDialog {
 
 	private void inicializarEventos(Evento evento) {
 		botonCancelar.addActionListener(e -> dispose());
-		
+
 		botonGuardar.setActionCommand(Evento.CMD_CONFIRMAR_CLIENTE);
 		botonGuardar.addActionListener(evento);
 
@@ -211,7 +211,6 @@ public class DialogCliente extends JDialog {
 	}
 
 	public void cargarCodigoGenerado(String codigoGenerado) {
-		// TODO Auto-generated method stub
 		campoCodigo.setText(codigoGenerado);
 		campoCodigo.setEditable(false);
 	}

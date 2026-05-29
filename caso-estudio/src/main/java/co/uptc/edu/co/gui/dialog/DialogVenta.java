@@ -32,6 +32,7 @@ import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class DialogVenta extends JDialog {
 
@@ -43,7 +44,7 @@ public class DialogVenta extends JDialog {
 	private JTextField campoFecha;
 	private JTextField campoHora;
 	private JComboBox<Cliente> comboCliente;
-	private JComboBox<String> comboFormaPago;
+	private JComboBox<FormaPago> comboFormaPago;
 
 	private JComboBox<Producto> comboProducto;
 	private JTextField campoCantidad;
@@ -81,10 +82,9 @@ public class DialogVenta extends JDialog {
 		comboCliente = new JComboBox<>();
 
 		comboFormaPago = new JComboBox<>();
-		comboFormaPago.addItem("Efectivo");
-		comboFormaPago.addItem("Transferencia");
-		comboFormaPago.addItem("Tarjeta");
-		comboFormaPago.addItem("Credito");
+		for (FormaPago formaPago : FormaPago.values()) {
+			comboFormaPago.addItem(formaPago);
+		}
 
 		comboProducto = new JComboBox<>();
 
@@ -312,7 +312,7 @@ public class DialogVenta extends JDialog {
 	public Venta obtenerVenta() throws Exception {
 		String numeroFactura = campoNumeroFactura.getText().trim();
 		Cliente cliente = (Cliente) comboCliente.getSelectedItem();
-		String formaPago = comboFormaPago.getSelectedItem().toString();
+		FormaPago formaPago = (FormaPago) comboFormaPago.getSelectedItem();
 		LocalDateTime fechaHora = obtenerFechaHora();
 		List<DetalleVenta> detalles = obtenerDetallesVenta();
 
@@ -328,7 +328,7 @@ public class DialogVenta extends JDialog {
 			throw new Exception("Debe agregar al menos un producto.");
 		}
 
-		return new Venta(numeroFactura, fechaHora, cliente.toString(), detalles, 0, formaPago, 0, 0,
+		return new Venta(numeroFactura, fechaHora, cliente.toString(), detalles, 0, formaPago.toString(), 0, 0,
 				EstadoVentaEnum.ACTIVA);
 	}
 

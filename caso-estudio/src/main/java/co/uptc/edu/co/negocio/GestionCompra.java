@@ -37,7 +37,6 @@ public class GestionCompra implements IGestionCompra {
 
 	@Override
 	public void registrarCompra(Compra compra) throws Exception {
-		// TODO Auto-generated method stub
 		validarCompra(compra);
 		String numeroFactura = compra.getNumeroFacturaProveedor();
 		if (numeroFactura == null || numeroFactura.trim().isEmpty()) {
@@ -55,8 +54,7 @@ public class GestionCompra implements IGestionCompra {
 		compra.setImpuestos(calcularimpuestos(compra.getDetalles()));
 		compra.setTotalCompra(compra.getSubtotal() + compra.getImpuestos());
 
-		// Ajustar inventario antes de persistir la compra para que el stock quede
-		// sincronizado.
+		
 		registrarEntradaInventario(compra);
 		try {
 			compraDAO.guardarComprar(compra);
@@ -69,13 +67,11 @@ public class GestionCompra implements IGestionCompra {
 
 	@Override
 	public List<Compra> obtenerCompras() {
-		// TODO Auto-generated method stub
 		return new ArrayList<>(compras);
 	}
 
 	@Override
 	public Compra buscarCompraPorNumero(String numeroFactura) throws Exception {
-		// TODO Auto-generated method stub
 		if (numeroFactura == null || numeroFactura.trim().isEmpty()) {
 			return null;
 		}
@@ -115,7 +111,6 @@ public class GestionCompra implements IGestionCompra {
 	}
 
 	private double calcularimpuestos(List<DetalleCompra> detalles) {
-		// TODO Auto-generated method stub
 		double impuestos = 0.0;
 		for (DetalleCompra detalle : detalles) {
 			impuestos += detalle.getImpuestos();
@@ -124,7 +119,6 @@ public class GestionCompra implements IGestionCompra {
 	}
 
 	private double calcularSubtotal(List<DetalleCompra> detalles) {
-		// TODO Auto-generated method stub
 		double subtotal = 0.0;
 		for (DetalleCompra detalle : detalles) {
 			subtotal += detalle.getSubtotal();
@@ -134,7 +128,6 @@ public class GestionCompra implements IGestionCompra {
 
 	@Override
 	public void anularCompra(String numeroFactura, String motivoAnulacion) throws Exception {
-		// TODO Auto-generated method stub
 		Compra compra = buscarCompraPorNumero(numeroFactura);
 
 		if (compra == null) {

@@ -345,7 +345,6 @@ public class DialogCompra extends JDialog {
 	}
 
 	private double obtenerCostoUnitarioProducto() {
-		// TODO Auto-generated method stub
 		Producto producto = (Producto) comboProducto.getSelectedItem();
 		return producto != null ? producto.getPrecioCompra() : 0.0;
 	}

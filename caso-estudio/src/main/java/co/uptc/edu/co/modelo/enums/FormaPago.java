@@ -2,9 +2,9 @@ package co.uptc.edu.co.modelo.enums;
 
 public enum FormaPago {
     EFECTIVO("Efectivo"),
-    TRANSFERENCIA("Traferencia"),
+    TRANSFERENCIA("Transferencia"),
     TARJETA("Tarjeta"),
-    CREDITO("Credito");
+    CREDITO("Crédito");
 	
 	 private final String texto;
 	 FormaPago(String texto) {

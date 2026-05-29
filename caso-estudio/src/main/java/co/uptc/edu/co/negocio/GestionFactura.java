@@ -65,8 +65,8 @@ public class GestionFactura implements IGestionFactura {
 	private void escribirEncabezado(StringBuilder contenido) {
 		contenido.append("========================================").append(System.lineSeparator());
 		contenido.append("         TIENDA MINORISTA UPTC").append(System.lineSeparator());
-		contenido.append("         NIT: 900.123.456-7").append(System.lineSeparator());
-		contenido.append("         Calle 1 # 2-3, Tunja").append(System.lineSeparator());
+		contenido.append("         NIT: 803.153.436-7").append(System.lineSeparator());
+		contenido.append("         Calle 5 # 8-9, Bogota").append(System.lineSeparator());
 		contenido.append("         Tel: 601-1234567").append(System.lineSeparator());
 		contenido.append("========================================").append(System.lineSeparator());
 	}
