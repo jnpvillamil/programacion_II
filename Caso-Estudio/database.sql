@@ -1,7 +1,4 @@
--- =====================================================
--- SISTEMA DE GESTIÓN COMERCIAL Y CONTABLE
--- BASE DE DATOS PARA TIENDA MINORISTA
--- =====================================================
+
 
 -- Crear base de datos
 CREATE DATABASE IF NOT EXISTS tienda_gestion;
@@ -117,9 +114,8 @@ CREATE TABLE IF NOT EXISTS movimientos_contables (
     FOREIGN KEY (codigo_asiento) REFERENCES asientos_contables(codigo_asiento)
 );
 
--- =====================================================
+
 -- DATOS DE PRUEBA
--- =====================================================
 
 -- Insertar productos
 INSERT INTO productos (codigo, nombre, categoria, precio_compra, precio_venta, stock_actual, stock_minimo) VALUES
@@ -141,9 +137,9 @@ INSERT INTO proveedores (codigo, razon_social, nit, direccion, telefono, email) 
 ('PROV002', 'Alimentos SAS', '800987654-2', 'Carrera 15 #45-60', '3209876543', 'pedidos@alimentossas.com'),
 ('PROV003', 'Papelería Central', '700456789-3', 'Avenida 5 #12-08', '6012345678', 'compras@papeleriacentral.com');
 
--- =====================================================
+
 -- VERIFICAR
--- =====================================================
+
 SELECT '✅ Base de datos creada exitosamente' AS Mensaje;
 SELECT COUNT(*) AS Total_Productos FROM productos;
 SELECT COUNT(*) AS Total_Clientes FROM clientes;

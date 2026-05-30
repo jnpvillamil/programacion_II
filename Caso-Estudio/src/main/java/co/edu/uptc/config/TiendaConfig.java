@@ -7,7 +7,7 @@ public class TiendaConfig {
     
     private static TiendaConfig instancia;
     
-    // Cambia a true cuando quieras usar base de datos
+    // Cambiar a true para base de datos
     private static final boolean USAR_BASE_DATOS = true;  
     
     private GestionProducto gestionProducto;
