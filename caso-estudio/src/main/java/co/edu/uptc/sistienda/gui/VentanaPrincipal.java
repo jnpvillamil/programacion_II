@@ -24,6 +24,7 @@ import co.edu.uptc.sistienda.modelo.DetalleVenta;
 import co.edu.uptc.sistienda.modelo.Producto;
 import co.edu.uptc.sistienda.modelo.Proveedor;
 import co.edu.uptc.sistienda.modelo.Venta;
+import co.edu.uptc.sistienda.negocio.GestorLog;
 import co.edu.uptc.sistienda.negocio.config.SistiendaConfig;
 import co.edu.uptc.sistienda.negocio.dto.CredencialDto;
 import co.edu.uptc.sistienda.productos.gui.DialogoProducto;
@@ -50,6 +51,7 @@ public class VentanaPrincipal extends JFrame {
 	private SistiendaConfig configuracion;
 	private Evento evento;
 	private String rolActivo;
+	private String usuarioActivo = "sistema";
 
 	// Paneles de navegación
 	private PanelLogin panelLogin;
@@ -236,6 +238,8 @@ public class VentanaPrincipal extends JFrame {
 			CredencialDto credencial = panelLogin.obtenerCredencialesIngresadas();
 			if (configuracion.getGestionDeSeguridad().validarLogueo(credencial)) {
 				rolActivo = credencial.getRol();
+				usuarioActivo = credencial.getUsuario(); 
+			    GestorLog.registrar(usuarioActivo, "LOGIN", "Rol: " + rolActivo);
 				setTitle("Sistienda – " + rolActivo);
 				mostrarPantallaInicial();
 			} else {
@@ -358,6 +362,7 @@ public class VentanaPrincipal extends JFrame {
 	            nuevaVenta.agregarItem(itemDeVenta);
 	        }
 	        configuracion.getGestionVenta().resgistrarVenta(nuevaVenta);
+	        GestorLog.registrar(usuarioActivo, "REGISTRAR_VENTA", "Factura: " + nuevaVenta.getNumeroFactura());
 	        JOptionPane.showMessageDialog(this, "Venta Registrada correctamente");
 	        mostrarPanelRegistrarVenta();
 	    } catch (Exception ex) {
@@ -379,6 +384,7 @@ public class VentanaPrincipal extends JFrame {
 		if (confirmacionAnulacion == JOptionPane.YES_OPTION) {
 			try {
 				configuracion.getGestionVenta().anularVenta(numeroFacturaAnular);
+				GestorLog.registrar(usuarioActivo, "ANULAR_VENTA", "Factura: " + numeroFacturaAnular);
 				mostrarPanelVentasRegistradas();
 				JOptionPane.showMessageDialog(this, "Venta anulada correctamente.");
 			} catch (Exception ex) {
@@ -478,6 +484,7 @@ public class VentanaPrincipal extends JFrame {
 		try {
 			Producto nuevo = dialogoProducto.capturarDatosFormulario();
 			configuracion.getGestionProducto().registrarNuevoProducto(nuevo);
+			GestorLog.registrar(usuarioActivo, "GUARDAR_PRODUCTO", "Código: " + nuevo.getCodigoInterno());
 			cerrarDialogoProducto();
 			refrescarTablaProductos();
 			JOptionPane.showMessageDialog(this, "Producto registrado correctamente.");
@@ -490,6 +497,7 @@ public class VentanaPrincipal extends JFrame {
 		try {
 			Producto editado = dialogoProducto.capturarDatosFormulario();
 			configuracion.getGestionProducto().modificarProducto(editado);
+			GestorLog.registrar(usuarioActivo, "EDITAR_PRODUCTO", "Código: " + editado.getCodigoInterno()); 
 			cerrarDialogoProducto();
 			refrescarTablaProductos();
 			JOptionPane.showMessageDialog(this, "Producto actualizado correctamente.");
@@ -588,6 +596,7 @@ public class VentanaPrincipal extends JFrame {
 		try {
 			Cliente nuevo = dialogoCliente.capturarDatosFormulario();
 			configuracion.getGestionCliente().registrarNuevoCliente(nuevo);
+			GestorLog.registrar(usuarioActivo, "GUARDAR_CLIENTE", "Código: " + nuevo.getCodigoCliente());
 			cerrarDialogoCliente();
 			refrescarTablaClientes();
 			JOptionPane.showMessageDialog(this, "Cliente registrado correctamente.");
@@ -600,6 +609,7 @@ public class VentanaPrincipal extends JFrame {
 		try {
 			Cliente editado = dialogoCliente.capturarDatosFormulario();
 			configuracion.getGestionCliente().modificarCliente(editado);
+			GestorLog.registrar(usuarioActivo, "EDITAR_CLIENTE", "Código: " + editado.getCodigoCliente());
 			cerrarDialogoCliente();
 			refrescarTablaClientes();
 			JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente.");
@@ -701,6 +711,7 @@ public class VentanaPrincipal extends JFrame {
 		try {
 			Proveedor nuevo = dialogoProveedor.capturarDatosFormulario();
 			configuracion.getGestionProveedor().registrarNuevoProveedor(nuevo);
+			GestorLog.registrar(usuarioActivo, "GUARDAR_PROVEEDOR", "Código: " + nuevo.getCodigoProveedor());
 			cerrarDialogoProveedor();
 			refrescarTablaProveedores();
 			JOptionPane.showMessageDialog(this, "Proveedor registrado correctamente.");
@@ -713,6 +724,7 @@ public class VentanaPrincipal extends JFrame {
 		try {
 			Proveedor editado = dialogoProveedor.capturarDatosFormulario();
 			configuracion.getGestionProveedor().modificarProveedor(editado);
+			GestorLog.registrar(usuarioActivo, "EDITAR_PROVEEDOR", "Código: " + editado.getCodigoProveedor());
 			cerrarDialogoProveedor();
 			refrescarTablaProveedores();
 			JOptionPane.showMessageDialog(this, "Proveedor actualizado correctamente.");
@@ -786,7 +798,9 @@ public class VentanaPrincipal extends JFrame {
 	// Cerrar sesión
 
 	public void cerrarSesion() {
+		GestorLog.registrar(usuarioActivo, "LOGOUT", "Sesión cerrada");
 		rolActivo = null;
+		usuarioActivo = "sistema";
 		setTitle(TITULO_VENTANA);
 		layoutPrincipal.show(panelRaiz, TARJETA_LOGIN);
 	}
