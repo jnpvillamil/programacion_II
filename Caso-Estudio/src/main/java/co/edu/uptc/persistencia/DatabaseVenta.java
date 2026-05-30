@@ -2,8 +2,9 @@ package co.edu.uptc.persistencia;
 
 import co.edu.uptc.interfaces.GestionVenta;
 import co.edu.uptc.modelo.*;
+import co.edu.uptc.Dtos.ReporteVentasDTO;
 import co.edu.uptc.Util.ConexionBD;
-import co.edu.uptc.negocio.ReporteVentasDTO;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -368,7 +369,7 @@ public class DatabaseVenta implements GestionVenta {
     }
     
     @Override
-    public co.edu.uptc.negocio.ReporteDiarioJSONDTO generarDatosJSONDiario(LocalDate fecha) {
+    public co.edu.uptc.Dtos.ReporteDiarioJSONDTO generarDatosJSONDiario(LocalDate fecha) {
         List<Venta> ventasDelDia = listarVentasPorFecha(fecha);
         
         double totalVentas = 0;
@@ -421,7 +422,7 @@ public class DatabaseVenta implements GestionVenta {
         resumenContable.put("Ingresos", totalVentas);
         resumenContable.put("Utilidad", utilidadBruta);
         
-        co.edu.uptc.negocio.ReporteDiarioJSONDTO reporte = new co.edu.uptc.negocio.ReporteDiarioJSONDTO();
+        co.edu.uptc.Dtos.ReporteDiarioJSONDTO reporte = new co.edu.uptc.Dtos.ReporteDiarioJSONDTO();
         reporte.setFecha(fecha.toString());
         reporte.setTotal_ventas(totalVentas);
         reporte.setTotal_compras(totalCompras);

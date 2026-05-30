@@ -1,8 +1,9 @@
 package co.edu.uptc.interfaces;
 
+import co.edu.uptc.Dtos.ReporteDiarioJSONDTO;
+import co.edu.uptc.Dtos.ReporteVentasDTO;
 import co.edu.uptc.modelo.Venta;
-import co.edu.uptc.negocio.ReporteVentasDTO;
-import co.edu.uptc.negocio.ReporteDiarioJSONDTO;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;

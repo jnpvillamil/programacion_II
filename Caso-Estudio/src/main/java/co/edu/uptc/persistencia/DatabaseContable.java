@@ -2,10 +2,11 @@ package co.edu.uptc.persistencia;
 
 import co.edu.uptc.interfaces.GestionContable;
 import co.edu.uptc.modelo.*;
+import co.edu.uptc.Dtos.ReporteContableDTO;
 import co.edu.uptc.Util.ConexionBD;
 import co.edu.uptc.enums.CuentaContable;
 import co.edu.uptc.enums.TipoMovimientoContable;
-import co.edu.uptc.negocio.ReporteContableDTO;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;

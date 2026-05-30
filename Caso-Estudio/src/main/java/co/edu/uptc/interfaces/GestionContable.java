@@ -4,7 +4,7 @@ import co.edu.uptc.modelo.AsientoContable;
 import co.edu.uptc.modelo.MovimientoContable;
 import co.edu.uptc.modelo.Venta;
 import co.edu.uptc.modelo.Compra;
-import co.edu.uptc.negocio.ReporteContableDTO;
+import co.edu.uptc.Dtos.ReporteContableDTO;
 import co.edu.uptc.enums.CuentaContable; 
 import java.time.LocalDate;
 import java.util.List;
