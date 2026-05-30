@@ -3,10 +3,11 @@ package co.edu.uptc.gui.negocio;
 
 import java.util.List;
 
+import co.edu.uptc.gui.interfaces.ICrudCliente;
 import co.edu.uptc.gui.modelo.Cliente;
 import co.edu.uptc.persistencia.LocalCliente;
 
-public class GestionCliente {
+public class GestionCliente implements ICrudCliente {
 
     private LocalCliente localCliente;
 
@@ -33,5 +34,17 @@ public class GestionCliente {
     public List<Cliente> listarClientes() {
         return localCliente.getClientes();
     }
+
+	@Override
+	public Cliente obtenerCliente(String idCliente) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void actualizarDatosContacto(Cliente cliente) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -1,5 +1,6 @@
 package co.edu.uptc.gui.modelo;
 
+import co.edu.uptc.dto.CredencialDto;
 import co.edu.uptc.enums.RolUsuarioEnum;
 import co.edu.uptc.gui.interfaces.Autenticable;
 
@@ -61,4 +62,10 @@ public class Usuario implements Autenticable {
     public void cerrarSesion() {
         System.out.println("Sesión cerrada");
     }
+
+	@Override
+	public boolean iniciarSesion(CredencialDto credenciales) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

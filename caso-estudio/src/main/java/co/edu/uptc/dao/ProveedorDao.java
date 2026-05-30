@@ -3,6 +3,7 @@ package co.edu.uptc.dao;
 import co.edu.uptc.conexion.Conexion;
 import co.edu.uptc.gui.modelo.Proveedor;
 import java.sql.Statement;
+import java.util.List;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
@@ -47,4 +48,19 @@ public class ProveedorDao {
             JOptionPane.showMessageDialog(null, "Error al actualizar proveedor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+	public Proveedor obtenerProveedor(String nit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void eliminarProveedor(String nit) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List<Proveedor> listarProveedores() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
