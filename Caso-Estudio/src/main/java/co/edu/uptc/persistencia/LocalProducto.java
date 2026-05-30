@@ -1,10 +1,10 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionProducto;
+import co.edu.uptc.interfaces.IGestionProducto;
 import co.edu.uptc.modelo.Producto;
 import java.util.*;
 
-public class LocalProducto implements GestionProducto {
+public class LocalProducto implements IGestionProducto {
     
     private Map<String, Producto> productos;
     

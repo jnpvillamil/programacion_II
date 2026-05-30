@@ -3,7 +3,7 @@ package co.edu.uptc.interfaces;
 import co.edu.uptc.modelo.Proveedor;
 import java.util.List;
 
-public interface GestionProveedor {
+public interface IGestionProveedor {
     
     // CRUD 
     void crear(Proveedor proveedor);

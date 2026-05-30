@@ -1,6 +1,6 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionCliente;
+import co.edu.uptc.interfaces.IGestionCliente;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.Util.ConexionBD;
 import co.edu.uptc.enums.TipoDocumentoEnum;
@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseCliente implements GestionCliente {
+public class DatabaseCliente implements IGestionCliente {
     
     private ConexionBD conexionBD = new ConexionBD();
     

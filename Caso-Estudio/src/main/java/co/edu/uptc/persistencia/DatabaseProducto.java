@@ -1,13 +1,13 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionProducto;
+import co.edu.uptc.interfaces.IGestionProducto;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.Util.ConexionBD;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseProducto implements GestionProducto {
+public class DatabaseProducto implements IGestionProducto {
     
     private ConexionBD conexionBD = new ConexionBD();
     

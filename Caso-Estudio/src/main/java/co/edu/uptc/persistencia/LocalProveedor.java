@@ -1,10 +1,10 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionProveedor;
+import co.edu.uptc.interfaces.IGestionProveedor;
 import co.edu.uptc.modelo.Proveedor;
 import java.util.*;
 
-public class LocalProveedor implements GestionProveedor {
+public class LocalProveedor implements IGestionProveedor {
     
     private Map<String, Proveedor> proveedores;
     

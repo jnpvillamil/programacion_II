@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public interface GestionVenta {
+public interface IGestionVenta {
     
     // CRUD
     void crearVenta(Venta venta);

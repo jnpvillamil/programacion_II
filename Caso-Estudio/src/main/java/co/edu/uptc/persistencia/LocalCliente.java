@@ -1,11 +1,11 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionCliente;
+import co.edu.uptc.interfaces.IGestionCliente;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.enums.TipoDocumentoEnum;
 import java.util.*;
 
-public class LocalCliente implements GestionCliente {
+public class LocalCliente implements IGestionCliente {
     
     private Map<String, Cliente> clientes;
     

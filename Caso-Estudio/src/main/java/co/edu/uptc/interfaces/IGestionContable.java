@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public interface GestionContable {
+public interface IGestionContable {
     
     
     void registrarAsientoVenta(Venta venta);

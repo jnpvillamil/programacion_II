@@ -1,6 +1,6 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionVenta;
+import co.edu.uptc.interfaces.IGestionVenta;
 import co.edu.uptc.modelo.*;
 import co.edu.uptc.Dtos.ReporteVentasDTO;
 import co.edu.uptc.Util.ConexionBD;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DatabaseVenta implements GestionVenta {
+public class DatabaseVenta implements IGestionVenta {
     
     private ConexionBD conexionBD = new ConexionBD();
     

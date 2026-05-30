@@ -1,13 +1,13 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionProveedor;
+import co.edu.uptc.interfaces.IGestionProveedor;
 import co.edu.uptc.modelo.Proveedor;
 import co.edu.uptc.Util.ConexionBD;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseProveedor implements GestionProveedor {
+public class DatabaseProveedor implements IGestionProveedor {
     
     private ConexionBD conexionBD = new ConexionBD();
     

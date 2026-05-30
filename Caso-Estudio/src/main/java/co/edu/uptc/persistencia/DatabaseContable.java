@@ -1,6 +1,6 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionContable;
+import co.edu.uptc.interfaces.IGestionContable;
 import co.edu.uptc.modelo.*;
 import co.edu.uptc.Dtos.ReporteContableDTO;
 import co.edu.uptc.Util.ConexionBD;
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DatabaseContable implements GestionContable {
+public class DatabaseContable implements IGestionContable {
     
     private ConexionBD conexionBD = new ConexionBD();
     private int contadorAsientos = 1;
