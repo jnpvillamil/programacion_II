@@ -35,6 +35,7 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 
 			prepararInsert(sentencia, movimiento);
+			sentencia.executeUpdate();
 
 		} catch (SQLException e) {
 			throw new Exception("Error al guardar el movimiento contable: " + e.getMessage(), e);
@@ -45,8 +46,27 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 	public void guardarMovimiento(Connection conexion, MovimientoContable movimiento) throws Exception {
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 			prepararInsert(sentencia, movimiento);
+			sentencia.executeUpdate();
 		} catch (SQLException e) {
 			throw new Exception("Error al guardar el movimiento contable: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void guardarMovimientos(Connection conexion, List<MovimientoContable> movimientos) throws Exception {
+		if (movimientos == null || movimientos.isEmpty()) {
+			return;
+		}
+
+		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
+			for (MovimientoContable movimiento : movimientos) {
+				prepararInsert(sentencia, movimiento);
+				sentencia.addBatch();
+			}
+
+			sentencia.executeBatch();
+		} catch (SQLException e) {
+			throw new Exception("Error al guardar los movimientos contables: " + e.getMessage(), e);
 		}
 	}
 
@@ -99,7 +119,6 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 		sentencia.setString(6, movimiento.getDescripcion());
 		sentencia.setString(7, movimiento.getOrigen());
 		sentencia.setString(8, movimiento.getReferencia());
-		sentencia.executeUpdate();
 	}
 
 	private MovimientoContable construirMovimiento(ResultSet resultado) throws SQLException {

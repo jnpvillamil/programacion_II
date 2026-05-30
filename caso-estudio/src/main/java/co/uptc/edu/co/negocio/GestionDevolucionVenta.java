@@ -47,7 +47,8 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	}
 
 	@Override
-	public void devolverVenta(String numeroFactura, String codigoProducto, int cantidad, String motivo) throws Exception {
+	public void devolverVenta(String numeroFactura, String codigoProducto, int cantidad, String motivo)
+			throws Exception {
 		Venta venta = ventaDAO.buscarVentaPorNumero(numeroFactura);
 		devolverVenta(venta, codigoProducto, cantidad, motivo);
 	}
@@ -81,18 +82,24 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		DevolucionVenta devolucion = crearDevolucion(venta, detalleDevuelto, cantidad, motivo.trim());
 		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
 		double ivaDevuelto = subtotalDevuelto * 0.19;
+
 		venta.setEstado(EstadoVentaEnum.DEVUELTA);
 
 		TransaccionBD.ejecutar(conexion -> {
+
 			gestionInventario.registrarEntrada(conexion, codigoProducto, cantidad,
-					"Entrada por devolucion de venta " + venta.getNumeroFactura() + ". Motivo: " + motivo.trim());
+					"Entrada por devolucion de venta " + venta.getNumeroFactura()
+							+ ". Motivo: " + motivo.trim());
+
 			devolucionVentaDAO.guardarDevolucion(conexion, devolucion);
-			ventaDAO.actualizarVenta(conexion, venta);
-			gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta, subtotalDevuelto, ivaDevuelto,
-					motivo.trim());
+
+			ventaDAO.actualizarEstadoVenta(conexion, venta.getNumeroFactura(),
+					EstadoVentaEnum.DEVUELTA);
+
+			gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta,
+					subtotalDevuelto, ivaDevuelto, motivo.trim());
 		});
 	}
-
 	@Override
 	public DevolucionVenta buscarDevolucionPorCodigo(String codigoDevolucion) throws Exception {
 		if (codigoDevolucion == null || codigoDevolucion.trim().isEmpty()) {
@@ -172,18 +179,12 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	}
 
 	private String generarCodigoDevolucion() throws Exception {
+		String ultimoCodigo = devolucionVentaDAO.obtenerUltimoCodigoDevolucion();
+
 		int mayor = 0;
 
-		for (DevolucionVenta devolucion : devolucionVentaDAO.listarDevoluciones()) {
-			String codigo = devolucion.getCodigoDevolucion();
-
-			if (codigo != null && codigo.matches("DEV\\d{5}")) {
-				int numero = Integer.parseInt(codigo.substring(3));
-
-				if (numero > mayor) {
-					mayor = numero;
-				}
-			}
+		if (ultimoCodigo != null && ultimoCodigo.matches("DEV\\d{5}")) {
+			mayor = Integer.parseInt(ultimoCodigo.substring(3));
 		}
 
 		return String.format("DEV%05d", mayor + 1);

@@ -52,6 +52,7 @@ public class GestionInventario implements IGestionInventario {
 		}
 
 		Map<String, Integer> cantidadesPorProducto = agruparCantidadesPorProducto(venta.getDetalles());
+		List<MovimientoInventario> movimientosAGuardar = new ArrayList<>();
 
 		for (Map.Entry<String, Integer> entrada : cantidadesPorProducto.entrySet()) {
 			String codigoProducto = entrada.getKey();
@@ -61,25 +62,26 @@ public class GestionInventario implements IGestionInventario {
 				throw new Exception("No hay stock suficiente o el producto esta inactivo: " + codigoProducto + ".");
 			}
 
-			MovimientoInventario movimiento = new MovimientoInventario(codigoProducto, TipoMovimientoInventarioEnum.SALIDA,
-					cantidad, LocalDate.now(), "Salida por venta " + venta.getNumeroFactura());
+			MovimientoInventario movimiento = new MovimientoInventario(codigoProducto,
+					TipoMovimientoInventarioEnum.SALIDA, cantidad, LocalDate.now(),
+					"Salida por venta " + venta.getNumeroFactura());
 			movimientos.add(movimiento);
-			movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
+			movimientosAGuardar.add(movimiento);
 		}
+
+		movimientoInventarioDAO.registrarMovimientos(conexion, movimientosAGuardar);
 	}
 
 	@Override
 	public void registrarEntrada(String codigoProducto, int cantidad, String descripcion) throws Exception {
-		TransaccionBD.ejecutar(
-				conexion -> registrarMovimiento(conexion, codigoProducto, cantidad, descripcion,
-						TipoMovimientoInventarioEnum.ENTRADA));
+		TransaccionBD.ejecutar(conexion -> registrarMovimiento(conexion, codigoProducto, cantidad, descripcion,
+				TipoMovimientoInventarioEnum.ENTRADA));
 	}
 
 	@Override
 	public void registrarSalida(String codigoProducto, int cantidad, String descripcion) throws Exception {
-		TransaccionBD.ejecutar(
-				conexion -> registrarMovimiento(conexion, codigoProducto, cantidad, descripcion,
-						TipoMovimientoInventarioEnum.SALIDA));
+		TransaccionBD.ejecutar(conexion -> registrarMovimiento(conexion, codigoProducto, cantidad, descripcion,
+				TipoMovimientoInventarioEnum.SALIDA));
 	}
 
 	public void registrarEntrada(Connection conexion, String codigoProducto, int cantidad, String descripcion)
@@ -135,42 +137,7 @@ public class GestionInventario implements IGestionInventario {
 				LocalDate.now(), descripcion);
 
 		movimientos.add(movimiento);
-		productoDAO.actualizarProducto(conexion, producto);
-		movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
-	}
 
-	private void registrarMovimiento(Connection conexion, Producto producto, int cantidad, String descripcion,
-			TipoMovimientoInventarioEnum tipoMovimiento) throws Exception {
-
-		if (producto == null) {
-			throw new Exception("No se encontro el producto.");
-		}
-
-		if (cantidad <= 0) {
-			throw new Exception("La cantidad debe ser mayor que cero.");
-		}
-
-		if (tipoMovimiento == TipoMovimientoInventarioEnum.ENTRADA) {
-			int nuevoStock = producto.getStockActual() + cantidad;
-
-			if (nuevoStock > producto.getStockMaximo()) {
-				throw new Exception("La entrada supera el stock maximo permitido.");
-			}
-
-			producto.setStockActual(nuevoStock);
-
-		} else if (tipoMovimiento == TipoMovimientoInventarioEnum.SALIDA) {
-			if (cantidad > producto.getStockActual()) {
-				throw new Exception("No hay stock suficiente para realizar la salida.");
-			}
-
-			producto.setStockActual(producto.getStockActual() - cantidad);
-		}
-
-		MovimientoInventario movimiento = new MovimientoInventario(producto.getCodigoProducto(), tipoMovimiento,
-				cantidad, LocalDate.now(), descripcion);
-
-		movimientos.add(movimiento);
 		productoDAO.actualizarProducto(conexion, producto);
 		movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
 	}

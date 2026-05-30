@@ -47,6 +47,9 @@ public class VentaBDDAO implements VentaDAO {
 	private static final String SQL_ELIMINAR_DETALLES = "DELETE FROM " + TABLA_DETALLE_VENTAS
 			+ " WHERE numero_factura = ?";
 
+	private static final String SQL_ACTUALIZAR_ESTADO_VENTA = "UPDATE " + TABLA_VENTAS
+			+ " SET estado = ? WHERE numero_factura = ?";
+
 	@Override
 	public void guardarVenta(Venta venta) throws Exception {
 		TransaccionBD.ejecutar(conexion -> guardarVenta(conexion, venta));
@@ -221,6 +224,24 @@ public class VentaBDDAO implements VentaDAO {
 		sentencia.setInt(3, detalle.getCantidad());
 		sentencia.setBigDecimal(4, BigDecimal.valueOf(detalle.getPrecioUnitario()));
 		sentencia.setBigDecimal(5, BigDecimal.valueOf(detalle.getSubtotal()));
+	}
+
+	@Override
+	public void actualizarEstadoVenta(Connection conexion, String numeroFactura, EstadoVentaEnum estado)
+			throws Exception {
+		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_ACTUALIZAR_ESTADO_VENTA)) {
+			sentencia.setString(1, estado.name());
+			sentencia.setString(2, numeroFactura);
+
+			int filasActualizadas = sentencia.executeUpdate();
+
+			if (filasActualizadas == 0) {
+				throw new SQLException("No se encontro la venta para actualizar el estado.");
+			}
+
+		} catch (SQLException e) {
+			throw new Exception("Error al actualizar el estado de la venta: " + e.getMessage(), e);
+		}
 	}
 
 }

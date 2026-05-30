@@ -32,6 +32,8 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 	private static final String SQL_LISTAR = "SELECT codigo_devolucion, numero_factura, codigo_producto, nombre_producto,"
 			+ " cantidad_devuelta, valor_devuelto, fecha_hora, motivo FROM " + TABLA_DEVOLUCIONES
 			+ " ORDER BY fecha_hora DESC";
+	private static final String SQL_ULTIMO_CODIGO = "SELECT MAX(codigo_devolucion) AS ultimo_codigo " + "FROM "
+			+ TABLA_DEVOLUCIONES + " WHERE codigo_devolucion LIKE 'DEV%'";
 
 	@Override
 	public void guardarDevolucion(DevolucionVenta devolucion) throws Exception {
@@ -39,6 +41,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 
 			prepararInsert(sentencia, devolucion);
+			sentencia.executeUpdate();
 
 		} catch (SQLException e) {
 			throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
@@ -49,9 +52,21 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 	public void guardarDevolucion(Connection conexion, DevolucionVenta devolucion) throws Exception {
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 			prepararInsert(sentencia, devolucion);
+			sentencia.executeUpdate();
 		} catch (SQLException e) {
 			throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
 		}
+	}
+
+	private void prepararInsert(PreparedStatement sentencia, DevolucionVenta devolucion) throws SQLException {
+		sentencia.setString(1, devolucion.getCodigoDevolucion());
+		sentencia.setString(2, devolucion.getNumeroFactura());
+		sentencia.setString(3, devolucion.getCodigoProducto());
+		sentencia.setString(4, devolucion.getNombreProducto());
+		sentencia.setInt(5, devolucion.getCantidadDevuelta());
+		sentencia.setBigDecimal(6, BigDecimal.valueOf(devolucion.getValorDevuelto()));
+		sentencia.setTimestamp(7, Timestamp.valueOf(devolucion.getFechaHora()));
+		sentencia.setString(8, devolucion.getMotivo());
 	}
 
 	@Override
@@ -115,18 +130,6 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 		}
 	}
 
-	private void prepararInsert(PreparedStatement sentencia, DevolucionVenta devolucion) throws SQLException {
-		sentencia.setString(1, devolucion.getCodigoDevolucion());
-		sentencia.setString(2, devolucion.getNumeroFactura());
-		sentencia.setString(3, devolucion.getCodigoProducto());
-		sentencia.setString(4, devolucion.getNombreProducto());
-		sentencia.setInt(5, devolucion.getCantidadDevuelta());
-		sentencia.setBigDecimal(6, BigDecimal.valueOf(devolucion.getValorDevuelto()));
-		sentencia.setTimestamp(7, Timestamp.valueOf(devolucion.getFechaHora()));
-		sentencia.setString(8, devolucion.getMotivo());
-		sentencia.executeUpdate();
-	}
-
 	private DevolucionVenta construirDevolucion(ResultSet resultado) throws SQLException {
 		DevolucionVenta devolucion = new DevolucionVenta();
 		devolucion.setCodigoDevolucion(resultado.getString("codigo_devolucion"));
@@ -138,5 +141,22 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 		devolucion.setFechaHora(resultado.getTimestamp("fecha_hora").toLocalDateTime());
 		devolucion.setMotivo(resultado.getString("motivo"));
 		return devolucion;
+	}
+
+	@Override
+	public String obtenerUltimoCodigoDevolucion() throws Exception {
+		try (Connection conexion = ConexionBD.getConexion();
+				PreparedStatement sentencia = conexion.prepareStatement(SQL_ULTIMO_CODIGO);
+				ResultSet resultado = sentencia.executeQuery()) {
+
+			if (resultado.next()) {
+				return resultado.getString("ultimo_codigo");
+			}
+
+			return null;
+
+		} catch (SQLException e) {
+			throw new Exception("Error al obtener el ultimo codigo de devolucion: " + e.getMessage(), e);
+		}
 	}
 }

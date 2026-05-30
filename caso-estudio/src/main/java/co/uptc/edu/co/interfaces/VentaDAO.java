@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
 public interface VentaDAO {
 
@@ -14,6 +15,8 @@ public interface VentaDAO {
 	void actualizarVenta(Venta venta) throws Exception;
 
 	void actualizarVenta(Connection conexion, Venta venta) throws Exception;
+
+	void actualizarEstadoVenta(Connection conexion, String numeroFactura, EstadoVentaEnum estado) throws Exception;
 
 	Venta buscarVentaPorNumero(String numeroFactura) throws Exception;
 

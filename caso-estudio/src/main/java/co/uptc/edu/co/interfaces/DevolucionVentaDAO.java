@@ -10,11 +10,13 @@ public interface DevolucionVentaDAO {
 	void guardarDevolucion(DevolucionVenta devolucion) throws Exception;
 
 	void guardarDevolucion(Connection conexion, DevolucionVenta devolucion) throws Exception;
-	
+
 	DevolucionVenta buscarPorCodigo(String codigoDevolucion) throws Exception;
-	
+
+	String obtenerUltimoCodigoDevolucion() throws Exception;
+
 	List<DevolucionVenta> buscarPorFactura(String numeroFactura) throws Exception;
-	
+
 	List<DevolucionVenta> listarDevoluciones() throws Exception;
 
 }

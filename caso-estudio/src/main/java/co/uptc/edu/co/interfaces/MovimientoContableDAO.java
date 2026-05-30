@@ -11,6 +11,8 @@ public interface MovimientoContableDAO {
 
 	void guardarMovimiento(Connection conexion, MovimientoContable movimiento) throws Exception;
 
+	void guardarMovimientos(Connection conexion, List<MovimientoContable> movimientos) throws Exception;
+
 	MovimientoContable buscarPorCodigo(String codigoTransaccion) throws Exception;
 
 	List<MovimientoContable> listarMovimientos() throws Exception;
