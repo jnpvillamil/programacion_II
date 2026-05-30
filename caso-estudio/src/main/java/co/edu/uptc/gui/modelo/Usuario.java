@@ -1,18 +1,16 @@
 package co.edu.uptc.gui.modelo;
 
-import co.edu.uptc.dto.CredencialDto;
 import co.edu.uptc.enums.RolUsuarioEnum;
-import co.edu.uptc.gui.interfaces.Autenticable;
+import co.edu.uptc.enums.TipoDocumentoEnum;
 
-public class Usuario implements Autenticable {
 
+public class Usuario {
     private int idUsuario;
     private String nombreUsuario;
     private String contrasena;
     private RolUsuarioEnum rol;
 
-    public Usuario() {
-    }
+    public Usuario() {}
 
     public Usuario(int idUsuario, String nombreUsuario, String contrasena, RolUsuarioEnum rol) {
         this.idUsuario = idUsuario;
@@ -21,51 +19,36 @@ public class Usuario implements Autenticable {
         this.rol = rol;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
-    }
+    public Usuario(String codigo, String nombre, String apellido, TipoDocumentoEnum tipoDocumento,
+			String numeroDocumento, String telefono, String direccion) {
+		// TODO Auto-generated constructor stub
+	}
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
+	// Getters y Setters
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
+    public String getNombreUsuario() { return nombreUsuario; }
+    public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
+    public String getContrasena() { return contrasena; }
+    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
 
-    public String getContrasena() {
-        return contrasena;
-    }
+    public RolUsuarioEnum getRol() { return rol; }
+    public void setRol(RolUsuarioEnum rol) { this.rol = rol; }
 
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-
-    public RolUsuarioEnum getRol() {
-        return rol;
-    }
-
-    public void setRol(RolUsuarioEnum rol) {
-        this.rol = rol;
-    }
-
-    @Override
-    public boolean iniciarSesion(String usuario, String contrasena) {
-        return this.nombreUsuario.equals(usuario) && this.contrasena.equals(contrasena);
-    }
-
-    @Override
-    public void cerrarSesion() {
-        System.out.println("Sesión cerrada");
-    }
-
-	@Override
-	public boolean iniciarSesion(CredencialDto credenciales) {
+	public void registrar() {
 		// TODO Auto-generated method stub
-		return false;
+		
+	}
+
+	public void modificar() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void inactivar() {
+		// TODO Auto-generated method stub
+		
 	}
 }

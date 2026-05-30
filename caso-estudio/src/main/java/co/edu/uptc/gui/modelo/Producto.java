@@ -1,20 +1,19 @@
 package co.edu.uptc.gui.modelo;
 
-import co.edu.uptc.gui.interfaces.Gestionable;
-import co.edu.uptc.dao.ProductoDao;
-
-public class Producto implements Gestionable {
+public class Producto {
     private String codigo;
     private String nombre;
-    private double precio;
+    private double precioCompra;
+    private double precioVenta;  
     private int cantidadInventario;
 
     public Producto() {}
 
-    public Producto(String codigo, String nombre, double precio, int cantidadInventario) {
+    public Producto(String codigo, String nombre, double precioCompra, double precioVenta, int cantidadInventario) {
         this.codigo = codigo;
         this.nombre = nombre;
-        this.precio = precio;
+        this.precioCompra = precioCompra;
+        this.precioVenta = precioVenta;
         this.cantidadInventario = cantidadInventario;
     }
 
@@ -25,26 +24,27 @@ public class Producto implements Gestionable {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public double getPrecio() { return precio; }
-    public void setPrecio(double precio) { this.precio = precio; }
+    public double getPrecioCompra() { return precioCompra; }
+    public void setPrecioCompra(double precioCompra) { this.precioCompra = precioCompra; }
+
+    public double getPrecioVenta() { return precioVenta; }
+    public void setPrecioVenta(double precioVenta) { this.precioVenta = precioVenta; }
 
     public int getCantidadInventario() { return cantidadInventario; }
     public void setCantidadInventario(int cantidadInventario) { this.cantidadInventario = cantidadInventario; }
 
-    @Override
-    public void registrar() {
-        ProductoDao dao = new ProductoDao();
-        dao.registrarProducto(this);
-    }
+	public double getPrecio() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-    @Override
-    public void modificar() {
-        ProductoDao dao = new ProductoDao();
-        dao.actualizarProducto(this);
-    }
+	public void registrar() {
+		// TODO Auto-generated method stub
+		
+	}
 
-    @Override
-    public void inactivar() {
-        System.out.println("Producto descatalogado");
-    }
+	public void modificar() {
+		// TODO Auto-generated method stub
+		
+	}
 }

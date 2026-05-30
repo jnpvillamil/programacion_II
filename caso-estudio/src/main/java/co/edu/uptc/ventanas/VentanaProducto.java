@@ -7,6 +7,7 @@ import java.awt.event.*;
 import java.sql.*;
 import co.edu.uptc.conexion.Conexion;
 import co.edu.uptc.gui.modelo.Producto;
+import co.edu.uptc.gui.negocio.GestionProducto;
 
 @SuppressWarnings("serial")
 public class VentanaProducto extends JFrame implements ActionListener {
@@ -15,12 +16,17 @@ public class VentanaProducto extends JFrame implements ActionListener {
     private JButton botonGuardar, botonActualizar, botonLimpiar;
     private JTable tablaProductos;
     private DefaultTableModel modeloTabla;
+    
+    // CAPA DE NEGOCIO
+    private GestionProducto logicaproducto;
 
     public VentanaProducto() {
         setTitle("Módulo de Catálogo e Inventario General - UPTC");
         setSize(800, 520);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+
+        this.logicaproducto = new GestionProducto();
 
         iniciarComponentesFormulario();
         iniciarComponenteTabla();
@@ -103,7 +109,6 @@ public class VentanaProducto extends JFrame implements ActionListener {
             Connection c = conex.getConnection();
             if (c != null) {
                 Statement st = c.createStatement();
-                // CORREGIDO:
                 ResultSet rs = st.executeQuery("SELECT codigo, nombre, precio_venta, stock FROM producto");
                 while (rs.next()) {
                     Object[] fila = {
@@ -130,17 +135,23 @@ public class VentanaProducto extends JFrame implements ActionListener {
         }
 
         try {
+
+            double precioDigitado = Double.parseDouble(campoPrecio.getText());
+            
             Producto producto = new Producto(
-                    campoCodigo.getText(), campoNombre.getText(),
-                    Double.parseDouble(campoPrecio.getText()),
+                    campoCodigo.getText(), 
+                    campoNombre.getText(),
+                    precioDigitado,
+                    precioDigitado, 
                     Integer.parseInt(campoInventario.getText())
             );
 
             if (e.getSource() == botonGuardar) {
-                producto.registrar();
+                logicaproducto.ejecutarOperacionProducto(producto);
             } else if (e.getSource() == botonActualizar) {
-                producto.modificar();
+                logicaproducto.ejecutarOperacionProducto(producto);
             }
+            
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Verifique el formato numérico de precio y cantidades.", "Error", JOptionPane.ERROR_MESSAGE);
         }

@@ -1,9 +1,6 @@
 package co.edu.uptc.gui.modelo;
 
-import co.edu.uptc.gui.interfaces.Gestionable;
-import co.edu.uptc.dao.ProveedorDao;
-
-public class Proveedor implements Gestionable {
+public class Proveedor {
     private String nit;
     private String razonSocial;
     private String telefono;
@@ -36,20 +33,13 @@ public class Proveedor implements Gestionable {
     public String getProductoSuministrado() { return productoSuministrado; }
     public void setProductoSuministrado(String productoSuministrado) { this.productoSuministrado = productoSuministrado; }
 
-    @Override
-    public void registrar() {
-        ProveedorDao dao = new ProveedorDao();
-        dao.registrarProveedor(this);
-    }
+	public void registrar() {
+		// TODO Auto-generated method stub
+		
+	}
 
-    @Override
-    public void modificar() {
-        ProveedorDao dao = new ProveedorDao();
-        dao.actualizarProveedor(this);
-    }
-
-    @Override
-    public void inactivar() {
-        System.out.println("Proveedor inactivado");
-    }
+	public void modificar() {
+		// TODO Auto-generated method stub
+		
+	}
 }

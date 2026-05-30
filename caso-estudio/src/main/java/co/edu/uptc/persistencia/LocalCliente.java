@@ -94,5 +94,15 @@ public class LocalCliente {
             return new ArrayList<>();
         }
     }
+
+	public List<Cliente> leer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void guardar(Cliente cliente) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }

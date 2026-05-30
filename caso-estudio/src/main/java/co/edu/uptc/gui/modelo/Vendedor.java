@@ -1,10 +1,9 @@
 package co.edu.uptc.gui.modelo;
 
-import co.edu.uptc.gui.interfaces.Gestionable;
 import co.edu.uptc.dao.VendedorDao;
 import co.edu.uptc.enums.TipoDocumentoEnum;
 
-public class Vendedor extends Persona implements Gestionable {
+public class Vendedor extends Usuario {
 
     private double sueldoBase;
     private double porcentajeComision;
@@ -46,4 +45,38 @@ public class Vendedor extends Persona implements Gestionable {
     public void setSueldoBase(double sueldoBase) { this.sueldoBase = sueldoBase; }
     public double getPorcentajeComision() { return porcentajeComision; }
     public void setPorcentajeComision(double porcentajeComision) { this.porcentajeComision = porcentajeComision; }
+	public String getCodigo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getNombre() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getApellido() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object getTipoDocumento() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getTelefono() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getNumeroDocumento() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getDireccion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

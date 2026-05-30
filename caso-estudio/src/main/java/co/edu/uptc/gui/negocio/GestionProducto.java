@@ -31,4 +31,9 @@ public class GestionProducto implements
     public List<Producto> consultarDisponibles() {
         return null; 
     }
+
+	public boolean registrarProducto(co.edu.uptc.dto.Producto producto) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

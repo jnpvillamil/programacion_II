@@ -4,6 +4,7 @@ import co.edu.uptc.dto.CredencialDto;
 import co.edu.uptc.gui.interfaces.RF31_AutenticarCredenciales;
 import co.edu.uptc.gui.interfaces.RF32_VerificarRolUsuario;
 import co.edu.uptc.gui.interfaces.RF33_CerrarSesionSegura;
+import co.edu.uptc.gui.modelo.Usuario;
 import co.edu.uptc.persistencia.LocalUsuario;
 
 public class GestionSeguridad implements 
@@ -48,4 +49,9 @@ public class GestionSeguridad implements
         this.usuarioLogueadoRol = null;
         System.gc(); 
     }
+
+	public Usuario validarIngreso(CredencialDto credencialDto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -36,9 +36,12 @@ public class VendedorDao {
         Conexion conex = new Conexion();
         try {
             Statement estatuto = conex.getConnection().createStatement();
+
+            String tipoDocStr = (v.getTipoDocumento() != null) ? String.valueOf(v.getTipoDocumento()) : "";
+
             String consulta = "INSERT INTO vendedor (codigo, nombre, apellido, tipo_documento, numero_documento, telefono, direccion, sueldo_base, porcentaje_comision) VALUES ('"
                     + v.getCodigo() + "', '" + v.getNombre() + "', '" + v.getApellido() + "', '"
-                    + (v.getTipoDocumento() != null ? v.getTipoDocumento().name() : "") + "', '"
+                    + tipoDocStr + "', '"
                     + v.getNumeroDocumento() + "', '" + v.getTelefono() + "', '" + v.getDireccion() + "', "
                     + v.getSueldoBase() + ", " + v.getPorcentajeComision() + ")";
 
@@ -55,10 +58,13 @@ public class VendedorDao {
         Conexion conex = new Conexion();
         try {
             Statement estatuto = conex.getConnection().createStatement();
+
+            String tipoDocStr = (v.getTipoDocumento() != null) ? String.valueOf(v.getTipoDocumento()) : "";
+
             String consulta = "UPDATE vendedor SET "
                     + "nombre = '" + v.getNombre() + "', "
                     + "apellido = '" + v.getApellido() + "', "
-                    + "tipo_documento = '" + (v.getTipoDocumento() != null ? v.getTipoDocumento().name() : "") + "', "
+                    + "tipo_documento = '" + tipoDocStr + "', "
                     + "numero_documento = '" + v.getNumeroDocumento() + "', "
                     + "telefono = '" + v.getTelefono() + "', "
                     + "direccion = '" + v.getDireccion() + "', "

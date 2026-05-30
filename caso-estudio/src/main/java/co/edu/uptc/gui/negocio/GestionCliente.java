@@ -27,7 +27,7 @@ public class GestionCliente implements
         if (cliente == null) {
             throw new IllegalArgumentException("El cliente no puede ser nulo.");
         }
-        
+
         if (cliente.getCedula() == null || cliente.getCedula().trim().isEmpty()) {
             throw new IllegalArgumentException("Error: La cédula es obligatoria.");
         }
@@ -35,7 +35,7 @@ public class GestionCliente implements
         if (existeCedula(cliente.getCedula())) {
             localCliente.guardar(cliente); 
         } else {
-            localCliente.guardar(cliente);
+            localCliente.guardar(cliente); 
         }
     }
 
@@ -56,4 +56,24 @@ public class GestionCliente implements
         }
         return false;
     }
+
+	public boolean registrarCliente(Cliente cliente) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean modificarCliente(Cliente cliente) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean eliminarCliente(String codigo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public Cliente buscarCliente(String codigo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
