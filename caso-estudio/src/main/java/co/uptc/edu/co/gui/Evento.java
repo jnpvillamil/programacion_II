@@ -69,6 +69,7 @@ public class Evento implements ActionListener {
 	public static final String CMD_EDITAR_CLIENTE = "EditarCliente";
 	public static final String CMD_ESTADO_CLIENTE = "EstadoCliente";
 	public static final String CMD_HISTORIAL_CLIENTE = "HistorialCliente";
+	public static final String CMD_VER_DETALLE_CLIENTE = "VerDetalleCliente";
 	public static final String CMD_CONFIRMAR_CLIENTE = "ConfirmarCliente";
 	public static final String CMD_CONFIRMAR_EDICION_CLIENTE = "ConfirmarEdicionCliente";
 
@@ -425,6 +426,10 @@ public class Evento implements ActionListener {
 			abrirHistorialCliente();
 			return true;
 
+		case CMD_VER_DETALLE_CLIENTE:
+			abrirDetalleVentaDesdeHistorial(e);
+			return true;
+
 		default:
 			return false;
 		}
@@ -448,10 +453,14 @@ public class Evento implements ActionListener {
 	}
 
 	private void abrirDialogoNuevoCliente() {
-		DialogCliente dialog = new DialogCliente(ventana, this);
-		String codigoGenerado = gestionCliente.generarCodigoCliente();
-		dialog.cargarCodigoGenerado(codigoGenerado);
-		dialog.setVisible(true);
+		try {
+			DialogCliente dialog = new DialogCliente(ventana, this);
+			String codigoGenerado = gestionCliente.generarCodigoCliente();
+			dialog.cargarCodigoGenerado(codigoGenerado);
+			dialog.setVisible(true);
+		} catch (Exception ex) {
+			mostrarError("No se pudo abrir el formulario de cliente: " + ex.getMessage());
+		}
 	}
 
 	private void registrarCliente(ActionEvent e) {
@@ -528,10 +537,61 @@ public class Evento implements ActionListener {
 		try {
 			Cliente cliente = obtenerClienteSeleccionado();
 
-			DialogHistorialCliente dialog = new DialogHistorialCliente(ventana);
+			DialogHistorialCliente dialog = new DialogHistorialCliente(ventana, this);
 			dialog.cargarCliente(cliente.getCodigo(), cliente.getNombre());
+			dialog.cargarHistorial(filtrarVentasDelCliente(cliente));
 			dialog.setVisible(true);
 
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
+	}
+
+	private java.util.List<Venta> filtrarVentasDelCliente(Cliente cliente) {
+		java.util.List<Venta> ventasDelCliente = new java.util.ArrayList<>();
+		String codigoCliente = cliente.getCodigo() != null ? cliente.getCodigo().trim() : "";
+		String nombreCliente = cliente.getNombre() != null ? cliente.getNombre().trim() : "";
+		String clienteRegistrado = cliente.toString();
+
+		for (Venta venta : gestionVenta.obtenerVentas()) {
+			String clienteVenta = venta.getCliente();
+
+			if (clienteVenta == null) {
+				continue;
+			}
+
+			String clienteNormalizado = clienteVenta.trim();
+			boolean coincidePorCodigo = !codigoCliente.isEmpty()
+					&& clienteNormalizado.toLowerCase().contains(codigoCliente.toLowerCase());
+			boolean coincidePorNombre = !nombreCliente.isEmpty()
+					&& clienteNormalizado.toLowerCase().contains(nombreCliente.toLowerCase());
+
+			if (clienteNormalizado.equalsIgnoreCase(clienteRegistrado) || coincidePorCodigo || coincidePorNombre) {
+				ventasDelCliente.add(venta);
+			}
+		}
+
+		return ventasDelCliente;
+	}
+
+	private void abrirDetalleVentaDesdeHistorial(ActionEvent e) {
+		try {
+			DialogHistorialCliente dialogHistorial = obtenerDialogHistorialCliente(e);
+
+			if (!dialogHistorial.haySeleccion()) {
+				throw new Exception("Debe seleccionar una venta del historial.");
+			}
+
+			String numeroFactura = dialogHistorial.obtenerFacturaSeleccionada();
+			Venta venta = gestionVenta.buscarVentaPorNumero(numeroFactura);
+
+			if (venta == null) {
+				throw new Exception("No se encontro la venta seleccionada.");
+			}
+
+			DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
+			dialog.cargarVenta(venta);
+			dialog.setVisible(true);
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
 		}
@@ -1094,6 +1154,16 @@ public class Evento implements ActionListener {
 		}
 
 		return (DialogCliente) ventanaPadre;
+	}
+
+	private DialogHistorialCliente obtenerDialogHistorialCliente(ActionEvent e) throws Exception {
+		Window ventanaPadre = obtenerVentanaPadre(e);
+
+		if (!(ventanaPadre instanceof DialogHistorialCliente)) {
+			throw new Exception("Error interno: no se pudo identificar el historial del cliente.");
+		}
+
+		return (DialogHistorialCliente) ventanaPadre;
 	}
 
 	private DialogProveedor obtenerDialogProveedor(ActionEvent e) throws Exception {

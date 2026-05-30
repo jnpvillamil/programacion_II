@@ -125,13 +125,19 @@ public class GestionCliente implements IGestionCliente {
 	}
 	@Override
 	public String generarCodigoCliente() {
+		try {
+			clientes = clienteDAO.listarClientes();
+		} catch (Exception e) {
+			System.out.println("Error al recargar clientes: " + e.getMessage());
+		}
+
 		int mayor = 0;
 
 		for (Cliente cliente : clientes) {
 			String codigo = cliente.getCodigo();
 
-			if (codigo != null && codigo.matches("CLIE\\d{4}")) {
-				int numero = Integer.parseInt(codigo.substring(3));
+			if (codigo != null && codigo.matches("CLIT\\d{4}")) {
+				int numero = Integer.parseInt(codigo.substring(4));
 
 				if (numero > mayor) {
 					mayor = numero;
@@ -139,7 +145,7 @@ public class GestionCliente implements IGestionCliente {
 			}
 		}
 
-		return String.format("CLIE%04d", mayor + 1);
+		return String.format("CLIT%04d", mayor + 1);
 
 	}
 	private void validarCliente(Cliente cliente) throws Exception {
