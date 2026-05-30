@@ -3,7 +3,7 @@ package co.edu.uptc.interfaces;
 import co.edu.uptc.modelo.Producto;
 import java.util.List;
 
-public interface GestionProducto {
+public interface IGestionProducto {
     void crear(Producto p);
     void actualizar(Producto p);
     void eliminar(String codigo);  

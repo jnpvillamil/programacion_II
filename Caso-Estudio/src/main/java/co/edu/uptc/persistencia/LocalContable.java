@@ -1,6 +1,6 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionContable;
+import co.edu.uptc.interfaces.IGestionContable;
 import co.edu.uptc.modelo.AsientoContable;
 import co.edu.uptc.modelo.MovimientoContable;
 import co.edu.uptc.modelo.Venta;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LocalContable implements GestionContable {
+public class LocalContable implements IGestionContable {
     
     private Map<String, AsientoContable> asientos;
     private int contadorAsientos;

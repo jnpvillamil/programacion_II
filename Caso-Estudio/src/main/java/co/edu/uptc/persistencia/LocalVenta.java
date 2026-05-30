@@ -1,6 +1,6 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionVenta;
+import co.edu.uptc.interfaces.IGestionVenta;
 import co.edu.uptc.modelo.Venta;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.modelo.DetalleVenta;
@@ -13,7 +13,7 @@ import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LocalVenta implements GestionVenta {
+public class LocalVenta implements IGestionVenta {
     
     private Map<String, Venta> ventas;
     

@@ -4,7 +4,7 @@ import co.edu.uptc.modelo.Compra;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface GestionCompra {
+public interface IGestionCompra {
     
     // CRUD
     void crearCompra(Compra compra);

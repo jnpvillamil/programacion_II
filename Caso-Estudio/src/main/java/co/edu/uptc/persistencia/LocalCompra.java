@@ -1,6 +1,6 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionCompra;
+import co.edu.uptc.interfaces.IGestionCompra;
 import co.edu.uptc.modelo.Compra;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.config.TiendaConfig;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LocalCompra implements GestionCompra {
+public class LocalCompra implements IGestionCompra {
     
     private Map<String, Compra> compras;
     

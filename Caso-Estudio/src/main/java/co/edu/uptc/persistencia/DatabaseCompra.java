@@ -1,6 +1,6 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.interfaces.GestionCompra;
+import co.edu.uptc.interfaces.IGestionCompra;
 import co.edu.uptc.modelo.*;
 import co.edu.uptc.Util.ConexionBD;
 import java.sql.*;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DatabaseCompra implements GestionCompra {
+public class DatabaseCompra implements IGestionCompra {
     
     private ConexionBD conexionBD = new ConexionBD();
     

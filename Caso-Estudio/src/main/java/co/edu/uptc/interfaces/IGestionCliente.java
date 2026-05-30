@@ -3,7 +3,7 @@ package co.edu.uptc.interfaces;
 import co.edu.uptc.modelo.Cliente;
 import java.util.List;
 
-public interface GestionCliente {
+public interface IGestionCliente {
     
     void crear(Cliente cliente);
     void actualizar(Cliente cliente);
