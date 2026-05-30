@@ -235,6 +235,9 @@ public class VentanaPrincipal extends JFrame {
     }
     
     // ========== MÉTODOS DE CLIENTE ==========
+    
+    // TODO Actulizar las clases de acuerdo al nuevo modelo de negocios y de validación
+    
     public void nuevoCliente() {
         DialogoCliente d = new DialogoCliente(this, true, null);
         d.setVisible(true);

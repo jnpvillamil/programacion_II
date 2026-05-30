@@ -17,6 +17,9 @@ public class TiendaConfig {
     private GestionCompra gestionCompra;
     private GestionContable gestionContable;
     
+    
+    // TODO Actualizar el sistema de base de datos de acuerdo a las nuevas clases
+    
     private TiendaConfig() {
         if (USAR_BASE_DATOS) {
             
