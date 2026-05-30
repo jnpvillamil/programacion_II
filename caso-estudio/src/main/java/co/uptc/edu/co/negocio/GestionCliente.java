@@ -143,7 +143,7 @@ public class GestionCliente implements IGestionCliente {
 					mayor = numero;
 				}
 			}
-		}
+		}    
 
 		return String.format("CLIT%04d", mayor + 1);
 
@@ -189,6 +189,121 @@ public class GestionCliente implements IGestionCliente {
 
 			throw new Exception("El tipo de cliente es obligatorio.");
 		}
+		
+		
+		 validarNumeroIdentificacion(cliente);
+
+		    validarDireccion(cliente.getDireccion());
+
+		    validarTelefono(cliente.getTelefono());
+	}
+	
+	
+	private void validarNumeroIdentificacion(Cliente cliente)
+	        throws Exception {
+
+	    String numero = cliente.getNumeroIdentificacion();
+
+	    if (numero == null || numero.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "El número de identificación es obligatorio."
+	        );
+	    }
+	    
+	    switch (cliente.getTipoIdentificacion()) {
+
+	        case CC:
+
+	            if (!numero.matches("\\d{7,10}")) {
+
+	                throw new Exception(
+	                    "La Cédula de Ciudadanía debe contener entre 7 y 10 dígitos."
+	                );
+	            }
+
+	            break;
+
+	        case NIT:
+
+	            if (!numero.matches("\\d{8,15}")) {
+
+	                throw new Exception(
+	                    "El NIT debe contener entre 8 y 15 dígitos."
+	                );
+	            }
+
+	            break;
+
+	        case CE:
+
+	            if (!numero.matches("\\d{6,12}")) {
+
+	                throw new Exception(
+	                    "La Cédula de Extranjería debe contener entre 6 y 12 dígitos."
+	                );
+	            }
+
+	            break;
+
+	        case PA:
+
+	            if (!numero.matches("[A-Za-z0-9]{5,20}")) {
+
+	                throw new Exception(
+	                    "El Pasaporte debe contener entre 5 y 20 caracteres alfanuméricos."
+	                );
+	            }
+
+	            break;
+
+	        default:
+
+	            throw new Exception(
+	                "Tipo de identificación no válido."
+	            );
+	    }
 	}
 
+	private void validarDireccion(String direccion)
+	        throws Exception {
+
+	    if (direccion == null ||
+	        direccion.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "La dirección es obligatoria."
+	        );
+	    }
+
+	    if (direccion.trim().length() < 5) {
+
+	        throw new Exception(
+	            "La dirección debe tener al menos 5 caracteres."
+	        );
+	    }
+	}
+
+	private void validarTelefono(String telefono)
+	        throws Exception {
+
+	    if (telefono == null ||
+	        telefono.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "El teléfono es obligatorio."
+	        );
+	    }
+
+	    if (!telefono.matches("^3\\d{9}$")) {
+
+	        throw new Exception(
+	            "El teléfono debe iniciar por 3 y tener exactamente 10 dígitos."
+	        );
+	    }
+	}
+	
+	
+	
+	
 	}

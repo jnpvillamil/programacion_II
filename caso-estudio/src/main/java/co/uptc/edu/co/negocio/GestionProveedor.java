@@ -115,33 +115,148 @@ public class GestionProveedor implements IGestionProveedor {
 	}
 
 	private void validarProveedor(Proveedor proveedor) throws Exception {
-		if (proveedor == null) {
-			throw new Exception("El proveedor no puede ser nulo.");
-		}
 
-		if (proveedor.getCodigoProveedor() == null || proveedor.getCodigoProveedor().trim().isEmpty()) {
-			throw new Exception("El código del proveedor es obligatorio.");
-		}
+	    if (proveedor == null) {
+	        throw new Exception("El proveedor no puede ser nulo.");
+	    }
 
-		if (proveedor.getRazonSocial() == null || proveedor.getRazonSocial().trim().isEmpty()) {
-			throw new Exception("La razón social es obligatoria.");
-		}
+	    if (proveedor.getCodigoProveedor() == null
+	            || proveedor.getCodigoProveedor().trim().isEmpty()) {
 
-		if (proveedor.getNit() == null || proveedor.getNit().trim().isEmpty()) {
-			throw new Exception("El NIT es obligatorio.");
-		}
+	        throw new Exception(
+	            "El código del proveedor es obligatorio."
+	        );
+	    }
 
-		if (proveedor.getDireccion() == null || proveedor.getDireccion().trim().isEmpty()) {
-			throw new Exception("La dirección es obligatoria.");
-		}
+	    validarRazonSocial(
+	        proveedor.getRazonSocial()
+	    );
 
-		if (proveedor.getTelefono() == null || proveedor.getTelefono().trim().isEmpty()) {
-			throw new Exception("El teléfono es obligatorio.");
-		}
+	    validarNit(
+	        proveedor.getNit()
+	    );
 
-		if (proveedor.getCorreoElectronico() == null || proveedor.getCorreoElectronico().trim().isEmpty()) {
-			throw new Exception("El correo electrónico es obligatorio.");
-		}
+	    validarDireccion(
+	        proveedor.getDireccion()
+	    );
+
+	    validarTelefono(
+	        proveedor.getTelefono()
+	    );
+
+	    validarCorreoElectronico(
+	        proveedor.getCorreoElectronico()
+	    );
 	}
+	
+	
 
+	
+	private void validarRazonSocial(String razonSocial)
+	        throws Exception {
+
+	    if (razonSocial == null
+	            || razonSocial.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "La razón social es obligatoria."
+	        );
+	    }
+
+	    if (razonSocial.trim().length() < 3) {
+
+	        throw new Exception(
+	            "La razón social debe tener al menos 3 caracteres."
+	        );
+	    }
+
+	    if (!razonSocial.matches(
+	            "[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 .,&-]+")) {
+
+	        throw new Exception(
+	            "La razón social contiene caracteres no válidos."
+	        );
+	    }
+	}
+	
+	
+	private void validarNit(String nit)
+	        throws Exception {
+
+	    if (nit == null
+	            || nit.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "El NIT es obligatorio."
+	        );
+	    }
+
+	    if (!nit.matches("\\d{8,15}")) {
+
+	        throw new Exception(
+	            "El NIT debe contener entre 8 y 15 dígitos."
+	        );
+	    }
+	}
+	
+	private void validarDireccion(String direccion)
+	        throws Exception {
+
+	    if (direccion == null
+	            || direccion.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "La dirección es obligatoria."
+	        );
+	    }
+
+	    if (direccion.trim().length() < 5) {
+
+	        throw new Exception(
+	            "La dirección debe tener al menos 5 caracteres."
+	        );
+	    }
+	}
+	
+	private void validarTelefono(String telefono)
+	        throws Exception {
+
+	    if (telefono == null
+	            || telefono.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "El teléfono es obligatorio."
+	        );
+	    }
+
+	    if (!telefono.matches("^3\\d{9}$")) {
+
+	        throw new Exception(
+	            "El teléfono debe iniciar por 3 y tener 10 dígitos."
+	        );
+	    }
+	}
+	
+	
+	private void validarCorreoElectronico(
+	        String correo)
+	        throws Exception {
+
+	    if (correo == null
+	            || correo.trim().isEmpty()) {
+
+	        throw new Exception(
+	            "El correo electrónico es obligatorio."
+	        );
+	    }
+
+	    if (!correo.matches(
+	            "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+
+	        throw new Exception(
+	            "El correo electrónico no tiene un formato válido."
+	        );
+	    }
+	}
+	
 }
