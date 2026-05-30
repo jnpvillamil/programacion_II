@@ -1,5 +1,7 @@
 package co.uptc.edu.co.gui;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class PanelContabilidad extends PanelCentral {
 
     private static final String OPCION_TODOS = "Todos";
     private static final String OPCION_TODAS = "Todas";
+    private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
     private static final String[] COLUMNAS = {
             "Codigo Transaccion",
@@ -35,6 +38,16 @@ public class PanelContabilidad extends PanelCentral {
     private JComboBox<String> comboTipoMovimiento;
     private JComboBox<String> comboCuenta;
     private List<MovimientoContable> movimientosCargados;
+
+    private static DecimalFormat crearFormatoMoneda() {
+        DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+        simbolos.setGroupingSeparator('.');
+        simbolos.setDecimalSeparator(',');
+
+        DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+        formato.setGroupingUsed(true);
+        return formato;
+    }
 
     public PanelContabilidad() {
         super();
@@ -133,7 +146,7 @@ public class PanelContabilidad extends PanelCentral {
                     ? movimiento.getTipoMovimientoContable().toString()
                     : "";
             String cuenta = valorTexto(movimiento.getCuentaContable());
-            String valor = movimiento.getValor() != null ? movimiento.getValor().toString() : "";
+            String valor = movimiento.getValor() != null ? formatearMoneda(movimiento.getValor()) : "";
             String descripcion = valorTexto(movimiento.getDescripcion());
 
             boolean coincideBusqueda =
@@ -169,5 +182,9 @@ public class PanelContabilidad extends PanelCentral {
 
     private String valorTexto(String valor) {
         return valor != null ? valor : "";
+    }
+
+    private String formatearMoneda(double valor) {
+        return FORMATO_MONEDA.format(valor);
     }
 }

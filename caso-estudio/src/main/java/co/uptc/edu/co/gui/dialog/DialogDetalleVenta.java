@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -25,6 +26,7 @@ import co.uptc.edu.co.modelo.Venta;
 public class DialogDetalleVenta extends JDialog {
 
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
+	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
 
 	private JTextField campoNumeroFactura;
 	private JTextField campoFecha;
@@ -187,7 +189,7 @@ public class DialogDetalleVenta extends JDialog {
 	public void cargarVenta(Venta venta) {
 		cargarVenta(venta.getNumeroFactura(),
 				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
-				venta.getFechaHora() != null ? venta.getFechaHora().toLocalTime().toString() : "", venta.getCliente(),
+				venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "", venta.getCliente(),
 				venta.getFormaPago(), formatearMoneda(venta.getImpuestos()), formatearMoneda(venta.getTotal()),
 				venta.getEstado() != null ? venta.getEstado().name() : "");
 

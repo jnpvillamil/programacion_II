@@ -13,6 +13,8 @@ public interface ProductoDAO {
 
     void actualizarProducto(Connection conexion, Producto producto) throws Exception;
 
+    boolean descontarStockPorVenta(Connection conexion, String codigoProducto, int cantidad) throws Exception;
+
     Producto buscarPorCodigo(String codigo) throws Exception;
 
     Producto buscarPorCodigo(Connection conexion, String codigo) throws Exception;

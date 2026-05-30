@@ -3,7 +3,9 @@ package co.uptc.edu.co.negocio;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionInventario;
@@ -49,12 +51,20 @@ public class GestionInventario implements IGestionInventario {
 			throw new Exception("La venta no puede ser nula.");
 		}
 
-		validarStockDisponible(conexion, venta.getDetalles());
+		Map<String, Integer> cantidadesPorProducto = agruparCantidadesPorProducto(venta.getDetalles());
 
-		for (DetalleVenta detalle : venta.getDetalles()) {
-			String codigoProducto = detalle.getProducto().getCodigoProducto();
+		for (Map.Entry<String, Integer> entrada : cantidadesPorProducto.entrySet()) {
+			String codigoProducto = entrada.getKey();
+			int cantidad = entrada.getValue();
 
-			registrarSalida(conexion, codigoProducto, detalle.getCantidad(), "Salida por venta " + venta.getNumeroFactura());
+			if (!productoDAO.descontarStockPorVenta(conexion, codigoProducto, cantidad)) {
+				throw new Exception("No hay stock suficiente o el producto esta inactivo: " + codigoProducto + ".");
+			}
+
+			MovimientoInventario movimiento = new MovimientoInventario(codigoProducto, TipoMovimientoInventarioEnum.SALIDA,
+					cantidad, LocalDate.now(), "Salida por venta " + venta.getNumeroFactura());
+			movimientos.add(movimiento);
+			movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
 		}
 	}
 
@@ -129,16 +139,64 @@ public class GestionInventario implements IGestionInventario {
 		movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
 	}
 
+	private void registrarMovimiento(Connection conexion, Producto producto, int cantidad, String descripcion,
+			TipoMovimientoInventarioEnum tipoMovimiento) throws Exception {
+
+		if (producto == null) {
+			throw new Exception("No se encontro el producto.");
+		}
+
+		if (cantidad <= 0) {
+			throw new Exception("La cantidad debe ser mayor que cero.");
+		}
+
+		if (tipoMovimiento == TipoMovimientoInventarioEnum.ENTRADA) {
+			int nuevoStock = producto.getStockActual() + cantidad;
+
+			if (nuevoStock > producto.getStockMaximo()) {
+				throw new Exception("La entrada supera el stock maximo permitido.");
+			}
+
+			producto.setStockActual(nuevoStock);
+
+		} else if (tipoMovimiento == TipoMovimientoInventarioEnum.SALIDA) {
+			if (cantidad > producto.getStockActual()) {
+				throw new Exception("No hay stock suficiente para realizar la salida.");
+			}
+
+			producto.setStockActual(producto.getStockActual() - cantidad);
+		}
+
+		MovimientoInventario movimiento = new MovimientoInventario(producto.getCodigoProducto(), tipoMovimiento,
+				cantidad, LocalDate.now(), descripcion);
+
+		movimientos.add(movimiento);
+		productoDAO.actualizarProducto(conexion, producto);
+		movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
+	}
+
 	public void validarStockDisponible(Connection conexion, List<DetalleVenta> detalles) throws Exception {
+		validarStockDisponibleYObtenerProductos(conexion, detalles);
+	}
+
+	private Map<String, Producto> validarStockDisponibleYObtenerProductos(Connection conexion,
+			List<DetalleVenta> detalles) throws Exception {
 		if (detalles == null || detalles.isEmpty()) {
 			throw new Exception("Debe existir al menos un producto para validar stock.");
 		}
+
+		Map<String, Producto> productosPorCodigo = new HashMap<>();
 
 		for (DetalleVenta detalle : detalles) {
 			validarDetalle(detalle);
 
 			String codigoProducto = detalle.getProducto().getCodigoProducto();
-			Producto producto = productoDAO.buscarPorCodigo(conexion, codigoProducto);
+			Producto producto = productosPorCodigo.get(codigoProducto);
+
+			if (producto == null) {
+				producto = productoDAO.buscarPorCodigo(conexion, codigoProducto);
+				productosPorCodigo.put(codigoProducto, producto);
+			}
 
 			if (producto == null) {
 				throw new Exception("No existe el producto " + codigoProducto + ".");
@@ -153,6 +211,8 @@ public class GestionInventario implements IGestionInventario {
 						+ producto.getStockActual() + ", solicitado: " + detalle.getCantidad() + ".");
 			}
 		}
+
+		return productosPorCodigo;
 	}
 
 	private void validarDetalle(DetalleVenta detalle) throws Exception {
@@ -172,6 +232,22 @@ public class GestionInventario implements IGestionInventario {
 		if (detalle.getCantidad() <= 0) {
 			throw new Exception("La cantidad debe ser mayor que cero.");
 		}
+	}
+
+	private Map<String, Integer> agruparCantidadesPorProducto(List<DetalleVenta> detalles) throws Exception {
+		if (detalles == null || detalles.isEmpty()) {
+			throw new Exception("Debe existir al menos un producto para registrar salida de inventario.");
+		}
+
+		Map<String, Integer> cantidadesPorProducto = new HashMap<>();
+
+		for (DetalleVenta detalle : detalles) {
+			validarDetalle(detalle);
+			String codigoProducto = detalle.getProducto().getCodigoProducto();
+			cantidadesPorProducto.merge(codigoProducto, detalle.getCantidad(), Integer::sum);
+		}
+
+		return cantidadesPorProducto;
 	}
 
 	@Override

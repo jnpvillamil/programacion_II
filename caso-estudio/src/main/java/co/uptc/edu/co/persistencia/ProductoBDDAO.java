@@ -32,6 +32,10 @@ public class ProductoBDDAO implements ProductoDAO {
 			+ "nombreProducto = ?, categoria = ?, precioCompra = ?, precioVenta = ?, "
 			+ "stockActual = ?, stockMinimo = ?, stockMaximo = ?, estado = ? " + "WHERE codigoProducto = ?";
 
+	private static final String SQL_DESCONTAR_STOCK_VENTA = "UPDATE " + TABLA_PRODUCTOS
+			+ " SET stockActual = stockActual - ?"
+			+ " WHERE codigoProducto = ? AND estado = 'ACTIVO' AND stockActual >= ?";
+
 	@Override
 	public void guardarProducto(Producto producto) throws Exception {
 		try (Connection connection = ConexionBD.getConexion();
@@ -63,6 +67,18 @@ public class ProductoBDDAO implements ProductoDAO {
 			ejecutarActualizacion(preparedStatement, producto);
 		} catch (SQLException e) {
 			throw new Exception("Error al actualizar el producto en el servidor remoto: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public boolean descontarStockPorVenta(Connection conexion, String codigoProducto, int cantidad) throws Exception {
+		try (PreparedStatement preparedStatement = conexion.prepareStatement(SQL_DESCONTAR_STOCK_VENTA)) {
+			preparedStatement.setInt(1, cantidad);
+			preparedStatement.setString(2, codigoProducto);
+			preparedStatement.setInt(3, cantidad);
+			return preparedStatement.executeUpdate() > 0;
+		} catch (SQLException e) {
+			throw new Exception("Error al descontar stock por venta: " + e.getMessage(), e);
 		}
 	}
 

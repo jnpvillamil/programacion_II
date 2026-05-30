@@ -49,7 +49,11 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	@Override
 	public void devolverVenta(String numeroFactura, String codigoProducto, int cantidad, String motivo) throws Exception {
 		Venta venta = ventaDAO.buscarVentaPorNumero(numeroFactura);
+		devolverVenta(venta, codigoProducto, cantidad, motivo);
+	}
 
+	@Override
+	public void devolverVenta(Venta venta, String codigoProducto, int cantidad, String motivo) throws Exception {
 		if (venta == null) {
 			throw new Exception("No se encontro la venta a devolver.");
 		}
@@ -66,10 +70,17 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 			throw new Exception("La cantidad a devolver no puede superar la cantidad vendida.");
 		}
 
+		int cantidadYaDevuelta = obtenerCantidadDevuelta(venta.getNumeroFactura(), codigoProducto);
+		int cantidadDisponible = detalleDevuelto.getCantidad() - cantidadYaDevuelta;
+
+		if (cantidad > cantidadDisponible) {
+			throw new Exception("La cantidad a devolver supera el saldo pendiente. Ya devuelto: "
+					+ cantidadYaDevuelta + ", disponible: " + cantidadDisponible + ".");
+		}
+
 		DevolucionVenta devolucion = crearDevolucion(venta, detalleDevuelto, cantidad, motivo.trim());
 		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
 		double ivaDevuelto = subtotalDevuelto * 0.19;
-
 		venta.setEstado(EstadoVentaEnum.DEVUELTA);
 
 		TransaccionBD.ejecutar(conexion -> {
@@ -110,10 +121,6 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 			throw new Exception("No se puede devolver una venta anulada.");
 		}
 
-		if (venta.getEstado() == EstadoVentaEnum.DEVUELTA) {
-			throw new Exception("La venta ya tiene una devolucion registrada.");
-		}
-
 		if (codigoProducto == null || codigoProducto.trim().isEmpty()) {
 			throw new Exception("Debe seleccionar un producto para devolver.");
 		}
@@ -139,6 +146,18 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		}
 
 		return null;
+	}
+
+	private int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
+		int cantidadDevuelta = 0;
+
+		for (DevolucionVenta devolucion : devolucionVentaDAO.buscarPorFactura(numeroFactura)) {
+			if (codigoProducto.equals(devolucion.getCodigoProducto())) {
+				cantidadDevuelta += devolucion.getCantidadDevuelta();
+			}
+		}
+
+		return cantidadDevuelta;
 	}
 
 	private DevolucionVenta crearDevolucion(Venta venta, DetalleVenta detalleDevuelto, int cantidad, String motivo)

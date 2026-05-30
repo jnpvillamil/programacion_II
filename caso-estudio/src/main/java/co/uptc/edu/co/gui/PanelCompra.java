@@ -159,8 +159,7 @@ public class PanelCompra extends PanelCentral {
 				? comboFormaPago.getSelectedItem().toString()
 				: OPCION_TODOS;
 
-		String estadoSeleccionado = comboEstado.getSelectedItem() != null
-				? comboEstado.getSelectedItem().toString()
+		String estadoSeleccionado = comboEstado.getSelectedItem() != null ? comboEstado.getSelectedItem().toString()
 				: OPCION_TODOS;
 
 		int totalFiltrados = 0;
@@ -168,17 +167,17 @@ public class PanelCompra extends PanelCentral {
 		for (Compra compra : comprasCargadas) {
 			String estadoCompra = compra.getEstado() != null ? compra.getEstado().name() : "";
 
-			boolean coincideBusqueda = textoBusqueda.isEmpty()
-					|| (compra.getNumeroFacturaProveedor() != null
-							&& compra.getNumeroFacturaProveedor().toLowerCase().contains(textoBusqueda));
+			boolean coincideBusqueda = textoBusqueda.isEmpty() || (compra.getNumeroFacturaProveedor() != null
+					&& compra.getNumeroFacturaProveedor().toLowerCase().contains(textoBusqueda));
 			boolean coincideProveedor = proveedorSeleccionado.equals(OPCION_TODOS)
 					|| (compra.getCodigoProveedor() != null
 							&& proveedorSeleccionado.startsWith(compra.getCodigoProveedor()));
 
-			boolean coincideFormaPago = formaPagoSeleccionada.equals(OPCION_TODOS) ||
-					(compra.getFormaPago() != null && compra.getFormaPago().equalsIgnoreCase(formaPagoSeleccionada));
+			boolean coincideFormaPago = formaPagoSeleccionada.equals(OPCION_TODOS)
+					|| (compra.getFormaPago() != null && compra.getFormaPago().equalsIgnoreCase(formaPagoSeleccionada));
 
-			boolean coincideEstado = estadoSeleccionado.equals(OPCION_TODOS) || estadoCompra.equalsIgnoreCase(estadoSeleccionado);
+			boolean coincideEstado = estadoSeleccionado.equals(OPCION_TODOS)
+					|| estadoCompra.equalsIgnoreCase(estadoSeleccionado);
 
 			if (coincideBusqueda && coincideProveedor && coincideFormaPago && coincideEstado) {
 				String factura = compra.getNumeroFacturaProveedor();
@@ -190,7 +189,8 @@ public class PanelCompra extends PanelCentral {
 				String total = formatearMoneda(compra.getTotalCompra());
 				String estado = estadoCompra;
 
-				modeloTabla.addRow(new Object[] { factura, fecha, proveedor, formaPago, subtotal, impuestos, total, estado });
+				modeloTabla.addRow(
+						new Object[] { factura, fecha, proveedor, formaPago, subtotal, impuestos, total, estado });
 				totalFiltrados++;
 			}
 		}

@@ -16,8 +16,7 @@ import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 public class GestionVenta implements IGestionVenta {
 
 	private static final String PREFIJO_FACTURA = "factura_";
-	private static final String CARACTERES_CODIGO_FACTURA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	private static final int LONGITUD_CODIGO_FACTURA = 6;
+	private static final int DIGITOS_FACTURA = 6;
 
 	private List<Venta> ventas;
 	private final VentaDAO ventaDAO;
@@ -63,10 +62,6 @@ public class GestionVenta implements IGestionVenta {
 	public void registrarVenta(Venta venta) throws Exception {
 		validarVenta(venta);
 
-		if (buscarVentaPorNumero(venta.getNumeroFactura()) != null) {
-			throw new Exception("Ya existe una venta con ese numero de factura");
-		}
-
 		if (venta.getFechaHora() == null) {
 			venta.setFechaHora(LocalDateTime.now());
 		}
@@ -76,12 +71,14 @@ public class GestionVenta implements IGestionVenta {
 		}
 
 		calcularTotales(venta);
+
 		TransaccionBD.ejecutar(conexion -> {
 			ventaDAO.guardarVenta(conexion, venta);
 			gestionInventario.registrarSalidaPorVenta(conexion, venta);
 			gestionContabilidad.registrarIngresoPorVenta(conexion, venta);
 		});
-		recargarVentas();
+
+		ventas.add(0, venta);
 	}
 
 	@Override
@@ -196,18 +193,25 @@ public class GestionVenta implements IGestionVenta {
 
 	@Override
 	public String generarNumeroFactura() {
-		return PREFIJO_FACTURA + generarCodigoAleatorio();
+		return PREFIJO_FACTURA + String.format("%0" + DIGITOS_FACTURA + "d", obtenerSiguienteConsecutivoFactura());
 	}
 
-	private String generarCodigoAleatorio() {
-		StringBuilder codigo = new StringBuilder();
+	private int obtenerSiguienteConsecutivoFactura() {
+		int mayorConsecutivo = 0;
 
-		for (int i = 0; i < LONGITUD_CODIGO_FACTURA; i++) {
-			int posicion = (int) (Math.random() * CARACTERES_CODIGO_FACTURA.length());
-			codigo.append(CARACTERES_CODIGO_FACTURA.charAt(posicion));
+		for (Venta venta : ventas) {
+			String numeroFactura = venta.getNumeroFactura();
+
+			if (numeroFactura != null && numeroFactura.startsWith(PREFIJO_FACTURA)) {
+				String consecutivo = numeroFactura.substring(PREFIJO_FACTURA.length());
+
+				if (consecutivo.matches("\\d+")) {
+					mayorConsecutivo = Math.max(mayorConsecutivo, Integer.parseInt(consecutivo));
+				}
+			}
 		}
 
-		return codigo.toString();
+		return mayorConsecutivo + 1;
 	}
 
 }

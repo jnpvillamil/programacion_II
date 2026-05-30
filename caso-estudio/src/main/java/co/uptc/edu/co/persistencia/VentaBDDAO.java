@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +115,8 @@ public class VentaBDDAO implements VentaDAO {
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR_VENTA)) {
 			prepararInsertVenta(sentencia, venta);
 			sentencia.executeUpdate();
+		} catch (SQLIntegrityConstraintViolationException e) {
+			throw new SQLException("Ya existe una venta con ese numero de factura.", e);
 		}
 	}
 

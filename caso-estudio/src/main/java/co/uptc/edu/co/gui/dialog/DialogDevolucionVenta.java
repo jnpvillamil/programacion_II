@@ -252,6 +252,10 @@ public class DialogDevolucionVenta extends JDialog {
 		return campoNumeroFactura.getText().trim();
 	}
 
+	public Venta obtenerVenta() {
+		return venta;
+	}
+
 	public String obtenerProductoSeleccionado() {
 		return comboProducto.getSelectedItem() != null ? comboProducto.getSelectedItem().toString() : "";
 	}

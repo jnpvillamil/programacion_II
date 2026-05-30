@@ -38,7 +38,7 @@ public class DialogVenta extends JDialog {
 
 	private static final double IVA = 0.19;
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");
+	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
 
 	private JTextField campoNumeroFactura;
 	private JTextField campoFecha;
@@ -416,7 +416,7 @@ public class DialogVenta extends JDialog {
 			LocalTime hora = LocalTime.parse(campoHora.getText().trim(), FORMATO_HORA);
 			return LocalDateTime.of(fecha, hora);
 		} catch (Exception e) {
-			throw new Exception("La fecha y hora deben tener formato yyyy-MM-dd y HH:mm.");
+			throw new Exception("La fecha y hora deben tener formato yyyy-MM-dd y hh:mm AM/PM.");
 		}
 	}
 

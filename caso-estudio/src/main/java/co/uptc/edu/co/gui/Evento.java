@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 
 import javax.swing.JOptionPane;
@@ -41,6 +43,7 @@ import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.Venta;
 
 public class Evento implements ActionListener {
+	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
 	// CONSTANTES DE NAVEGACION
 	public static final String PRODUCTOS = "Productos";
@@ -122,6 +125,16 @@ public class Evento implements ActionListener {
 		this.gestionFactura = config.getGestionFactura();
 		this.gestionContabilidad = config.getGestionContabilidad();
 		this.gestionInventario = config.getGestionInventario();
+	}
+
+	private static DecimalFormat crearFormatoMoneda() {
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator('.');
+		simbolos.setDecimalSeparator(',');
+
+		DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+		formato.setGroupingUsed(true);
+		return formato;
 	}
 
 	// METODO PRINCIPAL DE EVENTOS
@@ -778,12 +791,12 @@ public class Evento implements ActionListener {
 	private void guardarDevolucionVenta(ActionEvent e) {
 		try {
 			DialogDevolucionVenta dialog = obtenerDialogDevolucionVenta(e);
-			String numeroFactura = dialog.obtenerNumeroFactura();
+			Venta venta = dialog.obtenerVenta();
 			String codigoProducto = dialog.obtenerCodigoProductoSeleccionado();
 			int cantidad = Integer.parseInt(dialog.obtenerCantidad());
 			String motivo = dialog.obtenerMotivoDevolucion();
 
-			gestionDevolucionVenta.devolverVenta(numeroFactura, codigoProducto, cantidad, motivo);
+			gestionDevolucionVenta.devolverVenta(venta, codigoProducto, cantidad, motivo);
 			gestionProducto.recargar();
 			gestionVenta.recargar();
 
@@ -1029,7 +1042,7 @@ public class Evento implements ActionListener {
 					movimiento.getTipoMovimientoContable() != null ? movimiento.getTipoMovimientoContable().toString()
 							: "",
 					movimiento.getCuentaContable(),
-					movimiento.getValor() != null ? movimiento.getValor().toString() : "",
+					movimiento.getValor() != null ? formatearMoneda(movimiento.getValor()) : "",
 					movimiento.getDescripcion(),
 					movimiento.getOrigen(),
 					movimiento.getReferencia());
@@ -1043,6 +1056,10 @@ public class Evento implements ActionListener {
 	private void refrescarTablaContabilidad() {
 		PanelContabilidad panelContabilidad = ventana.getPanelContabilidad();
 		panelContabilidad.cargarMovimientos(gestionContabilidad.obtenerMovimientos());
+	}
+
+	private String formatearMoneda(double valor) {
+		return FORMATO_MONEDA.format(valor);
 	}
 
 	// METODOS AUXILIARES GENERALES

@@ -22,7 +22,7 @@ public class PanelVenta extends PanelCentral {
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");
+	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
 
 	private static final String[] COLUMNAS = { "N° Factura", "Fecha", "Hora", "Cliente", "Forma de Pago", "Impuestos",
 			"Total", "Estado" };
