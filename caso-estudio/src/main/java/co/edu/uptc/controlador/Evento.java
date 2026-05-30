@@ -107,7 +107,7 @@ public class Evento implements ActionListener {
 
     private void iniciarSesion() {
         String usuario = loginGUI.getTxtUsuario().getText().trim();
-        String contrasena = new String(loginGUI.getTxtContrasena().getPassword()); //porque nuevo string
+        String contrasena = new String(loginGUI.getTxtContrasena().getPassword()); 
 
         CredencialDto credencialDto = new CredencialDto(usuario, contrasena);
         Usuario usuarioValidado = gestionSeguridad.validarIngreso(credencialDto);

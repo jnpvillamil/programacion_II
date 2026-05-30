@@ -15,7 +15,7 @@ public class ClienteDao {
 
 
             String consulta = "INSERT INTO cliente (codigo, nombre, apellido, tipo_documento, numero_documento, "
-                    + "telefono, direccion, pais_id, city_id, tipo_cliente, activo, correo_electronico, responsable_tributario) VALUES ('"
+                    + "telefono, direccion, pais_id, ciudad_id, tipo_cliente, activo, correo_electronico, responsable_tributario) VALUES ('"
                     + miCliente.getCodigo() + "', '"
                     + miCliente.getNombre() + "', '"
                     + miCliente.getApellido() + "', '"
