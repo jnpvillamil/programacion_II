@@ -1,64 +1,34 @@
 package co.edu.uptc.gui.negocio;
 
+import co.edu.uptc.gui.interfaces.*;
+import co.edu.uptc.gui.modelo.Producto;
 import java.util.List;
 
-import co.edu.uptc.dto.Producto;
-import co.edu.uptc.gui.interfaces.ICrudProducto;
-import co.edu.uptc.persistencia.LocalProducto;
-
-public class GestionProducto implements ICrudProducto  {
-
-    private LocalProducto localProducto;
-
-    public GestionProducto() {
-        localProducto = new LocalProducto();
+public class GestionProducto implements 
+    RF01_RegistrarArticulo, 
+    RF02_AsignarCodigoBarras, 
+    RF03_ModificarPrecioVenta, 
+    RF04_ModificarPrecioCompra, 
+    RF05_ControlarStockMinimo, 
+    RF06_ConsultarDisponibles, 
+    RF07_EliminarDelCatalogo {
+  
+    @Override
+    public void ejecutarOperacionProducto(Producto producto) {
     }
 
-    public boolean registrarProducto(Producto producto) {
-        return localProducto.guardarProducto(producto);
-    }
-
-    public Producto buscarProducto(String codigoProducto) {
-        return localProducto.buscarProducto(codigoProducto);
-    }
-
+    @Override
     public List<Producto> listarProductos() {
-        return localProducto.getProductos();
+        return null;
     }
 
-	@Override
-	public void registrarProducto(co.edu.uptc.gui.modelo.Producto producto) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public List<Producto> consultarAlertasStockBajo() {
+        return null; 
+    }
 
-	@Override
-	public co.edu.uptc.gui.modelo.Producto obtenerProducto(String codigo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void actualizarProducto(co.edu.uptc.gui.modelo.Producto producto) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void eliminarProducto(String codigo) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<co.edu.uptc.gui.modelo.Producto> listarProductosDisponibles() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<co.edu.uptc.gui.modelo.Producto> consultarProductosStockBajo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Producto> consultarDisponibles() {
+        return null; 
+    }
 }

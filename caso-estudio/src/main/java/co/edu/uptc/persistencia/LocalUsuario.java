@@ -32,4 +32,9 @@ public class LocalUsuario {
     public List<Usuario> getUsuarios() {
         return usuarios;
     }
+
+	public boolean validarUsuario(String usuario, String contrasena) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

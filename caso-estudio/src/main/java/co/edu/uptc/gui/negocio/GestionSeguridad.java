@@ -1,44 +1,51 @@
 package co.edu.uptc.gui.negocio;
 
 import co.edu.uptc.dto.CredencialDto;
-import co.edu.uptc.gui.interfaces.Autenticable;
-import co.edu.uptc.gui.modelo.Usuario;
+import co.edu.uptc.gui.interfaces.RF31_AutenticarCredenciales;
+import co.edu.uptc.gui.interfaces.RF32_VerificarRolUsuario;
+import co.edu.uptc.gui.interfaces.RF33_CerrarSesionSegura;
 import co.edu.uptc.persistencia.LocalUsuario;
 
-public class GestionSeguridad implements Autenticable {
+public class GestionSeguridad implements 
+    RF31_AutenticarCredenciales, 
+    RF32_VerificarRolUsuario, 
+    RF33_CerrarSesionSegura {
 
     private LocalUsuario localUsuario;
+    private String usuarioLogueadoRol;
 
     public GestionSeguridad() {
-        localUsuario = new LocalUsuario();
+        this.localUsuario = new LocalUsuario();
+        this.usuarioLogueadoRol = null;
     }
 
-    public Usuario validarIngreso(CredencialDto credencialDto) {
-        Usuario usuario = localUsuario.buscarUsuario(credencialDto.getUsuario());
-
-        if (usuario != null && usuario.iniciarSesion(
-                credencialDto.getUsuario(),
-                credencialDto.getContrasena())) {
-            return usuario;
+    @Override
+    public boolean validarAcceso(CredencialDto login) {
+        if (login == null || login.getUsuario() == null || login.getContrasena() == null) {
+            return false;
         }
-        return null;
+        
+        boolean esValido = localUsuario.validarUsuario(login.getUsuario(), login.getContrasena());
+        
+        if (esValido) {
+            this.usuarioLogueadoRol = obtenerPermisosRol(login.getUsuario());
+        }
+        
+        return esValido;
     }
 
-	@Override
-	public boolean iniciarSesion(CredencialDto credenciales) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public String obtenerPermisosRol(String idUsuario) {
+        // Regla de negocio: Determina el rol del usuario para restringir las interfaces
+        if (idUsuario.toLowerCase().contains("admin")) {
+            return "ADMINISTRADOR";
+        }
+        return "VENDEDOR";
+    }
 
-	@Override
-	public boolean iniciarSesion(String usuario, String contrasena) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void cerrarSesion() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void destruirTokenSesion() {
+        this.usuarioLogueadoRol = null;
+        System.gc(); 
+    }
 }

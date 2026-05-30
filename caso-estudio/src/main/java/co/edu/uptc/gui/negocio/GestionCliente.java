@@ -1,50 +1,59 @@
 package co.edu.uptc.gui.negocio;
 
-
+import co.edu.uptc.gui.interfaces.RF08_RegistrarCliente;
+import co.edu.uptc.gui.interfaces.RF09_AsignarTipoCliente;
+import co.edu.uptc.gui.interfaces.RF10_ActualizarDatosContacto;
+import co.edu.uptc.gui.interfaces.RF11_ValidarDuplicidadCedula;
+import co.edu.uptc.gui.interfaces.RF12_EliminarHistorialCliente;
+import co.edu.uptc.gui.modelo.Cliente;
+import co.edu.uptc.persistencia.LocalCliente; // O tu ClienteDao según uses local/remoto
 import java.util.List;
 
-import co.edu.uptc.gui.interfaces.ICrudCliente;
-import co.edu.uptc.gui.modelo.Cliente;
-import co.edu.uptc.persistencia.LocalCliente;
+public class GestionCliente implements 
+    RF08_RegistrarCliente, 
+    RF09_AsignarTipoCliente, 
+    RF10_ActualizarDatosContacto, 
+    RF11_ValidarDuplicidadCedula, 
+    RF12_EliminarHistorialCliente {
 
-public class GestionCliente implements ICrudCliente {
-
-    private LocalCliente localCliente;
+    private LocalCliente localCliente; 
 
     public GestionCliente() {
-        localCliente = new LocalCliente();
+        this.localCliente = new LocalCliente();
     }
 
-    public boolean registrarCliente(Cliente cliente) {
-        return localCliente.guardarCliente(cliente);
+    @Override
+    public void ejecutarOperacionCliente(Cliente cliente) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("El cliente no puede ser nulo.");
+        }
+        
+        if (cliente.getCedula() == null || cliente.getCedula().trim().isEmpty()) {
+            throw new IllegalArgumentException("Error: La cédula es obligatoria.");
+        }
+
+        if (existeCedula(cliente.getCedula())) {
+            localCliente.guardar(cliente); 
+        } else {
+            localCliente.guardar(cliente);
+        }
     }
 
-    public boolean modificarCliente(Cliente cliente) {
-        return localCliente.actualizarCliente(cliente);
-    }
-
-    public boolean eliminarCliente(String codigoCliente) {
-        return localCliente.eliminarCliente(codigoCliente);
-    }
-
-    public Cliente buscarCliente(String codigoCliente) {
-        return localCliente.buscarCliente(codigoCliente);
-    }
-
+    @Override
     public List<Cliente> listarClientes() {
-        return localCliente.getClientes();
+        return localCliente.leer();
     }
 
-	@Override
-	public Cliente obtenerCliente(String idCliente) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void actualizarDatosContacto(Cliente cliente) {
-		// TODO Auto-generated method stub
-		
-	}
-
+    @Override
+    public boolean existeCedula(String cedula) {
+        List<Cliente> clientes = listarClientes();
+        if (clientes != null) {
+            for (Cliente c : clientes) {
+                if (c.getCedula().equals(cedula)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
