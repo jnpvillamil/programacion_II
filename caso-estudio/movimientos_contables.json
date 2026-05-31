@@ -106,5 +106,86 @@
     "valor": 580.0,
     "descripcion": "IVA venta factura FACT-11",
     "referenciaFactura": "FACT-11"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Caja",
+    "valor": 21420.0,
+    "descripcion": "Venta factura FACT-1",
+    "referenciaFactura": "FACT-1"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Ingresos por ventas",
+    "valor": 18000.0,
+    "descripcion": "Venta factura FACT-1",
+    "referenciaFactura": "FACT-1"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "IVA generado",
+    "valor": 3420.0,
+    "descripcion": "IVA venta factura FACT-1",
+    "referenciaFactura": "FACT-1"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Caja",
+    "valor": 14280.0,
+    "descripcion": "Venta factura FACT-2",
+    "referenciaFactura": "FACT-2"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Ingresos por ventas",
+    "valor": 12000.0,
+    "descripcion": "Venta factura FACT-2",
+    "referenciaFactura": "FACT-2"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "IVA generado",
+    "valor": 2280.0,
+    "descripcion": "IVA venta factura FACT-2",
+    "referenciaFactura": "FACT-2"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Caja",
+    "valor": 21420.0,
+    "descripcion": "Venta factura FACT-3",
+    "referenciaFactura": "FACT-3"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Ingresos por ventas",
+    "valor": 18000.0,
+    "descripcion": "Venta factura FACT-3",
+    "referenciaFactura": "FACT-3"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "IVA generado",
+    "valor": 3420.0,
+    "descripcion": "IVA venta factura FACT-3",
+    "referenciaFactura": "FACT-3"
   }
 ]

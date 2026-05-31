@@ -52,3 +52,51 @@ Correo:  almacen@correo.com
 Rol:     ALMACENISTA
 Acción:  Inicio de sesión exitoso
 ========================================
+========================================
+Fecha:   2026-05-31T10:09:38.012779
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T10:11:21.897850200
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T10:11:58.308823900
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Cierre de sesión
+========================================
+========================================
+Fecha:   2026-05-31T10:12:57.055769700
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T10:13:52.819555300
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T10:21:38.084373400
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T10:27:26.679400
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T10:51:15.115327100
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================

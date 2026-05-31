@@ -95,4 +95,10 @@ public class LocalVenta implements IGestionVenta {
             e.printStackTrace();
         }
     }
+
+	@Override
+	public Venta buscarPorFactura(String numeroFactura) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

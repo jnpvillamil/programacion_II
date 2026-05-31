@@ -70,5 +70,29 @@
     "stockMaximo": 100,
     "activo": true,
     "porcentajeIva": 0.19
+  },
+  {
+    "codigoProducto": 106,
+    "nombreProducto": "pan",
+    "categoria": "viveres",
+    "precioCompra": 2000.0,
+    "precioVenta": 3000.0,
+    "stockActual": 20,
+    "stockMinimo": 10,
+    "stockMaximo": 2000,
+    "activo": true,
+    "porcentajeIva": 0.0
+  },
+  {
+    "codigoProducto": 107,
+    "nombreProducto": "sal",
+    "categoria": "viveres",
+    "precioCompra": 3000.0,
+    "precioVenta": 5000.0,
+    "stockActual": 60,
+    "stockMinimo": 10,
+    "stockMaximo": 2000,
+    "activo": true,
+    "porcentajeIva": 0.19
   }
 ]

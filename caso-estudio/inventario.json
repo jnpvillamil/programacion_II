@@ -853,5 +853,62 @@
     "cantidad": 4,
     "fechaHora": "2026-05-31T08:55:50.606849100",
     "motivo": "Venta: FACT-11"
+  },
+  {
+    "idMovimiento": 46,
+    "producto": {
+      "codigoProducto": 1,
+      "nombreProducto": "agua",
+      "categoria": "viveres",
+      "precioCompra": 3000.0,
+      "precioVenta": 6000.0,
+      "stockActual": 27,
+      "stockMinimo": 10,
+      "stockMaximo": 1000,
+      "activo": true,
+      "porcentajeIva": 0.19
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 3,
+    "fechaHora": "2026-05-31T10:21:51.704377700",
+    "motivo": "Venta: FACT-1"
+  },
+  {
+    "idMovimiento": 47,
+    "producto": {
+      "codigoProducto": 1,
+      "nombreProducto": "agua",
+      "categoria": "viveres",
+      "precioCompra": 3000.0,
+      "precioVenta": 6000.0,
+      "stockActual": 25,
+      "stockMinimo": 10,
+      "stockMaximo": 1000,
+      "activo": true,
+      "porcentajeIva": 0.19
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 2,
+    "fechaHora": "2026-05-31T10:27:34.085145800",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 48,
+    "producto": {
+      "codigoProducto": 1,
+      "nombreProducto": "agua",
+      "categoria": "viveres",
+      "precioCompra": 3000.0,
+      "precioVenta": 6000.0,
+      "stockActual": 22,
+      "stockMinimo": 10,
+      "stockMaximo": 1000,
+      "activo": true,
+      "porcentajeIva": 0.19
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 3,
+    "fechaHora": "2026-05-31T10:51:21.938652400",
+    "motivo": "Venta: FACT-3"
   }
 ]

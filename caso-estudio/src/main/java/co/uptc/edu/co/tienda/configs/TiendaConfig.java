@@ -83,7 +83,7 @@ public class TiendaConfig {
         gestCompra = new GestionCompra(iCompra);
 
         // Venta
-        iVenta = new LocalVenta();
+        iVenta = new SqlVenta();
         gestVenta = new GestionVenta(iVenta);
 
         // Inventario
