@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class VentaBDDAO implements VentaDAO {
 
@@ -24,21 +26,24 @@ public class VentaBDDAO implements VentaDAO {
 	private static final String TABLA_DETALLE_VENTAS = "detalle_ventas";
 
 	private static final String SQL_INSERTAR_VENTA = "INSERT INTO " + TABLA_VENTAS
-			+ " (numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado)"
-			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			+ " (numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion)"
+			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_INSERTAR_DETALLE = "INSERT INTO " + TABLA_DETALLE_VENTAS
 			+ " (numero_factura, codigo_producto, cantidad, precio_unitario, subtotal)" + " VALUES (?, ?, ?, ?, ?)";
 
 	private static final String SQL_ACTUALIZAR_VENTA = "UPDATE " + TABLA_VENTAS
-			+ " SET fecha_hora = ?, cliente = ?, forma_pago = ?, subtotal = ?, impuestos = ?, total = ?, estado = ?"
+			+ " SET fecha_hora = ?, cliente = ?, forma_pago = ?, subtotal = ?, impuestos = ?, total = ?, estado = ?, motivo_anulacion = ?, fecha_anulacion = ?"
 			+ " WHERE numero_factura = ?";
 
-	private static final String SQL_BUSCAR_VENTA = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado"
+	private static final String SQL_BUSCAR_VENTA = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion"
 			+ " FROM " + TABLA_VENTAS + " WHERE numero_factura = ?";
 
-	private static final String SQL_LISTAR_VENTAS = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado"
+	private static final String SQL_LISTAR_VENTAS = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion"
 			+ " FROM " + TABLA_VENTAS + " ORDER BY fecha_hora DESC";
+
+	private static final String SQL_LISTAR_VENTAS_POR_FECHA = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion"
+			+ " FROM " + TABLA_VENTAS + " WHERE DATE(fecha_hora) = ? ORDER BY fecha_hora DESC";
 
 	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigo_producto, p.nombreProducto, dv.cantidad, dv.precio_unitario, dv.subtotal"
 			+ " FROM " + TABLA_DETALLE_VENTAS + " dv"
@@ -114,6 +119,28 @@ public class VentaBDDAO implements VentaDAO {
 		}
 	}
 
+	@Override
+	public List<Venta> listarVentasPorFecha(LocalDate fecha) throws Exception {
+		List<Venta> ventas = new ArrayList<>();
+
+		try (Connection conexion = ConexionBD.getConexion();
+				PreparedStatement sentencia = conexion.prepareStatement(SQL_LISTAR_VENTAS_POR_FECHA)) {
+
+			sentencia.setDate(1, java.sql.Date.valueOf(fecha));
+
+			try (ResultSet resultado = sentencia.executeQuery()) {
+				while (resultado.next()) {
+					ventas.add(construirVenta(resultado));
+				}
+			}
+
+			return ventas;
+
+		} catch (SQLException e) {
+			throw new Exception("Error al listar ventas por fecha: " + e.getMessage(), e);
+		}
+	}
+
 	private void guardarCabeceraVenta(Connection conexion, Venta venta) throws SQLException {
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR_VENTA)) {
 			prepararInsertVenta(sentencia, venta);
@@ -173,11 +200,19 @@ public class VentaBDDAO implements VentaDAO {
 		venta.setNumeroFactura(resultado.getString("numero_factura"));
 		venta.setFechaHora(resultado.getTimestamp("fecha_hora").toLocalDateTime());
 		venta.setCliente(resultado.getString("cliente"));
-		venta.setFormaPago(resultado.getString("forma_pago"));
+		venta.setFormaPago(
+			    FormaPago.valueOf(resultado.getString("forma_pago"))
+			);
 		venta.setSubTotal(resultado.getDouble("subtotal"));
 		venta.setImpuestos(resultado.getDouble("impuestos"));
 		venta.setTotal(resultado.getDouble("total"));
 		venta.setEstado(EstadoVentaEnum.valueOf(resultado.getString("estado")));
+		venta.setMotivoAnulacion(resultado.getString("motivo_anulacion"));
+
+		Timestamp fechaAnulacion = resultado.getTimestamp("fecha_anulacion");
+		if (fechaAnulacion != null) {
+			venta.setFechaAnulacion(fechaAnulacion.toLocalDateTime());
+		}
 		return venta;
 	}
 
@@ -198,22 +233,28 @@ public class VentaBDDAO implements VentaDAO {
 		sentencia.setString(1, venta.getNumeroFactura());
 		sentencia.setTimestamp(2, Timestamp.valueOf(venta.getFechaHora()));
 		sentencia.setString(3, venta.getCliente());
-		sentencia.setString(4, venta.getFormaPago());
+		sentencia.setString(4, venta.getFormaPago().name());
 		sentencia.setBigDecimal(5, BigDecimal.valueOf(venta.getSubTotal()));
 		sentencia.setBigDecimal(6, BigDecimal.valueOf(venta.getImpuestos()));
 		sentencia.setBigDecimal(7, BigDecimal.valueOf(venta.getTotal()));
 		sentencia.setString(8, venta.getEstado().name());
+		sentencia.setString(9, venta.getMotivoAnulacion());
+		sentencia.setTimestamp(10,
+				venta.getFechaAnulacion() != null ? Timestamp.valueOf(venta.getFechaAnulacion()) : null);
 	}
 
 	private void prepararUpdateVenta(PreparedStatement sentencia, Venta venta) throws SQLException {
 		sentencia.setTimestamp(1, Timestamp.valueOf(venta.getFechaHora()));
 		sentencia.setString(2, venta.getCliente());
-		sentencia.setString(3, venta.getFormaPago());
+		sentencia.setString(3, venta.getFormaPago().name());
 		sentencia.setBigDecimal(4, BigDecimal.valueOf(venta.getSubTotal()));
 		sentencia.setBigDecimal(5, BigDecimal.valueOf(venta.getImpuestos()));
 		sentencia.setBigDecimal(6, BigDecimal.valueOf(venta.getTotal()));
 		sentencia.setString(7, venta.getEstado().name());
-		sentencia.setString(8, venta.getNumeroFactura());
+		sentencia.setString(8, venta.getMotivoAnulacion());
+		sentencia.setTimestamp(9,
+				venta.getFechaAnulacion() != null ? Timestamp.valueOf(venta.getFechaAnulacion()) : null);
+		sentencia.setString(10, venta.getNumeroFactura());
 	}
 
 	private void prepararInsertDetalle(PreparedStatement sentencia, String numeroFactura, DetalleVenta detalle)

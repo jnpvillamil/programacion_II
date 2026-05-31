@@ -35,6 +35,9 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 	private static final String SQL_ULTIMO_CODIGO = "SELECT MAX(codigo_devolucion) AS ultimo_codigo " + "FROM "
 			+ TABLA_DEVOLUCIONES + " WHERE codigo_devolucion LIKE 'DEV%'";
 
+	private static final String SQL_CANTIDAD_DEVUELTA = "SELECT COALESCE(SUM(cantidad_devuelta), 0) AS cantidad_devuelta "
+			+ "FROM " + TABLA_DEVOLUCIONES + " WHERE numero_factura = ? AND codigo_producto = ?";
+
 	@Override
 	public void guardarDevolucion(DevolucionVenta devolucion) throws Exception {
 		try (Connection conexion = ConexionBD.getConexion();
@@ -157,6 +160,27 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 
 		} catch (SQLException e) {
 			throw new Exception("Error al obtener el ultimo codigo de devolucion: " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
+		try (Connection conexion = ConexionBD.getConexion();
+				PreparedStatement sentencia = conexion.prepareStatement(SQL_CANTIDAD_DEVUELTA)) {
+
+			sentencia.setString(1, numeroFactura);
+			sentencia.setString(2, codigoProducto);
+
+			try (ResultSet resultado = sentencia.executeQuery()) {
+				if (resultado.next()) {
+					return resultado.getInt("cantidad_devuelta");
+				}
+			}
+
+			return 0;
+
+		} catch (SQLException e) {
+			throw new Exception("Error al obtener la cantidad devuelta: " + e.getMessage(), e);
 		}
 	}
 }

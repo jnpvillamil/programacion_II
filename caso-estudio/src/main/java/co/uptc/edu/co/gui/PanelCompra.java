@@ -174,8 +174,8 @@ public class PanelCompra extends PanelCentral {
 							&& proveedorSeleccionado.startsWith(compra.getCodigoProveedor()));
 
 			boolean coincideFormaPago = formaPagoSeleccionada.equals(OPCION_TODOS)
-					|| (compra.getFormaPago() != null && compra.getFormaPago().equalsIgnoreCase(formaPagoSeleccionada));
-
+			        || (compra.getFormaPago() != null
+			                && compra.getFormaPago().toString().equalsIgnoreCase(formaPagoSeleccionada));
 			boolean coincideEstado = estadoSeleccionado.equals(OPCION_TODOS)
 					|| estadoCompra.equalsIgnoreCase(estadoSeleccionado);
 
@@ -183,7 +183,9 @@ public class PanelCompra extends PanelCentral {
 				String factura = compra.getNumeroFacturaProveedor();
 				String fecha = compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "";
 				String proveedor = compra.getCodigoProveedor();
-				String formaPago = compra.getFormaPago() != null ? compra.getFormaPago() : "";
+				String formaPago = compra.getFormaPago() != null
+				        ? compra.getFormaPago().toString()
+				        : "";
 				String subtotal = formatearMoneda(compra.getSubtotal());
 				String impuestos = formatearMoneda(compra.getImpuestos());
 				String total = formatearMoneda(compra.getTotalCompra());

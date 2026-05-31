@@ -83,7 +83,8 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
 		double ivaDevuelto = subtotalDevuelto * 0.19;
 
-		venta.setEstado(EstadoVentaEnum.DEVUELTA);
+		EstadoVentaEnum nuevoEstado = calcularEstadoDespuesDeDevolucion(venta, codigoProducto, cantidad);
+		venta.setEstado(nuevoEstado);
 
 		TransaccionBD.ejecutar(conexion -> {
 
@@ -93,8 +94,7 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 
 			devolucionVentaDAO.guardarDevolucion(conexion, devolucion);
 
-			ventaDAO.actualizarEstadoVenta(conexion, venta.getNumeroFactura(),
-					EstadoVentaEnum.DEVUELTA);
+			ventaDAO.actualizarEstadoVenta(conexion, venta.getNumeroFactura(), nuevoEstado);
 
 			gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta,
 					subtotalDevuelto, ivaDevuelto, motivo.trim());
@@ -156,15 +156,25 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	}
 
 	private int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
-		int cantidadDevuelta = 0;
+		return devolucionVentaDAO.obtenerCantidadDevuelta(numeroFactura, codigoProducto);
+	}
 
-		for (DevolucionVenta devolucion : devolucionVentaDAO.buscarPorFactura(numeroFactura)) {
-			if (codigoProducto.equals(devolucion.getCodigoProducto())) {
-				cantidadDevuelta += devolucion.getCantidadDevuelta();
+	private EstadoVentaEnum calcularEstadoDespuesDeDevolucion(Venta venta, String codigoProductoDevuelto,
+			int cantidadNuevaDevuelta) throws Exception {
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			String codigoProducto = detalle.getProducto().getCodigoProducto();
+			int cantidadDevuelta = obtenerCantidadDevuelta(venta.getNumeroFactura(), codigoProducto);
+
+			if (codigoProducto.equals(codigoProductoDevuelto)) {
+				cantidadDevuelta += cantidadNuevaDevuelta;
+			}
+
+			if (cantidadDevuelta < detalle.getCantidad()) {
+				return EstadoVentaEnum.PARCIALMENTE_DEVUELTA;
 			}
 		}
 
-		return cantidadDevuelta;
+		return EstadoVentaEnum.DEVUELTA;
 	}
 
 	private DevolucionVenta crearDevolucion(Venta venta, DetalleVenta detalleDevuelto, int cantidad, String motivo)

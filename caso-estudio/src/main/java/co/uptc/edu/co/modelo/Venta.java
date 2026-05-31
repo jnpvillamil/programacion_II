@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class Venta {
 
@@ -13,10 +14,12 @@ public class Venta {
 	private String cliente;
 	private List<DetalleVenta> detalles;
 	private double subtotal;
-	private String formaPago;
+	private FormaPago formaPago;
 	private double impuestos;
 	private double total;
 	private EstadoVentaEnum estado;
+	private String motivoAnulacion;
+	private LocalDateTime fechaAnulacion;
 
 	public Venta() {
 		this.detalles = new ArrayList<>();
@@ -24,7 +27,7 @@ public class Venta {
 	}
 
 	public Venta(String numeroFactura, LocalDateTime fechaHora, String cliente, List<DetalleVenta> detalles,
-			double subtotal, String formaPago, double impuestos, double total, EstadoVentaEnum estado) {
+			double subtotal, FormaPago formaPago, double impuestos, double total, EstadoVentaEnum estado) {
 
 		this.numeroFactura = numeroFactura;
 		this.fechaHora = fechaHora;
@@ -77,11 +80,11 @@ public class Venta {
 		this.subtotal = subTotal;
 	}
 
-	public String getFormaPago() {
+	public FormaPago getFormaPago() {
 		return formaPago;
 	}
 
-	public void setFormaPago(String formaPago) {
+	public void setFormaPago(FormaPago formaPago) {
 		this.formaPago = formaPago;
 	}
 
@@ -107,6 +110,22 @@ public class Venta {
 
 	public void setEstado(EstadoVentaEnum estado) {
 		this.estado = estado;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
+
+	public LocalDateTime getFechaAnulacion() {
+		return fechaAnulacion;
+	}
+
+	public void setFechaAnulacion(LocalDateTime fechaAnulacion) {
+		this.fechaAnulacion = fechaAnulacion;
 	}
 
 }

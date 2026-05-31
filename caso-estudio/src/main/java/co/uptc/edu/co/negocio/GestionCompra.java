@@ -57,9 +57,11 @@ public class GestionCompra implements IGestionCompra {
 		compra.setNumeroFacturaProveedor(numeroFactura);
 		compra.setFecha(LocalDate.now());
 		compra.setEstado(EstadoCompraEnum.ACTIVA);
-		if (compra.getFormaPago() == null || compra.getFormaPago().trim().isEmpty()) {
-			throw new Exception("La forma de pago es obligatoria.");
+
+		if (compra.getFormaPago() == null) {
+		    throw new Exception("La forma de pago es obligatoria.");
 		}
+
 		compra.setSubtotal(calcularSubtotal(compra.getDetalles()));
 		compra.setImpuestos(calcularimpuestos(compra.getDetalles()));
 		compra.setTotalCompra(compra.getSubtotal() + compra.getImpuestos());

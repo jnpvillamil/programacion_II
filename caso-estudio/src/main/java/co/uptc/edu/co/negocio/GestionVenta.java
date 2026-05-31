@@ -1,6 +1,7 @@
 package co.uptc.edu.co.negocio;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,7 @@ public class GestionVenta implements IGestionVenta {
 	@Override
 	public void registrarVenta(Venta venta) throws Exception {
 		validarVenta(venta);
+		validarFacturaNoRegistrada(venta.getNumeroFactura());
 
 		if (venta.getFechaHora() == null) {
 			venta.setFechaHora(LocalDateTime.now());
@@ -87,12 +89,34 @@ public class GestionVenta implements IGestionVenta {
 	}
 
 	@Override
+	public List<Venta> obtenerVentasPorFecha(LocalDate fecha) throws Exception {
+		if (fecha == null) {
+			throw new Exception("La fecha es obligatoria.");
+		}
+
+		return ventaDAO.listarVentasPorFecha(fecha);
+	}
+
+	@Override
 	public Venta buscarVentaPorNumero(String numeroFactura) throws Exception {
 		if (numeroFactura == null) {
 			return null;
 		}
 
 		return ventaDAO.buscarVentaPorNumero(numeroFactura);
+	}
+
+	private void validarFacturaNoRegistrada(String numeroFactura) throws Exception {
+		for (Venta ventaRegistrada : ventas) {
+			if (ventaRegistrada.getNumeroFactura() != null
+					&& ventaRegistrada.getNumeroFactura().equalsIgnoreCase(numeroFactura)) {
+				throw new Exception("Ya existe una venta con ese numero de factura.");
+			}
+		}
+
+		if (ventaDAO.buscarVentaPorNumero(numeroFactura) != null) {
+			throw new Exception("Ya existe una venta con ese numero de factura.");
+		}
 	}
 
 	private void validarVenta(Venta venta) throws Exception {
@@ -110,10 +134,10 @@ public class GestionVenta implements IGestionVenta {
 			throw new Exception("El cliente es obligatorio");
 		}
 
-		if (venta.getFormaPago() == null || venta.getFormaPago().trim().isEmpty()) {
-			throw new Exception("La forma de pago es obligatorio");
+		if (venta.getFormaPago() == null) {
+		    throw new Exception("La forma de pago es obligatoria");
 		}
-
+		
 		if (venta.getDetalles() == null || venta.getDetalles().isEmpty()) {
 			throw new Exception("La venta debe tener almenos un producto");
 		}
@@ -174,7 +198,8 @@ public class GestionVenta implements IGestionVenta {
 			throw new Exception("La venta ya esta anulada.");
 		}
 
-		if (venta.getEstado() == EstadoVentaEnum.DEVUELTA) {
+		if (venta.getEstado() == EstadoVentaEnum.DEVUELTA
+				|| venta.getEstado() == EstadoVentaEnum.PARCIALMENTE_DEVUELTA) {
 			throw new Exception("No se puede anular una venta que ya tiene devolucion registrada.");
 		}
 
@@ -183,12 +208,26 @@ public class GestionVenta implements IGestionVenta {
 		}
 
 		venta.setEstado(EstadoVentaEnum.ANULADA);
+		venta.setMotivoAnulacion(motivo.trim());
+		venta.setFechaAnulacion(LocalDateTime.now());
 		TransaccionBD.ejecutar(conexion -> {
 			ventaDAO.actualizarVenta(conexion, venta);
 			gestionInventario.registrarEntradaPorAnulacion(conexion, venta, motivo.trim());
 			gestionContabilidad.registrarReversoPorAnulacionVenta(conexion, venta, motivo.trim());
 		});
-		recargarVentas();
+		actualizarVentaEnMemoria(venta);
+	}
+
+	private void actualizarVentaEnMemoria(Venta ventaActualizada) {
+		for (int i = 0; i < ventas.size(); i++) {
+			Venta venta = ventas.get(i);
+
+			if (venta.getNumeroFactura() != null
+					&& venta.getNumeroFactura().equalsIgnoreCase(ventaActualizada.getNumeroFactura())) {
+				ventas.set(i, ventaActualizada);
+				return;
+			}
+		}
 	}
 
 	@Override

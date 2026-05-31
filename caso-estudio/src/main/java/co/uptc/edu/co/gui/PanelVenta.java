@@ -99,6 +99,7 @@ public class PanelVenta extends PanelCentral {
 		comboEstado.addItem(OPCION_TODOS);
 		comboEstado.addItem("ACTIVA");
 		comboEstado.addItem("ANULADA");
+		comboEstado.addItem("PARCIALMENTE_DEVUELTA");
 		comboEstado.addItem("DEVUELTA");
 	}
 
@@ -215,8 +216,8 @@ public class PanelVenta extends PanelCentral {
 					|| venta.getCliente().equalsIgnoreCase(clienteSeleccionado);
 
 			boolean coincideFormaPago = formaPagoSeleccionada.equals(OPCION_TODOS)
-					|| venta.getFormaPago().equalsIgnoreCase(formaPagoSeleccionada);
-
+			        || (venta.getFormaPago() != null
+			                && venta.getFormaPago().toString().equalsIgnoreCase(formaPagoSeleccionada));
 			boolean coincideEstado = estadoSeleccionado.equals(OPCION_TODOS)
 					|| estadoVenta.equalsIgnoreCase(estadoSeleccionado);
 

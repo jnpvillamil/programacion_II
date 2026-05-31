@@ -102,6 +102,9 @@ public class Evento implements ActionListener {
 	// CONSTANTES DE COMANDOS - CONTABILIDAD
 	public static final String CMD_VER_DETALLE_CONTABLE = "VerDetalleContable";
 
+	// CONSTANTES DE COMANDOS - CONSULTAS
+	public static final String CMD_CONSULTAR_SISTEMA = "ConsultarSistema";
+
 	// ATRIBUTOS
 	private VentanaPrincipal ventana;
 	private IGestionProducto gestionProducto;
@@ -168,6 +171,10 @@ public class Evento implements ActionListener {
 		}
 
 		if (manejarEventosContabilidad(comando)) {
+			return;
+		}
+
+		if (manejarEventosConsultas(comando)) {
 			return;
 		}
 	}
@@ -984,7 +991,7 @@ public class Evento implements ActionListener {
 				compra.getNumeroFacturaProveedor(),
 				compra.getFecha() != null ? compra.getFecha().toString() : "",
 				compra.getCodigoProveedor(),
-				compra.getFormaPago() != null ? compra.getFormaPago() : "",
+				compra.getFormaPago() != null ? compra.getFormaPago().toString() : "",
 				String.valueOf(compra.getSubtotal()),
 				String.valueOf(compra.getImpuestos()),
 				String.valueOf(compra.getTotalCompra()));
@@ -1077,6 +1084,31 @@ public class Evento implements ActionListener {
 
 		default:
 			return false;
+		}
+	}
+
+	private boolean manejarEventosConsultas(String comando) {
+		switch (comando) {
+		case CMD_CONSULTAR_SISTEMA:
+			ejecutarConsultaSistema();
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
+	private void ejecutarConsultaSistema() {
+		try {
+			PanelConsultas panelConsultas = ventana.getPanelConsultas();
+
+			if (panelConsultas.esConsultaVentasPorFecha()) {
+				LocalDate fecha = panelConsultas.obtenerFechaConsulta();
+				panelConsultas.cargarVentasPorFecha(gestionVenta.obtenerVentasPorFecha(fecha));
+			}
+
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
 		}
 	}
 

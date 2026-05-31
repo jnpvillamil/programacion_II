@@ -4,6 +4,7 @@ public enum EstadoVentaEnum {
 	
 	ACTIVA,
 	ANULADA,
+	PARCIALMENTE_DEVUELTA,
 	DEVUELTA
 
 }

@@ -4,12 +4,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 public class Compra {
 	private String numeroFacturaProveedor;
 	private LocalDate fecha;
 	private String codigoProveedor;
 	private String proveedor;
-	private String formaPago;
+	private FormaPago formaPago;
 	private List<DetalleCompra> detalles;
 	private double subtotal;
 	private double impuestos;
@@ -23,7 +24,7 @@ public class Compra {
 	}
 
 	public Compra(String numeroFacturaProveedor, LocalDate fecha, String codigoProveedor, String proveedor,
-			String formaPago, double subtotal, double impuestos, double totalCompra, EstadoCompraEnum estado) {
+			FormaPago formaPago, double subtotal, double impuestos, double totalCompra, EstadoCompraEnum estado) {
 		this.numeroFacturaProveedor = numeroFacturaProveedor;
 		this.fecha = fecha;
 		this.codigoProveedor = codigoProveedor;
@@ -69,11 +70,11 @@ public class Compra {
 		this.proveedor = proveedor;
 	}
 
-	public String getFormaPago() {
+	public FormaPago getFormaPago() {
 		return formaPago;
 	}
 
-	public void setFormaPago(String formaPago) {
+	public void setFormaPago(FormaPago formaPago) {
 		this.formaPago = formaPago;
 	}
 

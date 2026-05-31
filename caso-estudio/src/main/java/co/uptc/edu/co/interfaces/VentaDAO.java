@@ -1,6 +1,7 @@
 package co.uptc.edu.co.interfaces;
 
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.Venta;
@@ -19,6 +20,8 @@ public interface VentaDAO {
 	void actualizarEstadoVenta(Connection conexion, String numeroFactura, EstadoVentaEnum estado) throws Exception;
 
 	Venta buscarVentaPorNumero(String numeroFactura) throws Exception;
+
+	List<Venta> listarVentasPorFecha(LocalDate fecha) throws Exception;
 
 	List<Venta> listarVentas() throws Exception;
 

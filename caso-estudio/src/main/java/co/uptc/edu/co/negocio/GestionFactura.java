@@ -111,11 +111,8 @@ public class GestionFactura implements IGestionFactura {
 			Producto producto = detalle.getProducto();
 			String nombreProducto = producto != null ? producto.getNombreProducto() : "Producto";
 
-			contenido.append(String.format("%-20s %5d %12s %12s%n",
-					nombreProducto,
-					detalle.getCantidad(),
-					formatearMoneda(detalle.getPrecioUnitario()),
-					formatearMoneda(detalle.getSubtotal())));
+			contenido.append(String.format("%-20s %5d %12s %12s%n", nombreProducto, detalle.getCantidad(),
+					formatearMoneda(detalle.getPrecioUnitario()), formatearMoneda(detalle.getSubtotal())));
 		}
 
 		contenido.append("----------------------------------------").append(System.lineSeparator());
@@ -133,10 +130,9 @@ public class GestionFactura implements IGestionFactura {
 		contenido.append("========================================").append(System.lineSeparator());
 	}
 
-	
-
 	private void escribirDatosCompra(StringBuilder contenido, Compra compra) {
-		contenido.append("Factura proveedor: ").append(compra.getNumeroFacturaProveedor()).append(System.lineSeparator());
+		contenido.append("Factura proveedor: ").append(compra.getNumeroFacturaProveedor())
+				.append(System.lineSeparator());
 		contenido.append("Fecha compra:      ").append(compra.getFecha()).append(System.lineSeparator());
 		contenido.append("Proveedor:         ")
 				.append(compra.getProveedor() != null ? compra.getProveedor() : compra.getCodigoProveedor())
@@ -153,11 +149,8 @@ public class GestionFactura implements IGestionFactura {
 			Producto producto = detalle.getProducto();
 			String nombreProducto = producto != null ? producto.getNombreProducto() : "Producto";
 
-			contenido.append(String.format("%-20s %5d %12s %12s %12s%n",
-					nombreProducto,
-					detalle.getCantidad(),
-					formatearMoneda(detalle.getCostoUnitario()),
-					formatearMoneda(detalle.getImpuestos()),
+			contenido.append(String.format("%-20s %5d %12s %12s %12s%n", nombreProducto, detalle.getCantidad(),
+					formatearMoneda(detalle.getCostoUnitario()), formatearMoneda(detalle.getImpuestos()),
 					formatearMoneda(detalle.getSubtotal())));
 		}
 
@@ -169,8 +162,6 @@ public class GestionFactura implements IGestionFactura {
 		contenido.append(String.format("%-30s %12s%n", "IVA:", formatearMoneda(compra.getImpuestos())));
 		contenido.append(String.format("%-30s %12s%n", "TOTAL:", formatearMoneda(compra.getTotalCompra())));
 	}
-
-	
 
 	private void validarCompra(Compra compra) throws Exception {
 		if (compra == null) {
@@ -185,7 +176,7 @@ public class GestionFactura implements IGestionFactura {
 			throw new Exception("La compra no tiene productos para facturar.");
 		}
 
-		if (compra.getFormaPago() == null || compra.getFormaPago().trim().isEmpty()) {
+		if (compra.getFormaPago() == null) {
 			throw new Exception("La compra no tiene forma de pago para facturar.");
 		}
 	}

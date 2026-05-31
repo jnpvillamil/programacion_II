@@ -25,7 +25,7 @@ public class TransaccionBD {
 				throw e;
 
 			} finally {
-				conexion.setAutoCommit(true);
+				
 			}
 		}
 	}

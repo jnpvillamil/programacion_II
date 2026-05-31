@@ -1,5 +1,6 @@
 package co.uptc.edu.co.interfaces;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.Venta;
@@ -9,6 +10,8 @@ public interface IGestionVenta {
     void registrarVenta(Venta venta) throws Exception;
     
     Venta buscarVentaPorNumero(String numeroFactura) throws Exception;
+
+    List<Venta> obtenerVentasPorFecha(LocalDate fecha) throws Exception;
     
     List<Venta> obtenerVentas();
     

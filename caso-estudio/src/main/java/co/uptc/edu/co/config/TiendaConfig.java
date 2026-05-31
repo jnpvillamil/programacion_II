@@ -37,6 +37,8 @@ import co.uptc.edu.co.persistencia.MovimientoInventarioBDDAO;
 import co.uptc.edu.co.persistencia.ProductoBDDAO;
 import co.uptc.edu.co.persistencia.ProveedorBDDAO;
 import co.uptc.edu.co.persistencia.VentaBDDAO;
+import java.sql.Connection;
+import co.uptc.edu.co.conexion.ConexionBD;
 
 public class TiendaConfig {
 

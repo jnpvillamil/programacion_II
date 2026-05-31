@@ -27,6 +27,7 @@ public class DialogDetalleVenta extends JDialog {
 
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
+	private static final DateTimeFormatter FORMATO_FECHA_ANULACION = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private JTextField campoNumeroFactura;
 	private JTextField campoFecha;
@@ -36,6 +37,8 @@ public class DialogDetalleVenta extends JDialog {
 	private JTextField campoImpuestos;
 	private JTextField campoTotal;
 	private JTextField campoEstado;
+	private JTextField campoFechaAnulacion;
+	private JTextField campoMotivoAnulacion;
 
 	private JTable tablaDetalle;
 	private DefaultTableModel modeloTabla;
@@ -69,6 +72,8 @@ public class DialogDetalleVenta extends JDialog {
 		campoImpuestos = new JTextField(15);
 		campoTotal = new JTextField(15);
 		campoEstado = new JTextField(15);
+		campoFechaAnulacion = new JTextField(15);
+		campoMotivoAnulacion = new JTextField(15);
 
 		campoNumeroFactura.setEditable(false);
 		campoFecha.setEditable(false);
@@ -78,6 +83,8 @@ public class DialogDetalleVenta extends JDialog {
 		campoImpuestos.setEditable(false);
 		campoTotal.setEditable(false);
 		campoEstado.setEditable(false);
+		campoFechaAnulacion.setEditable(false);
+		campoMotivoAnulacion.setEditable(false);
 
 		modeloTabla = new DefaultTableModel(
 
@@ -156,6 +163,17 @@ public class DialogDetalleVenta extends JDialog {
 		gbc.gridx = 3;
 		panelDatos.add(campoEstado, gbc);
 
+		gbc.gridx = 0;
+		gbc.gridy = 4;
+		panelDatos.add(new JLabel("Fecha Anulación:"), gbc);
+		gbc.gridx = 1;
+		panelDatos.add(campoFechaAnulacion, gbc);
+
+		gbc.gridx = 2;
+		panelDatos.add(new JLabel("Motivo Anulación:"), gbc);
+		gbc.gridx = 3;
+		panelDatos.add(campoMotivoAnulacion, gbc);
+
 		JScrollPane scrollTabla = new JScrollPane(tablaDetalle);
 		scrollTabla.setBorder(BorderFactory.createTitledBorder("Productos Vendidos"));
 
@@ -189,14 +207,21 @@ public class DialogDetalleVenta extends JDialog {
 	public void cargarVenta(Venta venta) {
 		cargarVenta(venta.getNumeroFactura(),
 				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
-				venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "", venta.getCliente(),
-				venta.getFormaPago(), formatearMoneda(venta.getImpuestos()), formatearMoneda(venta.getTotal()),
+				venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "",
+				venta.getCliente(),
+				venta.getFormaPago() != null ? venta.getFormaPago().toString() : "",
+				formatearMoneda(venta.getImpuestos()),
+				formatearMoneda(venta.getTotal()),
 				venta.getEstado() != null ? venta.getEstado().name() : "");
+		campoFechaAnulacion.setText(
+				venta.getFechaAnulacion() != null ? venta.getFechaAnulacion().format(FORMATO_FECHA_ANULACION) : "");
+		campoMotivoAnulacion.setText(venta.getMotivoAnulacion() != null ? venta.getMotivoAnulacion() : "");
 
 		limpiarTabla();
-
-		for (DetalleVenta detalle : venta.getDetalles()) {
-			agregarDetalle(detalle);
+		if (venta.getDetalles() != null) {
+			for (DetalleVenta detalle : venta.getDetalles()) {
+				agregarDetalle(detalle);
+			}
 		}
 	}
 
@@ -231,6 +256,8 @@ public class DialogDetalleVenta extends JDialog {
 		campoImpuestos.setText("");
 		campoTotal.setText("");
 		campoEstado.setText("");
+		campoFechaAnulacion.setText("");
+		campoMotivoAnulacion.setText("");
 	}
 
 	private String formatearMoneda(double valor) {

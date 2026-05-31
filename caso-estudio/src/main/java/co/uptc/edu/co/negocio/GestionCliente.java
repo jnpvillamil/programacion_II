@@ -6,7 +6,6 @@ import java.util.List;
 import co.uptc.edu.co.interfaces.ClienteDAO;
 import co.uptc.edu.co.interfaces.IGestionCliente;
 import co.uptc.edu.co.modelo.Cliente;
-import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
 public class GestionCliente implements IGestionCliente {

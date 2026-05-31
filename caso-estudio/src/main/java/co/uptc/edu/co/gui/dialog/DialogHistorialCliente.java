@@ -135,7 +135,9 @@ public class DialogHistorialCliente extends JDialog {
 			String fecha = venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA)
 					: "";
 			String hora = venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "";
-			String formaPago = venta.getFormaPago() != null ? venta.getFormaPago() : "";
+			String formaPago = venta.getFormaPago() != null
+			        ? venta.getFormaPago().toString()
+			        : "";
 			String impuestos = formatearMoneda(venta.getImpuestos());
 			String total = formatearMoneda(venta.getTotal());
 			String estado = venta.getEstado() != null ? venta.getEstado().name() : "";

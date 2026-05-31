@@ -15,6 +15,8 @@ public interface DevolucionVentaDAO {
 
 	String obtenerUltimoCodigoDevolucion() throws Exception;
 
+	int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception;
+
 	List<DevolucionVenta> buscarPorFactura(String numeroFactura) throws Exception;
 
 	List<DevolucionVenta> listarDevoluciones() throws Exception;

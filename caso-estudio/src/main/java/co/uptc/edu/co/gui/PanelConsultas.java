@@ -1,6 +1,12 @@
 package co.uptc.edu.co.gui;
 
 import java.text.ParseException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -9,11 +15,15 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
+import co.uptc.edu.co.modelo.Venta;
+
 public class PanelConsultas extends PanelCentral {
 
     private static final String TITULO_PANEL = "Gestión de Consultas";
     private static final String TEXTO_TOTAL_INICIAL = "Resultados encontrados: 0";
     private static final String TEXTO_TOTAL = "Resultados encontrados: ";
+    private static final DateTimeFormatter FORMATO_FECHA_ENTRADA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
     private static final String CONSULTA_VENTAS_FECHA = "Ventas por fecha";
     private static final String CONSULTA_COMPRAS_PROVEEDOR = "Compras por proveedor";
@@ -63,6 +73,16 @@ public class PanelConsultas extends PanelCentral {
         configurarPanelConsultas();
         agregarComponentesConsultas();
         actualizarFiltros();
+    }
+
+    private static DecimalFormat crearFormatoMoneda() {
+        DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+        simbolos.setGroupingSeparator('.');
+        simbolos.setDecimalSeparator(',');
+
+        DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+        formato.setGroupingUsed(true);
+        return formato;
     }
 
     @Override
@@ -167,7 +187,43 @@ public class PanelConsultas extends PanelCentral {
     }
 
     public void inicializarEventos(Evento evento) {
-        // por hacer
+        botonConsultar.setActionCommand(Evento.CMD_CONSULTAR_SISTEMA);
+        botonConsultar.addActionListener(evento);
+    }
+
+    public boolean esConsultaVentasPorFecha() {
+        return CONSULTA_VENTAS_FECHA.equals(comboTipoConsulta.getSelectedItem());
+    }
+
+    public LocalDate obtenerFechaConsulta() throws Exception {
+        String textoFecha = campoFecha.getText().trim();
+
+        if (textoFecha.contains("_")) {
+            throw new Exception("Debe ingresar una fecha completa con formato dd/MM/yyyy.");
+        }
+
+        try {
+            return LocalDate.parse(textoFecha, FORMATO_FECHA_ENTRADA);
+        } catch (DateTimeParseException e) {
+            throw new Exception("La fecha debe tener formato dd/MM/yyyy.");
+        }
+    }
+
+    public void cargarVentasPorFecha(List<Venta> ventas) {
+        limpiarTabla();
+        actualizarColumnas(COLUMNAS_VENTAS_FECHA);
+
+        for (Venta venta : ventas) {
+            Object[] fila = {
+                    venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate() : "",
+                    venta.getCliente(),
+                    FORMATO_MONEDA.format(venta.getTotal()),
+                    FORMATO_MONEDA.format(venta.getImpuestos())
+            };
+            modeloTabla.addRow(fila);
+        }
+
+        actualizarTextoTotal(TEXTO_TOTAL, ventas.size());
     }
 
     private void configurarVentasPorFecha() {

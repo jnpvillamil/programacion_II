@@ -328,7 +328,7 @@ public class DialogVenta extends JDialog {
 			throw new Exception("Debe agregar al menos un producto.");
 		}
 
-		return new Venta(numeroFactura, fechaHora, cliente.toString(), detalles, 0, formaPago.toString(), 0, 0,
+		return new Venta(numeroFactura, fechaHora, cliente.toString(), detalles, 0, formaPago, 0, 0,
 				EstadoVentaEnum.ACTIVA);
 	}
 
@@ -369,14 +369,8 @@ public class DialogVenta extends JDialog {
 			double subtotal = cantidad * precioUnitario;
 			double iva = subtotal * IVA;
 
-			Object[] fila = {
-					producto.getCodigoProducto(),
-					producto.getNombreProducto(),
-					cantidad,
-					precioUnitario,
-					iva,
-					subtotal
-			};
+			Object[] fila = { producto.getCodigoProducto(), producto.getNombreProducto(), cantidad, precioUnitario, iva,
+					subtotal };
 
 			modeloTabla.addRow(fila);
 			actualizarResumen();
