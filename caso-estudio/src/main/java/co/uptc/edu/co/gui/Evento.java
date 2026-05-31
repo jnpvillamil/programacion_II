@@ -104,6 +104,7 @@ public class Evento implements ActionListener {
 
 	// CONSTANTES DE COMANDOS - CONSULTAS
 	public static final String CMD_CONSULTAR_SISTEMA = "ConsultarSistema";
+	public static final String CMD_GENERAR_REPORTE_PRODUCTOS_MAS_VENDIDOS = "GenerarReporteProductosMasVendidos";
 
 	// ATRIBUTOS
 	private VentanaPrincipal ventana;
@@ -171,6 +172,10 @@ public class Evento implements ActionListener {
 		}
 
 		if (manejarEventosContabilidad(comando)) {
+			return;
+		}
+
+		if (manejarEventosReportes(comando)) {
 			return;
 		}
 
@@ -1084,6 +1089,47 @@ public class Evento implements ActionListener {
 
 		default:
 			return false;
+		}
+	}
+
+	private boolean manejarEventosReportes(String comando) {
+		switch (comando) {
+		case CMD_GENERAR_REPORTE_PRODUCTOS_MAS_VENDIDOS:
+			generarReporteProductosMasVendidos();
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
+	private void generarReporteProductosMasVendidos() {
+		try {
+			PanelReportes panelReportes = ventana.getPanelReportes();
+
+			if (!panelReportes.esReporteProductosMasVendidos()) {
+				throw new Exception("Seleccione 'Productos más vendidos' en el tipo de reporte.");
+			}
+
+			LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
+			LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
+
+			// Si hay una fila seleccionada, generar JSON solo para ese producto
+			if (panelReportes.haySeleccion()) {
+				String codigoSeleccionado = panelReportes.obtenerTextoSeleccionado(0);
+				if (codigoSeleccionado == null || codigoSeleccionado.isBlank()) {
+					throw new Exception("Debe seleccionar un producto valido en la tabla.");
+				}
+				String rutaReporte = gestionVenta.generarReporteProducto(codigoSeleccionado, fechaInicio, fechaFin);
+				mostrarInformacion("Reporte JSON del producto generado en: " + rutaReporte);
+				return;
+			}
+
+			// Si no hay selección, obtener y mostrar el resumen agregado por producto
+			java.util.List<?> resumenDTOs = gestionVenta.obtenerResumenProductosMasVendidos(fechaInicio, fechaFin);
+			panelReportes.mostrarResumenProductos((java.util.List) resumenDTOs);
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
 		}
 	}
 

@@ -1,6 +1,11 @@
 package co.uptc.edu.co.gui;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.text.ParseException;
+import java.util.List;
+
+import co.uptc.edu.co.modelo.ResumenProductoDTO;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -10,6 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
 public class PanelReportes extends PanelCentral {
+
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private static final String TITULO_PANEL = "Gestión de Reportes";
     private static final String TEXTO_TOTAL_INICIAL = "Registros del reporte: 0";
@@ -192,7 +199,8 @@ public class PanelReportes extends PanelCentral {
     }
 
     public void inicializarEventos(Evento evento) {
-       // por hacer
+		botonGenerar.setActionCommand(Evento.CMD_GENERAR_REPORTE_PRODUCTOS_MAS_VENDIDOS);
+		botonGenerar.addActionListener(evento);
     }
 
     private void configurarVentasDiarias() {
@@ -265,6 +273,44 @@ public class PanelReportes extends PanelCentral {
             return new JFormattedTextField(mascara);
         } catch (ParseException e) {
             return new JFormattedTextField();
+        }
+    }
+
+    public boolean esReporteProductosMasVendidos() {
+        Object seleccionado = comboTipoReporte.getSelectedItem();
+        return seleccionado != null && REPORTE_PRODUCTOS_MAS_VENDIDOS.equals(seleccionado.toString());
+    }
+
+    public LocalDate obtenerFechaInicioReporte() throws Exception {
+        return parsearFecha(campoFechaInicio.getText().trim());
+    }
+
+    public LocalDate obtenerFechaFinReporte() throws Exception {
+        return parsearFecha(campoFechaFin.getText().trim());
+    }
+
+    public void mostrarResumenProductos(List<ResumenProductoDTO> resumenes) {
+        limpiarTabla();
+        if (resumenes == null) {
+            actualizarTextoTotal(TEXTO_TOTAL, 0);
+            return;
+        }
+
+        for (ResumenProductoDTO r : resumenes) {
+            modeloTabla.addRow(new Object[] { r.getCodigoProducto(), r.getNombreProducto(), r.getCantidadVendida() });
+        }
+        actualizarTextoTotal(TEXTO_TOTAL, resumenes.size());
+    }
+
+    private LocalDate parsearFecha(String texto) throws Exception {
+        if (texto == null || texto.isBlank() || texto.contains("_")) {
+            return null;
+        }
+
+        try {
+            return LocalDate.parse(texto, FORMATO_FECHA);
+        } catch (Exception e) {
+            throw new Exception("La fecha debe tener formato dd/MM/yyyy.");
         }
     }
 }

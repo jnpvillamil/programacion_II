@@ -219,6 +219,10 @@ public class VentanaPrincipal extends JFrame {
 		return panelConsultas;
 	}
 
+	public PanelReportes getPanelReportes() {
+		return panelReportes;
+	}
+
 	public static void main(String[] args) {
 		VentanaPrincipal ventana = new VentanaPrincipal();
 		ventana.setVisible(true);
