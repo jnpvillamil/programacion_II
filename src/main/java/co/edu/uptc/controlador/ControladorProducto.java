@@ -41,7 +41,7 @@ public class ControladorProducto {
        for (Producto p : gestionProducto.listarTodos()) {
            if (p.isActivo()) { // Solo mostramos los activos en la tabla
                String alerta = p.getStockActual() <= p.getStockMinimo() ? "¡BAJO STOCK!" : "Normal";
-               resumen.add(new ProductoResumenDTO(p.getCodigoInterno(), p.getNombreProducto(),
+               resumen.add(new ProductoResumenDTO(p.getCodigoInterno(), p.getNombre(),
                            p.getCategoria().name(), p.getPrecioVenta(), p.getStockActual(), alerta));
            }
        }
