@@ -187,5 +187,41 @@
     "valor": 3420.0,
     "descripcion": "IVA venta factura FACT-3",
     "referenciaFactura": "FACT-3"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Caja",
+    "valor": 24000.0,
+    "descripcion": "Venta factura FACT-1",
+    "referenciaFactura": "FACT-1"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Ingresos por ventas",
+    "valor": 24000.0,
+    "descripcion": "Venta factura FACT-1",
+    "referenciaFactura": "FACT-1"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Inventario",
+    "valor": 12000.0,
+    "descripcion": "Compra factura COMP-1",
+    "referenciaFactura": "COMP-1"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Proveedores",
+    "valor": 12000.0,
+    "descripcion": "Compra factura COMP-1",
+    "referenciaFactura": "COMP-1"
   }
 ]

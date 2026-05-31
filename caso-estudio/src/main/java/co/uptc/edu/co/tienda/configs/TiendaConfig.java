@@ -79,7 +79,7 @@ public class TiendaConfig {
         gestProducto = new GestionProducto(iProducto);
 
         // Compra
-        iCompra = new LocalCompra();
+        iCompra = new SqlCompra();
         gestCompra = new GestionCompra(iCompra);
 
         // Venta
