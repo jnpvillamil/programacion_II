@@ -9,9 +9,7 @@ import java.awt.Insets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,8 +21,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import co.uptc.edu.co.modelo.DetalleVenta;
-import co.uptc.edu.co.modelo.DevolucionVenta;
+import co.uptc.edu.co.modelo.DetalleVentaDevolucionDTO;
 import co.uptc.edu.co.modelo.Venta;
 
 public class DialogDetalleVenta extends JDialog {
@@ -92,8 +89,8 @@ public class DialogDetalleVenta extends JDialog {
 
 		modeloTabla = new DefaultTableModel(
 
-				new Object[] { "Producto", "Vendido", "Devuelto", "Pendiente", "Precio Unitario", "Impuestos",
-						"Subtotal" }, 0) {
+				new Object[] { "Producto", "Vendido", "Devuelto", "Pendiente", "Precio Unitario",
+						"Subtotal Original", "Valor Devuelto", "Total Actual" }, 0) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -106,10 +103,20 @@ public class DialogDetalleVenta extends JDialog {
 	}
 
 	private void configurarDialogo() {
-		setSize(700, 480);
+		setSize(1050, 600);
 		setLocationRelativeTo(getOwner());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
+		tablaDetalle.setRowHeight(25);
+		tablaDetalle.getTableHeader().setReorderingAllowed(false);
+		tablaDetalle.getColumnModel().getColumn(0).setPreferredWidth(170);
+		tablaDetalle.getColumnModel().getColumn(1).setPreferredWidth(70);
+		tablaDetalle.getColumnModel().getColumn(2).setPreferredWidth(75);
+		tablaDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);
+		tablaDetalle.getColumnModel().getColumn(4).setPreferredWidth(115);
+		tablaDetalle.getColumnModel().getColumn(5).setPreferredWidth(135);
+		tablaDetalle.getColumnModel().getColumn(6).setPreferredWidth(125);
+		tablaDetalle.getColumnModel().getColumn(7).setPreferredWidth(115);
 	}
 
 	private void agregarComponentes() {
@@ -153,13 +160,13 @@ public class DialogDetalleVenta extends JDialog {
 		panelDatos.add(campoFormaPago, gbc);
 
 		gbc.gridx = 2;
-		panelDatos.add(new JLabel("Impuestos:"), gbc);
+		panelDatos.add(new JLabel("Impuestos Originales:"), gbc);
 		gbc.gridx = 3;
 		panelDatos.add(campoImpuestos, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 3;
-		panelDatos.add(new JLabel("Total:"), gbc);
+		panelDatos.add(new JLabel("Total Original:"), gbc);
 		gbc.gridx = 1;
 		panelDatos.add(campoTotal, gbc);
 
@@ -213,7 +220,7 @@ public class DialogDetalleVenta extends JDialog {
 		cargarVenta(venta, List.of());
 	}
 
-	public void cargarVenta(Venta venta, List<DevolucionVenta> devoluciones) {
+	public void cargarVenta(Venta venta, List<DetalleVentaDevolucionDTO> detallesResumen) {
 		cargarVenta(venta.getNumeroFactura(),
 				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
 				venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "",
@@ -227,59 +234,27 @@ public class DialogDetalleVenta extends JDialog {
 		campoMotivoAnulacion.setText(venta.getMotivoAnulacion() != null ? venta.getMotivoAnulacion() : "");
 
 		limpiarTabla();
-		Map<String, Integer> cantidadesDevueltas = agruparCantidadesDevueltas(devoluciones);
 
-		if (venta.getDetalles() != null) {
-			for (DetalleVenta detalle : venta.getDetalles()) {
-				agregarDetalle(detalle, cantidadesDevueltas);
+		if (detallesResumen != null) {
+			for (DetalleVentaDevolucionDTO detalle : detallesResumen) {
+				agregarDetalle(detalle);
 			}
 		}
 	}
 
-	private Map<String, Integer> agruparCantidadesDevueltas(List<DevolucionVenta> devoluciones) {
-		Map<String, Integer> cantidadesDevueltas = new HashMap<>();
-
-		if (devoluciones == null) {
-			return cantidadesDevueltas;
-		}
-
-		for (DevolucionVenta devolucion : devoluciones) {
-			if (devolucion == null || devolucion.getCodigoProducto() == null) {
-				continue;
-			}
-
-			cantidadesDevueltas.merge(devolucion.getCodigoProducto(), devolucion.getCantidadDevuelta(), Integer::sum);
-		}
-
-		return cantidadesDevueltas;
-	}
-
-	private void agregarDetalle(DetalleVenta detalle, Map<String, Integer> cantidadesDevueltas) {
-		String producto = detalle.getProducto().getNombreProducto();
-
-		if (producto == null || producto.trim().isEmpty()) {
-			producto = detalle.getProducto().getCodigoProducto();
-		}
-
-		String codigoProducto = detalle.getProducto() != null ? detalle.getProducto().getCodigoProducto() : "";
-		int cantidadVendida = detalle.getCantidad();
-		int cantidadDevuelta = cantidadesDevueltas.getOrDefault(codigoProducto, 0);
-		int cantidadPendiente = Math.max(0, cantidadVendida - cantidadDevuelta);
-
-		double impuestoDetalle = detalle.getProducto() != null && detalle.getProducto().isAplicaIva()
-				? detalle.getSubtotal() * 0.19
-				: 0;
-
-		agregarDetalle(producto, String.valueOf(cantidadVendida), String.valueOf(cantidadDevuelta),
-				String.valueOf(cantidadPendiente), formatearMoneda(detalle.getPrecioUnitario()),
-				formatearMoneda(impuestoDetalle), formatearMoneda(detalle.getSubtotal()));
+	private void agregarDetalle(DetalleVentaDevolucionDTO detalle) {
+		agregarDetalle(detalle.getNombreProducto(), String.valueOf(detalle.getCantidadVendida()),
+				String.valueOf(detalle.getCantidadDevuelta()), String.valueOf(detalle.getCantidadPendiente()),
+				formatearMoneda(detalle.getPrecioUnitario()), formatearMoneda(detalle.getSubtotalOriginal()),
+				formatearMoneda(detalle.getTotalDevuelto()), formatearMoneda(detalle.getTotalPendiente()));
 	}
 
 	public void agregarDetalle(String producto, String cantidadVendida, String cantidadDevuelta,
-			String cantidadPendiente, String precioUnitario, String impuestos, String subtotal) {
+			String cantidadPendiente, String precioUnitario, String subtotalOriginal, String valorDevuelto,
+			String totalActual) {
 		modeloTabla.addRow(
 				new Object[] { producto, cantidadVendida, cantidadDevuelta, cantidadPendiente, precioUnitario,
-						impuestos, subtotal });
+						subtotalOriginal, valorDevuelto, totalActual });
 	}
 
 	public void limpiarTabla() {

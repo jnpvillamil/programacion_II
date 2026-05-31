@@ -9,6 +9,8 @@ import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.CompraDAO;
 import co.uptc.edu.co.interfaces.IGestionFactura;
+import co.uptc.edu.co.interfaces.IGestionReporte;
+import co.uptc.edu.co.interfaces.IGestionConsultas;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
 import co.uptc.edu.co.interfaces.FacturaDAO;
@@ -22,12 +24,14 @@ import co.uptc.edu.co.interfaces.VentaDAO;
 import co.uptc.edu.co.negocio.GestionCliente;
 import co.uptc.edu.co.negocio.GestionCompra;
 import co.uptc.edu.co.negocio.GestionContabilidad;
+import co.uptc.edu.co.negocio.GestionConsultas;
 import co.uptc.edu.co.negocio.GestionDevolucionVenta;
 import co.uptc.edu.co.negocio.GestionProducto;
 import co.uptc.edu.co.negocio.GestionProveedor;
 import co.uptc.edu.co.negocio.GestionVenta;
 import co.uptc.edu.co.negocio.GestionInventario;
 import co.uptc.edu.co.negocio.GestionFactura;
+import co.uptc.edu.co.negocio.GestionReporte;
 import co.uptc.edu.co.persistencia.ClienteBDDAO;
 import co.uptc.edu.co.persistencia.ComprasBDDAO;
 import co.uptc.edu.co.persistencia.DevolucionVentaBDDAO;
@@ -37,8 +41,6 @@ import co.uptc.edu.co.persistencia.MovimientoInventarioBDDAO;
 import co.uptc.edu.co.persistencia.ProductoBDDAO;
 import co.uptc.edu.co.persistencia.ProveedorBDDAO;
 import co.uptc.edu.co.persistencia.VentaBDDAO;
-import java.sql.Connection;
-import co.uptc.edu.co.conexion.ConexionBD;
 
 public class TiendaConfig {
 
@@ -50,6 +52,8 @@ public class TiendaConfig {
 	private IGestionCompra gestionCompra;
 	private IGestionDevolucionVenta gestionDevolucionVenta;
 	private IGestionFactura gestionFactura;
+	private IGestionReporte gestionReporte;
+	private IGestionConsultas gestionConsultas;
 	private IGestionContabilidad gestionContabilidad;
 
 	public TiendaConfig() {
@@ -75,6 +79,8 @@ public class TiendaConfig {
 		gestionContabilidad = new GestionContabilidad(movimientoContableDAO);
 		
 		gestionVenta = new GestionVenta(ventaDAO, gestionInventario, gestionContabilidad);
+		gestionReporte = new GestionReporte(ventaDAO);
+		gestionConsultas = new GestionConsultas(ventaDAO);
 		gestionDevolucionVenta = new GestionDevolucionVenta(ventaDAO, devolucionVentaDAO, gestionInventario,
 				gestionContabilidad);
 
@@ -115,6 +121,14 @@ public class TiendaConfig {
 
 	public IGestionFactura getGestionFactura() {
 		return gestionFactura;
+	}
+
+	public IGestionReporte getGestionReporte() {
+		return gestionReporte;
+	}
+
+	public IGestionConsultas getGestionConsultas() {
+		return gestionConsultas;
 	}
 
 	public IGestionContabilidad getGestionContabilidad() {

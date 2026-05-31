@@ -28,6 +28,7 @@ import co.uptc.edu.co.gui.dialog.DialogVenta;
 import co.uptc.edu.co.interfaces.IGestionCliente;
 import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
+import co.uptc.edu.co.interfaces.IGestionConsultas;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.IGestionProducto;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
@@ -35,11 +36,13 @@ import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.interfaces.IGestionFactura;
+import co.uptc.edu.co.interfaces.IGestionReporte;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
+import co.uptc.edu.co.modelo.ResumenProductoDTO;
 import co.uptc.edu.co.modelo.Venta;
 
 public class Evento implements ActionListener {
@@ -115,6 +118,8 @@ public class Evento implements ActionListener {
 	private IGestionCompra gestionCompra;
 	private IGestionDevolucionVenta gestionDevolucionVenta;
 	private IGestionFactura gestionFactura;
+	private IGestionReporte gestionReporte;
+	private IGestionConsultas gestionConsultas;
 	private IGestionContabilidad gestionContabilidad;
 	private IGestionInventario gestionInventario;
 
@@ -128,6 +133,8 @@ public class Evento implements ActionListener {
 		this.gestionCompra = config.getGestionCompra();
 		this.gestionDevolucionVenta = config.getGestionDevolucionVenta();
 		this.gestionFactura = config.getGestionFactura();
+		this.gestionReporte = config.getGestionReporte();
+		this.gestionConsultas = config.getGestionConsultas();
 		this.gestionContabilidad = config.getGestionContabilidad();
 		this.gestionInventario = config.getGestionInventario();
 	}
@@ -551,45 +558,12 @@ public class Evento implements ActionListener {
 
 			DialogHistorialCliente dialog = new DialogHistorialCliente(ventana, this);
 			dialog.cargarCliente(cliente.getCodigo(), cliente.getNombre());
-			dialog.cargarHistorial(filtrarVentasDelCliente(cliente));
+			dialog.cargarHistorial(gestionVenta.obtenerVentasPorCliente(cliente));
 			dialog.setVisible(true);
 
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
 		}
-	}
-
-	private java.util.List<Venta> filtrarVentasDelCliente(Cliente cliente) {
-		java.util.List<Venta> ventasDelCliente = new java.util.ArrayList<>();
-		String codigoCliente = cliente.getCodigo() != null ? cliente.getCodigo().trim() : "";
-		String nombreCliente = cliente.getNombre() != null ? cliente.getNombre().trim() : "";
-		String clienteRegistrado = cliente.toString();
-
-		for (Venta venta : gestionVenta.obtenerVentas()) {
-			String codigoVenta = venta.getCodigoCliente();
-			if (codigoVenta != null && codigoVenta.trim().equalsIgnoreCase(codigoCliente)) {
-				ventasDelCliente.add(venta);
-				continue;
-			}
-
-			String clienteVenta = venta.getCliente();
-
-			if (clienteVenta == null) {
-				continue;
-			}
-
-			String clienteNormalizado = clienteVenta.trim();
-			boolean coincidePorCodigo = !codigoCliente.isEmpty()
-					&& clienteNormalizado.toLowerCase().contains(codigoCliente.toLowerCase());
-			boolean coincidePorNombre = !nombreCliente.isEmpty()
-					&& clienteNormalizado.toLowerCase().contains(nombreCliente.toLowerCase());
-
-			if (clienteNormalizado.equalsIgnoreCase(clienteRegistrado) || coincidePorCodigo || coincidePorNombre) {
-				ventasDelCliente.add(venta);
-			}
-		}
-
-		return ventasDelCliente;
 	}
 
 	private void abrirDetalleVentaDesdeHistorial(ActionEvent e) {
@@ -608,7 +582,7 @@ public class Evento implements ActionListener {
 			}
 
 			DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
-			dialog.cargarVenta(venta, gestionDevolucionVenta.obtenerDevolucionesPorFactura(venta.getNumeroFactura()));
+			dialog.cargarVenta(venta, gestionDevolucionVenta.obtenerResumenDetalleVenta(venta));
 			dialog.setVisible(true);
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
@@ -794,7 +768,7 @@ public class Evento implements ActionListener {
 	}
 
 	private void abrirDialogoNuevaVenta() {
-		DialogVenta dialog = new DialogVenta(ventana, this);
+		DialogVenta dialog = new DialogVenta(ventana, this, gestionVenta);
 		dialog.cargarNumeroFactura(gestionVenta.generarNumeroFactura());
 		dialog.cargarClientes(gestionCliente.obtenerClientes());
 		dialog.cargarProductos(gestionProducto.obtenerProductos());
@@ -894,7 +868,7 @@ public class Evento implements ActionListener {
 			Venta venta = obtenerVentaSeleccionada();
 
 			DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
-			dialog.cargarVenta(venta, gestionDevolucionVenta.obtenerDevolucionesPorFactura(venta.getNumeroFactura()));
+			dialog.cargarVenta(venta, gestionDevolucionVenta.obtenerResumenDetalleVenta(venta));
 			dialog.setVisible(true);
 
 		} catch (Exception ex) {
@@ -1126,14 +1100,15 @@ public class Evento implements ActionListener {
 				if (codigoSeleccionado == null || codigoSeleccionado.isBlank()) {
 					throw new Exception("Debe seleccionar un producto valido en la tabla.");
 				}
-				String rutaReporte = gestionVenta.generarReporteProducto(codigoSeleccionado, fechaInicio, fechaFin);
+				String rutaReporte = gestionReporte.generarReporteProducto(codigoSeleccionado, fechaInicio, fechaFin);
 				mostrarInformacion("Reporte JSON del producto generado en: " + rutaReporte);
 				return;
 			}
 
 			// Si no hay selección, obtener y mostrar el resumen agregado por producto
-			java.util.List<?> resumenDTOs = gestionVenta.obtenerResumenProductosMasVendidos(fechaInicio, fechaFin);
-			panelReportes.mostrarResumenProductos((java.util.List) resumenDTOs);
+			java.util.List<ResumenProductoDTO> resumenDTOs = gestionReporte.obtenerResumenProductosMasVendidos(
+					fechaInicio, fechaFin);
+			panelReportes.mostrarResumenProductos(resumenDTOs);
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
 		}
@@ -1156,7 +1131,7 @@ public class Evento implements ActionListener {
 
 			if (panelConsultas.esConsultaVentasPorFecha()) {
 				LocalDate fecha = panelConsultas.obtenerFechaConsulta();
-				panelConsultas.cargarVentasPorFecha(gestionVenta.obtenerVentasPorFecha(fecha));
+				panelConsultas.cargarVentasPorFecha(gestionConsultas.obtenerVentasPorFecha(fecha));
 			}
 
 		} catch (Exception ex) {

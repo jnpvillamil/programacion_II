@@ -1,7 +1,10 @@
 package co.uptc.edu.co.negocio;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
@@ -10,11 +13,14 @@ import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.VentaDAO;
 import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.DetalleVentaDevolucionDTO;
 import co.uptc.edu.co.modelo.DevolucionVenta;
+import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
 public class GestionDevolucionVenta implements IGestionDevolucionVenta {
+	private static final double IVA = 0.19;
 
 	private final VentaDAO ventaDAO;
 	private final DevolucionVentaDAO devolucionVentaDAO;
@@ -82,7 +88,7 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		DevolucionVenta devolucion = crearDevolucion(venta, detalleDevuelto, cantidad, motivo.trim());
 		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
 		double ivaDevuelto = detalleDevuelto.getProducto() != null && detalleDevuelto.getProducto().isAplicaIva()
-				? subtotalDevuelto * 0.19
+				? subtotalDevuelto * IVA
 				: 0;
 
 		EstadoVentaEnum nuevoEstado = calcularEstadoDespuesDeDevolucion(venta, codigoProducto, cantidad);
@@ -109,6 +115,31 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		}
 
 		return devolucionVentaDAO.buscarPorCodigo(codigoDevolucion.trim());
+	}
+
+	@Override
+	public List<DetalleVentaDevolucionDTO> obtenerResumenDetalleVenta(Venta venta) throws Exception {
+		if (venta == null) {
+			throw new Exception("La venta es obligatoria para construir el resumen.");
+		}
+
+		if (venta.getNumeroFactura() == null || venta.getNumeroFactura().trim().isEmpty()) {
+			throw new Exception("El numero de factura es obligatorio para construir el resumen.");
+		}
+
+		List<DevolucionVenta> devoluciones = devolucionVentaDAO.buscarPorFactura(venta.getNumeroFactura());
+		Map<String, Integer> cantidadesDevueltas = agruparCantidadesDevueltas(devoluciones);
+		List<DetalleVentaDevolucionDTO> resumen = new ArrayList<>();
+
+		if (venta.getDetalles() == null) {
+			return resumen;
+		}
+
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			resumen.add(construirResumenDetalle(detalle, cantidadesDevueltas));
+		}
+
+		return resumen;
 	}
 
 	@Override
@@ -159,6 +190,71 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 
 	private int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
 		return devolucionVentaDAO.obtenerCantidadDevuelta(numeroFactura, codigoProducto);
+	}
+
+	private Map<String, Integer> agruparCantidadesDevueltas(List<DevolucionVenta> devoluciones) {
+		Map<String, Integer> cantidadesDevueltas = new HashMap<>();
+
+		if (devoluciones == null) {
+			return cantidadesDevueltas;
+		}
+
+		for (DevolucionVenta devolucion : devoluciones) {
+			if (devolucion == null || devolucion.getCodigoProducto() == null) {
+				continue;
+			}
+
+			cantidadesDevueltas.merge(devolucion.getCodigoProducto(), devolucion.getCantidadDevuelta(), Integer::sum);
+		}
+
+		return cantidadesDevueltas;
+	}
+
+	private DetalleVentaDevolucionDTO construirResumenDetalle(DetalleVenta detalle,
+			Map<String, Integer> cantidadesDevueltas) throws Exception {
+		if (detalle == null || detalle.getProducto() == null) {
+			throw new Exception("El detalle de venta debe tener producto para construir el resumen.");
+		}
+
+		Producto producto = detalle.getProducto();
+		String codigoProducto = producto.getCodigoProducto();
+		String nombreProducto = obtenerNombreProducto(producto);
+		int cantidadVendida = detalle.getCantidad();
+		int cantidadDevuelta = cantidadesDevueltas.getOrDefault(codigoProducto, 0);
+		int cantidadPendiente = Math.max(0, cantidadVendida - cantidadDevuelta);
+		double precioUnitario = detalle.getPrecioUnitario();
+
+		double subtotalOriginal = calcularSubtotal(cantidadVendida, precioUnitario);
+		double impuestosOriginal = calcularImpuesto(producto, subtotalOriginal);
+		double totalOriginal = subtotalOriginal + impuestosOriginal;
+
+		double valorDevuelto = calcularSubtotal(cantidadDevuelta, precioUnitario);
+		double impuestosDevueltos = calcularImpuesto(producto, valorDevuelto);
+		double totalDevuelto = valorDevuelto + impuestosDevueltos;
+
+		double subtotalPendiente = calcularSubtotal(cantidadPendiente, precioUnitario);
+		double impuestoPendiente = calcularImpuesto(producto, subtotalPendiente);
+		double totalPendiente = subtotalPendiente + impuestoPendiente;
+
+		return new DetalleVentaDevolucionDTO(codigoProducto, nombreProducto, cantidadVendida, cantidadDevuelta,
+				cantidadPendiente, precioUnitario, subtotalOriginal, impuestosOriginal, totalOriginal, valorDevuelto,
+				impuestosDevueltos, totalDevuelto, subtotalPendiente, impuestoPendiente, totalPendiente);
+	}
+
+	private String obtenerNombreProducto(Producto producto) {
+		if (producto.getNombreProducto() == null || producto.getNombreProducto().trim().isEmpty()) {
+			return producto.getCodigoProducto();
+		}
+
+		return producto.getNombreProducto();
+	}
+
+	private double calcularSubtotal(int cantidad, double precioUnitario) {
+		return cantidad * precioUnitario;
+	}
+
+	private double calcularImpuesto(Producto producto, double subtotal) {
+		return producto != null && producto.isAplicaIva() ? subtotal * IVA : 0;
 	}
 
 	private EstadoVentaEnum calcularEstadoDespuesDeDevolucion(Venta venta, String codigoProductoDevuelto,

@@ -27,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import co.uptc.edu.co.gui.Evento;
+import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
@@ -36,7 +37,6 @@ import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class DialogVenta extends JDialog {
 
-	private static final double IVA = 0.19;
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
 
@@ -61,13 +61,19 @@ public class DialogVenta extends JDialog {
 	private JButton botonQuitarProducto;
 	private JButton botonGuardar;
 	private JButton botonCancelar;
+	private IGestionVenta gestionVenta;
 
 	public DialogVenta(Frame propietario) {
-		this(propietario, null);
+		this(propietario, null, null);
 	}
 
 	public DialogVenta(Frame propietario, Evento evento) {
+		this(propietario, evento, null);
+	}
+
+	public DialogVenta(Frame propietario, Evento evento, IGestionVenta gestionVenta) {
 		super(propietario, "Registrar Venta", true);
+		this.gestionVenta = gestionVenta;
 		inicializarComponentes();
 		configurarDialogo();
 		agregarComponentes();
@@ -315,20 +321,10 @@ public class DialogVenta extends JDialog {
 		FormaPago formaPago = (FormaPago) comboFormaPago.getSelectedItem();
 		LocalDateTime fechaHora = obtenerFechaHora();
 		List<DetalleVenta> detalles = obtenerDetallesVenta();
+		String codigoCliente = cliente != null ? cliente.getCodigo() : null;
+		String nombreCliente = cliente != null ? cliente.getNombre() : null;
 
-		if (numeroFactura.isEmpty()) {
-			throw new Exception("El numero de factura es obligatorio.");
-		}
-
-		if (cliente == null) {
-			throw new Exception("Debe seleccionar un cliente.");
-		}
-
-		if (detalles.isEmpty()) {
-			throw new Exception("Debe agregar al menos un producto.");
-		}
-
-		return new Venta(numeroFactura, fechaHora, cliente.getCodigo(), cliente.getNombre(), detalles, 0, formaPago, 0, 0,
+		return new Venta(numeroFactura, fechaHora, codigoCliente, nombreCliente, detalles, 0, formaPago, 0, 0,
 				EstadoVentaEnum.ACTIVA);
 	}
 
@@ -358,16 +354,8 @@ public class DialogVenta extends JDialog {
 			int cantidad = convertirEntero(campoCantidad.getText().trim(), "La cantidad debe ser numerica.");
 			double precioUnitario = producto.getPrecioVenta();
 
-			if (cantidad <= 0) {
-				throw new Exception("La cantidad debe ser mayor que cero.");
-			}
-
-			if (precioUnitario <= 0) {
-				throw new Exception("El precio unitario debe ser mayor que cero.");
-			}
-
-			double subtotal = cantidad * precioUnitario;
-			double iva = producto.isAplicaIva() ? subtotal * IVA : 0;
+			double subtotal = obtenerGestionVenta().calcularSubtotalDetalleVenta(producto, cantidad);
+			double iva = obtenerGestionVenta().calcularIvaDetalleVenta(producto, cantidad);
 
 			Object[] fila = { producto.getCodigoProducto(), producto.getNombreProducto(), cantidad, precioUnitario, iva,
 					subtotal };
@@ -418,19 +406,20 @@ public class DialogVenta extends JDialog {
 	}
 
 	private void actualizarResumen() {
-		double subtotal = 0;
-		double iva = 0;
+		try {
+			List<DetalleVenta> detalles = obtenerDetallesVenta();
+			double subtotal = detalles.isEmpty() ? 0 : obtenerGestionVenta().calcularSubtotalVenta(detalles);
+			double iva = detalles.isEmpty() ? 0 : obtenerGestionVenta().calcularImpuestosVenta(detalles);
+			double total = detalles.isEmpty() ? 0 : obtenerGestionVenta().calcularTotalVenta(detalles);
 
-		for (int fila = 0; fila < modeloTabla.getRowCount(); fila++) {
-			subtotal += Double.parseDouble(modeloTabla.getValueAt(fila, 5).toString());
-			iva += Double.parseDouble(modeloTabla.getValueAt(fila, 4).toString());
+			campoSubtotal.setText(String.valueOf(subtotal));
+			campoIva.setText(String.valueOf(iva));
+			campoTotal.setText(String.valueOf(total));
+		} catch (Exception e) {
+			campoSubtotal.setText("");
+			campoIva.setText("");
+			campoTotal.setText("");
 		}
-
-		double total = subtotal + iva;
-
-		campoSubtotal.setText(String.valueOf(subtotal));
-		campoIva.setText(String.valueOf(iva));
-		campoTotal.setText(String.valueOf(total));
 	}
 
 	private void limpiarCamposProducto() {
@@ -457,11 +446,10 @@ public class DialogVenta extends JDialog {
 		}
 	}
 
-	private double convertirDouble(String texto, String mensajeError) throws Exception {
-		try {
-			return Double.parseDouble(texto);
-		} catch (NumberFormatException e) {
-			throw new Exception(mensajeError);
+	private IGestionVenta obtenerGestionVenta() throws Exception {
+		if (gestionVenta == null) {
+			throw new Exception("La gestion de ventas no esta configurada.");
 		}
+		return gestionVenta;
 	}
 }
