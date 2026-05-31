@@ -3,6 +3,7 @@ package co.edu.uptc.tiendaminorista.negocio;
 import java.util.List;
 import co.edu.uptc.tiendaminorista.interfaces.IGestionCliente;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
+import co.edu.uptc.tiendaminorista.modelo.CompasCliente;
 
 public class GestionCliente {
     private IGestionCliente clientes;
@@ -78,4 +79,9 @@ public class GestionCliente {
         }
         return filtrados;
     }
+
+	public List<CompasCliente> listarTodasLasCompras() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

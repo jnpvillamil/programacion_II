@@ -42,7 +42,6 @@ public class PanelCliente extends JPanel {
         JPanel panelBotones = new JPanel();
         panelBotones.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 🟢 CORREGIDO: Vinculados a las constantes correctas de la clase Evento
         JButton btnRegistrar = new JButton("Registrar cliente");
         btnRegistrar.addActionListener(evento);
         btnRegistrar.setActionCommand(Evento.REGISTRARCLIENTE); 
@@ -57,6 +56,12 @@ public class PanelCliente extends JPanel {
         btnHistorial.addActionListener(evento);
         btnHistorial.setActionCommand(Evento.HISTORIALCLIENTE);
         panelBotones.add(btnHistorial);
+
+        JButton btnComprasCliente = new JButton("Compras cliente");
+        btnComprasCliente.addActionListener(evento);
+        btnComprasCliente.setActionCommand(Evento.COMPRASCLI); 
+        panelBotones.add(btnComprasCliente);
+   
 
         add(panelBotones);
 
@@ -88,7 +93,6 @@ public class PanelCliente extends JPanel {
         scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(scrollPane);
 
-        // Listener del Motor de Búsqueda
         Motolcli.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent de) { ejecutarFiltro(); }
@@ -102,7 +106,7 @@ public class PanelCliente extends JPanel {
             private void ejecutarFiltro() {
                 SwingUtilities.invokeLater(() -> {
                     String texto = Motolcli.getText();
-                    // 🟢 CORREGIDO: Acceso seguro a través del controlador sin romper el CardLayout
+                    
                     if (evento != null && evento.getVentana() != null) {
                         evento.getVentana().filtrarClientes(texto);
                     }
