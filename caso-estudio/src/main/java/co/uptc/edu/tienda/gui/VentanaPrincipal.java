@@ -177,6 +177,93 @@ public class VentanaPrincipal extends JFrame {
                     });
 
                     break;
+                    
+                case CAJERO:
+                    remove(pLogin);
+
+                    JPanel panelNorteCajero = new JPanel(new BorderLayout());
+                    JButton btnCerrarSesionCajero = new JButton("Cerrar Sesión");
+                    btnCerrarSesionCajero.setBackground(new Color(192, 57, 43));
+                    btnCerrarSesionCajero.setForeground(Color.WHITE);
+                    btnCerrarSesionCajero.setFocusPainted(false);
+                    JPanel panelCerrarCajero = new JPanel();
+                    panelCerrarCajero.add(btnCerrarSesionCajero);
+                    panelNorteCajero.add(panelCerrarCajero, BorderLayout.EAST);
+                    add(panelNorteCajero, BorderLayout.NORTH);
+                    btnCerrarSesionCajero.addActionListener(e -> cerrarSesion());
+
+                    JPanel panelLateral = new JPanel(new GridLayout(4, 1, 5, 5));
+                    panelLateral.setPreferredSize(new Dimension(165, 0));
+                    panelLateral.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                    panelLateral.setBackground(new Color(52, 73, 94));
+
+                    JButton btnNuevaVenta = new JButton("Nueva Venta");
+                    JButton btnHistorial = new JButton("Historial Ventas");
+                    JButton btnClientesCajero = new JButton("Clientes");
+                    JButton btnHistorialClientes = new JButton("Historial Clientes");
+
+                    for (JButton btn : new JButton[]{btnNuevaVenta, btnHistorial, btnClientesCajero, btnHistorialClientes}) {
+                        btn.setBackground(new Color(52, 73, 94));
+                        btn.setForeground(Color.WHITE);
+                        btn.setFocusPainted(false);
+                        btn.setBorderPainted(false);
+                        btn.setFont(new Font("Arial", Font.BOLD, 13));
+                    }
+
+                    panelLateral.add(btnNuevaVenta);
+                    panelLateral.add(btnHistorial);
+                    panelLateral.add(btnClientesCajero);
+                    panelLateral.add(btnHistorialClientes);
+
+                    add(panelLateral, BorderLayout.WEST);
+
+                    contenedor = new JPanel(new BorderLayout());
+                    add(contenedor, BorderLayout.CENTER);
+
+                    pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
+                    pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
+
+                    contenedor.add(pVenta);
+
+                    this.setSize(1100, 650);
+                    this.setLocationRelativeTo(null);
+                    repaint();
+                    revalidate();
+
+                    btnNuevaVenta.addActionListener(e -> {
+                        contenedor.removeAll();
+                        pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
+                        pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
+                        contenedor.add(pVenta);
+                        contenedor.repaint();
+                        contenedor.revalidate();
+                    });
+
+                    btnHistorial.addActionListener(e -> {
+                        contenedor.removeAll();
+                        pHistorial.refrescar(tiendaConfig.getGestVenta().listarVentas());
+                        contenedor.add(pHistorial);
+                        contenedor.repaint();
+                        contenedor.revalidate();
+                    });
+
+                    btnClientesCajero.addActionListener(e -> {
+                        contenedor.removeAll();
+                        pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
+                        contenedor.add(pCliente);
+                        contenedor.repaint();
+                        contenedor.revalidate();
+                    });
+
+                    btnHistorialClientes.addActionListener(e -> {
+                        contenedor.removeAll();
+                        pHistorialCliente.refrescar(tiendaConfig.getGestVenta().listarVentas());
+                        contenedor.add(pHistorialCliente);
+                        contenedor.repaint();
+                        contenedor.revalidate();
+                    });
+
+                    break;
 
                     case ALMACENISTA:
                         remove(pLogin);

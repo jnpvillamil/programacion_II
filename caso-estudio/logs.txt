@@ -238,3 +238,27 @@ Correo:  admin@correo.com
 Rol:     ADMIN
 Acción:  Inicio de sesión exitoso
 ========================================
+========================================
+Fecha:   2026-05-31T18:04:57.697813500
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T18:05:01.046187800
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T18:05:25.493607500
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T18:08:54.179245900
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
