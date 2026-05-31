@@ -948,5 +948,43 @@
     "cantidad": 2,
     "fechaHora": "2026-05-31T11:04:06.705241200",
     "motivo": "Compra: COMP-1"
+  },
+  {
+    "idMovimiento": 51,
+    "producto": {
+      "codigoProducto": 1,
+      "nombreProducto": "Frijol",
+      "categoria": "viveres",
+      "precioCompra": 6000.0,
+      "precioVenta": 8000.0,
+      "stockActual": 89,
+      "stockMinimo": 20,
+      "stockMaximo": 100,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 10,
+    "fechaHora": "2026-05-31T11:15:43.652665500",
+    "motivo": "Venta: FACT-2"
+  },
+  {
+    "idMovimiento": 52,
+    "producto": {
+      "codigoProducto": 1,
+      "nombreProducto": "Frijol",
+      "categoria": "viveres",
+      "precioCompra": 6000.0,
+      "precioVenta": 8000.0,
+      "stockActual": 99,
+      "stockMinimo": 20,
+      "stockMaximo": 100,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "ENTRADA",
+    "cantidad": 10,
+    "fechaHora": "2026-05-31T11:16:09.828562600",
+    "motivo": "Compra: COMP-2"
   }
 ]

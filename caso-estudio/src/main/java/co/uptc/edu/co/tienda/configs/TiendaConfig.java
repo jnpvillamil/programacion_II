@@ -91,7 +91,7 @@ public class TiendaConfig {
         gestInventario = new GestionInventario(iInventario);
 
         // Contable
-        iContable = new LocalContable();
+        iContable = new SqlContable();
         gestContable = new GestionContable(iContable);
 
         // Reporte — depende de iVenta e iCompra, va de último

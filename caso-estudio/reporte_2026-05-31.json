@@ -1,35 +1,35 @@
 {
   "fechaInicio": "2026-05-31",
   "fechaFin": "2026-05-31",
-  "totalVentas": 9135.0,
-  "totalCompras": 10000.0,
-  "utilidadBruta": -865.0,
+  "totalVentas": 104000.0,
+  "totalCompras": 72000.0,
+  "utilidadBruta": 32000.0,
   "ventasPorFormaPago": [
     {
       "tipo": "EFECTIVO",
-      "valor": 9135.0
+      "valor": 104000.0
     }
   ],
   "productosMasVendidos": [
     {
-      "codigo": 100,
-      "nombre": "arroz",
-      "cantidadVendida": 3
+      "codigo": 1,
+      "nombre": "Frijol",
+      "cantidadVendida": 13
     }
   ],
   "clientesMayorVolumen": [
     {
-      "codigo": 100,
-      "nombre": "DIANA SUAREZ",
-      "totalComprado": 9135.0
+      "codigo": 1,
+      "nombre": "Juan Pablo",
+      "totalComprado": 104000.0
     }
   ],
-  "inventarioValorizado": 1973400.0,
+  "inventarioValorizado": 594000.0,
   "resumenContable": {
-    "ingresos": 9135.0,
-    "egresos": 10000.0,
-    "utilidad": -865.0,
-    "ivaGenerado": 435.0,
+    "ingresos": 104000.0,
+    "egresos": 72000.0,
+    "utilidad": 32000.0,
+    "ivaGenerado": 0.0,
     "ivaDescontable": 0.0
   }
 }
