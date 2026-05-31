@@ -47,9 +47,7 @@ public class GestionProducto {
 
         nuevo.setCodigoProducto(idReal);
 
-        actuales.add(nuevo);
-
-        gestionP.guardar(actuales);
+        gestionP.guardar(nuevo);
     }
 
     public void actualizar(Producto producto) {
@@ -80,6 +78,6 @@ public class GestionProducto {
     }
     
     public void guardarTodos(List<Producto> productos) {
-        gestionP.guardar(productos); // guardar(List) ya existe en IGestionProducto
+        gestionP.guardarTodos(productos); 
     }
 }

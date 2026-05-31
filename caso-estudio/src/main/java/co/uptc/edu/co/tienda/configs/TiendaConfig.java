@@ -75,7 +75,7 @@ public class TiendaConfig {
         gestProveedor = new GestionProveedor(iProveedor);
 
         // Producto
-        iProducto = new LocalProducto();
+        iProducto = new SqlProducto();
         gestProducto = new GestionProducto(iProducto);
 
         // Compra

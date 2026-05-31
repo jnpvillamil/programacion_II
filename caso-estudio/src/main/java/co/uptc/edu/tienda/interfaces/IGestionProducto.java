@@ -5,16 +5,17 @@ import java.util.List;
 import co.uptc.edu.tienda.modelo.Producto;
 
 public interface IGestionProducto {
-
-    public void guardar(List<Producto> productos);
-
-    public void actualizar(Producto producto);
-
-    public void eliminar(int codigoProducto);
-
-    public Producto buscar(int codigoProducto);
-
-    public List<Producto> listar();
+	
+    void guardar(Producto producto);
     
-    public void cambiarEstado(int codigoProducto);
+    void guardarTodos(List<Producto> productos);
+    
+    void actualizar(Producto producto);
+    
+    void eliminar(int codigoProducto);
+    
+    Producto buscar(int codigoProducto);
+    List<Producto> listar();
+    
+    void cambiarEstado(int codigoProducto);
 }

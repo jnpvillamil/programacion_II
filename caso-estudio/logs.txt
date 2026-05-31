@@ -40,3 +40,15 @@ Correo:  cajero@correo.com
 Rol:     CAJERO
 Acción:  Inicio de sesión exitoso
 ========================================
+========================================
+Fecha:   2026-05-31T09:48:02.804737800
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T10:04:12.910805600
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================

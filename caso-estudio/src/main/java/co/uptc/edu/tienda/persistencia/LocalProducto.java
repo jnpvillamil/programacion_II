@@ -24,57 +24,47 @@ public class LocalProducto implements IGestionProducto {
     }
 
     @Override
-    public void guardar(List<Producto> productos) {
-
+    public void guardar(Producto producto) {
+        List<Producto> lista = listar();
+        lista.add(producto);
         try (FileWriter writer = new FileWriter(RUTA)) {
-
-            gson.toJson(productos, writer);
-
-            System.out.println("Productos guardados");
-
+            gson.toJson(lista, writer);
         } catch (IOException e) {
+            System.out.println("Error al guardar producto: " + e.getMessage());
+        }
+    }
 
-            System.out.println(
-                    "Error al guardar en " + RUTA + ": " + e.getMessage());
+    @Override
+    public void guardarTodos(List<Producto> productos) {
+        try (FileWriter writer = new FileWriter(RUTA)) {
+            gson.toJson(productos, writer);
+        } catch (IOException e) {
+            System.out.println("Error al guardar productos: " + e.getMessage());
         }
     }
 
     @Override
     public void actualizar(Producto producto) {
-
         List<Producto> lista = listar();
-
         for (int i = 0; i < lista.size(); i++) {
-
-            if (lista.get(i).getCodigoProducto()
-                    == producto.getCodigoProducto()) {
-
+            if (lista.get(i).getCodigoProducto() == producto.getCodigoProducto()) {
                 lista.set(i, producto);
-
                 break;
             }
         }
-
-        guardar(lista);
+        guardarTodos(lista); // ← cambia guardar por guardarTodos
     }
 
     @Override
     public void eliminar(int codigoProducto) {
-
         List<Producto> lista = listar();
-
         for (int i = 0; i < lista.size(); i++) {
-
-            if (lista.get(i).getCodigoProducto()
-                    == codigoProducto) {
-
-                lista.remove(i);
-
+            if (lista.get(i).getCodigoProducto() == codigoProducto) {
+                lista.get(i).setActivo(false); // ← inactivar, no eliminar físicamente
                 break;
             }
         }
-
-        guardar(lista);
+        guardarTodos(lista); // ← cambia guardar por guardarTodos
     }
 
     @Override
