@@ -6,17 +6,22 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import co.edu.uptc.tiendaminorista.gui.administrador.PanelCompraCliente;
+import co.edu.uptc.tiendaminorista.gui.administrador.PanelHistorialCliente;
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelInicial;
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelRegistrosEmpleados;
 import co.edu.uptc.tiendaminorista.enums.TipoDocumentoEnum;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
+import co.edu.uptc.tiendaminorista.modelo.CompasCliente;
 import co.edu.uptc.tiendaminorista.modelo.Empleado;
 import co.edu.uptc.tiendaminorista.modelo.Proveedor;
+import co.edu.uptc.tiendaminorista.modelo.Producto; 
 import co.edu.uptc.tiendaminorista.negocio.GestionCliente;
 import co.edu.uptc.tiendaminorista.negocio.GestionProducto;
 import co.edu.uptc.tiendaminorista.negocio.GestionProveedor;
 import co.edu.uptc.tiendaminorista.negocio.SistemaSeguridad;
 import co.edu.uptc.tiendaminorista.negocio.GestionEmpleado;
+import co.edu.uptc.tiendaminorista.negocio.GestionCompasCliente; 
 import co.edu.uptc.tiendaminorista.negocio.TiendaConfig;
 
 public class PanelPrincipal extends JFrame {
@@ -29,23 +34,23 @@ public class PanelPrincipal extends JFrame {
     private GestionCliente gestionCliente;
     private GestionProveedor gestionProveedor;
     private GestionProducto gestionProducto;
+    private GestionCompasCliente gestionCompasCliente; 
     private PanelRegistrosEmpleados empleados; 
 
     private SistemaSeguridad seguridad;
     private TiendaConfig tiendaConfig;
 
-    public PanelPrincipal() {
+    private PanelCompraCliente compracliente;
 
+    public PanelPrincipal() {
         seguridad = new SistemaSeguridad();
-        
-      
         this.tiendaConfig = new TiendaConfig();
         
-      
         this.gestionEmpleado = tiendaConfig.getGestionEmpleado();
         this.gestionCliente = tiendaConfig.getGestionCliente();
         this.gestionProveedor = tiendaConfig.getGestionProveedor();
         this.gestionProducto = tiendaConfig.getGestionProducto();
+        this.gestionCompasCliente = new GestionCompasCliente(); 
         
         evento = new Evento(this); 
         empleados = new PanelRegistrosEmpleados(evento);
@@ -137,6 +142,38 @@ public class PanelPrincipal extends JFrame {
     public void mostrarActualizarProveedor() {
         panelInicial.mostrarActualizarProveedor();
     }
+    
+    public void mostrarCompraCliente() {
+        panelInicial.mostrarCompraCliente();
+        
+        if (panelInicial.getPanelCompraCliente() != null) {
+            panelInicial.getPanelCompraCliente().cargarClientesEnCombo(gestionCliente.listarClientes());
+            panelInicial.getPanelCompraCliente().cargarProductosEnCombo(gestionProducto.listarProductos());
+            panelInicial.getPanelCompraCliente().actualizarTablaCompras(gestionCompasCliente.listarTodasLasCompras());
+        }
+    }
+
+    public void ejecutarCompraCliente() {
+        PanelCompraCliente panelCompra = panelInicial.getPanelCompraCliente();
+        if (panelCompra == null) return;
+
+        try {
+            Cliente clienteSel = panelCompra.getClienteSeleccionado();
+            Producto productoSel = panelCompra.getProductoSeleccionado();
+            int cantidad = panelCompra.getCantidad();
+
+            gestionCompasCliente.registrarCompra(clienteSel, productoSel, cantidad);
+
+            JOptionPane.showMessageDialog(this, "Compra registrada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            panelCompra.actualizarTablaCompras(gestionCompasCliente.listarTodasLasCompras());
+            panelCompra.limpiarCampos();
+
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese un número entero válido en la cantidad.", "Error de Datos", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
     public void registrarCliente() {
         try {
@@ -148,14 +185,12 @@ public class PanelPrincipal extends JFrame {
             cliente.setNumeroIdentificacion(panelInicial.getPanelRegistroCliente().getNumeroDoc());
             cliente.setTipoCliente(panelInicial.getPanelRegistroCliente().getTipoCliente());
             
-           
             gestionCliente.agregarCliente(cliente);
             
             JOptionPane.showMessageDialog(this, "Cliente registrado correctamente");
             panelInicial.cargarClientes(gestionCliente.listarClientes());
             mostrarPanelCliente();
         } catch (IllegalArgumentException ex) {
-           
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -189,7 +224,6 @@ public class PanelPrincipal extends JFrame {
             cliente.setNumeroIdentificacion(panelInicial.getPanelActualizarCliente().getNumeroDoc());
             cliente.setTipoCliente(panelInicial.getPanelActualizarCliente().getTipoCliente());
             
-
             gestionCliente.actualizarCliente(cliente);
             
             JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente");
@@ -355,10 +389,33 @@ public class PanelPrincipal extends JFrame {
             panelEmp.cargarEmpleados(gestionEmpleado.listarEmpleados());
             panelEmp.limpiarCampos();
         }
-    }public void filtrarClientes(String texto) {
+    }
+
+    public void filtrarClientes(String texto) {
         List<Cliente> filtrados = gestionCliente.consultarClientes(texto);
-        
-    
         panelInicial.getPanelCliente().cargarClientes(filtrados);
+    }public void mostrarPantallaHistorial() {
+        panelInicial.mostrarPantallaHistorial();
+    }
+
+    public void buscarHistorialCliente() {
+        PanelHistorialCliente panelHistorial = panelInicial.getPanelHistorialCliente();
+        if (panelHistorial == null) return;
+
+        Cliente clienteSel = panelHistorial.getClienteSeleccionado();
+        
+        if (clienteSel == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente válido.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String cedula = clienteSel.getNumeroIdentificacion();
+        java.util.List<CompasCliente> comprasDelCliente = gestionCompasCliente.listarComprasPorCliente(cedula);
+
+        if (comprasDelCliente.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Este cliente no tiene compras registradas.", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        panelHistorial.actualizarTabla(comprasDelCliente);
     }
 }
