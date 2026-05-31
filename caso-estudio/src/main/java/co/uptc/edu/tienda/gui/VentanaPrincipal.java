@@ -11,10 +11,12 @@ import co.uptc.edu.tienda.modelo.DetalleCompra;
 import co.uptc.edu.tienda.modelo.Producto;
 import co.uptc.edu.tienda.modelo.Proveedor;
 import co.uptc.edu.tienda.modelo.ResumenFinanciero;
+import co.uptc.edu.tienda.modelo.Usuario;
 import co.uptc.edu.tienda.modelo.Venta;
 import co.uptc.edu.tienda.modelo.DetalleVenta;
 import co.uptc.edu.tienda.negocio.GestionSeguridad;
 import co.uptc.edu.tienda.negocio.dto.CredencialDto;
+import co.uptc.edu.tienda.persistencia.LogsTxt;
 import co.uptc.edu.tienda.persistencia.TxtFactura;
 
 import java.util.ArrayList;
@@ -55,6 +57,8 @@ public class VentanaPrincipal extends JFrame {
     private Evento evento;
 
     private TiendaConfig tiendaConfig;
+    
+    private Usuario usuarioActual;
 
     public VentanaPrincipal() {
 
@@ -98,9 +102,9 @@ public class VentanaPrincipal extends JFrame {
 
             if (validar != null) {
                 GestionSeguridad moduloSeguridad = tiendaConfig.getGestSeguridad();
-                co.uptc.edu.tienda.modelo.Usuario usuarioLogueado = moduloSeguridad.validarLogueo(validar);
-
-                switch (usuarioLogueado.getRol()) {
+                usuarioActual = moduloSeguridad.validarLogueo(validar);
+                new LogsTxt().registrarLogin(usuarioActual);
+                switch (usuarioActual.getRol()) {
 
                     case ADMIN:
                         remove(pLogin);
@@ -1058,6 +1062,10 @@ public class VentanaPrincipal extends JFrame {
                 opciones,
                 opciones[1]);
         if (respuesta == 0) {
+        	if (usuarioActual != null) {
+        	    new LogsTxt().registrarLogout(usuarioActual);
+        	    usuarioActual = null;
+        	}
             getContentPane().removeAll();
             listaDetalle = new ArrayList<>();
             listaDetalleCompra = new ArrayList<>();

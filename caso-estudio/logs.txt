@@ -1,0 +1,24 @@
+========================================
+Fecha:   2026-05-31T09:01:16.881830900
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T09:06:43.596171200
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T09:14:32.618653700
+Correo:  contador@correo.com
+Rol:     CONTADOR
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T09:14:43.131591200
+Correo:  contador@correo.com
+Rol:     CONTADOR
+Acción:  Cierre de sesión
+========================================
