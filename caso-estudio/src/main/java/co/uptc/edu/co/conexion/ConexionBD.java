@@ -30,12 +30,12 @@ public class ConexionBD {
 		config.setUsername(USUARIO);
 		config.setPassword(PASSWORD);
 		config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		config.setMaximumPoolSize(5);
-		config.setMinimumIdle(1);
+		config.setMaximumPoolSize(8);
+		config.setMinimumIdle(3);
 		config.setConnectionTimeout(10000);
 		config.setIdleTimeout(300000);
-		config.setMaxLifetime(1800000);
-		config.addDataSourceProperty("cachePrepStmts", "true");
+		config.setMaxLifetime(600000);
+		config.addDataSourceProperty("useServerPrepStmts", "true");
 		config.addDataSourceProperty("prepStmtCacheSize", "250");
 		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		return new HikariDataSource(config);
