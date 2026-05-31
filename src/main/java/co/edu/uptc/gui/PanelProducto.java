@@ -2,7 +2,7 @@ package co.edu.uptc.gui;
 
 import co.edu.uptc.controlador.ControladorProducto;
 import co.edu.uptc.dto.ProductoResumenDTO;
-import co.edu.uptc.enums.CategoriaProducto;
+import co.edu.uptc.enums.Categoria;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.utilidades.ConstructorComponentes;
 import javax.swing.*;
@@ -13,7 +13,7 @@ import java.util.List;
 public class PanelProducto extends JPanel {
     private ControladorProducto controlador;
     private JTextField txtCodigo, txtNombre, txtPrecioCompra, txtPrecioVenta, txtStockActual, txtStockMinimo, txtStockMaximo;
-    private JComboBox<CategoriaProducto> cbCategoria;
+    private JComboBox<Categoria> cbCategoria;
     private DefaultTableModel modeloTabla;
     private JTable tablaProductos;
 
@@ -27,6 +27,7 @@ public class PanelProducto extends JPanel {
         
         inicializarFormulario();
         inicializarTabla();
+        actualizarTabla();
     }
 
     private void inicializarFormulario() {
@@ -42,7 +43,7 @@ public class PanelProducto extends JPanel {
 
         txtCodigo = ConstructorComponentes.crearCampoTexto();
         txtNombre = ConstructorComponentes.crearCampoTexto();
-        cbCategoria = new JComboBox<>(CategoriaProducto.values());
+        cbCategoria = new JComboBox<>(Categoria.values());
         txtPrecioCompra = ConstructorComponentes.crearCampoTexto();
         txtPrecioVenta = ConstructorComponentes.crearCampoTexto();
         txtStockActual = ConstructorComponentes.crearCampoTexto();
@@ -110,14 +111,14 @@ public class PanelProducto extends JPanel {
 
     private Producto extraerProductoFormulario() throws NumberFormatException {
         return new Producto(
-            txtCodigo.getText().trim(),
-            txtNombre.getText().trim(),
-            (CategoriaProducto) cbCategoria.getSelectedItem(),
-            Double.parseDouble(txtPrecioCompra.getText().trim()),
-            Double.parseDouble(txtPrecioVenta.getText().trim()),
-            Integer.parseInt(txtStockActual.getText().trim()),
-            Integer.parseInt(txtStockMinimo.getText().trim()),
-            Integer.parseInt(txtStockMaximo.getText().trim())
+            txtNombre.getText().trim(), // nombre
+            txtCodigo.getText().trim(), // codigoInterno
+            Double.parseDouble(txtPrecioCompra.getText().trim()), // precioCompra
+            Double.parseDouble(txtPrecioVenta.getText().trim()), // precioVenta
+            Integer.parseInt(txtStockActual.getText().trim()), // stockActual
+            Integer.parseInt(txtStockMinimo.getText().trim()), // stockMinimo
+            Integer.parseInt(txtStockMaximo.getText().trim()), // stockMaximo
+            (Categoria) cbCategoria.getSelectedItem() // categoria
         );
     }
 
@@ -139,7 +140,7 @@ public class PanelProducto extends JPanel {
             Producto p = controlador.buscarProducto(codigo.trim());
             if (p != null) {
                 txtCodigo.setText(p.getCodigoInterno());
-                txtNombre.setText(p.getNombreProducto());
+                txtNombre.setText(p.getNombre());
                 cbCategoria.setSelectedItem(p.getCategoria());
                 txtPrecioCompra.setText(String.valueOf(p.getPrecioCompra()));
                 txtPrecioVenta.setText(String.valueOf(p.getPrecioVenta()));
