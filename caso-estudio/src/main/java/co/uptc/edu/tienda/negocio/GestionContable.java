@@ -12,13 +12,11 @@ import co.uptc.edu.tienda.modelo.Venta;
 public class GestionContable {
 
     private IGestionContable iContable;
-    private List<MovimientoContable> listaMovimientos;
+    
 
     public GestionContable(IGestionContable iContable) {
         this.iContable = iContable;
-        this.listaMovimientos = iContable.cargar();
-        System.out.println(">>> GestionContable iniciado, movimientos cargados: " 
-            + listaMovimientos.size());
+        
     }
 
     public void registrarVenta(Venta venta) {
@@ -104,7 +102,7 @@ public class GestionContable {
     public List<MovimientoContable> consultarPorCuentaYPeriodo(
             String cuenta, String desde, String hasta) {
         List<MovimientoContable> resultado = new ArrayList<>();
-        for (MovimientoContable m : listaMovimientos) {
+        for (MovimientoContable m : iContable.cargar()) { // ← lee de BD
             boolean cumpleCuenta = cuenta == null || cuenta.isEmpty()
                     || m.getCuentaContable().equalsIgnoreCase(cuenta);
             boolean cumpleDesde = desde == null || desde.isEmpty()
@@ -119,19 +117,14 @@ public class GestionContable {
     }
 
     public List<MovimientoContable> listarMovimientos() {
-        return listaMovimientos;
+        return iContable.cargar();
     }
 
     private void guardar(MovimientoContable m) {
-        System.out.println("  >> guardando: cuenta=" + m.getCuentaContable()
-                + " valor=" + m.getValor()
-                + " tipo=" + m.getTipoMovimiento());
         try {
             iContable.guardar(m);
-            listaMovimientos.add(m);
-            System.out.println("  >> OK - código: " + m.getCodigoTransaccion());
         } catch (Exception e) {
-            System.out.println("  >> ERROR: " + e.getMessage());
+            System.out.println("ERROR al guardar movimiento: " + e.getMessage());
             e.printStackTrace();
         }
     }

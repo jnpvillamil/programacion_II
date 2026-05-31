@@ -24,29 +24,32 @@ public class GestionProveedor {
 	    if (nuevo.getRazonSocial().trim().isEmpty()) {
 	        throw new Exception("La razón social es obligatoria");
 	    }
+	    if (nuevo.getNit().trim().isEmpty()) {
+	        throw new Exception("El NIT es obligatorio");
+	    }
 	    if (nuevo.getTelefonoP() <= 0) {
 	        throw new Exception("El teléfono debe ser un número positivo");
 	    }
+	    gestionP.guardar(nuevo);
+	}
 
-	    // Consecutivo sigue siendo necesario para JSON
-	    // En SQL esto desaparece
-	    List<Proveedor> actuales = gestionP.leerProveedores();
-	    int maxId = 99;
-	    for (Proveedor p : actuales) {
-	        if (p.getCodigoProveedor() > maxId) maxId = p.getCodigoProveedor();
+	public void modificarProveedor(Proveedor proveedor) throws Exception {
+	    Proveedor existente = gestionP.buscar(proveedor.getCodigoProveedor());
+	    if (existente == null) {
+	        throw new Exception("El proveedor no existe");
 	    }
-	    nuevo.setCodigoProveedor(maxId + 1);
-	    Proveedor.setContador(maxId + 1);
+	    gestionP.actualizar(proveedor);
+	}
 
-	    gestionP.guardar(nuevo); //
-	}
-	
-	public void modificarProveedor(Proveedor proveedor) {
-		gestionP.actualizar(proveedor);
-	}
-	
-	public void eliminarProveedor(int proveedor) {
-		gestionP.eliminar(proveedor);
+	public void eliminarProveedor(int codigo) throws Exception {
+	    Proveedor existente = gestionP.buscar(codigo);
+	    if (existente == null) {
+	        throw new Exception("El proveedor no existe");
+	    }
+	    if (existente.getEstado() == EstadoEnum.INACTIVO) {
+	        throw new Exception("El proveedor ya está inactivo");
+	    }
+	    gestionP.eliminar(codigo);
 	}
 	
 	public List<Proveedor> leerProveedores() {

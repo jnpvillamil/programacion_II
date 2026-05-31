@@ -16,43 +16,32 @@ public class GestionCliente {
     }
 
     public void agregarCliente(Cliente nuevo) throws Exception {
-
-        
         if (nuevo.getNombreCompleto().trim().isEmpty()) {
             throw new Exception("El nombre es obligatorio");
         }
-
         if (nuevo.getTelefonoC() <= 0) {
             throw new Exception("El teléfono debe ser un número positivo");
         }
-
-        List<Cliente> actuales = gestionC.leerClientes();
-
-        int maxId = 99;
-
-        if (!actuales.isEmpty()) {
-            for (int i = 0; i < actuales.size(); i++) {
-                if (actuales.get(i).getIdCliente() > maxId) {
-                    maxId = actuales.get(i).getIdCliente();
-                }
-            }
-        }
-
-        int idReal = maxId + 1;
-
-        nuevo.setIdCliente(idReal);
-
-        Cliente.setContador(idReal);
-
-        
+        // BD asigna el ID automáticamente con AUTO_INCREMENT
         gestionC.guardar(nuevo);
     }
 
-    public void modificarCliente(Cliente cliente) {
+    public void modificarCliente(Cliente cliente) throws Exception {
+        Cliente existente = gestionC.buscar(cliente.getIdCliente());
+        if (existente == null) {
+            throw new Exception("El cliente no existe");
+        }
         gestionC.actualizar(cliente);
     }
 
-    public void eliminarCliente(int codigoCliente) {
+    public void eliminarCliente(int codigoCliente) throws Exception {
+        Cliente existente = gestionC.buscar(codigoCliente);
+        if (existente == null) {
+            throw new Exception("El cliente no existe");
+        }
+        if (existente.getEstado() == EstadoEnum.INACTIVO) {
+            throw new Exception("El cliente ya está inactivo");
+        }
         gestionC.eliminar(codigoCliente);
     }
 
@@ -68,12 +57,12 @@ public class GestionCliente {
 	    // 1. Lógica de negocio: ¿Existe el proveedor?
 	    Cliente c = gestionC.buscar(codigo);
 	    if (c == null) {
-	        throw new Exception("El proveedor no existe");
+	        throw new Exception("El cliente no existe");
 	    }
 	    
 	    // 2. ¿Ya está activo? 
 	    if (c.getEstado() == EstadoEnum.ACTIVO) {
-	        throw new Exception("El proveedor ya se encuentra activo");
+	        throw new Exception("El cliente ya se encuentra activo");
 	    }
 
 	    // 3. Mandar a guardar el cambio

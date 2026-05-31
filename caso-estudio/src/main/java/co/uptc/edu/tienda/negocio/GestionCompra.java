@@ -61,6 +61,6 @@ public class GestionCompra {
     }
 
     public List<Compra> listarCompras() {
-        return listaCompras;
+        return iCompra.cargar();
     }
 }

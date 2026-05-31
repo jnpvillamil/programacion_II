@@ -13,31 +13,29 @@ import co.uptc.edu.tienda.enums.EstadoVentaEnum;
 
 public class GestionVenta {
 
-    private List<Venta> listaVentas;
+//    private List<Venta> listaVentas;
     private IGestionVenta iVenta;
     private int consecutivo;
     private static final String PREFIJO_FACTURA = "FACT-";
 
     public GestionVenta(IGestionVenta iVenta) {
         this.iVenta = iVenta;
-        this.listaVentas = iVenta.leerVentas();
-        this.consecutivo = calcularSiguienteConsecutivo(); // ← corregido
+        List<Venta> temp = iVenta.leerVentas();
+        this.consecutivo = calcularSiguienteConsecutivo(temp);
     }
 
     // =====================================
     // CONSECUTIVO SEGURO
     // =====================================
-    private int calcularSiguienteConsecutivo() {
+    private int calcularSiguienteConsecutivo(List<Venta> ventas) {
         int max = 0;
-        for (Venta v : listaVentas) {
+        for (Venta v : ventas) {
             try {
                 String numero = v.getNumeroFactura()
                         .replace(PREFIJO_FACTURA, "");
                 int n = Integer.parseInt(numero);
                 if (n > max) max = n;
-            } catch (Exception e) {
-                // formato inesperado, se ignora
-            }
+            } catch (Exception e) {}
         }
         return max + 1;
     }
@@ -80,7 +78,6 @@ public class GestionVenta {
         venta.setNumeroFactura(PREFIJO_FACTURA + consecutivo++);
         venta.setFechaHora(LocalDateTime.now().toString());
         calcularTotal(venta);
-        listaVentas.add(venta);
         iVenta.guardar(venta);
     }
 
@@ -88,12 +85,7 @@ public class GestionVenta {
     // BUSCAR POR FACTURA
     // =====================================
     public Venta buscarPorFactura(String numeroFactura) {
-        for (Venta v : listaVentas) {
-            if (v.getNumeroFactura().equalsIgnoreCase(numeroFactura)) {
-                return v;
-            }
-        }
-        return null;
+    	return iVenta.buscarPorFactura(numeroFactura);
     }
 
     // =====================================
@@ -105,7 +97,7 @@ public class GestionVenta {
             throw new Exception("Debe ingresar un motivo de anulación");
         }
 
-        Venta venta = buscarPorFactura(numeroFactura);
+        Venta venta = buscarPorFactura(numeroFactura); // ← lee de BD
 
         if (venta == null) {
             throw new Exception("No existe una venta con factura: " + numeroFactura);
@@ -117,29 +109,19 @@ public class GestionVenta {
         venta.setEstado(EstadoVentaEnum.ANULADA);
         venta.setMotivoAnulacion(motivo.trim());
 
-        // Actualizar en memoria
-        for (int i = 0; i < listaVentas.size(); i++) {
-            if (listaVentas.get(i).getNumeroFactura()
-                    .equalsIgnoreCase(numeroFactura)) {
-                listaVentas.set(i, venta);
-                break;
-            }
-        }
-
-        // Persistir
-        iVenta.actualizar(venta);
+        iVenta.actualizar(venta); // ← solo persiste, no toca memoria
     }
 
     // =====================================
     // LISTAR
     // =====================================
     public List<Venta> listarVentas() {
-        return listaVentas;
+        return iVenta.leerVentas();
     }
 
     public List<Venta> listarVentasActivas() {
         List<Venta> activas = new ArrayList<>();
-        for (Venta v : listaVentas) {
+        for (Venta v : iVenta.leerVentas()) {
             if (v.getEstado() == EstadoVentaEnum.ACTIVA) {
                 activas.add(v);
             }
