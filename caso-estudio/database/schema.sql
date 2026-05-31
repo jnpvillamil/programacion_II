@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS productos (
   stockActual INT NOT NULL DEFAULT 0,
   stockMinimo INT NOT NULL DEFAULT 0,
   stockMaximo INT NOT NULL DEFAULT 0,
+  aplicaIva BOOLEAN NOT NULL DEFAULT TRUE,
   estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
   PRIMARY KEY (codigoProducto),
   INDEX idx_productos_estado (estado),
@@ -50,6 +51,7 @@ CREATE TABLE IF NOT EXISTS ventas (
   numeroFactura VARCHAR(30) NOT NULL,
   fechaHora DATETIME NOT NULL,
   cliente VARCHAR(180) NOT NULL,
+  codigoCliente VARCHAR(30) NOT NULL,
   formaPago VARCHAR(30) NOT NULL,
   subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
   impuestos DECIMAL(12,2) NOT NULL DEFAULT 0,
@@ -61,7 +63,11 @@ CREATE TABLE IF NOT EXISTS ventas (
   INDEX idx_ventas_fecha_hora (fechaHora),
   INDEX idx_ventas_estado (estado),
   INDEX idx_ventas_forma_pago (formaPago),
-  INDEX idx_ventas_cliente (cliente)
+  INDEX idx_ventas_cliente (cliente),
+  INDEX idx_ventas_codigo_cliente (codigoCliente),
+  CONSTRAINT fk_ventas_cliente
+    FOREIGN KEY (codigoCliente) REFERENCES clientes (codigoCliente)
+    ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS detalle_ventas (

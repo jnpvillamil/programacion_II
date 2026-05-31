@@ -145,6 +145,10 @@ public class GestionVenta implements IGestionVenta {
 			throw new Exception("El numero de factura es obligatorio");
 		}
 
+		if (venta.getCodigoCliente() == null || venta.getCodigoCliente().trim().isEmpty()) {
+			throw new Exception("El codigo del cliente es obligatorio");
+		}
+
 		if (venta.getCliente() == null || venta.getCliente().trim().isEmpty()) {
 			throw new Exception("El cliente es obligatorio");
 		}
@@ -186,14 +190,18 @@ public class GestionVenta implements IGestionVenta {
 
 	private void calcularTotales(Venta venta) {
 		double subtotal = 0;
+		double impuestos = 0;
 
 		for (DetalleVenta detalle : venta.getDetalles()) {
 			double subtotalDetalle = detalle.getCantidad() * detalle.getPrecioUnitario();
 			detalle.setSubtotal(subtotalDetalle);
 			subtotal += subtotalDetalle;
+
+			if (detalle.getProducto() != null && detalle.getProducto().isAplicaIva()) {
+				impuestos += subtotalDetalle * 0.19;
+			}
 		}
 
-		double impuestos = subtotal * 0.19;
 		double total = subtotal + impuestos;
 
 		venta.setSubTotal(subtotal);

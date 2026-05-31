@@ -19,6 +19,7 @@ import co.uptc.edu.co.gui.Evento;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
+import javax.swing.JCheckBox;
 
 public class DialogProducto extends JDialog {
 
@@ -30,6 +31,7 @@ public class DialogProducto extends JDialog {
 	private JTextField campoStockActual;
 	private JTextField campoStockMinimo;
 	private JTextField campoStockMaximo;
+	private JCheckBox checkAplicaIva;
 
 	private JButton botonGuardar;
 	private JButton botonCancelar;
@@ -66,6 +68,9 @@ public class DialogProducto extends JDialog {
 		botonGuardar.setForeground(Color.WHITE);
 
 		botonCancelar.setBackground(new Color(220, 220, 220));
+		
+		checkAplicaIva = new JCheckBox("Aplica Iva");
+		checkAplicaIva.setSelected(true);
 	}
 
 	private void configurarDialogo() {
@@ -134,6 +139,9 @@ public class DialogProducto extends JDialog {
 
 		gbc.gridy++;
 		panelPrincipal.add(campoStockMaximo, gbc);
+		
+		gbc.gridy++;
+		panelPrincipal.add(checkAplicaIva, gbc);
 
 		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		panelBotones.add(botonGuardar);
@@ -167,6 +175,8 @@ public class DialogProducto extends JDialog {
 		String codigo = campoCodigo.getText().trim();
 		String nombre = campoNombre.getText().trim();
 		CategoriaProductoEnum categoria = (CategoriaProductoEnum) comboCategoria.getSelectedItem();
+		
+		boolean aplicaIva = checkAplicaIva.isSelected();
 
 		String textoPrecioVenta = campoPrecioVenta.getText().trim();
 		String textoPrecioCompra = campoPrecioCompra.getText().trim();
@@ -186,7 +196,7 @@ public class DialogProducto extends JDialog {
 		EstadoEnum estado = modoEdicion ? estadoActual : EstadoEnum.ACTIVO;
 
 		return new Producto(codigo, nombre, categoria, precioCompra, precioVenta, stockActual, stockMinimo, stockMaximo,
-				estado);
+				estado, aplicaIva);
 	}
 
 	private void validarCamposObligatorios(String codigo, String nombre, String precioVenta, String precioCompra,
@@ -247,6 +257,7 @@ public class DialogProducto extends JDialog {
 		campoStockMinimo.setText(String.valueOf(producto.getStockMinimo()));
 		campoStockMaximo.setText(String.valueOf(producto.getStockMaximo()));
 		estadoActual = producto.getEstado();
+		checkAplicaIva.setSelected(producto.isAplicaIva());
 	}
 	
 	public void cargarCodigoGenerado(String codigo) {

@@ -9,6 +9,9 @@ import java.awt.Insets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -21,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.DevolucionVenta;
 import co.uptc.edu.co.modelo.Venta;
 
 public class DialogDetalleVenta extends JDialog {
@@ -88,7 +92,8 @@ public class DialogDetalleVenta extends JDialog {
 
 		modeloTabla = new DefaultTableModel(
 
-				new Object[] { "Producto", "Cantidad", "Precio Unitario", "Impuestos", "Subtotal" }, 0) {
+				new Object[] { "Producto", "Vendido", "Devuelto", "Pendiente", "Precio Unitario", "Impuestos",
+						"Subtotal" }, 0) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -205,6 +210,10 @@ public class DialogDetalleVenta extends JDialog {
 	}
 
 	public void cargarVenta(Venta venta) {
+		cargarVenta(venta, List.of());
+	}
+
+	public void cargarVenta(Venta venta, List<DevolucionVenta> devoluciones) {
 		cargarVenta(venta.getNumeroFactura(),
 				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
 				venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "",
@@ -218,29 +227,59 @@ public class DialogDetalleVenta extends JDialog {
 		campoMotivoAnulacion.setText(venta.getMotivoAnulacion() != null ? venta.getMotivoAnulacion() : "");
 
 		limpiarTabla();
+		Map<String, Integer> cantidadesDevueltas = agruparCantidadesDevueltas(devoluciones);
+
 		if (venta.getDetalles() != null) {
 			for (DetalleVenta detalle : venta.getDetalles()) {
-				agregarDetalle(detalle);
+				agregarDetalle(detalle, cantidadesDevueltas);
 			}
 		}
 	}
 
-	private void agregarDetalle(DetalleVenta detalle) {
+	private Map<String, Integer> agruparCantidadesDevueltas(List<DevolucionVenta> devoluciones) {
+		Map<String, Integer> cantidadesDevueltas = new HashMap<>();
+
+		if (devoluciones == null) {
+			return cantidadesDevueltas;
+		}
+
+		for (DevolucionVenta devolucion : devoluciones) {
+			if (devolucion == null || devolucion.getCodigoProducto() == null) {
+				continue;
+			}
+
+			cantidadesDevueltas.merge(devolucion.getCodigoProducto(), devolucion.getCantidadDevuelta(), Integer::sum);
+		}
+
+		return cantidadesDevueltas;
+	}
+
+	private void agregarDetalle(DetalleVenta detalle, Map<String, Integer> cantidadesDevueltas) {
 		String producto = detalle.getProducto().getNombreProducto();
 
 		if (producto == null || producto.trim().isEmpty()) {
 			producto = detalle.getProducto().getCodigoProducto();
 		}
 
-		double impuestoDetalle = detalle.getSubtotal() * 0.19;
+		String codigoProducto = detalle.getProducto() != null ? detalle.getProducto().getCodigoProducto() : "";
+		int cantidadVendida = detalle.getCantidad();
+		int cantidadDevuelta = cantidadesDevueltas.getOrDefault(codigoProducto, 0);
+		int cantidadPendiente = Math.max(0, cantidadVendida - cantidadDevuelta);
 
-		agregarDetalle(producto, String.valueOf(detalle.getCantidad()), formatearMoneda(detalle.getPrecioUnitario()),
+		double impuestoDetalle = detalle.getProducto() != null && detalle.getProducto().isAplicaIva()
+				? detalle.getSubtotal() * 0.19
+				: 0;
+
+		agregarDetalle(producto, String.valueOf(cantidadVendida), String.valueOf(cantidadDevuelta),
+				String.valueOf(cantidadPendiente), formatearMoneda(detalle.getPrecioUnitario()),
 				formatearMoneda(impuestoDetalle), formatearMoneda(detalle.getSubtotal()));
 	}
 
-	public void agregarDetalle(String producto, String cantidad, String precioUnitario, String impuestos,
-			String subtotal) {
-		modeloTabla.addRow(new Object[] { producto, cantidad, precioUnitario, impuestos, subtotal });
+	public void agregarDetalle(String producto, String cantidadVendida, String cantidadDevuelta,
+			String cantidadPendiente, String precioUnitario, String impuestos, String subtotal) {
+		modeloTabla.addRow(
+				new Object[] { producto, cantidadVendida, cantidadDevuelta, cantidadPendiente, precioUnitario,
+						impuestos, subtotal });
 	}
 
 	public void limpiarTabla() {

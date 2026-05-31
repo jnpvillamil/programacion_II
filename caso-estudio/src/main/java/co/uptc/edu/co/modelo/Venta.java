@@ -11,6 +11,7 @@ public class Venta {
 
 	private String numeroFactura;
 	private LocalDateTime fechaHora;
+	private String codigoCliente;
 	private String cliente;
 	private List<DetalleVenta> detalles;
 	private double subtotal;
@@ -26,11 +27,12 @@ public class Venta {
 		this.estado = EstadoVentaEnum.ACTIVA;
 	}
 
-	public Venta(String numeroFactura, LocalDateTime fechaHora, String cliente, List<DetalleVenta> detalles,
-			double subtotal, FormaPago formaPago, double impuestos, double total, EstadoVentaEnum estado) {
-
+	public Venta(String numeroFactura, LocalDateTime fechaHora, String codigoCliente, String cliente,
+			List<DetalleVenta> detalles, double subtotal, FormaPago formaPago, double impuestos, double total,
+			EstadoVentaEnum estado) {
 		this.numeroFactura = numeroFactura;
 		this.fechaHora = fechaHora;
+		this.codigoCliente = codigoCliente;
 		this.cliente = cliente;
 		this.detalles = detalles;
 		this.subtotal = subtotal;
@@ -54,6 +56,14 @@ public class Venta {
 
 	public void setFechaHora(LocalDateTime fechaHora) {
 		this.fechaHora = fechaHora;
+	}
+
+	public String getCodigoCliente() {
+		return codigoCliente;
+	}
+
+	public void setCodigoCliente(String codigoCliente) {
+		this.codigoCliente = codigoCliente;
 	}
 
 	public String getCliente() {

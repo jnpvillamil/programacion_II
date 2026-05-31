@@ -14,12 +14,14 @@ public class Producto {
 	private int stockMinimo;
 	private int stockMaximo;
 	private EstadoEnum estado;
+	private boolean aplicaIva;
 
 	public Producto() {
 	}
 
 	public Producto(String codigoProducto, String nombreProducto, CategoriaProductoEnum categoria, double precioCompra,
-			double precioVenta, int stockActual, int stockMinimo, int stockMaximo, EstadoEnum estado) {
+			double precioVenta, int stockActual, int stockMinimo, int stockMaximo, EstadoEnum estado,
+			boolean aplicaIva) {
 
 		this.codigoProducto = codigoProducto;
 		this.nombreProducto = nombreProducto;
@@ -30,6 +32,7 @@ public class Producto {
 		this.stockMinimo = stockMinimo;
 		this.stockMaximo = stockMaximo;
 		this.estado = estado;
+		this.aplicaIva = aplicaIva;
 	}
 
 	public String getCodigoProducto() {
@@ -110,6 +113,14 @@ public class Producto {
 
 	public boolean stockBajoMinimo() {
 		return stockActual < stockMinimo;
+	}
+
+	public boolean isAplicaIva() {
+		return aplicaIva;
+	}
+
+	public void setAplicaIva(boolean aplicaIva) {
+		this.aplicaIva = aplicaIva;
 	}
 
 	@Override

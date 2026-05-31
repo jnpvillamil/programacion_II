@@ -26,26 +26,26 @@ public class VentaBDDAO implements VentaDAO {
 	private static final String TABLA_DETALLE_VENTAS = "detalle_ventas";
 
 	private static final String SQL_INSERTAR_VENTA = "INSERT INTO " + TABLA_VENTAS
-			+ " (numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion)"
-			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ " (numeroFactura, fechaHora, cliente, codigoCliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion)"
+			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_INSERTAR_DETALLE = "INSERT INTO " + TABLA_DETALLE_VENTAS
 			+ " (numeroFactura, codigoProducto, cantidad, precioUnitario, subtotal)" + " VALUES (?, ?, ?, ?, ?)";
 
 	private static final String SQL_ACTUALIZAR_VENTA = "UPDATE " + TABLA_VENTAS
-			+ " SET fechaHora = ?, cliente = ?, formaPago = ?, subtotal = ?, impuestos = ?, total = ?, estado = ?, motivoAnulacion = ?, fechaAnulacion = ?"
+			+ " SET fechaHora = ?, cliente = ?, codigoCliente = ?, formaPago = ?, subtotal = ?, impuestos = ?, total = ?, estado = ?, motivoAnulacion = ?, fechaAnulacion = ?"
 			+ " WHERE numeroFactura = ?";
 
-	private static final String SQL_BUSCAR_VENTA = "SELECT numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
+	private static final String SQL_BUSCAR_VENTA = "SELECT numeroFactura, fechaHora, cliente, codigoCliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
 			+ " FROM " + TABLA_VENTAS + " WHERE numeroFactura = ?";
 
-	private static final String SQL_LISTAR_VENTAS = "SELECT numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
+	private static final String SQL_LISTAR_VENTAS = "SELECT numeroFactura, fechaHora, cliente, codigoCliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
 			+ " FROM " + TABLA_VENTAS + " ORDER BY fechaHora DESC";
 
-	private static final String SQL_LISTAR_VENTAS_POR_FECHA = "SELECT numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
+	private static final String SQL_LISTAR_VENTAS_POR_FECHA = "SELECT numeroFactura, fechaHora, cliente, codigoCliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
 			+ " FROM " + TABLA_VENTAS + " WHERE DATE(fechaHora) = ? ORDER BY fechaHora DESC";
 
-	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigoProducto, p.nombreProducto, dv.cantidad, dv.precioUnitario, dv.subtotal"
+	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigoProducto, p.nombreProducto, p.aplicaIva, dv.cantidad, dv.precioUnitario, dv.subtotal"
 			+ " FROM " + TABLA_DETALLE_VENTAS + " dv"
 			+ " LEFT JOIN productos p ON dv.codigoProducto = p.codigoProducto" + " WHERE dv.numeroFactura = ?";
 
@@ -218,6 +218,7 @@ public class VentaBDDAO implements VentaDAO {
 		}
 
 		venta.setCliente(resultado.getString("cliente"));
+		venta.setCodigoCliente(resultado.getString("codigoCliente"));
 		venta.setFormaPago(parseFormaPago(resultado.getString("formaPago")));
 		venta.setSubTotal(resultado.getDouble("subtotal"));
 		venta.setImpuestos(resultado.getDouble("impuestos"));
@@ -252,6 +253,7 @@ public class VentaBDDAO implements VentaDAO {
 		Producto producto = new Producto();
 		producto.setCodigoProducto(resultado.getString("codigoProducto"));
 		producto.setNombreProducto(resultado.getString("nombreProducto"));
+		producto.setAplicaIva(resultado.getBoolean("aplicaIva"));
 
 		DetalleVenta detalle = new DetalleVenta();
 		detalle.setProducto(producto);
@@ -265,6 +267,21 @@ public class VentaBDDAO implements VentaDAO {
 		sentencia.setString(1, venta.getNumeroFactura());
 		sentencia.setTimestamp(2, Timestamp.valueOf(venta.getFechaHora()));
 		sentencia.setString(3, venta.getCliente());
+		sentencia.setString(4, venta.getCodigoCliente());
+		sentencia.setString(5, venta.getFormaPago().name());
+		sentencia.setBigDecimal(6, BigDecimal.valueOf(venta.getSubTotal()));
+		sentencia.setBigDecimal(7, BigDecimal.valueOf(venta.getImpuestos()));
+		sentencia.setBigDecimal(8, BigDecimal.valueOf(venta.getTotal()));
+		sentencia.setString(9, venta.getEstado().name());
+		sentencia.setString(10, venta.getMotivoAnulacion());
+		sentencia.setTimestamp(11,
+				venta.getFechaAnulacion() != null ? Timestamp.valueOf(venta.getFechaAnulacion()) : null);
+	}
+
+	private void prepararUpdateVenta(PreparedStatement sentencia, Venta venta) throws SQLException {
+		sentencia.setTimestamp(1, Timestamp.valueOf(venta.getFechaHora()));
+		sentencia.setString(2, venta.getCliente());
+		sentencia.setString(3, venta.getCodigoCliente());
 		sentencia.setString(4, venta.getFormaPago().name());
 		sentencia.setBigDecimal(5, BigDecimal.valueOf(venta.getSubTotal()));
 		sentencia.setBigDecimal(6, BigDecimal.valueOf(venta.getImpuestos()));
@@ -273,20 +290,7 @@ public class VentaBDDAO implements VentaDAO {
 		sentencia.setString(9, venta.getMotivoAnulacion());
 		sentencia.setTimestamp(10,
 				venta.getFechaAnulacion() != null ? Timestamp.valueOf(venta.getFechaAnulacion()) : null);
-	}
-
-	private void prepararUpdateVenta(PreparedStatement sentencia, Venta venta) throws SQLException {
-		sentencia.setTimestamp(1, Timestamp.valueOf(venta.getFechaHora()));
-		sentencia.setString(2, venta.getCliente());
-		sentencia.setString(3, venta.getFormaPago().name());
-		sentencia.setBigDecimal(4, BigDecimal.valueOf(venta.getSubTotal()));
-		sentencia.setBigDecimal(5, BigDecimal.valueOf(venta.getImpuestos()));
-		sentencia.setBigDecimal(6, BigDecimal.valueOf(venta.getTotal()));
-		sentencia.setString(7, venta.getEstado().name());
-		sentencia.setString(8, venta.getMotivoAnulacion());
-		sentencia.setTimestamp(9,
-				venta.getFechaAnulacion() != null ? Timestamp.valueOf(venta.getFechaAnulacion()) : null);
-		sentencia.setString(10, venta.getNumeroFactura());
+		sentencia.setString(11, venta.getNumeroFactura());
 	}
 
 	private void prepararInsertDetalle(PreparedStatement sentencia, String numeroFactura, DetalleVenta detalle)

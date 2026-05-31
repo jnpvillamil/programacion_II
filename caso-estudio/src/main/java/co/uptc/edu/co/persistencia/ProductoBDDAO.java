@@ -18,19 +18,20 @@ public class ProductoBDDAO implements ProductoDAO {
 	private static final String TABLA_PRODUCTOS = "productos";
 
 	private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_PRODUCTOS
-			+ " (codigoProducto, nombreProducto, categoria, precioCompra, precioVenta, stockActual, stockMinimo, stockMaximo, estado) "
-			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ " (codigoProducto, nombreProducto, categoria, precioCompra, precioVenta, stockActual, stockMinimo, stockMaximo, aplicaIva, estado) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoProducto, nombreProducto, categoria, precioCompra, precioVenta, "
-			+ "stockActual, stockMinimo, stockMaximo, estado " + "FROM " + TABLA_PRODUCTOS
+			+ "stockActual, stockMinimo, stockMaximo, aplicaIva, estado " + "FROM " + TABLA_PRODUCTOS
 			+ " WHERE codigoProducto = ?";
 
 	private static final String SQL_LISTAR = "SELECT codigoProducto, nombreProducto, categoria, precioCompra, precioVenta, "
-			+ "stockActual, stockMinimo, stockMaximo, estado " + "FROM " + TABLA_PRODUCTOS;
+			+ "stockActual, stockMinimo, stockMaximo, aplicaIva, estado " + "FROM " + TABLA_PRODUCTOS;
 
 	private static final String SQL_ACTUALIZAR = "UPDATE " + TABLA_PRODUCTOS + " SET "
 			+ "nombreProducto = ?, categoria = ?, precioCompra = ?, precioVenta = ?, "
-			+ "stockActual = ?, stockMinimo = ?, stockMaximo = ?, estado = ? " + "WHERE codigoProducto = ?";
+			+ "stockActual = ?, stockMinimo = ?, stockMaximo = ?, aplicaIva = ?, estado = ? "
+			+ "WHERE codigoProducto = ?";
 
 	private static final String SQL_DESCONTAR_STOCK_VENTA = "UPDATE " + TABLA_PRODUCTOS
 			+ " SET stockActual = stockActual - ?"
@@ -147,6 +148,7 @@ public class ProductoBDDAO implements ProductoDAO {
 		producto.setStockActual(resultSet.getInt("stockActual"));
 		producto.setStockMinimo(resultSet.getInt("stockMinimo"));
 		producto.setStockMaximo(resultSet.getInt("stockMaximo"));
+		producto.setAplicaIva(resultSet.getBoolean("aplicaIva"));
 		producto.setEstado(EstadoEnum.valueOf(resultSet.getString("estado")));
 		return producto;
 
@@ -161,7 +163,8 @@ public class ProductoBDDAO implements ProductoDAO {
 		preparedStatement.setInt(6, producto.getStockActual());
 		preparedStatement.setInt(7, producto.getStockMinimo());
 		preparedStatement.setInt(8, producto.getStockMaximo());
-		preparedStatement.setString(9, producto.getEstado().name());
+		preparedStatement.setBoolean(9, producto.isAplicaIva());
+		preparedStatement.setString(10, producto.getEstado().name());
 	}
 
 	private void prepararActualizar(PreparedStatement preparedStatement, Producto producto) throws SQLException {
@@ -172,8 +175,9 @@ public class ProductoBDDAO implements ProductoDAO {
 		preparedStatement.setInt(5, producto.getStockActual());
 		preparedStatement.setInt(6, producto.getStockMinimo());
 		preparedStatement.setInt(7, producto.getStockMaximo());
-		preparedStatement.setString(8, producto.getEstado().name());
-		preparedStatement.setString(9, producto.getCodigoProducto());
+		preparedStatement.setBoolean(8, producto.isAplicaIva());
+		preparedStatement.setString(9, producto.getEstado().name());
+		preparedStatement.setString(10, producto.getCodigoProducto());
 	}
 
 }

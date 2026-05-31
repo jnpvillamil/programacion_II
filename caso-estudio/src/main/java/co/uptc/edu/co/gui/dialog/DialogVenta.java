@@ -328,7 +328,7 @@ public class DialogVenta extends JDialog {
 			throw new Exception("Debe agregar al menos un producto.");
 		}
 
-		return new Venta(numeroFactura, fechaHora, cliente.toString(), detalles, 0, formaPago, 0, 0,
+		return new Venta(numeroFactura, fechaHora, cliente.getCodigo(), cliente.getNombre(), detalles, 0, formaPago, 0, 0,
 				EstadoVentaEnum.ACTIVA);
 	}
 
@@ -367,7 +367,7 @@ public class DialogVenta extends JDialog {
 			}
 
 			double subtotal = cantidad * precioUnitario;
-			double iva = subtotal * IVA;
+			double iva = producto.isAplicaIva() ? subtotal * IVA : 0;
 
 			Object[] fila = { producto.getCodigoProducto(), producto.getNombreProducto(), cantidad, precioUnitario, iva,
 					subtotal };
@@ -396,7 +396,10 @@ public class DialogVenta extends JDialog {
 
 			int cantidad = Integer.parseInt(modeloTabla.getValueAt(fila, 2).toString());
 			double precioUnitario = Double.parseDouble(modeloTabla.getValueAt(fila, 3).toString());
+			double iva = Double.parseDouble(modeloTabla.getValueAt(fila, 4).toString());
 			double subtotal = Double.parseDouble(modeloTabla.getValueAt(fila, 5).toString());
+
+			producto.setAplicaIva(iva > 0);
 
 			detalles.add(new DetalleVenta(producto, cantidad, precioUnitario, subtotal));
 		}
@@ -416,12 +419,13 @@ public class DialogVenta extends JDialog {
 
 	private void actualizarResumen() {
 		double subtotal = 0;
+		double iva = 0;
 
 		for (int fila = 0; fila < modeloTabla.getRowCount(); fila++) {
 			subtotal += Double.parseDouble(modeloTabla.getValueAt(fila, 5).toString());
+			iva += Double.parseDouble(modeloTabla.getValueAt(fila, 4).toString());
 		}
 
-		double iva = subtotal * IVA;
 		double total = subtotal + iva;
 
 		campoSubtotal.setText(String.valueOf(subtotal));

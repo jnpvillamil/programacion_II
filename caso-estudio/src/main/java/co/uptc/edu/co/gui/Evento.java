@@ -566,6 +566,12 @@ public class Evento implements ActionListener {
 		String clienteRegistrado = cliente.toString();
 
 		for (Venta venta : gestionVenta.obtenerVentas()) {
+			String codigoVenta = venta.getCodigoCliente();
+			if (codigoVenta != null && codigoVenta.trim().equalsIgnoreCase(codigoCliente)) {
+				ventasDelCliente.add(venta);
+				continue;
+			}
+
 			String clienteVenta = venta.getCliente();
 
 			if (clienteVenta == null) {
@@ -602,7 +608,7 @@ public class Evento implements ActionListener {
 			}
 
 			DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
-			dialog.cargarVenta(venta);
+			dialog.cargarVenta(venta, gestionDevolucionVenta.obtenerDevolucionesPorFactura(venta.getNumeroFactura()));
 			dialog.setVisible(true);
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
@@ -888,7 +894,7 @@ public class Evento implements ActionListener {
 			Venta venta = obtenerVentaSeleccionada();
 
 			DialogDetalleVenta dialog = new DialogDetalleVenta(ventana);
-			dialog.cargarVenta(venta);
+			dialog.cargarVenta(venta, gestionDevolucionVenta.obtenerDevolucionesPorFactura(venta.getNumeroFactura()));
 			dialog.setVisible(true);
 
 		} catch (Exception ex) {

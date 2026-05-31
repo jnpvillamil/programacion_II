@@ -81,7 +81,9 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 
 		DevolucionVenta devolucion = crearDevolucion(venta, detalleDevuelto, cantidad, motivo.trim());
 		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
-		double ivaDevuelto = subtotalDevuelto * 0.19;
+		double ivaDevuelto = detalleDevuelto.getProducto() != null && detalleDevuelto.getProducto().isAplicaIva()
+				? subtotalDevuelto * 0.19
+				: 0;
 
 		EstadoVentaEnum nuevoEstado = calcularEstadoDespuesDeDevolucion(venta, codigoProducto, cantidad);
 		venta.setEstado(nuevoEstado);

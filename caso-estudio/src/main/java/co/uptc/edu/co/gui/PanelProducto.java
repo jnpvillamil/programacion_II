@@ -37,11 +37,12 @@ public class PanelProducto extends PanelCentral {
             "Stock Actual",
             "Stock Mínimo",
             "Stock Máximo",
+            "Aplica IVA",
             "Estado"
     };
 
     private static final int COLUMNA_CODIGO = 0;
-    private static final int COLUMNA_ESTADO = 8;
+    private static final int COLUMNA_ESTADO = 9;
 
     private JButton botonNuevo;
     private JButton botonEditar;
@@ -178,6 +179,7 @@ public class PanelProducto extends PanelCentral {
                         producto.getStockActual(),
                         producto.getStockMinimo(),
                         producto.getStockMaximo(),
+                        producto.isAplicaIva() ? "Si" : "No",
                         producto.getEstado()
                 };
                 modeloTabla.addRow(fila);
