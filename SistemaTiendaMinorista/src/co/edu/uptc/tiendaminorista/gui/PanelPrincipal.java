@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelInicial;
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelRegistrosEmpleados;
+import co.edu.uptc.tiendaminorista.dto.CredencialDto;
 import co.edu.uptc.tiendaminorista.enums.TipoDocumentoEnum;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
 import co.edu.uptc.tiendaminorista.modelo.Empleado;
@@ -78,14 +79,16 @@ public class PanelPrincipal extends JFrame {
     }
 
     public void loguear() {
-        try {
-            if (seguridad.validarInicio(panelLogin.getCredencialusuario())) {
-                cambiarPanel(panelInicial);
-            } else {
-                JOptionPane.showMessageDialog(this, "Credenciales incorrectas");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+        CredencialDto credencial = panelLogin.getCredencialusuario();
+        
+        if (credencial == null) {
+            return;
+        }
+        
+        if (seguridad.validarInicio(credencial)) {
+            cambiarPanel(panelInicial);
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
         }
     }
 
