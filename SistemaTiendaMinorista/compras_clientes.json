@@ -1,0 +1,52 @@
+[
+  {
+    "cliente": {
+      "tipodoc": "CE",
+      "numeroIdentificacion": "1",
+      "tipoCliente": "Minorista",
+      "codigo": "CLI1",
+      "nombre": "1",
+      "direccion": "1",
+      "telefono": "1",
+      "activo": true
+    },
+    "producto": {
+      "codigo": "576675",
+      "nombre": "765675",
+      "categoria": "GRANOS",
+      "precioCompra": 756756.0,
+      "precioVenta": 756.0,
+      "stockActual": 567567,
+      "stockMinimo": 576567,
+      "activo": true
+    },
+    "cantidad": 2,
+    "totalCompra": 1512.0,
+    "fecha": "May 30, 2026, 11:15:19 PM"
+  },
+  {
+    "cliente": {
+      "tipodoc": "CE",
+      "numeroIdentificacion": "1",
+      "tipoCliente": "Minorista",
+      "codigo": "CLI1",
+      "nombre": "1",
+      "direccion": "1",
+      "telefono": "1",
+      "activo": true
+    },
+    "producto": {
+      "codigo": "1920",
+      "nombre": "Agua",
+      "categoria": "AGUA",
+      "precioCompra": 2000.0,
+      "precioVenta": 3000.0,
+      "stockActual": 56,
+      "stockMinimo": 10,
+      "activo": true
+    },
+    "cantidad": 4,
+    "totalCompra": 12000.0,
+    "fecha": "May 30, 2026, 11:15:55 PM"
+  }
+]

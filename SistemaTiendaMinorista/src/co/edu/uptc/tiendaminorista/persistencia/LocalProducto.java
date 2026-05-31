@@ -13,23 +13,18 @@ import co.edu.uptc.tiendaminorista.enums.CategoriaProducto;
 import co.edu.uptc.tiendaminorista.interfaces.IGestionProducto;
 import co.edu.uptc.tiendaminorista.modelo.Producto;
 
-// DAO de productos - usa SQLite para persistencia
-// siguiendo el patron aprendido en clase con JDBC y PreparedStatement
 public class LocalProducto implements IGestionProducto {
 
-    // SQLite crea el archivo automaticamente si no existe
     private static final String URL = "jdbc:sqlite:tienda_minorista.db";
 
     public LocalProducto() {
         crearTablaProductos();
     }
 
-    // metodo para obtener conexion a la base de datos
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL);
     }
 
-    // crear la tabla si no existe, se ejecuta al iniciar
     private void crearTablaProductos() {
         String sql = "CREATE TABLE IF NOT EXISTS productos ("
                 + "codigo TEXT PRIMARY KEY, "

@@ -19,7 +19,8 @@ public class PanelInicial extends JPanel {
     private CardLayout clienteLayout;
     private JPanel proveedorCards;
     private CardLayout proveedorLayout;
-
+    private PanelHistorialCliente panelHistorialCliente;
+    private PanelCompraCliente compracliente;
     private PanelCliente panelCliente;
     private PanelRegistrosEmpleados Empleados; 
     private PanelResgistroCli panelRegistroCliente;
@@ -40,6 +41,7 @@ public class PanelInicial extends JPanel {
         this.gestionProveedor = gestionProveedor;
         this.gestionProducto = gestionProducto; 
         this.Empleados = Empleados; 
+        this.panelHistorialCliente = new PanelHistorialCliente(e);
 
         panelesCliente(e);
         panelesProveedores(e);
@@ -49,6 +51,8 @@ public class PanelInicial extends JPanel {
         pestanas.addTab("Producto", new PanelProductos(e));
         pestanas.addTab("Proveedores", proveedorCards);
         pestanas.addTab("Empleados", this.Empleados); 
+ 
+        
 
         add(pestanas, BorderLayout.CENTER);
         cargarClientes(gestionCliente.listarClientes());
@@ -65,12 +69,13 @@ public class PanelInicial extends JPanel {
         panelCliente = new PanelCliente(e);
         panelRegistroCliente = new PanelResgistroCli(e);
         panelActualizarCliente = new PanelActualizarCliente(e);
-
+        this.compracliente = new PanelCompraCliente(e);
         clienteCards.add(panelCliente, "CLIENTE_LIST");
         clienteCards.add(panelRegistroCliente, "CLIENTE_REGISTRAR");
         clienteCards.add(panelActualizarCliente, "CLIENTE_ACTUALIZAR");
-
+        clienteCards.add(this.compracliente, "CLIENTE_COMPRA");
         clienteLayout.show(clienteCards, "CLIENTE_LIST");
+        clienteCards.add(this.panelHistorialCliente, "CLIENTE_HISTORIAL");
     }
 
     private void panelesProveedores(Evento e) {
@@ -184,9 +189,38 @@ public class PanelInicial extends JPanel {
     public void cargarProveedores(List<Proveedor> proveedores) {
         panelProveedores.cargarProveedores(proveedores);
         panelActualizarProveedor.setProveedores(proveedores);
-    }public void mostrarClienteLista1() {
+    }
+    public PanelHistorialCliente getPanelHistorialCliente() {
+        return panelHistorialCliente;
+    }
+
+    public void mostrarPantallaHistorial() {
+        pestanas.setSelectedIndex(0);
+        clienteLayout.show(clienteCards, "CLIENTE_HISTORIAL");
+        if (panelHistorialCliente != null) {
+            panelHistorialCliente.cargarClientesEnCombo(gestionCliente.listarClientes());
+            panelHistorialCliente.actualizarTabla(null); 
+        }
+    }
+    
+    public void mostrarClienteLista1() {
         pestanas.setSelectedIndex(0);
         clienteLayout.show(clienteCards, "CLIENTE_LIST");
     }
-    
+
+    public void mostrarCompraCliente() {
+        pestanas.setSelectedIndex(0); 
+        
+        clienteLayout.show(clienteCards, "CLIENTE_COMPRA"); 
+        
+        if (this.compracliente != null) {
+            this.compracliente.cargarClientesEnCombo(this.gestionCliente.listarClientes());
+            this.compracliente.cargarProductosEnCombo(this.gestionProducto.listarProductos());
+            this.compracliente.actualizarTablaCompras(this.gestionCliente.listarTodasLasCompras());
+        }
+    }
+
+    public PanelCompraCliente getPanelCompraCliente() {
+        return this.compracliente;
+    }
 }
