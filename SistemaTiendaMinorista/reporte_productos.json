@@ -1,0 +1,22 @@
+[
+  {
+    "codigo": "576675",
+    "nombre": "765675",
+    "categoria": "GRANOS",
+    "precioCompra": 756756.0,
+    "precioVenta": 756.0,
+    "stockActual": 567567,
+    "stockMinimo": 576567,
+    "activo": true
+  },
+  {
+    "codigo": "1920",
+    "nombre": "Agua",
+    "categoria": "AGUA",
+    "precioCompra": 2000.0,
+    "precioVenta": 3000.0,
+    "stockActual": 56,
+    "stockMinimo": 10,
+    "activo": true
+  }
+]
