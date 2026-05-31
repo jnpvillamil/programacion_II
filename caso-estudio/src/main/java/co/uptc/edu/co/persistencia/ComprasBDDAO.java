@@ -22,30 +22,30 @@ public class ComprasBDDAO implements CompraDAO {
 	private static final String TABLA_DETALLE_COMPRAS = "detalle_compras";
 
 	private static final String SQL_INSERTAR_COMPRA = "INSERT INTO " + TABLA_COMPRAS
-			+ " (numeroFacturaProveedor, fecha, codigo_proveedor, forma_pago, subtotal, impuestos, totalCompra, estado, motivoAnulacion)"
+			+ " (numeroFacturaProveedor, fecha, codigoProveedor, formaPago, subtotal, impuestos, totalCompra, estado, motivoAnulacion)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_INSERTAR_DETALLE = "INSERT INTO " + TABLA_DETALLE_COMPRAS
-			+ " (id_compra, codigoProducto, cantidad, costoUnitario, subtotal, impuestos, total)"
+			+ " (idCompra, codigoProducto, cantidad, costoUnitario, subtotal, impuestos, total)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_ACTUALIZAR_COMPRA = "UPDATE " + TABLA_COMPRAS
-			+ " SET numeroFacturaProveedor = ?, fecha = ?, codigo_proveedor = ?, forma_pago = ?, subtotal = ?, impuestos = ?, totalCompra = ?, estado = ?, motivoAnulacion = ?"
+			+ " SET numeroFacturaProveedor = ?, fecha = ?, codigoProveedor = ?, formaPago = ?, subtotal = ?, impuestos = ?, totalCompra = ?, estado = ?, motivoAnulacion = ?"
 			+ " WHERE numeroFacturaProveedor = ?";
 
-	private static final String SQL_BUSCAR_COMPRA = "SELECT numeroFacturaProveedor, fecha, codigo_proveedor, forma_pago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
+	private static final String SQL_BUSCAR_COMPRA = "SELECT numeroFacturaProveedor, fecha, codigoProveedor, formaPago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
 			+ " FROM " + TABLA_COMPRAS + " WHERE numeroFacturaProveedor = ?";
 
-	private static final String SQL_BUSCAR_ID_COMPRA = "SELECT id_compra FROM " + TABLA_COMPRAS
+	private static final String SQL_BUSCAR_ID_COMPRA = "SELECT idCompra FROM " + TABLA_COMPRAS
 			+ " WHERE numeroFacturaProveedor = ?";
 
-	private static final String SQL_LISTAR_COMPRAS = "SELECT numeroFacturaProveedor, fecha, codigo_proveedor, forma_pago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
+	private static final String SQL_LISTAR_COMPRAS = "SELECT numeroFacturaProveedor, fecha, codigoProveedor, formaPago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
 			+ " FROM " + TABLA_COMPRAS + " ORDER BY fecha DESC";
 
-	private static final String SQL_LISTAR_DETALLES = "SELECT id_detalle, id_compra, codigoProducto, cantidad, costoUnitario, subtotal, impuestos, total"
-			+ " FROM " + TABLA_DETALLE_COMPRAS + " WHERE id_compra = ?";
+	private static final String SQL_LISTAR_DETALLES = "SELECT idDetalle, idCompra, codigoProducto, cantidad, costoUnitario, subtotal, impuestos, total"
+			+ " FROM " + TABLA_DETALLE_COMPRAS + " WHERE idCompra = ?";
 
-	private static final String SQL_ELIMINAR_DETALLES = "DELETE FROM " + TABLA_DETALLE_COMPRAS + " WHERE id_compra = ?";
+	private static final String SQL_ELIMINAR_DETALLES = "DELETE FROM " + TABLA_DETALLE_COMPRAS + " WHERE idCompra = ?";
 
 	private static final String SQL_ELIMINAR_COMPRA = "DELETE FROM " + TABLA_COMPRAS
 			+ " WHERE numeroFacturaProveedor = ?";
@@ -211,7 +211,7 @@ public class ComprasBDDAO implements CompraDAO {
 
 			try (ResultSet resultado = sentencia.executeQuery()) {
 				if (resultado.next()) {
-					return resultado.getInt("id_compra");
+					return resultado.getInt("idCompra");
 				}
 			}
 		}
@@ -227,8 +227,8 @@ public class ComprasBDDAO implements CompraDAO {
 		if (fechaSql != null) {
 			compra.setFecha(fechaSql.toLocalDate());
 		}
-		compra.setCodigoProveedor(resultado.getString("codigo_proveedor"));
-		compra.setFormaPago(FormaPago.valueOf(resultado.getString("forma_pago")));
+		compra.setCodigoProveedor(resultado.getString("codigoProveedor"));
+		compra.setFormaPago(FormaPago.valueOf(resultado.getString("formaPago")));
 		compra.setSubtotal(resultado.getDouble("subtotal"));
 		compra.setImpuestos(resultado.getDouble("impuestos"));
 		compra.setTotalCompra(resultado.getDouble("totalCompra"));

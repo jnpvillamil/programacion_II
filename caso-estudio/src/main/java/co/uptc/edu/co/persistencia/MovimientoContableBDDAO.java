@@ -19,14 +19,14 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 	private static final String TABLA_MOVIMIENTOS = "movimientos_contables";
 
 	private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_MOVIMIENTOS
-			+ " (codigo_transaccion, fecha, tipo_movimiento, cuenta_contable, valor, descripcion, origen, referencia)"
+			+ " (codigoTransaccion, fecha, tipoMovimiento, cuentaContable, valor, descripcion, origen, referencia)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigo_transaccion, fecha, tipo_movimiento, "
-			+ "cuenta_contable, valor, descripcion, origen, referencia FROM " + TABLA_MOVIMIENTOS
-			+ " WHERE codigo_transaccion = ?";
+	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoTransaccion, fecha, tipoMovimiento, "
+			+ "cuentaContable, valor, descripcion, origen, referencia FROM " + TABLA_MOVIMIENTOS
+			+ " WHERE codigoTransaccion = ?";
 
-	private static final String SQL_LISTAR = "SELECT codigo_transaccion, fecha, tipo_movimiento, cuenta_contable, "
+	private static final String SQL_LISTAR = "SELECT codigoTransaccion, fecha, tipoMovimiento, cuentaContable, "
 			+ "valor, descripcion, origen, referencia FROM " + TABLA_MOVIMIENTOS + " ORDER BY fecha DESC";
 
 	@Override
@@ -124,19 +124,19 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 	private MovimientoContable construirMovimiento(ResultSet resultado) throws SQLException {
 		MovimientoContable movimiento = new MovimientoContable();
 
-		movimiento.setCodigoTransaccion(resultado.getString("codigo_transaccion"));
+		movimiento.setCodigoTransaccion(resultado.getString("codigoTransaccion"));
 
 		Date fecha = resultado.getDate("fecha");
 		if (fecha != null) {
 			movimiento.setFecha(fecha.toLocalDate());
 		}
 
-		String tipoMovimiento = resultado.getString("tipo_movimiento");
+		String tipoMovimiento = resultado.getString("tipoMovimiento");
 		if (tipoMovimiento != null && !tipoMovimiento.isBlank()) {
 			movimiento.setTipoMovimientoContable(TipoMovimientoContable.valueOf(tipoMovimiento));
 		}
 
-		movimiento.setCuentaContable(resultado.getString("cuenta_contable"));
+		movimiento.setCuentaContable(resultado.getString("cuentaContable"));
 		movimiento.setValor(resultado.getDouble("valor"));
 		movimiento.setDescripcion(resultado.getString("descripcion"));
 		movimiento.setOrigen(resultado.getString("origen"));

@@ -17,18 +17,18 @@ public class ProveedorBDDAO implements ProveedorDAO {
 	private static final String TABLA_PROVEEDORES = "proveedores";
 
 	private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_PROVEEDORES
-			+ " (codigo_proveedor, razon_social, nit, direccion, telefono, correo_electronico, estado)"
+			+ " (codigoProveedor, razonSocial, nit, direccion, telefono, correoElectronico, estado)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigo_proveedor, razon_social, nit, direccion, telefono, correo_electronico, estado "
-			+ "FROM " + TABLA_PROVEEDORES + " WHERE codigo_proveedor = ?";
+	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoProveedor, razonSocial, nit, direccion, telefono, correoElectronico, estado "
+			+ "FROM " + TABLA_PROVEEDORES + " WHERE codigoProveedor = ?";
 
-	private static final String SQL_LISTAR = "SELECT codigo_proveedor, razon_social, nit, direccion, telefono, correo_electronico, estado "
+	private static final String SQL_LISTAR = "SELECT codigoProveedor, razonSocial, nit, direccion, telefono, correoElectronico, estado "
 			+ "FROM " + TABLA_PROVEEDORES;
 
 	private static final String SQL_ACTUALIZAR = "UPDATE " + TABLA_PROVEEDORES
-			+ " SET razon_social = ?, nit = ?, direccion = ?, telefono = ?, correo_electronico = ?, estado = ?"
-			+ " WHERE codigo_proveedor = ?";
+			+ " SET razonSocial = ?, nit = ?, direccion = ?, telefono = ?, correoElectronico = ?, estado = ?"
+			+ " WHERE codigoProveedor = ?";
 
 	@Override
 	public void guardarProveedor(Proveedor proveedor) throws Exception {
@@ -110,12 +110,12 @@ public class ProveedorBDDAO implements ProveedorDAO {
 
 	private Proveedor construirProveedor(ResultSet resultSet) throws SQLException {
 		Proveedor proveedor = new Proveedor();
-		proveedor.setCodigoProveedor(resultSet.getString("codigo_proveedor"));
-		proveedor.setRazonSocial(resultSet.getString("razon_social"));
+		proveedor.setCodigoProveedor(resultSet.getString("codigoProveedor"));
+		proveedor.setRazonSocial(resultSet.getString("razonSocial"));
 		proveedor.setNit(resultSet.getString("nit"));
 		proveedor.setDireccion(resultSet.getString("direccion"));
 		proveedor.setTelefono(resultSet.getString("telefono"));
-		proveedor.setCorreoElectronico(resultSet.getString("correo_electronico"));
+		proveedor.setCorreoElectronico(resultSet.getString("correoElectronico"));
 
 		String estado = resultSet.getString("estado");
 		if (estado != null && !estado.isBlank()) {

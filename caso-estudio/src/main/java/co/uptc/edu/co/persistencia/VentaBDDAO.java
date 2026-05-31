@@ -26,34 +26,34 @@ public class VentaBDDAO implements VentaDAO {
 	private static final String TABLA_DETALLE_VENTAS = "detalle_ventas";
 
 	private static final String SQL_INSERTAR_VENTA = "INSERT INTO " + TABLA_VENTAS
-			+ " (numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion)"
+			+ " (numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String SQL_INSERTAR_DETALLE = "INSERT INTO " + TABLA_DETALLE_VENTAS
-			+ " (numero_factura, codigo_producto, cantidad, precio_unitario, subtotal)" + " VALUES (?, ?, ?, ?, ?)";
+			+ " (numeroFactura, codigoProducto, cantidad, precioUnitario, subtotal)" + " VALUES (?, ?, ?, ?, ?)";
 
 	private static final String SQL_ACTUALIZAR_VENTA = "UPDATE " + TABLA_VENTAS
-			+ " SET fecha_hora = ?, cliente = ?, forma_pago = ?, subtotal = ?, impuestos = ?, total = ?, estado = ?, motivo_anulacion = ?, fecha_anulacion = ?"
-			+ " WHERE numero_factura = ?";
+			+ " SET fechaHora = ?, cliente = ?, formaPago = ?, subtotal = ?, impuestos = ?, total = ?, estado = ?, motivoAnulacion = ?, fechaAnulacion = ?"
+			+ " WHERE numeroFactura = ?";
 
-	private static final String SQL_BUSCAR_VENTA = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion"
-			+ " FROM " + TABLA_VENTAS + " WHERE numero_factura = ?";
+	private static final String SQL_BUSCAR_VENTA = "SELECT numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
+			+ " FROM " + TABLA_VENTAS + " WHERE numeroFactura = ?";
 
-	private static final String SQL_LISTAR_VENTAS = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion"
-			+ " FROM " + TABLA_VENTAS + " ORDER BY fecha_hora DESC";
+	private static final String SQL_LISTAR_VENTAS = "SELECT numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
+			+ " FROM " + TABLA_VENTAS + " ORDER BY fechaHora DESC";
 
-	private static final String SQL_LISTAR_VENTAS_POR_FECHA = "SELECT numero_factura, fecha_hora, cliente, forma_pago, subtotal, impuestos, total, estado, motivo_anulacion, fecha_anulacion"
-			+ " FROM " + TABLA_VENTAS + " WHERE DATE(fecha_hora) = ? ORDER BY fecha_hora DESC";
+	private static final String SQL_LISTAR_VENTAS_POR_FECHA = "SELECT numeroFactura, fechaHora, cliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
+			+ " FROM " + TABLA_VENTAS + " WHERE DATE(fechaHora) = ? ORDER BY fechaHora DESC";
 
-	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigo_producto, p.nombreProducto, dv.cantidad, dv.precio_unitario, dv.subtotal"
+	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigoProducto, p.nombreProducto, dv.cantidad, dv.precioUnitario, dv.subtotal"
 			+ " FROM " + TABLA_DETALLE_VENTAS + " dv"
-			+ " LEFT JOIN productos p ON dv.codigo_producto = p.codigoProducto" + " WHERE dv.numero_factura = ?";
+			+ " LEFT JOIN productos p ON dv.codigoProducto = p.codigoProducto" + " WHERE dv.numeroFactura = ?";
 
 	private static final String SQL_ELIMINAR_DETALLES = "DELETE FROM " + TABLA_DETALLE_VENTAS
-			+ " WHERE numero_factura = ?";
+			+ " WHERE numeroFactura = ?";
 
 	private static final String SQL_ACTUALIZAR_ESTADO_VENTA = "UPDATE " + TABLA_VENTAS
-			+ " SET estado = ? WHERE numero_factura = ?";
+			+ " SET estado = ? WHERE numeroFactura = ?";
 
 	@Override
 	public void guardarVenta(Venta venta) throws Exception {
@@ -197,19 +197,19 @@ public class VentaBDDAO implements VentaDAO {
 
 	private Venta construirVenta(ResultSet resultado) throws SQLException {
 		Venta venta = new Venta();
-		venta.setNumeroFactura(resultado.getString("numero_factura"));
-		venta.setFechaHora(resultado.getTimestamp("fecha_hora").toLocalDateTime());
+		venta.setNumeroFactura(resultado.getString("numeroFactura"));
+		venta.setFechaHora(resultado.getTimestamp("fechaHora").toLocalDateTime());
 		venta.setCliente(resultado.getString("cliente"));
 		venta.setFormaPago(
-			    FormaPago.valueOf(resultado.getString("forma_pago"))
+			    FormaPago.valueOf(resultado.getString("formaPago"))
 			);
 		venta.setSubTotal(resultado.getDouble("subtotal"));
 		venta.setImpuestos(resultado.getDouble("impuestos"));
 		venta.setTotal(resultado.getDouble("total"));
 		venta.setEstado(EstadoVentaEnum.valueOf(resultado.getString("estado")));
-		venta.setMotivoAnulacion(resultado.getString("motivo_anulacion"));
+		venta.setMotivoAnulacion(resultado.getString("motivoAnulacion"));
 
-		Timestamp fechaAnulacion = resultado.getTimestamp("fecha_anulacion");
+		Timestamp fechaAnulacion = resultado.getTimestamp("fechaAnulacion");
 		if (fechaAnulacion != null) {
 			venta.setFechaAnulacion(fechaAnulacion.toLocalDateTime());
 		}
@@ -218,13 +218,13 @@ public class VentaBDDAO implements VentaDAO {
 
 	private DetalleVenta construirDetalleVenta(ResultSet resultado) throws SQLException {
 		Producto producto = new Producto();
-		producto.setCodigoProducto(resultado.getString("codigo_producto"));
+		producto.setCodigoProducto(resultado.getString("codigoProducto"));
 		producto.setNombreProducto(resultado.getString("nombreProducto"));
 
 		DetalleVenta detalle = new DetalleVenta();
 		detalle.setProducto(producto);
 		detalle.setCantidad(resultado.getInt("cantidad"));
-		detalle.setPrecioUnitario(resultado.getDouble("precio_unitario"));
+		detalle.setPrecioUnitario(resultado.getDouble("precioUnitario"));
 		detalle.setSubtotal(resultado.getDouble("subtotal"));
 		return detalle;
 	}

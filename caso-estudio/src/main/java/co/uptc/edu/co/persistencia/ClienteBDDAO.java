@@ -16,24 +16,24 @@ import co.uptc.edu.co.modelo.enums.TipoDocEnum;
 
 public class ClienteBDDAO implements ClienteDAO {
 
-    private static final String TABLA = "Clientes";
+    private static final String TABLA = "clientes";
 
     private static final String SQL_INSERTAR =
-            "INSERT INTO Clientes "
-            + "(codigo_cliente, nombre, tipoIdentificacion, "
+            "INSERT INTO " + TABLA + " "
+            + "(codigoCliente, nombre, tipoIdentificacion, "
             + "numeroIdentificacion, direccion, telefono, "
             + "tipoCliente, estado) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_LISTAR =
-            "SELECT * FROM Clientes";
+            "SELECT * FROM " + TABLA;
 
     private static final String SQL_BUSCAR =
-            "SELECT * FROM Clientes "
-            + "WHERE codigo_cliente = ?";
+            "SELECT * FROM " + TABLA + " "
+            + "WHERE codigoCliente = ?";
 
     private static final String SQL_ACTUALIZAR =
-            "UPDATE Clientes SET "
+            "UPDATE " + TABLA + " SET "
             + "nombre = ?, "
             + "tipoIdentificacion = ?, "
             + "numeroIdentificacion = ?, "
@@ -41,7 +41,7 @@ public class ClienteBDDAO implements ClienteDAO {
             + "telefono = ?, "
             + "tipoCliente = ?, "
             + "estado = ? "
-            + "WHERE codigo_cliente = ?";
+            + "WHERE codigoCliente = ?";
 
     @Override
     public void guardarCliente(Cliente cliente)
@@ -169,7 +169,7 @@ public class ClienteBDDAO implements ClienteDAO {
 
         cliente.setCodigo(
                 resultSet.getString(
-                        "codigo_cliente"));
+                        "codigoCliente"));
 
         cliente.setNombre(
                 resultSet.getString(

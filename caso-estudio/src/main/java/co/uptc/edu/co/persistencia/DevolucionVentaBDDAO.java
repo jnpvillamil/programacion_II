@@ -18,25 +18,25 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 	private static final String TABLA_DEVOLUCIONES = "devoluciones_venta";
 
 	private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_DEVOLUCIONES
-			+ " (codigo_devolucion, numero_factura, codigo_producto, nombre_producto, cantidad_devuelta, valor_devuelto, fecha_hora, motivo)"
+			+ " (codigoDevolucion, numeroFactura, codigoProducto, nombreProducto, cantidadDevuelta, valorDevuelto, fechaHora, motivo)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigo_devolucion, numero_factura, codigo_producto, nombre_producto,"
-			+ " cantidad_devuelta, valor_devuelto, fecha_hora, motivo FROM " + TABLA_DEVOLUCIONES
-			+ " WHERE codigo_devolucion = ?";
+	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
+			+ " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
+			+ " WHERE codigoDevolucion = ?";
 
-	private static final String SQL_BUSCAR_POR_FACTURA = "SELECT codigo_devolucion, numero_factura, codigo_producto, nombre_producto,"
-			+ " cantidad_devuelta, valor_devuelto, fecha_hora, motivo FROM " + TABLA_DEVOLUCIONES
-			+ " WHERE numero_factura = ? ORDER BY fecha_hora DESC";
+	private static final String SQL_BUSCAR_POR_FACTURA = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
+			+ " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
+			+ " WHERE numeroFactura = ? ORDER BY fechaHora DESC";
 
-	private static final String SQL_LISTAR = "SELECT codigo_devolucion, numero_factura, codigo_producto, nombre_producto,"
-			+ " cantidad_devuelta, valor_devuelto, fecha_hora, motivo FROM " + TABLA_DEVOLUCIONES
-			+ " ORDER BY fecha_hora DESC";
-	private static final String SQL_ULTIMO_CODIGO = "SELECT MAX(codigo_devolucion) AS ultimo_codigo " + "FROM "
-			+ TABLA_DEVOLUCIONES + " WHERE codigo_devolucion LIKE 'DEV%'";
+	private static final String SQL_LISTAR = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
+			+ " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
+			+ " ORDER BY fechaHora DESC";
+	private static final String SQL_ULTIMO_CODIGO = "SELECT MAX(codigoDevolucion) AS ultimoCodigo " + "FROM "
+			+ TABLA_DEVOLUCIONES + " WHERE codigoDevolucion LIKE 'DEV%'";
 
-	private static final String SQL_CANTIDAD_DEVUELTA = "SELECT COALESCE(SUM(cantidad_devuelta), 0) AS cantidad_devuelta "
-			+ "FROM " + TABLA_DEVOLUCIONES + " WHERE numero_factura = ? AND codigo_producto = ?";
+	private static final String SQL_CANTIDAD_DEVUELTA = "SELECT COALESCE(SUM(cantidadDevuelta), 0) AS cantidadDevuelta "
+			+ "FROM " + TABLA_DEVOLUCIONES + " WHERE numeroFactura = ? AND codigoProducto = ?";
 
 	@Override
 	public void guardarDevolucion(DevolucionVenta devolucion) throws Exception {
@@ -135,13 +135,13 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 
 	private DevolucionVenta construirDevolucion(ResultSet resultado) throws SQLException {
 		DevolucionVenta devolucion = new DevolucionVenta();
-		devolucion.setCodigoDevolucion(resultado.getString("codigo_devolucion"));
-		devolucion.setNumeroFactura(resultado.getString("numero_factura"));
-		devolucion.setCodigoProducto(resultado.getString("codigo_producto"));
-		devolucion.setNombreProducto(resultado.getString("nombre_producto"));
-		devolucion.setCantidadDevuelta(resultado.getInt("cantidad_devuelta"));
-		devolucion.setValorDevuelto(resultado.getDouble("valor_devuelto"));
-		devolucion.setFechaHora(resultado.getTimestamp("fecha_hora").toLocalDateTime());
+		devolucion.setCodigoDevolucion(resultado.getString("codigoDevolucion"));
+		devolucion.setNumeroFactura(resultado.getString("numeroFactura"));
+		devolucion.setCodigoProducto(resultado.getString("codigoProducto"));
+		devolucion.setNombreProducto(resultado.getString("nombreProducto"));
+		devolucion.setCantidadDevuelta(resultado.getInt("cantidadDevuelta"));
+		devolucion.setValorDevuelto(resultado.getDouble("valorDevuelto"));
+		devolucion.setFechaHora(resultado.getTimestamp("fechaHora").toLocalDateTime());
 		devolucion.setMotivo(resultado.getString("motivo"));
 		return devolucion;
 	}
@@ -153,7 +153,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 				ResultSet resultado = sentencia.executeQuery()) {
 
 			if (resultado.next()) {
-				return resultado.getString("ultimo_codigo");
+				return resultado.getString("ultimoCodigo");
 			}
 
 			return null;
@@ -173,7 +173,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 
 			try (ResultSet resultado = sentencia.executeQuery()) {
 				if (resultado.next()) {
-					return resultado.getInt("cantidad_devuelta");
+					return resultado.getInt("cantidadDevuelta");
 				}
 			}
 
