@@ -228,17 +228,32 @@ public class ComprasBDDAO implements CompraDAO {
 			compra.setFecha(fechaSql.toLocalDate());
 		}
 		compra.setCodigoProveedor(resultado.getString("codigo_proveedor"));
-		compra.setFormaPago(FormaPago.valueOf(resultado.getString("forma_pago")));
+		compra.setFormaPago(parseFormaPago(resultado.getString("forma_pago")));
 		compra.setSubtotal(resultado.getDouble("subtotal"));
 		compra.setImpuestos(resultado.getDouble("impuestos"));
 		compra.setTotalCompra(resultado.getDouble("totalCompra"));
 		String estadoStr = resultado.getString("estado");
 		if (estadoStr != null && !estadoStr.isEmpty()) {
-			compra.setEstado(EstadoCompraEnum.valueOf(estadoStr));
+			compra.setEstado(EstadoCompraEnum.valueOf(estadoStr.trim().toUpperCase()));
 		}
 		compra.setMotivoAnulacion(resultado.getString("motivoAnulacion"));
 
 		return compra;
+	}
+
+	private FormaPago parseFormaPago(String valor) throws SQLException {
+		if (valor == null || valor.isBlank()) {
+			throw new SQLException("La forma de pago viene vacía en la base de datos.");
+		}
+
+		String normalizado = valor.trim();
+		for (FormaPago formaPago : FormaPago.values()) {
+			if (formaPago.name().equalsIgnoreCase(normalizado) || formaPago.toString().equalsIgnoreCase(normalizado)) {
+				return formaPago;
+			}
+		}
+
+		throw new SQLException("Forma de pago no reconocida: " + valor);
 	}
 
 	private DetalleCompra construirDetalleCompra(ResultSet resultado) throws SQLException {

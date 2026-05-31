@@ -11,6 +11,7 @@ import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
+import co.uptc.edu.co.util.LogUtil;
 
 public class ProveedorBDDAO implements ProveedorDAO {
 
@@ -37,8 +38,9 @@ public class ProveedorBDDAO implements ProveedorDAO {
 
 			prepararInsert(preparedStatement, proveedor);
 			preparedStatement.executeUpdate();
-
+			LogUtil.info("Proveedor registrado con éxito. Código: " + proveedor.getCodigoProveedor());
 		} catch (SQLException e) {
+			LogUtil.error("Falla al guardar proveedor. Código: " + proveedor.getCodigoProveedor(), e);
 			throw new Exception("Error al guardar el proveedor en el servidor remoto: " + e.getMessage(), e);
 		}
 	}
@@ -50,7 +52,9 @@ public class ProveedorBDDAO implements ProveedorDAO {
 
 			prepararActualizar(preparedStatement, proveedor);
 			preparedStatement.executeUpdate();
+			LogUtil.info("Proveedor actualizado con éxito. Código: " + proveedor.getCodigoProveedor());
 		} catch (SQLException e) {
+			LogUtil.error("Falla al actualizar proveedor. Código: " + proveedor.getCodigoProveedor(), e);
 			throw new Exception("Error al actualizar el proveedor en el servidor remoto: " + e.getMessage(), e);
 		}
 	}
@@ -66,7 +70,9 @@ public class ProveedorBDDAO implements ProveedorDAO {
 					return construirProveedor(resultSet);
 				}
 			}
+			LogUtil.info("Búsqueda de proveedor exitosa. Código: " + codigo);
 		} catch (SQLException e) {
+			LogUtil.error("Falla al buscar proveedor. Código: " + codigo, e);
 			throw new Exception("Error al buscar el proveedor solicitado: " + e.getMessage(), e);
 		}
 		return null;
@@ -82,7 +88,9 @@ public class ProveedorBDDAO implements ProveedorDAO {
 			while (resultSet.next()) {
 				lista.add(construirProveedor(resultSet));
 			}
+			LogUtil.info("Listado de proveedores exitoso.");
 		} catch (SQLException e) {
+			LogUtil.error("Falla al listar proveedores.", e);
 			throw new Exception("Error al listar los proveedores: " + e.getMessage(), e);
 		}
 		return lista;

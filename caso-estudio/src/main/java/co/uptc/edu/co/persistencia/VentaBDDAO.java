@@ -109,7 +109,13 @@ public class VentaBDDAO implements VentaDAO {
 				ResultSet resultado = sentencia.executeQuery()) {
 
 			while (resultado.next()) {
-				ventas.add(construirVenta(resultado));
+				try {
+					Venta venta = construirVenta(resultado);
+					venta.setDetalles(listarDetallesVenta(conexion, venta.getNumeroFactura()));
+					ventas.add(venta);
+				} catch (SQLException e) {
+					System.out.println("Se omitió una venta con datos inválidos: " + e.getMessage());
+				}
 			}
 
 			return ventas;
@@ -130,7 +136,13 @@ public class VentaBDDAO implements VentaDAO {
 
 			try (ResultSet resultado = sentencia.executeQuery()) {
 				while (resultado.next()) {
-					ventas.add(construirVenta(resultado));
+					try {
+						Venta venta = construirVenta(resultado);
+						venta.setDetalles(listarDetallesVenta(conexion, venta.getNumeroFactura()));
+						ventas.add(venta);
+					} catch (SQLException e) {
+						System.out.println("Se omitió una venta por fecha con datos inválidos: " + e.getMessage());
+					}
 				}
 			}
 
@@ -198,15 +210,19 @@ public class VentaBDDAO implements VentaDAO {
 	private Venta construirVenta(ResultSet resultado) throws SQLException {
 		Venta venta = new Venta();
 		venta.setNumeroFactura(resultado.getString("numero_factura"));
-		venta.setFechaHora(resultado.getTimestamp("fecha_hora").toLocalDateTime());
+		Timestamp fechaHora = resultado.getTimestamp("fecha_hora");
+		if (fechaHora != null) {
+			venta.setFechaHora(fechaHora.toLocalDateTime());
+		}
 		venta.setCliente(resultado.getString("cliente"));
-		venta.setFormaPago(
-			    FormaPago.valueOf(resultado.getString("forma_pago"))
-			);
+		venta.setFormaPago(parseFormaPago(resultado.getString("forma_pago")));
 		venta.setSubTotal(resultado.getDouble("subtotal"));
 		venta.setImpuestos(resultado.getDouble("impuestos"));
 		venta.setTotal(resultado.getDouble("total"));
-		venta.setEstado(EstadoVentaEnum.valueOf(resultado.getString("estado")));
+		String estadoStr = resultado.getString("estado");
+		if (estadoStr != null && !estadoStr.isBlank()) {
+			venta.setEstado(EstadoVentaEnum.valueOf(estadoStr.trim().toUpperCase()));
+		}
 		venta.setMotivoAnulacion(resultado.getString("motivo_anulacion"));
 
 		Timestamp fechaAnulacion = resultado.getTimestamp("fecha_anulacion");
@@ -214,6 +230,21 @@ public class VentaBDDAO implements VentaDAO {
 			venta.setFechaAnulacion(fechaAnulacion.toLocalDateTime());
 		}
 		return venta;
+	}
+
+	private FormaPago parseFormaPago(String valor) throws SQLException {
+		if (valor == null || valor.isBlank()) {
+			throw new SQLException("La forma de pago viene vacía en la base de datos.");
+		}
+
+		String normalizado = valor.trim();
+		for (FormaPago formaPago : FormaPago.values()) {
+			if (formaPago.name().equalsIgnoreCase(normalizado) || formaPago.toString().equalsIgnoreCase(normalizado)) {
+				return formaPago;
+			}
+		}
+
+		throw new SQLException("Forma de pago no reconocida: " + valor);
 	}
 
 	private DetalleVenta construirDetalleVenta(ResultSet resultado) throws SQLException {
