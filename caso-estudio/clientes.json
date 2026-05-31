@@ -48,5 +48,15 @@
     "nombreCompleto": "SEBASTIAN",
     "tipoDocumento": "CC",
     "numeroDocumento": 1000432543
+  },
+  {
+    "idCliente": 105,
+    "direccionC": "carrera 23",
+    "tipoCliente": "Minorista",
+    "telefonoC": 32145678,
+    "estado": "ACTIVO",
+    "nombreCompleto": "pepito",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 345678
   }
 ]

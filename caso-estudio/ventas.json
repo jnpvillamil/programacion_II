@@ -452,5 +452,77 @@
     "impuestos": 0.0,
     "total": 292000.0,
     "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-10",
+    "fechaHora": "2026-05-31T08:42:45.801811900",
+    "cliente": {
+      "idCliente": 100,
+      "direccionC": "CALLE 50",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3121214144,
+      "estado": "ACTIVO",
+      "nombreCompleto": "DIANA SUAREZ",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1000432123
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 100,
+          "nombreProducto": "arroz",
+          "precioCompra": 0.0,
+          "precioVenta": 2900.0,
+          "stockActual": 19,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.05
+        },
+        "cantidad": 3,
+        "precioUnitario": 2900.0,
+        "impuestos": 435.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 435.0,
+    "total": 9135.0,
+    "estado": "ACTIVA"
+  },
+  {
+    "numeroFactura": "FACT-11",
+    "fechaHora": "2026-05-31T08:55:50.574495500",
+    "cliente": {
+      "idCliente": 100,
+      "direccionC": "CALLE 50",
+      "tipoCliente": "Minorista",
+      "telefonoC": 3121214144,
+      "estado": "ACTIVO",
+      "nombreCompleto": "DIANA SUAREZ",
+      "tipoDocumento": "CC",
+      "numeroDocumento": 1000432123
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 100,
+          "nombreProducto": "arroz",
+          "precioCompra": 0.0,
+          "precioVenta": 2900.0,
+          "stockActual": 15,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.05
+        },
+        "cantidad": 4,
+        "precioUnitario": 2900.0,
+        "impuestos": 580.0
+      }
+    ],
+    "formaPago": "EFECTIVO",
+    "impuestos": 580.0,
+    "total": 12180.0,
+    "estado": "ACTIVA"
   }
 ]

@@ -34,5 +34,77 @@
     "valor": 26000.0,
     "descripcion": "Compra factura COMP-6",
     "referenciaFactura": "COMP-6"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Inventario",
+    "valor": 10000.0,
+    "descripcion": "Compra factura COMP-7",
+    "referenciaFactura": "COMP-7"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "EGRESO",
+    "cuentaContable": "Proveedores",
+    "valor": 10000.0,
+    "descripcion": "Compra factura COMP-7",
+    "referenciaFactura": "COMP-7"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Caja",
+    "valor": 9135.0,
+    "descripcion": "Venta factura FACT-10",
+    "referenciaFactura": "FACT-10"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Ingresos por ventas",
+    "valor": 8700.0,
+    "descripcion": "Venta factura FACT-10",
+    "referenciaFactura": "FACT-10"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "IVA generado",
+    "valor": 435.0,
+    "descripcion": "IVA venta factura FACT-10",
+    "referenciaFactura": "FACT-10"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Caja",
+    "valor": 12180.0,
+    "descripcion": "Venta factura FACT-11",
+    "referenciaFactura": "FACT-11"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "Ingresos por ventas",
+    "valor": 11600.0,
+    "descripcion": "Venta factura FACT-11",
+    "referenciaFactura": "FACT-11"
+  },
+  {
+    "codigoTransaccion": 0,
+    "fecha": "2026-05-31",
+    "tipoMovimiento": "INGRESO",
+    "cuentaContable": "IVA generado",
+    "valor": 580.0,
+    "descripcion": "IVA venta factura FACT-11",
+    "referenciaFactura": "FACT-11"
   }
 ]

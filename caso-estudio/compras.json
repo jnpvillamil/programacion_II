@@ -196,5 +196,38 @@
       }
     ],
     "total": 26000.0
+  },
+  {
+    "idCompra": 0,
+    "numeroFactura": "COMP-7",
+    "proveedor": {
+      "codigoProveedor": 1,
+      "razonSocial": "Jumbo",
+      "nit": "123456",
+      "direccionP": "carrera 1 a",
+      "telefonoP": 74746123,
+      "correoP": "jumbo@correo.com",
+      "estado": "ACTIVO"
+    },
+    "fechaCompra": "2026-05-31T08:41:23.042511800",
+    "detalles": [
+      {
+        "producto": {
+          "codigoProducto": 102,
+          "nombreProducto": "Pasta",
+          "precioCompra": 5000.0,
+          "precioVenta": 0.0,
+          "stockActual": 105,
+          "stockMinimo": 0,
+          "stockMaximo": 0,
+          "activo": true,
+          "porcentajeIva": 0.0
+        },
+        "cantidad": 2,
+        "precioCompra": 5000.0,
+        "subtotal": 10000.0
+      }
+    ],
+    "total": 10000.0
   }
 ]

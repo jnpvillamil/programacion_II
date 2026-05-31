@@ -1,0 +1,35 @@
+{
+  "fechaInicio": "2026-05-31",
+  "fechaFin": "2026-05-31",
+  "totalVentas": 9135.0,
+  "totalCompras": 10000.0,
+  "utilidadBruta": -865.0,
+  "ventasPorFormaPago": [
+    {
+      "tipo": "EFECTIVO",
+      "valor": 9135.0
+    }
+  ],
+  "productosMasVendidos": [
+    {
+      "codigo": 100,
+      "nombre": "arroz",
+      "cantidadVendida": 3
+    }
+  ],
+  "clientesMayorVolumen": [
+    {
+      "codigo": 100,
+      "nombre": "DIANA SUAREZ",
+      "totalComprado": 9135.0
+    }
+  ],
+  "inventarioValorizado": 1973400.0,
+  "resumenContable": {
+    "ingresos": 9135.0,
+    "egresos": 10000.0,
+    "utilidad": -865.0,
+    "ivaGenerado": 435.0,
+    "ivaDescontable": 0.0
+  }
+}

@@ -2,15 +2,7 @@ package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
 
-import co.uptc.edu.co.tienda.configs.ClienteConfig;
-import co.uptc.edu.co.tienda.configs.CompraConfig;
-import co.uptc.edu.co.tienda.configs.ContableConfig;
-import co.uptc.edu.co.tienda.configs.InventarioConfig;
-import co.uptc.edu.co.tienda.configs.ProductoConfig;
-import co.uptc.edu.co.tienda.configs.ProveedorConfig;
-import co.uptc.edu.co.tienda.configs.ReporteConfig;
-import co.uptc.edu.co.tienda.configs.SeguridadConfig;
-import co.uptc.edu.co.tienda.configs.VentaConfig;
+import co.uptc.edu.co.tienda.configs.TiendaConfig;
 import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.enums.EstadoVentaEnum;
 import co.uptc.edu.tienda.modelo.Cliente;
@@ -54,7 +46,6 @@ public class VentanaPrincipal extends JFrame {
     private JButton btnProducto;
     private JButton btnCliente;
 
-    private SeguridadConfig seguridadConfig;
 
     private DialogoProveedor nuevoProveedor;
     private DialogoProducto nuevoProducto;
@@ -63,15 +54,7 @@ public class VentanaPrincipal extends JFrame {
 
     private Evento evento;
 
-    // CONFIGS
-    private ProveedorConfig proveedorConfig;
-    private ProductoConfig productoConfig;
-    private ClienteConfig clienteConfig;
-    private VentaConfig ventaConfig;
-    private InventarioConfig inventarioConfig;
-    private CompraConfig compraConfig;
-    private ContableConfig contableConfig;
-    private ReporteConfig reporteConfig;
+    private TiendaConfig tiendaConfig;
 
     public VentanaPrincipal() {
 
@@ -97,20 +80,10 @@ public class VentanaPrincipal extends JFrame {
         pMovimientosContables = new PanelMovimientosContables();
         pReportes = new PanelReportes(evento);
 
-        seguridadConfig = new SeguridadConfig();
 
-        proveedorConfig = new ProveedorConfig();
-        productoConfig = new ProductoConfig();
-        clienteConfig = new ClienteConfig();
-        ventaConfig = new VentaConfig();
-        inventarioConfig = new InventarioConfig();
-        compraConfig = new CompraConfig();
-        contableConfig = new ContableConfig();
-        reporteConfig = new ReporteConfig(
-                ventaConfig.getiVenta(),
-                compraConfig.getiCompra()
-        );
+        tiendaConfig = new TiendaConfig();
 
+        
         add(pLogin, BorderLayout.CENTER);
     }
 
@@ -124,7 +97,7 @@ public class VentanaPrincipal extends JFrame {
             CredencialDto validar = pLogin.getCredencialesUsuario();
 
             if (validar != null) {
-                GestionSeguridad moduloSeguridad = seguridadConfig.getGestSeguridad();
+                GestionSeguridad moduloSeguridad = tiendaConfig.getGestSeguridad();
                 co.uptc.edu.tienda.modelo.Usuario usuarioLogueado = moduloSeguridad.validarLogueo(validar);
 
                 switch (usuarioLogueado.getRol()) {
@@ -156,14 +129,14 @@ public class VentanaPrincipal extends JFrame {
                         add(contenedor, BorderLayout.CENTER);
                         contenedor.add(pProveedor);
 
-                        pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
-                        pProducto.poblarTabla(productoConfig.getGestProducto().listar());
-                        pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+                        pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
+                        pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
+                        pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
 
                         btnProveedor.addActionListener(e -> {
                             contenedor.removeAll();
                             contenedor.add(pProveedor);
-                            pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+                            pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
                             contenedor.repaint();
                             contenedor.revalidate();
                         });
@@ -171,7 +144,7 @@ public class VentanaPrincipal extends JFrame {
                         btnCliente.addActionListener(e -> {
                             contenedor.removeAll();
                             contenedor.add(pCliente);
-                            pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+                            pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
                             contenedor.repaint();
                             contenedor.revalidate();
                         });
@@ -224,8 +197,8 @@ public class VentanaPrincipal extends JFrame {
                         contenedor = new JPanel(new BorderLayout());
                         add(contenedor, BorderLayout.CENTER);
 
-                        pVenta.poblarClientes(clienteConfig.getGestCliente().leerClientes());
-                        pVenta.poblarProductos(productoConfig.getGestProducto().listar());
+                        pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
+                        pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
 
                         contenedor.add(pVenta);
 
@@ -236,8 +209,8 @@ public class VentanaPrincipal extends JFrame {
 
                         btnNuevaVenta.addActionListener(e -> {
                             contenedor.removeAll();
-                            pVenta.poblarProductos(productoConfig.getGestProducto().listar());
-                            pVenta.poblarClientes(clienteConfig.getGestCliente().leerClientes());
+                            pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
+                            pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
                             contenedor.add(pVenta);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -245,7 +218,7 @@ public class VentanaPrincipal extends JFrame {
 
                         btnHistorial.addActionListener(e -> {
                             contenedor.removeAll();
-                            pHistorial.refrescar(ventaConfig.getGestVenta().listarVentas());
+                            pHistorial.refrescar(tiendaConfig.getGestVenta().listarVentas());
                             contenedor.add(pHistorial);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -253,7 +226,7 @@ public class VentanaPrincipal extends JFrame {
 
                         btnClientesCajero.addActionListener(e -> {
                             contenedor.removeAll();
-                            pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+                            pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
                             contenedor.add(pCliente);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -261,7 +234,7 @@ public class VentanaPrincipal extends JFrame {
 
                         btnHistorialClientes.addActionListener(e -> {
                             contenedor.removeAll();
-                            pHistorialCliente.refrescar(ventaConfig.getGestVenta().listarVentas());
+                            pHistorialCliente.refrescar(tiendaConfig.getGestVenta().listarVentas());
                             contenedor.add(pHistorialCliente);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -313,8 +286,8 @@ public class VentanaPrincipal extends JFrame {
                         contenedor = new JPanel(new BorderLayout());
                         add(contenedor, BorderLayout.CENTER);
 
-                        pCompra.poblarProveedores(proveedorConfig.getGestProveedor().leerProveedores());
-                        pCompra.poblarProductos(productoConfig.getGestProducto().listar());
+                        pCompra.poblarProveedores(tiendaConfig.getGestProveedor().leerProveedores());
+                        pCompra.poblarProductos(tiendaConfig.getGestProducto().listar());
                         contenedor.add(pCompra);
 
                         this.setSize(1100, 650);
@@ -324,8 +297,8 @@ public class VentanaPrincipal extends JFrame {
 
                         btnNuevaCompra.addActionListener(e -> {
                             contenedor.removeAll();
-                            pCompra.poblarProveedores(proveedorConfig.getGestProveedor().leerProveedores());
-                            pCompra.poblarProductos(productoConfig.getGestProducto().listar());
+                            pCompra.poblarProveedores(tiendaConfig.getGestProveedor().leerProveedores());
+                            pCompra.poblarProductos(tiendaConfig.getGestProducto().listar());
                             contenedor.add(pCompra);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -333,7 +306,7 @@ public class VentanaPrincipal extends JFrame {
 
                         btnHistorialCompra.addActionListener(e -> {
                             contenedor.removeAll();
-                            pHistorialCompra.refrescar(compraConfig.getGestion().listarCompras());
+                            pHistorialCompra.refrescar(tiendaConfig.getGestCompra().listarCompras());
                             contenedor.add(pHistorialCompra);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -341,7 +314,7 @@ public class VentanaPrincipal extends JFrame {
 
                         btnProveedores.addActionListener(e -> {
                             contenedor.removeAll();
-                            pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+                            pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
                             contenedor.add(pProveedor);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -350,7 +323,7 @@ public class VentanaPrincipal extends JFrame {
                         btnProductos.addActionListener(e -> {
                             contenedor.removeAll();
                             contenedor.add(pProducto);
-                            pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+                            pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
                             contenedor.repaint();
                             contenedor.revalidate();
                         });
@@ -358,7 +331,7 @@ public class VentanaPrincipal extends JFrame {
                         btnInventario.addActionListener(e -> {
                             contenedor.removeAll();
                             contenedor.add(pInventario);
-                            pInventario.refrescar(inventarioConfig.getGestInventario().listarMovimientos());
+                            pInventario.refrescar(tiendaConfig.getGestInventario().listarMovimientos());
                             contenedor.repaint();
                             contenedor.revalidate();
                         });
@@ -410,7 +383,7 @@ public class VentanaPrincipal extends JFrame {
 
                         btnMovimientosContables.addActionListener(e -> {
                             contenedor.removeAll();
-                            pMovimientosContables.refrescar(contableConfig.getGestContable().listarMovimientos());
+                            pMovimientosContables.refrescar(tiendaConfig.getGestContable().listarMovimientos());
                             contenedor.add(pMovimientosContables);
                             contenedor.repaint();
                             contenedor.revalidate();
@@ -455,9 +428,9 @@ public class VentanaPrincipal extends JFrame {
 
     public void crearProveedor() {
         try {
-            proveedorConfig.getGestProveedor().agregarProveedor(nuevoProveedor.capturarDatos());
+        	tiendaConfig.getGestProveedor().agregarProveedor(nuevoProveedor.capturarDatos());
             cerrarDialogoProveedor();
-            pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+            pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -471,7 +444,7 @@ public class VentanaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, seleccione un proveedor de la tabla.");
             return;
         }
-        Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+        Proveedor p = tiendaConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
         nuevoProveedor = new DialogoProveedor(evento, "Modificar Proveedor", false);
         nuevoProveedor.cargarDatos(p);
         nuevoProveedor.setSize(400, 400);
@@ -484,8 +457,8 @@ public class VentanaPrincipal extends JFrame {
         if (codigo == -1) return;
         try {
             Proveedor p = nuevoProveedor.capturarDatos();
-            proveedorConfig.getGestProveedor().modificarProveedor(p);
-            pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+            tiendaConfig.getGestProveedor().modificarProveedor(p);
+            pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
             JOptionPane.showMessageDialog(this, "Proveedor modificado exitosamente.");
             cerrarDialogoProveedor();
         } catch (Exception e) {
@@ -501,7 +474,7 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         try {
-            Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+            Proveedor p = tiendaConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
             if (p != null && p.getEstado() == EstadoEnum.INACTIVO) {
                 JOptionPane.showMessageDialog(this, "El proveedor ya se encuentra inactivo.");
                 return;
@@ -510,8 +483,8 @@ public class VentanaPrincipal extends JFrame {
                     "¿Está seguro de inactivar el proveedor " + codigo + "?",
                     "Confirmar", JOptionPane.YES_NO_OPTION);
             if (respuesta == JOptionPane.YES_OPTION) {
-                proveedorConfig.getGestProveedor().eliminarProveedor(codigo);
-                pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+            	tiendaConfig.getGestProveedor().eliminarProveedor(codigo);
+                pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
             }
             JOptionPane.showMessageDialog(this, "Proveedor inactivado exitosamente.");
         } catch (Exception e) {
@@ -526,7 +499,7 @@ public class VentanaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, seleccione un proveedor de la tabla.");
             return;
         }
-        Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+        Proveedor p = tiendaConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
         if (p != null) {
             JOptionPane.showMessageDialog(this,
                     "Código: " + p.getCodigoProveedor() +
@@ -543,7 +516,7 @@ public class VentanaPrincipal extends JFrame {
             String input = JOptionPane.showInputDialog(this, "Ingrese código del proveedor:");
             if (input == null || input.isEmpty()) return;
             int codigo = Integer.parseInt(input);
-            Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+            Proveedor p = tiendaConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
             if (p != null) {
                 pProveedor.poblarTabla(java.util.List.of(p));
             } else {
@@ -555,7 +528,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void limpiarProveedor() {
-        pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+        pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
     }
 
     public void activarProveedor() {
@@ -565,7 +538,7 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         try {
-            Proveedor p = proveedorConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
+            Proveedor p = tiendaConfig.getGestProveedor().buscarProveedorPorCodigo(codigo);
             if (p != null && p.getEstado() == EstadoEnum.ACTIVO) {
                 JOptionPane.showMessageDialog(this, "El proveedor ya se encuentra activo.");
                 return;
@@ -574,8 +547,8 @@ public class VentanaPrincipal extends JFrame {
                     "¿Está seguro de activar el proveedor " + codigo + "?",
                     "Confirmar", JOptionPane.YES_NO_OPTION);
             if (respuesta == JOptionPane.YES_OPTION) {
-                proveedorConfig.getGestProveedor().activarProveedor(codigo);
-                pProveedor.poblarTabla(proveedorConfig.getGestProveedor().leerProveedores());
+            	tiendaConfig.getGestProveedor().activarProveedor(codigo);
+                pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
             }
             JOptionPane.showMessageDialog(this, "Proveedor activado exitosamente.");
         } catch (Exception e) {
@@ -602,9 +575,9 @@ public class VentanaPrincipal extends JFrame {
 
     public void crearCliente() {
         try {
-            clienteConfig.getGestCliente().agregarCliente(nuevoCliente.capturarDatos());
+        	tiendaConfig.getGestCliente().agregarCliente(nuevoCliente.capturarDatos());
             cerrarDialogoCliente();
-            pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+            pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -613,7 +586,7 @@ public class VentanaPrincipal extends JFrame {
     public void lanzarDialogoModificarCliente() {
         int codigo = pCliente.getItemSeleccionado();
         if (codigo == -1) return;
-        Cliente c = clienteConfig.getGestCliente().buscarClientePorCodigo(codigo);
+        Cliente c = tiendaConfig.getGestCliente().buscarClientePorCodigo(codigo);
         nuevoCliente = new DialogoCliente(evento, "Modificar Cliente", false);
         nuevoCliente.cargarDatos(c);
         nuevoCliente.setSize(400, 400);
@@ -624,9 +597,9 @@ public class VentanaPrincipal extends JFrame {
     public void modificarCliente() {
         try {
             Cliente c = nuevoCliente.capturarDatos();
-            clienteConfig.getGestCliente().modificarCliente(c);
+            tiendaConfig.getGestCliente().modificarCliente(c);
             cerrarDialogoCliente();
-            pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+            pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -639,7 +612,7 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         try {
-            Cliente c = clienteConfig.getGestCliente().buscarClientePorCodigo(codigo);
+            Cliente c = tiendaConfig.getGestCliente().buscarClientePorCodigo(codigo);
             if (c == null) {
                 JOptionPane.showMessageDialog(this, "Cliente no encontrado");
                 return;
@@ -653,8 +626,8 @@ public class VentanaPrincipal extends JFrame {
                     "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
             if (respuesta == JOptionPane.YES_OPTION) {
                 c.setEstado(EstadoEnum.INACTIVO);
-                clienteConfig.getGestCliente().modificarCliente(c);
-                pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+                tiendaConfig.getGestCliente().modificarCliente(c);
+                pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
                 JOptionPane.showMessageDialog(this, "Cliente inactivado exitosamente.");
             }
         } catch (Exception e) {
@@ -668,7 +641,7 @@ public class VentanaPrincipal extends JFrame {
             String input = JOptionPane.showInputDialog(this, "Ingrese código del cliente:");
             if (input == null || input.isEmpty()) return;
             int codigo = Integer.parseInt(input);
-            Cliente c = clienteConfig.getGestCliente().buscarClientePorCodigo(codigo);
+            Cliente c = tiendaConfig.getGestCliente().buscarClientePorCodigo(codigo);
             if (c != null) {
                 pCliente.poblarTabla(java.util.List.of(c));
             } else {
@@ -682,7 +655,7 @@ public class VentanaPrincipal extends JFrame {
     public void verCliente() {
         int codigo = pCliente.getItemSeleccionado();
         if (codigo == -1) return;
-        Cliente c = clienteConfig.getGestCliente().buscarClientePorCodigo(codigo);
+        Cliente c = tiendaConfig.getGestCliente().buscarClientePorCodigo(codigo);
         if (c != null) {
             JOptionPane.showMessageDialog(this,
                     "Código: " + c.getIdCliente() +
@@ -693,7 +666,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void limpiarCliente() {
-        pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+        pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
     }
 
     public void activarCliente() {
@@ -703,7 +676,7 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         try {
-            Cliente c = clienteConfig.getGestCliente().buscarClientePorCodigo(codigo);
+            Cliente c = tiendaConfig.getGestCliente().buscarClientePorCodigo(codigo);
             if (c != null && c.getEstado() == EstadoEnum.ACTIVO) {
                 JOptionPane.showMessageDialog(this, "El cliente ya se encuentra activo.");
                 return;
@@ -712,8 +685,8 @@ public class VentanaPrincipal extends JFrame {
                     "¿Está seguro de activar el cliente " + codigo + "?",
                     "Confirmar", JOptionPane.YES_NO_OPTION);
             if (respuesta == JOptionPane.YES_OPTION) {
-                clienteConfig.getGestCliente().activarCliente(codigo);
-                pCliente.poblarTabla(clienteConfig.getGestCliente().leerClientes());
+            	tiendaConfig.getGestCliente().activarCliente(codigo);
+                pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
             }
             JOptionPane.showMessageDialog(this, "Cliente activado exitosamente.");
         } catch (Exception e) {
@@ -739,15 +712,15 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void crearProducto() {
-        productoConfig.getGestProducto().guardar(nuevoProducto.capturarDatos());
+    	tiendaConfig.getGestProducto().guardar(nuevoProducto.capturarDatos());
         cerrarDialogoProducto();
-        pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+        pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
     }
 
     public void lanzarDialogoModificarProducto() {
         int codigo = pProducto.getItemSeleccionado();
         if (codigo == -1) return;
-        Producto p = productoConfig.getGestProducto().buscar(codigo);
+        Producto p = tiendaConfig.getGestProducto().buscar(codigo);
         nuevoProducto = new DialogoProducto(evento, "Modificar Producto", false);
         nuevoProducto.cargarDatos(p);
         nuevoProducto.setSize(400, 400);
@@ -757,23 +730,23 @@ public class VentanaPrincipal extends JFrame {
 
     public void modificarProducto() {
         Producto p = nuevoProducto.capturarDatos();
-        productoConfig.getGestProducto().actualizar(p);
+        tiendaConfig.getGestProducto().actualizar(p);
         cerrarDialogoProducto();
-        pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+        pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
     }
 
     public void inactivarProducto() {
         int codigo = pProducto.getItemSeleccionado();
         if (codigo == -1) return;
-        productoConfig.getGestProducto().inactivar(codigo);
-        pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+        tiendaConfig.getGestProducto().inactivar(codigo);
+        pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
     }
 
     public void activarProducto() {
         int codigo = pProducto.getItemSeleccionado();
         if (codigo == -1) return;
-        productoConfig.getGestProducto().activar(codigo);
-        pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+        tiendaConfig.getGestProducto().activar(codigo);
+        pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
     }
 
     public void buscarProducto() {
@@ -781,7 +754,7 @@ public class VentanaPrincipal extends JFrame {
             String input = JOptionPane.showInputDialog(this, "Ingrese código del producto:");
             if (input == null || input.isEmpty()) return;
             int codigo = Integer.parseInt(input);
-            Producto p = productoConfig.getGestProducto().buscar(codigo);
+            Producto p = tiendaConfig.getGestProducto().buscar(codigo);
             if (p != null) {
                 pProducto.poblarTabla(java.util.List.of(p));
             } else {
@@ -793,13 +766,13 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void limpiarProducto() {
-        pProducto.poblarTabla(productoConfig.getGestProducto().listar());
+        pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
     }
 
     public void verProducto() {
         int codigo = pProducto.getItemSeleccionado();
         if (codigo == -1) return;
-        Producto p = productoConfig.getGestProducto().buscar(codigo);
+        Producto p = tiendaConfig.getGestProducto().buscar(codigo);
         if (p != null) {
             JOptionPane.showMessageDialog(this,
                     "Código: " + p.getCodigoProducto() +
@@ -890,20 +863,20 @@ public class VentanaPrincipal extends JFrame {
             venta.setFormaPago(pVenta.getFormaPagoSeleccionada());
             venta.setDetalles(listaDetalle);
 
-            List<Producto> productos = productoConfig.getGestProducto().listar();
+            List<Producto> productos = tiendaConfig.getGestProducto().listar();
 
             // 1. Guardar venta
-            ventaConfig.getGestVenta().guardarVenta(venta);
+            tiendaConfig.getGestVenta().guardarVenta(venta);
 
             // 2. Inventario registra salida y actualiza stock
-            inventarioConfig.getGestInventario().registrarSalidaPorVenta(venta, productos);
+            tiendaConfig.getGestInventario().registrarSalidaPorVenta(venta, productos);
 
             // 3. Persistir stock
-            productoConfig.getGestProducto().guardarTodos(productos);
+            tiendaConfig.getGestProducto().guardarTodos(productos);
 
             // 4. ✅ Registrar movimientos contables
             System.out.println(">>> Registrando movimiento contable venta: " + venta.getNumeroFactura());
-            contableConfig.getGestContable().registrarVenta(venta);
+            tiendaConfig.getGestContable().registrarVenta(venta);
             System.out.println(">>> Movimiento contable venta OK");
 
             new TxtFactura().generarFactura(venta);
@@ -926,7 +899,7 @@ public class VentanaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Seleccione una venta de la tabla");
             return;
         }
-        Venta venta = ventaConfig.getGestVenta().buscarPorFactura(facturaSeleccionada);
+        Venta venta = tiendaConfig.getGestVenta().buscarPorFactura(facturaSeleccionada);
         if (venta != null && venta.getEstado() == EstadoVentaEnum.ANULADA) {
             JOptionPane.showMessageDialog(this, "La venta " + facturaSeleccionada + " ya está anulada.");
             return;
@@ -955,12 +928,12 @@ public class VentanaPrincipal extends JFrame {
                 JOptionPane.showMessageDialog(this, "Ingrese el motivo de anulación");
                 return;
             }
-            Venta venta = ventaConfig.getGestVenta().buscarPorFactura(factura);
-            ventaConfig.getGestVenta().anularVenta(factura, motivo);
-            List<Producto> productos = productoConfig.getGestProducto().listar();
-            inventarioConfig.getGestInventario().registrarEntradaPorAnulacion(venta, productos, motivo);
-            productoConfig.getGestProducto().guardarTodos(productos);
-            pHistorial.refrescar(ventaConfig.getGestVenta().listarVentas());
+            Venta venta = tiendaConfig.getGestVenta().buscarPorFactura(factura);
+            tiendaConfig.getGestVenta().anularVenta(factura, motivo);
+            List<Producto> productos = tiendaConfig.getGestProducto().listar();
+            tiendaConfig.getGestInventario().registrarEntradaPorAnulacion(venta, productos, motivo);
+            tiendaConfig.getGestProducto().guardarTodos(productos);
+            pHistorial.refrescar(tiendaConfig.getGestVenta().listarVentas());
             cerrarDialogoAnularVenta();
             JOptionPane.showMessageDialog(this, "Venta anulada correctamente.");
         } catch (Exception e) {
@@ -1034,14 +1007,14 @@ public class VentanaPrincipal extends JFrame {
             compra.setProveedor(proveedor);
             compra.setDetalles(listaDetalleCompra);
 
-            List<Producto> productos = productoConfig.getGestProducto().listar();
+            List<Producto> productos = tiendaConfig.getGestProducto().listar();
 
             // 1. Guardar compra
-            compraConfig.getGestion().guardarCompra(compra);
+            tiendaConfig.getGestCompra().guardarCompra(compra);
 
             // 2. Inventario registra entrada por cada producto
             for (DetalleCompra detalle : listaDetalleCompra) {
-                inventarioConfig.getGestInventario()
+            	tiendaConfig.getGestInventario()
                         .registrarEntradaPorCompra(
                                 compra.getNumeroFactura(),
                                 detalle.getProducto(),
@@ -1050,11 +1023,11 @@ public class VentanaPrincipal extends JFrame {
             }
 
             // 3. Persistir stock
-            productoConfig.getGestProducto().guardarTodos(productos);
+            tiendaConfig.getGestProducto().guardarTodos(productos);
 
             // 4. ✅ Registrar movimientos contables
             System.out.println(">>> Registrando movimiento contable compra: " + compra.getNumeroFactura());
-            contableConfig.getGestContable().registrarCompra(compra);
+            tiendaConfig.getGestContable().registrarCompra(compra);
             System.out.println(">>> Movimiento contable compra OK");
 
             JOptionPane.showMessageDialog(this,
@@ -1105,8 +1078,8 @@ public class VentanaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Ingrese el rango de fechas");
             return;
         }
-        ResumenFinanciero resumen = reporteConfig.getGestReporte()
-                .generarReporte(desde, hasta, productoConfig.getGestProducto().listar());
+        ResumenFinanciero resumen = tiendaConfig.getGestReporte()
+                .generarReporte(desde, hasta, tiendaConfig.getGestProducto().listar());
         pReportes.mostrarResumen(resumen);
         JOptionPane.showMessageDialog(this, "Reporte generado y guardado en JSON.");
     }

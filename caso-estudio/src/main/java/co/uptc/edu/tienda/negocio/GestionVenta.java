@@ -8,7 +8,7 @@ import java.util.List;
 import co.uptc.edu.tienda.interfaces.IGestionVenta;
 import co.uptc.edu.tienda.modelo.DetalleVenta;
 import co.uptc.edu.tienda.modelo.Venta;
-import co.uptc.edu.co.tienda.configs.VentaConfig;
+import co.uptc.edu.co.tienda.configs.TiendaConfig;
 import co.uptc.edu.tienda.enums.EstadoVentaEnum;
 
 public class GestionVenta {
@@ -16,6 +16,7 @@ public class GestionVenta {
     private List<Venta> listaVentas;
     private IGestionVenta iVenta;
     private int consecutivo;
+    private static final String PREFIJO_FACTURA = "FACT-";
 
     public GestionVenta(IGestionVenta iVenta) {
         this.iVenta = iVenta;
@@ -31,7 +32,7 @@ public class GestionVenta {
         for (Venta v : listaVentas) {
             try {
                 String numero = v.getNumeroFactura()
-                        .replace(VentaConfig.PREFIJO_FACTURA, "");
+                        .replace(PREFIJO_FACTURA, "");
                 int n = Integer.parseInt(numero);
                 if (n > max) max = n;
             } catch (Exception e) {
@@ -76,7 +77,7 @@ public class GestionVenta {
         if (venta.getFormaPago() == null) {
             throw new Exception("Debe seleccionar una forma de pago");
         }
-        venta.setNumeroFactura(VentaConfig.PREFIJO_FACTURA + consecutivo++);
+        venta.setNumeroFactura(PREFIJO_FACTURA + consecutivo++);
         venta.setFechaHora(LocalDateTime.now().toString());
         calcularTotal(venta);
         listaVentas.add(venta);
