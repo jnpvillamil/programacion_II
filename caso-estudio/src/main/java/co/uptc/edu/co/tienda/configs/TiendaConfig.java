@@ -67,7 +67,7 @@ public class TiendaConfig {
     public TiendaConfig() {
 
         // Cliente
-        iCliente = new LocalCliente();
+        iCliente = new SqlCliente();
         gestCliente = new GestionCliente(iCliente);
 
         // Proveedor

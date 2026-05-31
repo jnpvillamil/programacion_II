@@ -30,63 +30,46 @@ public class LocalCliente implements IGestionCliente {
     }
 
     @Override
-    public void guardar(List<Cliente> clientes) {
-
+    public void guardar(Cliente cliente) {
+        List<Cliente> lista = leerClientes();
+        lista.add(cliente);
         try (FileWriter writer = new FileWriter(RUTA)) {
-
-            gson.toJson(clientes, writer);
-
-            System.out.println("Clientes guardados correctamente");
-
+            gson.toJson(lista, writer);
         } catch (IOException e) {
-
-            System.out.println(
-                    "Error al guardar en " +
-                    RUTA +
-                    ": " +
-                    e.getMessage()
-            );
+            System.out.println("Error al guardar cliente: " + e.getMessage());
         }
     }
 
     @Override
     public void actualizar(Cliente cliente) {
-
         List<Cliente> lista = leerClientes();
-
         for (int i = 0; i < lista.size(); i++) {
-
-            if (lista.get(i).getIdCliente() ==
-                    cliente.getIdCliente()) {
-
+            if (lista.get(i).getIdCliente() == cliente.getIdCliente()) {
                 lista.set(i, cliente);
-
                 break;
             }
         }
-
-        guardar(lista);
+        try (FileWriter writer = new FileWriter(RUTA)) {
+            gson.toJson(lista, writer);
+        } catch (IOException e) {
+            System.out.println("Error al actualizar cliente: " + e.getMessage());
+        }
     }
 
     @Override
     public void eliminar(int idCliente) {
-
         List<Cliente> lista = leerClientes();
-
         for (int i = 0; i < lista.size(); i++) {
-
-            if (lista.get(i).getIdCliente() ==
-                    idCliente) {
-
-                lista.get(i).setEstado(
-                        EstadoEnum.INACTIVO
-                );
-
+            if (lista.get(i).getIdCliente() == idCliente) {
+                lista.get(i).setEstado(EstadoEnum.INACTIVO);
                 break;
             }
         }
-
-        guardar(lista);
+        try (FileWriter writer = new FileWriter(RUTA)) {
+            gson.toJson(lista, writer);
+        } catch (IOException e) {
+            System.out.println("Error al eliminar cliente: " + e.getMessage());
+        }
     }
 
     @Override
@@ -151,17 +134,20 @@ public class LocalCliente implements IGestionCliente {
         }
     }
     
-	public void cambiarEstado(int codigoCliente, EstadoEnum nuevoEstado) {
-		// TODO Auto-generated method stub
-		List<Cliente> lista = leerClientes();
-	    for (Cliente c : lista) {
-	        if (c.getIdCliente() == codigoCliente) {
-	            c.setEstado(nuevoEstado);
-	            break;
-	        }
-	    }
-	    guardar(lista);
-		
-	}
+    @Override
+    public void cambiarEstado(int codigoCliente, EstadoEnum nuevoEstado) {
+        List<Cliente> lista = leerClientes();
+        for (Cliente c : lista) {
+            if (c.getIdCliente() == codigoCliente) {
+                c.setEstado(nuevoEstado);
+                break;
+            }
+        }
+        try (FileWriter writer = new FileWriter(RUTA)) {
+            gson.toJson(lista, writer);
+        } catch (IOException e) {
+            System.out.println("Error al cambiar estado cliente: " + e.getMessage());
+        }
+    }
 
 }

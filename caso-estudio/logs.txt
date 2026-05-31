@@ -22,3 +22,21 @@ Correo:  contador@correo.com
 Rol:     CONTADOR
 Acción:  Cierre de sesión
 ========================================
+========================================
+Fecha:   2026-05-31T09:28:32.166417200
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T09:31:47.956038700
+Correo:  almacen@correo.com
+Rol:     ALMACENISTA
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-05-31T09:44:46.023528400
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================

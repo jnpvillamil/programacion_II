@@ -17,7 +17,7 @@ public class GestionCliente {
 
     public void agregarCliente(Cliente nuevo) throws Exception {
 
-        // ✅ nombre correcto (viene de Persona)
+        
         if (nuevo.getNombreCompleto().trim().isEmpty()) {
             throw new Exception("El nombre es obligatorio");
         }
@@ -44,9 +44,8 @@ public class GestionCliente {
 
         Cliente.setContador(idReal);
 
-        actuales.add(nuevo);
-
-        gestionC.guardar(actuales);
+        
+        gestionC.guardar(nuevo);
     }
 
     public void modificarCliente(Cliente cliente) {
