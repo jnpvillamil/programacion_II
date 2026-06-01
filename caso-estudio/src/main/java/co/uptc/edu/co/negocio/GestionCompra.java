@@ -11,6 +11,7 @@ import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
+import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
 public class GestionCompra implements IGestionCompra {
 	private static final long NUMERO_FACTURA_INICIAL = 708507L;
@@ -24,6 +25,7 @@ public class GestionCompra implements IGestionCompra {
 		if (compraDAO == null) {
 			throw new IllegalArgumentException("El compraDAO no puede ser nulo.");
 		}
+
 		if (gestionInventario == null) {
 			throw new IllegalArgumentException("El gestionInventario no puede ser nulo.");
 		}
@@ -40,6 +42,26 @@ public class GestionCompra implements IGestionCompra {
 			compras = new ArrayList<>();
 			System.out.println("Error al carga compras:" + e.getMessage());
 		}
+	}
+
+	@Override
+	public double calcularImpuesto(CategoriaProductoEnum categoria, double subtotal) {
+		double tasa;
+		if (categoria == null) {
+			tasa = 0.19;
+		} else {
+			switch (categoria) {
+			case ALIMENTOS:
+				tasa = 0.05;
+				break;
+			case ASEO:
+			case PAPELERIA:
+			default:
+				tasa = 0.19;
+				break;
+			}
+		}
+		return subtotal * tasa;
 	}
 
 	@Override

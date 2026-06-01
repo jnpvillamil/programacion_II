@@ -13,6 +13,7 @@ import co.uptc.edu.co.interfaces.ProductoDAO;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
+import co.uptc.edu.co.util.LogUtil;
 
 public class ProductoBDDAO implements ProductoDAO {
 	private static final String TABLA_PRODUCTOS = "productos";
@@ -39,6 +40,7 @@ public class ProductoBDDAO implements ProductoDAO {
 
 	@Override
 	public void guardarProducto(Producto producto) throws Exception {
+        LogUtil.info("Entrando a guardarProducto. codigo=" + (producto != null ? producto.getCodigoProducto() : "null"));
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERTAR)) {
 
@@ -46,18 +48,21 @@ public class ProductoBDDAO implements ProductoDAO {
 			preparedStatement.executeUpdate();
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en guardarProducto: " + e.getMessage(), e);
 			throw new Exception("Error al guardar el producto en el servidor remoto: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void actualizarProducto(Producto producto) throws Exception {
+        LogUtil.info("Entrando a actualizarProducto. codigo=" + (producto != null ? producto.getCodigoProducto() : "null"));
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_ACTUALIZAR)) {
 
 			ejecutarActualizacion(preparedStatement, producto);
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en actualizarProducto: " + e.getMessage(), e);
 			throw new Exception("Error al actualizar el producto en el servidor remoto: " + e.getMessage(), e);
 		}
 	}
@@ -73,23 +78,27 @@ public class ProductoBDDAO implements ProductoDAO {
 
 	@Override
 	public boolean descontarStockPorVenta(Connection conexion, String codigoProducto, int cantidad) throws Exception {
+        LogUtil.info("Entrando a descontarStockPorVenta. codigo=" + codigoProducto + " cantidad=" + cantidad);
 		try (PreparedStatement preparedStatement = conexion.prepareStatement(SQL_DESCONTAR_STOCK_VENTA)) {
 			preparedStatement.setInt(1, cantidad);
 			preparedStatement.setString(2, codigoProducto);
 			preparedStatement.setInt(3, cantidad);
 			return preparedStatement.executeUpdate() > 0;
 		} catch (SQLException e) {
+            LogUtil.error("Error en descontarStockPorVenta: " + e.getMessage(), e);
 			throw new Exception("Error al descontar stock por venta: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public Producto buscarPorCodigo(String codigo) throws Exception {
+        LogUtil.info("Entrando a buscarPorCodigo. codigo=" + codigo);
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
 
 			return ejecutarBusquedaPorCodigo(preparedStatement, codigo);
 		} catch (SQLException e) {
+            LogUtil.error("Error en buscarPorCodigo: " + e.getMessage(), e);
 			throw new Exception("Error al buscar el producto solicitado: " + e.getMessage(), e);
 		}
 	}
@@ -105,6 +114,7 @@ public class ProductoBDDAO implements ProductoDAO {
 
 	@Override
 	public List<Producto> listarProducto() throws Exception {
+        LogUtil.info("Entrando a listarProducto");
 		List<Producto> lista = new ArrayList<>();
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_LISTAR);
@@ -114,6 +124,7 @@ public class ProductoBDDAO implements ProductoDAO {
 				lista.add(construirProducto(resultSet));
 			}
 		} catch (SQLException e) {
+            LogUtil.error("Error en listarProducto: " + e.getMessage(), e);
 			throw new Exception("Error al listar los producto: " + e.getMessage(), e);
 		}
 		return lista;

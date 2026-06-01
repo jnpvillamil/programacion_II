@@ -19,6 +19,7 @@ import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 import co.uptc.edu.co.modelo.enums.FormaPago;
+import co.uptc.edu.co.util.LogUtil;
 
 public class VentaBDDAO implements VentaDAO {
 
@@ -57,18 +58,21 @@ public class VentaBDDAO implements VentaDAO {
 
 	@Override
 	public void guardarVenta(Venta venta) throws Exception {
-		TransaccionBD.ejecutar(conexion -> guardarVenta(conexion, venta));
+ 		LogUtil.info("Entrando a guardarVenta. numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
+ 		TransaccionBD.ejecutar(conexion -> guardarVenta(conexion, venta));
 	}
 
 	@Override
 	public void guardarVenta(Connection conexion, Venta venta) throws Exception {
-		guardarCabeceraVenta(conexion, venta);
-		guardarDetallesVenta(conexion, venta);
+ 		LogUtil.info("Entrando a guardarVenta(conn). numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
+ 		guardarCabeceraVenta(conexion, venta);
+ 		guardarDetallesVenta(conexion, venta);
 	}
 
 	@Override
 	public void actualizarVenta(Venta venta) throws Exception {
-		TransaccionBD.ejecutar(conexion -> actualizarVenta(conexion, venta));
+ 		LogUtil.info("Entrando a actualizarVenta. numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
+ 		TransaccionBD.ejecutar(conexion -> actualizarVenta(conexion, venta));
 	}
 
 	@Override
@@ -80,6 +84,7 @@ public class VentaBDDAO implements VentaDAO {
 
 	@Override
 	public Venta buscarVentaPorNumero(String numeroFactura) throws Exception {
+        LogUtil.info("Entrando a buscarVentaPorNumero. numeroFactura=" + numeroFactura);
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_VENTA)) {
 
@@ -96,12 +101,14 @@ public class VentaBDDAO implements VentaDAO {
 			return null;
 
 		} catch (SQLException e) {
+			LogUtil.error("Error en buscarVentaPorNumero: " + e.getMessage(), e);
 			throw new Exception("Error al buscar la venta solicitada: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public List<Venta> listarVentas() throws Exception {
+        LogUtil.info("Entrando a listarVentas");
 		List<Venta> ventas = new ArrayList<>();
 
 		try (Connection conexion = ConexionBD.getConexion();
@@ -121,12 +128,14 @@ public class VentaBDDAO implements VentaDAO {
 			return ventas;
 
 		} catch (SQLException e) {
+			LogUtil.error("Error en listarVentas: " + e.getMessage(), e);
 			throw new Exception("Error al listar las ventas: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public List<Venta> listarVentasPorFecha(LocalDate fecha) throws Exception {
+        LogUtil.info("Entrando a listarVentasPorFecha fecha=" + fecha);
 		List<Venta> ventas = new ArrayList<>();
 
 		try (Connection conexion = ConexionBD.getConexion();
@@ -149,11 +158,13 @@ public class VentaBDDAO implements VentaDAO {
 			return ventas;
 
 		} catch (SQLException e) {
+			LogUtil.error("Error en listarVentasPorFecha: " + e.getMessage(), e);
 			throw new Exception("Error al listar ventas por fecha: " + e.getMessage(), e);
 		}
 	}
 
 	private void guardarCabeceraVenta(Connection conexion, Venta venta) throws SQLException {
+        LogUtil.info("Entrando a guardarCabeceraVenta. numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR_VENTA)) {
 			prepararInsertVenta(sentencia, venta);
 			sentencia.executeUpdate();
@@ -163,6 +174,7 @@ public class VentaBDDAO implements VentaDAO {
 	}
 
 	private void actualizarCabeceraVenta(Connection conexion, Venta venta) throws SQLException {
+        LogUtil.info("Entrando a actualizarCabeceraVenta. numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_ACTUALIZAR_VENTA)) {
 			prepararUpdateVenta(sentencia, venta);
 			int filasActualizadas = sentencia.executeUpdate();
@@ -174,6 +186,7 @@ public class VentaBDDAO implements VentaDAO {
 	}
 
 	private void guardarDetallesVenta(Connection conexion, Venta venta) throws SQLException {
+        LogUtil.info("Entrando a guardarDetallesVenta. numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR_DETALLE)) {
 			for (DetalleVenta detalle : venta.getDetalles()) {
 				prepararInsertDetalle(sentencia, venta.getNumeroFactura(), detalle);
@@ -185,6 +198,7 @@ public class VentaBDDAO implements VentaDAO {
 	}
 
 	private void eliminarDetallesVenta(Connection conexion, String numeroFactura) throws SQLException {
+        LogUtil.info("Entrando a eliminarDetallesVenta. numeroFactura=" + numeroFactura);
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_ELIMINAR_DETALLES)) {
 			sentencia.setString(1, numeroFactura);
 			sentencia.executeUpdate();
@@ -192,6 +206,7 @@ public class VentaBDDAO implements VentaDAO {
 	}
 
 	private List<DetalleVenta> listarDetallesVenta(Connection conexion, String numeroFactura) throws SQLException {
+        LogUtil.info("Entrando a listarDetallesVenta. numeroFactura=" + numeroFactura);
 		List<DetalleVenta> detalles = new ArrayList<>();
 
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_LISTAR_DETALLES)) {

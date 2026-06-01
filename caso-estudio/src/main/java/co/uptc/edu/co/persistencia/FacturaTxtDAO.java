@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import co.uptc.edu.co.interfaces.FacturaDAO;
+import co.uptc.edu.co.util.LogUtil;
 
 public class FacturaTxtDAO implements FacturaDAO {
 
@@ -12,6 +13,7 @@ public class FacturaTxtDAO implements FacturaDAO {
 
 	@Override
 	public String guardarFactura(String numeroFactura, String contenido) throws Exception {
+        LogUtil.info("Entrando a guardarFactura. numeroFactura=" + numeroFactura);
 		File carpeta = new File(CARPETA_FACTURAS);
 
 		if (!carpeta.exists() && !carpeta.mkdirs()) {
@@ -23,6 +25,8 @@ public class FacturaTxtDAO implements FacturaDAO {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
 			writer.print(contenido);
 		}
+
+		LogUtil.info("Factura guardada en: " + archivo.getPath());
 
 		return archivo.getPath();
 	}

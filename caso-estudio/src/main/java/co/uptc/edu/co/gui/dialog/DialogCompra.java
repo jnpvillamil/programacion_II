@@ -37,6 +37,7 @@ public class DialogCompra extends JDialog {
 	private JTextField campoFecha;
 	private JComboBox<Proveedor> comboProveedor;
 	private JComboBox<FormaPago> comboFormaPago;
+	private Evento evento;
 
 	private JComboBox<Producto> comboProducto;
 	private JTextField campoCantidad;
@@ -54,11 +55,12 @@ public class DialogCompra extends JDialog {
 	private JButton botonCancelar;
 
 	public DialogCompra(Frame propietario) {
-		this(propietario, null);
+		throw new IllegalArgumentException("Evento is required to calculate taxes; use DialogCompra(Frame, Evento)");
 	}
 
 	public DialogCompra(Frame propietario, Evento evento) {
 		super(propietario, "Registrar Compra", true);
+		this.evento = evento;
 		inicializarComponentes();
 		configurarDialogo();
 		agregarComponentes();
@@ -318,7 +320,7 @@ public class DialogCompra extends JDialog {
 
 		double costoUnitario = obtenerCostoUnitarioProducto();
 		double subtotal = costoUnitario * cantidad;
-		double impuesto = subtotal * obtenerTasaIva(producto.getCategoria());
+		double impuesto = evento.getGestionCompra().calcularImpuesto(producto.getCategoria(), subtotal);
 		double total = subtotal + impuesto;
 
 		modeloTabla.addRow(new Object[] { producto.getCodigoProducto(), producto.getNombreProducto(), cantidad,
@@ -362,20 +364,7 @@ public class DialogCompra extends JDialog {
 		return producto != null ? producto.getPrecioCompra() : 0.0;
 	}
 
-	private double obtenerTasaIva(CategoriaProductoEnum categoria) {
-		if (categoria == null) {
-			return 0.19;
-		}
-
-		switch (categoria) {
-		case ALIMENTOS:
-			return 0.05;
-		case ASEO:
-		case PAPELERIA:
-		default:
-			return 0.19;
-		}
-	}
+	// Nota: la lógica de tasa/IVA se delega a `GestionCompra.calcularImpuesto(...)`.
 
 	public JTable getTablaDetalleCompra() {
 		return tablaDetalleCompra;

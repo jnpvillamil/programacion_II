@@ -191,7 +191,7 @@ public class GestionProveedor implements IGestionProveedor {
 	        );
 	    }
 
-	    if (!nit.matches("\\d{8,15}")) {
+	    if (!nit.matches("\\d{8,15}(-\\d)?")) {
 
 	        throw new Exception(
 	            "El NIT debe contener entre 8 y 15 dígitos."
@@ -229,7 +229,7 @@ public class GestionProveedor implements IGestionProveedor {
 	        );
 	    }
 
-	    if (!telefono.matches("^3\\d{9}$")) {
+	    if (!telefono.matches("^(3\\d{9}|6\\d{9})$")) {
 
 	        throw new Exception(
 	            "El teléfono debe iniciar por 3 y tener 10 dígitos."

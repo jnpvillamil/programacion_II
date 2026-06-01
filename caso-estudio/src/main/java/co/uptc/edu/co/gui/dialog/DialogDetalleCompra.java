@@ -7,6 +7,8 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,6 +33,7 @@ public class DialogDetalleCompra extends JDialog {
 	private JTable tablaDetalleCompra;
 	private DefaultTableModel modeloTabla;
 
+	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 	private JButton botonCerrar;
 
 	public DialogDetalleCompra(Frame propietario) {
@@ -39,6 +42,20 @@ public class DialogDetalleCompra extends JDialog {
 		configurarDialogo();
 		agregarComponentes();
 		inicializarEventos();
+	}
+
+	private static DecimalFormat crearFormatoMoneda() {
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator('.');
+		simbolos.setDecimalSeparator(',');
+
+		DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+		formato.setGroupingUsed(true);
+		return formato;
+	}
+
+	private String formatearMoneda(double valor) {
+		return FORMATO_MONEDA.format(valor);
 	}
 
 	private void inicializarComponentes() {

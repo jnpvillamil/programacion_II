@@ -13,6 +13,7 @@ import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.modelo.enums.TipoClienteEnum;
 import co.uptc.edu.co.modelo.enums.TipoDocEnum;
+import co.uptc.edu.co.util.LogUtil;
 
 public class ClienteBDDAO implements ClienteDAO {
 
@@ -47,6 +48,8 @@ public class ClienteBDDAO implements ClienteDAO {
     public void guardarCliente(Cliente cliente)
             throws Exception {
 
+        LogUtil.info("Entrando a guardarCliente. codigo=" + (cliente != null ? cliente.getCodigo() : "null"));
+
         try (Connection connection =
                      ConexionBD.getConexion();
 
@@ -60,6 +63,8 @@ public class ClienteBDDAO implements ClienteDAO {
 
         } catch (SQLException e) {
 
+                        LogUtil.error("Error en guardarCliente: " + e.getMessage(), e);
+
             throw new Exception(
                     "Error al guardar cliente: "
                             + e.getMessage(), e
@@ -70,6 +75,8 @@ public class ClienteBDDAO implements ClienteDAO {
     @Override
     public void actualizarCliente(Cliente cliente)
             throws Exception {
+
+        LogUtil.info("Entrando a actualizarCliente. codigo=" + (cliente != null ? cliente.getCodigo() : "null"));
 
         try (Connection connection =
                      ConexionBD.getConexion();
@@ -87,6 +94,8 @@ public class ClienteBDDAO implements ClienteDAO {
 
         } catch (SQLException e) {
 
+                        LogUtil.error("Error en actualizarCliente: " + e.getMessage(), e);
+
             throw new Exception(
                     "Error al actualizar cliente: "
                             + e.getMessage(), e
@@ -97,6 +106,8 @@ public class ClienteBDDAO implements ClienteDAO {
     @Override
     public Cliente buscarPorCodigo(String codigo)
             throws Exception {
+
+        LogUtil.info("Entrando a buscarPorCodigo cliente. codigo=" + codigo);
 
         try (Connection connection =
                      ConexionBD.getConexion();
@@ -118,6 +129,8 @@ public class ClienteBDDAO implements ClienteDAO {
 
         } catch (SQLException e) {
 
+                        LogUtil.error("Error en buscarPorCodigo cliente: " + e.getMessage(), e);
+
             throw new Exception(
                     "Error al buscar cliente: "
                             + e.getMessage(), e
@@ -130,6 +143,8 @@ public class ClienteBDDAO implements ClienteDAO {
     @Override
     public List<Cliente> listarClientes()
             throws Exception {
+
+        LogUtil.info("Entrando a listarClientes");
 
         List<Cliente> lista = new ArrayList<>();
 
@@ -151,6 +166,8 @@ public class ClienteBDDAO implements ClienteDAO {
             }
 
         } catch (SQLException e) {
+
+                        LogUtil.error("Error en listarClientes: " + e.getMessage(), e);
 
             throw new Exception(
                     "Error al listar clientes: "

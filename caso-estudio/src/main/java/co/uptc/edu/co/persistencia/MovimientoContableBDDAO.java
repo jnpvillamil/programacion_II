@@ -13,6 +13,7 @@ import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.interfaces.MovimientoContableDAO;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.enums.TipoMovimientoContable;
+import co.uptc.edu.co.util.LogUtil;
 
 public class MovimientoContableBDDAO implements MovimientoContableDAO {
 
@@ -31,6 +32,7 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 
 	@Override
 	public void guardarMovimiento(MovimientoContable movimiento) throws Exception {
+        LogUtil.info("Entrando a guardarMovimiento. codigoTransaccion=" + (movimiento != null ? movimiento.getCodigoTransaccion() : "null"));
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 
@@ -38,22 +40,26 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 			sentencia.executeUpdate();
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en guardarMovimiento: " + e.getMessage(), e);
 			throw new Exception("Error al guardar el movimiento contable: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void guardarMovimiento(Connection conexion, MovimientoContable movimiento) throws Exception {
+        LogUtil.info("Entrando a guardarMovimiento(conn). codigoTransaccion=" + (movimiento != null ? movimiento.getCodigoTransaccion() : "null"));
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 			prepararInsert(sentencia, movimiento);
 			sentencia.executeUpdate();
 		} catch (SQLException e) {
+            LogUtil.error("Error en guardarMovimiento(conn): " + e.getMessage(), e);
 			throw new Exception("Error al guardar el movimiento contable: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void guardarMovimientos(Connection conexion, List<MovimientoContable> movimientos) throws Exception {
+        LogUtil.info("Entrando a guardarMovimientos. count=" + (movimientos != null ? movimientos.size() : 0));
 		if (movimientos == null || movimientos.isEmpty()) {
 			return;
 		}
@@ -66,12 +72,14 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 
 			sentencia.executeBatch();
 		} catch (SQLException e) {
+            LogUtil.error("Error en guardarMovimientos: " + e.getMessage(), e);
 			throw new Exception("Error al guardar los movimientos contables: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public MovimientoContable buscarPorCodigo(String codigoTransaccion) throws Exception {
+        LogUtil.info("Entrando a buscarPorCodigo. codigoTransaccion=" + codigoTransaccion);
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
 
@@ -86,12 +94,14 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 			return null;
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en buscarPorCodigo: " + e.getMessage(), e);
 			throw new Exception("Error al buscar el movimiento contable: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public List<MovimientoContable> listarMovimientos() throws Exception {
+        LogUtil.info("Entrando a listarMovimientos");
 		List<MovimientoContable> movimientos = new ArrayList<>();
 
 		try (Connection conexion = ConexionBD.getConexion();
@@ -105,6 +115,7 @@ public class MovimientoContableBDDAO implements MovimientoContableDAO {
 			return movimientos;
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en listarMovimientos: " + e.getMessage(), e);
 			throw new Exception("Error al listar los movimientos contables: " + e.getMessage(), e);
 		}
 	}

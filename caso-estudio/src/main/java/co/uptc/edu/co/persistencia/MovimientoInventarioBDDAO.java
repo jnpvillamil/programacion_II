@@ -8,6 +8,7 @@ import java.util.List;
 import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.interfaces.MovimientoInventarioDAO;
 import co.uptc.edu.co.modelo.MovimientoInventario;
+import co.uptc.edu.co.util.LogUtil;
 
 public class MovimientoInventarioBDDAO implements MovimientoInventarioDAO {
 
@@ -17,6 +18,7 @@ public class MovimientoInventarioBDDAO implements MovimientoInventarioDAO {
 
 	@Override
 	public void registrarMovimiento(MovimientoInventario movimiento) throws Exception {
+        LogUtil.info("Entrando a registrarMovimiento. codigoProducto=" + (movimiento != null ? movimiento.getCodigoProducto() : "null"));
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR_MOVIMIENTO)) {
 
@@ -24,22 +26,26 @@ public class MovimientoInventarioBDDAO implements MovimientoInventarioDAO {
 			sentencia.executeUpdate();
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en registrarMovimiento: " + e.getMessage(), e);
 			throw new Exception("Error al registrar movimiento de inventario: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void registrarMovimiento(Connection conexion, MovimientoInventario movimiento) throws Exception {
+        LogUtil.info("Entrando a registrarMovimiento(conn). codigoProducto=" + (movimiento != null ? movimiento.getCodigoProducto() : "null"));
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR_MOVIMIENTO)) {
 			prepararInsert(sentencia, movimiento);
 			sentencia.executeUpdate();
 		} catch (SQLException e) {
+            LogUtil.error("Error en registrarMovimiento(conn): " + e.getMessage(), e);
 			throw new Exception("Error al registrar movimiento de inventario: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void registrarMovimientos(Connection conexion, List<MovimientoInventario> movimientos) throws Exception {
+        LogUtil.info("Entrando a registrarMovimientos. count=" + (movimientos != null ? movimientos.size() : 0));
 		if (movimientos == null || movimientos.isEmpty()) {
 			return;
 		}
@@ -52,6 +58,7 @@ public class MovimientoInventarioBDDAO implements MovimientoInventarioDAO {
 
 			sentencia.executeBatch();
 		} catch (SQLException e) {
+            LogUtil.error("Error en registrarMovimientos: " + e.getMessage(), e);
 			throw new Exception("Error al registrar movimientos de inventario: " + e.getMessage(), e);
 		}
 	}

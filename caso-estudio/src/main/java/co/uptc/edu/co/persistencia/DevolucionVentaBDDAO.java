@@ -12,6 +12,7 @@ import java.util.List;
 import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
 import co.uptc.edu.co.modelo.DevolucionVenta;
+import co.uptc.edu.co.util.LogUtil;
 
 public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 
@@ -40,6 +41,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 
 	@Override
 	public void guardarDevolucion(DevolucionVenta devolucion) throws Exception {
+        LogUtil.info("Entrando a guardarDevolucion. codigoDevolucion=" + (devolucion != null ? devolucion.getCodigoDevolucion() : "null"));
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 
@@ -47,6 +49,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 			sentencia.executeUpdate();
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en guardarDevolucion: " + e.getMessage(), e);
 			throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
 		}
 	}
@@ -74,6 +77,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 
 	@Override
 	public DevolucionVenta buscarPorCodigo(String codigoDevolucion) throws Exception {
+        LogUtil.info("Entrando a buscarPorCodigo devolucion. codigoDevolucion=" + codigoDevolucion);
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
 
@@ -88,12 +92,14 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 			return null;
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en buscarPorCodigo devolucion: " + e.getMessage(), e);
 			throw new Exception("Error al buscar la devolucion de venta: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public List<DevolucionVenta> buscarPorFactura(String numeroFactura) throws Exception {
+        LogUtil.info("Entrando a buscarPorFactura devoluciones. numeroFactura=" + numeroFactura);
 		List<DevolucionVenta> devoluciones = new ArrayList<>();
 
 		try (Connection conexion = ConexionBD.getConexion();
@@ -110,12 +116,14 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 			return devoluciones;
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en buscarPorFactura devoluciones: " + e.getMessage(), e);
 			throw new Exception("Error al listar devoluciones por factura: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public List<DevolucionVenta> listarDevoluciones() throws Exception {
+        LogUtil.info("Entrando a listarDevoluciones");
 		List<DevolucionVenta> devoluciones = new ArrayList<>();
 
 		try (Connection conexion = ConexionBD.getConexion();
@@ -129,6 +137,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 			return devoluciones;
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en listarDevoluciones: " + e.getMessage(), e);
 			throw new Exception("Error al listar devoluciones de venta: " + e.getMessage(), e);
 		}
 	}
@@ -148,6 +157,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 
 	@Override
 	public String obtenerUltimoCodigoDevolucion() throws Exception {
+        LogUtil.info("Entrando a obtenerUltimoCodigoDevolucion");
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_ULTIMO_CODIGO);
 				ResultSet resultado = sentencia.executeQuery()) {
@@ -159,12 +169,14 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 			return null;
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en obtenerUltimoCodigoDevolucion: " + e.getMessage(), e);
 			throw new Exception("Error al obtener el ultimo codigo de devolucion: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
+        LogUtil.info("Entrando a obtenerCantidadDevuelta. factura=" + numeroFactura + " codigoProducto=" + codigoProducto);
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_CANTIDAD_DEVUELTA)) {
 
@@ -180,6 +192,7 @@ public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
 			return 0;
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en obtenerCantidadDevuelta: " + e.getMessage(), e);
 			throw new Exception("Error al obtener la cantidad devuelta: " + e.getMessage(), e);
 		}
 	}

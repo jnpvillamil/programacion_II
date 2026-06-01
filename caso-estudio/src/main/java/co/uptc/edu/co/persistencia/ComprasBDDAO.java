@@ -16,6 +16,7 @@ import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
 import co.uptc.edu.co.modelo.enums.FormaPago;
+import co.uptc.edu.co.util.LogUtil;
 
 public class ComprasBDDAO implements CompraDAO {
 	private static final String TABLA_COMPRAS = "compras";
@@ -52,6 +53,7 @@ public class ComprasBDDAO implements CompraDAO {
 
 	@Override
 	public void guardarComprar(Compra compra) throws Exception {
+        LogUtil.info("Entrando a guardarComprar. factura=" + (compra != null ? compra.getNumeroFacturaProveedor() : "null"));
 		try (Connection conexion = ConexionBD.getConexion()) {
 			conexion.setAutoCommit(false);
 
@@ -67,12 +69,14 @@ public class ComprasBDDAO implements CompraDAO {
 			}
 
 		} catch (SQLException e) {
+            LogUtil.error("Error en guardarComprar: " + e.getMessage(), e);
 			throw new Exception("Error al guardar la compra en el servidor remoto: " + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void actualizarCompra(Compra compra) throws Exception {
+        LogUtil.info("Entrando a actualizarCompra. factura=" + (compra != null ? compra.getNumeroFacturaProveedor() : "null"));
 		try (Connection conexion = ConexionBD.getConexion()) {
 			conexion.setAutoCommit(false);
 
@@ -87,11 +91,16 @@ public class ComprasBDDAO implements CompraDAO {
 				throw e;
 			}
 		}
+		catch (SQLException e) {
+			LogUtil.error("Error en actualizarCompra: " + e.getMessage(), e);
+			throw e;
+		}
 
 	}
 
 	@Override
 	public void eliminarCompra(String numeroFactura) throws Exception {
+        LogUtil.info("Entrando a eliminarCompra. numeroFactura=" + numeroFactura);
 		try (Connection conexion = ConexionBD.getConexion()) {
 			conexion.setAutoCommit(false);
 
@@ -110,10 +119,15 @@ public class ComprasBDDAO implements CompraDAO {
 				throw e;
 			}
 		}
+		catch (SQLException e) {
+			LogUtil.error("Error en eliminarCompra: " + e.getMessage(), e);
+			throw e;
+		}
 	}
 
 	@Override
 	public Compra buscarComprarpornumero(String numeroFactura) throws Exception {
+        LogUtil.info("Entrando a buscarComprarpornumero. numeroFactura=" + numeroFactura);
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentecia = conexion.prepareStatement(SQL_BUSCAR_COMPRA)) {
 
@@ -130,6 +144,7 @@ public class ComprasBDDAO implements CompraDAO {
 			return null;
 
 		} catch (SQLException e) {
+			LogUtil.error("Error en buscarComprarpornumero: " + e.getMessage(), e);
 			throw new Exception("Error al buscar la compra solicitada: " + e.getMessage(), e);
 		}
 	}
@@ -162,6 +177,7 @@ public class ComprasBDDAO implements CompraDAO {
 
 	@Override
 	public List<Compra> listarCompra() throws Exception {
+        LogUtil.info("Entrando a listarCompra");
 		List<Compra> compras = new ArrayList<>();
 
 		try (Connection conexion = ConexionBD.getConexion();
@@ -178,6 +194,7 @@ public class ComprasBDDAO implements CompraDAO {
 			return compras;
 
 		} catch (SQLException e) {
+			LogUtil.error("Error en listarCompra: " + e.getMessage(), e);
 			throw new Exception("Error al listar las compras: " + e.getMessage(), e);
 		}
 	}

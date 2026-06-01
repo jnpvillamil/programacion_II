@@ -139,6 +139,10 @@ public class Evento implements ActionListener {
 		this.gestionInventario = config.getGestionInventario();
 	}
 
+	public IGestionCompra getGestionCompra() {
+		return gestionCompra;
+	}
+
 	private static DecimalFormat crearFormatoMoneda() {
 		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
 		simbolos.setGroupingSeparator('.');
@@ -977,9 +981,9 @@ public class Evento implements ActionListener {
 				compra.getFecha() != null ? compra.getFecha().toString() : "",
 				compra.getCodigoProveedor(),
 				compra.getFormaPago() != null ? compra.getFormaPago().toString() : "",
-				String.valueOf(compra.getSubtotal()),
-				String.valueOf(compra.getImpuestos()),
-				String.valueOf(compra.getTotalCompra()));
+				FORMATO_MONEDA.format(compra.getSubtotal()),
+				FORMATO_MONEDA.format(compra.getImpuestos()),
+				FORMATO_MONEDA.format(compra.getTotalCompra()));
 
 			dialog.limpiarTabla();
 			if (compra.getDetalles() != null) {
@@ -988,10 +992,10 @@ public class Evento implements ActionListener {
 						detalle.getProducto().getCodigoProducto(),
 						detalle.getProducto().getNombreProducto(),
 						String.valueOf(detalle.getCantidad()),
-						String.valueOf(detalle.getCostoUnitario()),
-						String.valueOf(detalle.getImpuestos()),
-						String.valueOf(detalle.getSubtotal()),
-						String.valueOf(detalle.getTotalCompra()));
+						FORMATO_MONEDA.format(detalle.getCostoUnitario()),
+						FORMATO_MONEDA.format(detalle.getImpuestos()),
+						FORMATO_MONEDA.format(detalle.getSubtotal()),
+						FORMATO_MONEDA.format(detalle.getTotalCompra()));
 				}
 			}
 

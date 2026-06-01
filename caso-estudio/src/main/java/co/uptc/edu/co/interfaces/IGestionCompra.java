@@ -2,6 +2,7 @@ package co.uptc.edu.co.interfaces;
 
 import java.util.List;
 import co.uptc.edu.co.modelo.Compra;
+import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
 public interface IGestionCompra {
 
@@ -14,4 +15,6 @@ public interface IGestionCompra {
 	String generarNumeroFactura();
 
 	void anularCompra(String numeroFactura, String motivoAnulacion) throws Exception;
+
+	double calcularImpuesto(CategoriaProductoEnum categoria, double subtotal);
 }
