@@ -7,268 +7,257 @@ import java.awt.GridLayout;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import co.uptc.edu.persistencia.ClienteDAO;
 
 public class GestionClientes extends JFrame {
 
-    
-    private JTextField txtCodigo, txtNombre, txtNumero, txtDireccion, txtTelefono;
-    private JComboBox<String> cbTipoId, cbTipoCliente, cbEstado;
-    private JTable tabla;
-    private DefaultTableModel modelo;
+	private JTextField txtCodigo, txtNombre, txtNumero, txtDireccion, txtTelefono;
+	private JComboBox<String> cbTipoId, cbTipoCliente, cbEstado;
+	private JTable tabla;
+	private DefaultTableModel modelo;
 
-   
-    private co.uptc.edu.negocio.GestionClientes gestion;
+	private co.uptc.edu.negocio.GestionClientes gestion;
+	private ClienteDAO clienteDAO;
 
-    public GestionClientes() {
+	public GestionClientes() {
 
-        gestion = new co.uptc.edu.negocio.GestionClientes();
+		gestion = new co.uptc.edu.negocio.GestionClientes();
+		clienteDAO = new ClienteDAO();
 
-        setTitle("Gestión de Clientes");
-        setSize(1100, 700);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout(15,15));
+		setTitle("Gestión de Clientes");
+		setSize(1100, 700);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setLayout(new BorderLayout(15, 15));
 
-        add(crearTabla(), BorderLayout.CENTER);
-        add(crearPanelSuperior(), BorderLayout.NORTH);
-        
-        add(crearPanelHistorial(), BorderLayout.SOUTH);
-    }
+		add(crearTabla(), BorderLayout.CENTER);
+		add(crearPanelSuperior(), BorderLayout.NORTH);
 
-    private JPanel crearPanelSuperior() {
-    	
-    	
+		add(crearPanelHistorial(), BorderLayout.SOUTH);
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new TitledBorder("Datos del Cliente"));
+		cargarClientesTabla();
+	}
 
-        JPanel formulario = new JPanel(new GridLayout(4,4,15,10));
+	private JPanel crearPanelSuperior() {
 
-        //  INICIALIZAR CAMPOS
-        txtCodigo = new JTextField();
-        txtNombre = new JTextField();
-        txtNumero = new JTextField();
-        txtDireccion = new JTextField();
-        txtTelefono = new JTextField();
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBorder(new TitledBorder("Datos del Cliente"));
 
-        cbTipoId = new JComboBox<>(new String[]{"CC", "NIT", "CE", "PA"});
-        cbTipoCliente = new JComboBox<>(new String[]{"Minorista", "Mayorista"});
-        cbEstado = new JComboBox<>(new String[]{"Activo", "Inactivo"});
+		JPanel formulario = new JPanel(new GridLayout(4, 4, 15, 10));
 
-        formulario.add(new JLabel("Código Único:"));
-        formulario.add(txtCodigo);
+		// INICIALIZAR CAMPOS
+		txtCodigo = new JTextField();
+		txtNombre = new JTextField();
+		txtNumero = new JTextField();
+		txtDireccion = new JTextField();
+		txtTelefono = new JTextField();
 
-        formulario.add(new JLabel("Nombre / Razón Social:"));
-        formulario.add(txtNombre);
+		cbTipoId = new JComboBox<>(new String[] { "CC", "NIT", "CE", "PA" });
+		cbTipoCliente = new JComboBox<>(new String[] { "Minorista", "Mayorista" });
+		cbEstado = new JComboBox<>(new String[] { "Activo", "Inactivo" });
 
-        formulario.add(new JLabel("Tipo Identificación:"));
-        formulario.add(cbTipoId);
+		formulario.add(new JLabel("Código Único:"));
+		formulario.add(txtCodigo);
 
-        formulario.add(new JLabel("Número Identificación:"));
-        formulario.add(txtNumero);
+		formulario.add(new JLabel("Nombre / Razón Social:"));
+		formulario.add(txtNombre);
 
-        formulario.add(new JLabel("Dirección:"));
-        formulario.add(txtDireccion);
+		formulario.add(new JLabel("Tipo Identificación:"));
+		formulario.add(cbTipoId);
 
-        formulario.add(new JLabel("Teléfono:"));
-        formulario.add(txtTelefono);
+		formulario.add(new JLabel("Número Identificación:"));
+		formulario.add(txtNumero);
 
-        formulario.add(new JLabel("Tipo Cliente:"));
-        formulario.add(cbTipoCliente);
+		formulario.add(new JLabel("Dirección:"));
+		formulario.add(txtDireccion);
 
-        formulario.add(new JLabel("Estado:"));
-        formulario.add(cbEstado);
+		formulario.add(new JLabel("Teléfono:"));
+		formulario.add(txtTelefono);
 
-        panel.add(formulario, BorderLayout.CENTER);
+		formulario.add(new JLabel("Tipo Cliente:"));
+		formulario.add(cbTipoCliente);
 
-        //  BOTONES
-        JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		formulario.add(new JLabel("Estado:"));
+		formulario.add(cbEstado);
 
-        JButton btnNuevo = new JButton("Nuevo");
-        JButton btnRegistrar = new JButton("Registrar");
-        JButton btnModificar = new JButton("Modificar");
-        JButton btnInactivar = new JButton("Inactivar");
-        JButton btnHistorial = new JButton("Consultar Historial");
+		panel.add(formulario, BorderLayout.CENTER);
 
-        botones.add(btnNuevo);
-        botones.add(btnRegistrar);
-        botones.add(btnModificar);
-        botones.add(btnInactivar);
-        botones.add(btnHistorial);
+		// BOTONES
+		JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        //  EVENTO REGISTRAR
-        btnRegistrar.addActionListener(e -> {
+		JButton btnNuevo = new JButton("Nuevo");
+		JButton btnRegistrar = new JButton("Registrar");
+		JButton btnModificar = new JButton("Modificar");
+		JButton btnInactivar = new JButton("Inactivar");
+		JButton btnHistorial = new JButton("Consultar Historial");
 
-            if(txtCodigo.getText().isEmpty() || txtNombre.getText().isEmpty()){
-                JOptionPane.showMessageDialog(this, "Debe llenar los campos obligatorios");
-                return;
-            }
+		botones.add(btnNuevo);
+		botones.add(btnRegistrar);
+		botones.add(btnModificar);
+		botones.add(btnInactivar);
+		botones.add(btnHistorial);
 
-            String codigo = txtCodigo.getText();
-            String nombre = txtNombre.getText();
+		// EVENTO REGISTRAR
+		btnRegistrar.addActionListener(e -> {
 
-            co.uptc.edu.modelo.Cliente cliente = new co.uptc.edu.modelo.Cliente(
-                    codigo,
-                    nombre,
-                    cbTipoId.getSelectedItem().toString(),
-                    txtNumero.getText(),
-                    txtDireccion.getText(),
-                    txtTelefono.getText(),
-                    cbTipoCliente.getSelectedItem().toString()
-            );
+			if (txtCodigo.getText().isEmpty() || txtNombre.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Debe llenar los campos obligatorios");
+				return;
+			}
 
-            boolean resultado = gestion.registrarCliente(cliente);
+			String codigo = txtCodigo.getText();
+			String nombre = txtNombre.getText();
 
-            if(resultado){
-                modelo.addRow(new Object[]{
-                        codigo,
-                        nombre,
-                        cbTipoId.getSelectedItem(),
-                        txtNumero.getText(),
-                        txtDireccion.getText(),
-                        txtTelefono.getText(),
-                        cbTipoCliente.getSelectedItem(),
-                        "Activo"
-                });
+			co.uptc.edu.modelo.Cliente cliente = new co.uptc.edu.modelo.Cliente(codigo, nombre,
+					cbTipoId.getSelectedItem().toString(), txtNumero.getText(), txtDireccion.getText(),
+					txtTelefono.getText(), cbTipoCliente.getSelectedItem().toString());
 
-                JOptionPane.showMessageDialog(this, "Cliente registrado");
-                limpiarCampos();
-            } else {
-                JOptionPane.showMessageDialog(this, "El cliente ya existe");
-            }
-        });
+			boolean resultado = clienteDAO.guardarCliente(cliente);
 
-        btnNuevo.addActionListener(e -> limpiarCampos());
-        
-        btnModificar.addActionListener(e -> {
+			if (resultado) {
+				modelo.addRow(new Object[] { codigo, nombre, cbTipoId.getSelectedItem(), txtNumero.getText(),
+						txtDireccion.getText(), txtTelefono.getText(), cbTipoCliente.getSelectedItem(), "Activo" });
 
-            int fila = tabla.getSelectedRow();
+				JOptionPane.showMessageDialog(this, "Cliente registrado");
+				limpiarCampos();
+			} else {
+				JOptionPane.showMessageDialog(this, "El cliente ya existe");
+			}
+		});
 
-            if(fila == -1){
-                JOptionPane.showMessageDialog(this, "Seleccione un cliente");
-                return;
-            }
+		btnNuevo.addActionListener(e -> limpiarCampos());
+		// MODIFICAR
+		btnModificar.addActionListener(e -> {
 
-            co.uptc.edu.modelo.Cliente cliente = new co.uptc.edu.modelo.Cliente(
-                    txtCodigo.getText(),
-                    txtNombre.getText(),
-                    cbTipoId.getSelectedItem().toString(),
-                    txtNumero.getText(),
-                    txtDireccion.getText(),
-                    txtTelefono.getText(),
-                    cbTipoCliente.getSelectedItem().toString()
-            );
+			int fila = tabla.getSelectedRow();
 
-            boolean resultado = gestion.modificarCliente(cliente);
+			if (fila == -1) {
+				JOptionPane.showMessageDialog(this, "Seleccione un cliente");
+				return;
+			}
 
-            if(resultado){
+			co.uptc.edu.modelo.Cliente cliente = new co.uptc.edu.modelo.Cliente(txtCodigo.getText(),
+					txtNombre.getText(), cbTipoId.getSelectedItem().toString(), txtNumero.getText(),
+					txtDireccion.getText(), txtTelefono.getText(), cbTipoCliente.getSelectedItem().toString());
+			cliente.setActivo(cbEstado.getSelectedItem().toString().equals("Activo"));
 
-                modelo.setValueAt(txtNombre.getText(), fila, 1);
-                modelo.setValueAt(cbTipoId.getSelectedItem(), fila, 2);
-                modelo.setValueAt(txtNumero.getText(), fila, 3);
-                modelo.setValueAt(txtDireccion.getText(), fila, 4);
-                modelo.setValueAt(txtTelefono.getText(), fila, 5);
-                modelo.setValueAt(cbTipoCliente.getSelectedItem(), fila, 6);
+			boolean resultado = clienteDAO.modificarCliente(cliente);
 
-                JOptionPane.showMessageDialog(this, "Cliente modificado");
+			if (resultado) {
 
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al modificar");
-            }
-        });
-        btnInactivar.addActionListener(e -> {
+				modelo.setValueAt(txtNombre.getText(), fila, 1);
+				modelo.setValueAt(cbTipoId.getSelectedItem(), fila, 2);
+				modelo.setValueAt(txtNumero.getText(), fila, 3);
+				modelo.setValueAt(txtDireccion.getText(), fila, 4);
+				modelo.setValueAt(txtTelefono.getText(), fila, 5);
+				modelo.setValueAt(cbTipoCliente.getSelectedItem(), fila, 6);
+				modelo.setValueAt(cbEstado.getSelectedItem(), fila, 7);
 
-            int fila = tabla.getSelectedRow();
+				JOptionPane.showMessageDialog(this, "Cliente modificado");
 
-            if(fila == -1){
-                JOptionPane.showMessageDialog(this, "Seleccione un cliente");
-                return;
-            }
+			} else {
+				JOptionPane.showMessageDialog(this, "Error al modificar");
+			}
+		});
 
-            String codigo = txtCodigo.getText();
+//INACTIVAR
+		btnInactivar.addActionListener(e -> {
 
-            boolean resultado = gestion.inactivarCliente(codigo);
+			int fila = tabla.getSelectedRow();
 
-            if(resultado){
+			if (fila == -1) {
+				JOptionPane.showMessageDialog(this, "Seleccione un cliente");
+				return;
+			}
 
-                modelo.setValueAt("Inactivo", fila, 7);
+			String codigo = txtCodigo.getText();
 
-                JOptionPane.showMessageDialog(this, "Cliente inactivado");
+			boolean resultado = clienteDAO.inactivarCliente(codigo);
 
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al inactivar");
-            }
-        });
+			if (resultado) {
 
-        panel.add(botones, BorderLayout.SOUTH);
+				modelo.setValueAt("Inactivo", fila, 7);
 
-        return panel;
-        
-        
-    }
-    
-  
+				JOptionPane.showMessageDialog(this, "Cliente inactivado");
 
-    private JScrollPane crearTabla() {
-    	
-    	
+			} else {
+				JOptionPane.showMessageDialog(this, "Error al inactivar");
+			}
+		});
 
-        String[] columnas = {
-                "Código", "Nombre",
-                "Tipo ID", "Número ID",
-                "Dirección", "Teléfono",
-                "Tipo Cliente", "Estado"
-        };
+		panel.add(botones, BorderLayout.SOUTH);
 
-        modelo = new DefaultTableModel(columnas, 0);
-        tabla = new JTable(modelo);
-        tabla.setRowHeight(25);
-        tabla.getSelectionModel().addListSelectionListener(e -> {
+		return panel;
 
-            int fila = tabla.getSelectedRow();
+	}
 
-            if(fila >= 0){
+	private JScrollPane crearTabla() {
 
-                txtCodigo.setText(modelo.getValueAt(fila, 0).toString());
-                txtNombre.setText(modelo.getValueAt(fila, 1).toString());
-                cbTipoId.setSelectedItem(modelo.getValueAt(fila, 2).toString());
-                txtNumero.setText(modelo.getValueAt(fila, 3).toString());
-                txtDireccion.setText(modelo.getValueAt(fila, 4).toString());
-                txtTelefono.setText(modelo.getValueAt(fila, 5).toString());
-                cbTipoCliente.setSelectedItem(modelo.getValueAt(fila, 6).toString());
-                cbEstado.setSelectedItem(modelo.getValueAt(fila, 7).toString());
-            }
-        });
+		String[] columnas = { "Código", "Nombre", "Tipo ID", "Número ID", "Dirección", "Teléfono", "Tipo Cliente",
+				"Estado" };
 
-        return new JScrollPane(tabla);
-    }
+		modelo = new DefaultTableModel(columnas, 0);
+		tabla = new JTable(modelo);
+		tabla.setRowHeight(25);
+		tabla.getSelectionModel().addListSelectionListener(e -> {
 
-    private JPanel crearPanelHistorial() {
+			int fila = tabla.getSelectedRow();
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new TitledBorder("Historial de Compras del Cliente"));
+			if (fila >= 0) {
 
-        JTextArea historial = new JTextArea(4, 50);
-        historial.setEditable(false);
+				txtCodigo.setText(modelo.getValueAt(fila, 0).toString());
+				txtNombre.setText(modelo.getValueAt(fila, 1).toString());
+				cbTipoId.setSelectedItem(modelo.getValueAt(fila, 2).toString());
+				txtNumero.setText(modelo.getValueAt(fila, 3).toString());
+				txtDireccion.setText(modelo.getValueAt(fila, 4).toString());
+				txtTelefono.setText(modelo.getValueAt(fila, 5).toString());
+				cbTipoCliente.setSelectedItem(modelo.getValueAt(fila, 6).toString());
+				cbEstado.setSelectedItem(modelo.getValueAt(fila, 7).toString());
+			}
+		});
 
-        panel.add(new JScrollPane(historial), BorderLayout.CENTER);
+		return new JScrollPane(tabla);
+	}
 
-        return panel;
-    }
+	private JPanel crearPanelHistorial() {
 
-    
-    private void limpiarCampos() {
-        txtCodigo.setText("");
-        txtNombre.setText("");
-        txtNumero.setText("");
-        txtDireccion.setText("");
-        txtTelefono.setText("");
-        cbTipoId.setSelectedIndex(0);
-        cbTipoCliente.setSelectedIndex(0);
-        cbEstado.setSelectedIndex(0);
-    }
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBorder(new TitledBorder("Historial de Compras del Cliente"));
 
-    public static void main(String[] args) {
-        new GestionClientes().setVisible(true);
-    }
+		JTextArea historial = new JTextArea(4, 50);
+		historial.setEditable(false);
+
+		panel.add(new JScrollPane(historial), BorderLayout.CENTER);
+
+		return panel;
+	}
+
+	private void limpiarCampos() {
+		txtCodigo.setText("");
+		txtNombre.setText("");
+		txtNumero.setText("");
+		txtDireccion.setText("");
+		txtTelefono.setText("");
+		cbTipoId.setSelectedIndex(0);
+		cbTipoCliente.setSelectedIndex(0);
+		cbEstado.setSelectedIndex(0);
+	}
+
+	public void cargarClientesTabla() {
+
+		modelo.setRowCount(0);
+
+		for (co.uptc.edu.modelo.Cliente cliente : clienteDAO.obtenerClientes()) {
+
+			modelo.addRow(new Object[] {
+
+					cliente.getCodigo(), cliente.getNombre(), cliente.getTipoIdentificacion(),
+					cliente.getNumeroIdentificacion(), cliente.getDireccion(), cliente.getTelefono(),
+					cliente.getTipoCliente(), cliente.isActivo() ? "Activo" : "Inactivo" });
+		}
+	}
+
+	public static void main(String[] args) {
+		new GestionClientes().setVisible(true);
+	}
 }

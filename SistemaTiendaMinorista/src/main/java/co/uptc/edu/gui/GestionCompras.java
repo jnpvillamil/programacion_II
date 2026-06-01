@@ -8,10 +8,12 @@ import java.awt.*;
 import co.uptc.edu.modelo.Compra;
 import co.uptc.edu.modelo.DetalleCompra;
 import co.uptc.edu.modelo.Proveedor;
-
+import co.uptc.edu.persistencia.ProductoDAO;
+import co.uptc.edu.persistencia.ProveedorDAO;
+import co.uptc.edu.persistencia.CompraDAO;
 public class GestionCompras extends JFrame {
 
-    // ================= COMPONENTES =================
+    //  COMPONENTES 
     private JTextField txtFactura;
     private JTextField txtFecha;
 
@@ -24,17 +26,25 @@ public class GestionCompras extends JFrame {
     private JTextField txtIVA;
     private JTextField txtTotal;
 
-    // ================= NEGOCIO =================
+    //  NEGOCIO 
     private co.uptc.edu.negocio.GestionCompras gestion;
     private co.uptc.edu.negocio.GestionProveedores gestionProveedores;
+    private ProveedorDAO proveedorDAO;
+    private co.uptc.edu.negocio.GestionProductos gestionProductos;
+    private ProductoDAO productoDAO;
+    private CompraDAO compraDAO;
 
-    // ================= CONSTRUCTOR =================
+    // CONSTRUCTOR 
     public GestionCompras(
-            co.uptc.edu.negocio.GestionProveedores gestionProveedores) {
+            co.uptc.edu.negocio.GestionProveedores gestionProveedores,co.uptc.edu.negocio.GestionProductos gestionProductos) {
 
         this.gestionProveedores = gestionProveedores;
+        this.gestionProductos = gestionProductos;
 
         gestion = new co.uptc.edu.negocio.GestionCompras();
+        productoDAO = new ProductoDAO();
+        proveedorDAO = new ProveedorDAO();
+        compraDAO = new CompraDAO();
 
         setTitle("Gestión de Compras");
         setSize(1200, 800);
@@ -49,27 +59,27 @@ public class GestionCompras extends JFrame {
         cargarProveedores();
     }
 
-    // ================= CARGAR PROVEEDORES =================
+    //  CARGAR PROVEEDORES 
     private void cargarProveedores() {
 
         cbProveedor.removeAllItems();
 
         cbProveedor.addItem("Seleccione proveedor");
 
-        for (Proveedor p : gestionProveedores.obtenerProveedores()) {
+        for (Proveedor p : proveedorDAO.obtenerProveedores()) {
 
             if (p.isActivo()) {
 
                 cbProveedor.addItem(
-                        p.getCodigo() +
-                        " - " +
-                        p.getRazonSocial()
+                        p.getCodigo()
+                        + " - "
+                        + p.getRazonSocial()
                 );
             }
         }
     }
 
-    // ================= PANEL SUPERIOR =================
+    //  PANEL SUPERIOR 
     private JPanel crearPanelSuperior() {
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -80,7 +90,7 @@ public class GestionCompras extends JFrame {
 
         txtFactura = new JTextField(15);
 
-        txtFecha = new JTextField("DD/MM/AAAA", 15);
+        txtFecha = new JTextField("AAAA/MM/DD", 15);
 
         cbProveedor = new JComboBox<>();
 
@@ -410,7 +420,60 @@ public class GestionCompras extends JFrame {
                             );
 
                     compra.agregarDetalle(detalle);
+                    
+                 // ================= CREAR O ACTUALIZAR PRODUCTO =================
 
+                    String codigo = detalle.getCodigoProducto();
+
+                    co.uptc.edu.modelo.Producto productoExistente =
+                            gestionProductos.buscarProducto(codigo);
+
+                    // SI EL PRODUCTO NO EXISTE
+                    boolean existe = false;
+
+                    for(co.uptc.edu.modelo.Producto p :
+                            productoDAO.obtenerProductos()){
+
+                        if(p.getCodigo().equals(codigo)){
+
+                            existe = true;
+                            break;
+                        }
+                    }
+
+                    if(!existe){
+
+                        co.uptc.edu.modelo.Producto nuevoProducto =
+                                new co.uptc.edu.modelo.Producto(
+
+                                        detalle.getCodigoProducto(),
+
+                                        detalle.getNombreProducto(),
+
+                                        "Víveres",
+
+                                        detalle.getCostoUnitario(),
+
+                                        detalle.getCostoUnitario() * 1.3,
+
+                                        detalle.getCantidad(),
+
+                                        5
+                                );
+
+                        productoDAO.guardarProducto(
+                                nuevoProducto
+                        );
+
+                    }else{
+
+                        productoDAO.aumentarStock(
+
+                                codigo,
+
+                                detalle.getCantidad()
+                        );
+                    }
                 } catch (Exception ex) {
 
                     JOptionPane.showMessageDialog(
@@ -425,15 +488,28 @@ public class GestionCompras extends JFrame {
             // ================= REGISTRAR =================
             if (gestion.registrarCompra(compra)) {
 
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Compra registrada correctamente\n\n" +
-                        "Subtotal: " + txtSubtotal.getText() +
-                        "\nIVA: " + txtIVA.getText() +
-                        "\nTOTAL: " + txtTotal.getText()
-                );
+                boolean guardado =
+                        compraDAO.guardarCompra(compra);
 
-                limpiarTodo();
+                if(guardado){
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Compra registrada correctamente\n\n" +
+                            "Subtotal: " + txtSubtotal.getText() +
+                            "\nIVA: " + txtIVA.getText() +
+                            "\nTOTAL: " + txtTotal.getText()
+                    );
+
+                    limpiarTodo();
+
+                }else{
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Error guardando compra"
+                    );
+                }
 
             } else {
 
@@ -515,17 +591,15 @@ public class GestionCompras extends JFrame {
         co.uptc.edu.negocio.GestionProveedores gp =
                 new co.uptc.edu.negocio.GestionProveedores();
 
-        gp.registrarProveedor(
-                new Proveedor(
-                        "1234",
-                        "Proveedor Demo",
-                        "123",
-                        "Calle 1",
-                        "3000000000",
-                        "correo@gmail.com"
-                )
-        );
+        
+        
 
-        new GestionCompras(gp).setVisible(true);
+        co.uptc.edu.negocio.GestionProductos gProductos =
+                new co.uptc.edu.negocio.GestionProductos();
+
+        new GestionCompras(
+                gp,
+                gProductos
+        ).setVisible(true);
     }
 }

@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import co.uptc.edu.persistencia.ProveedorDAO;
+
 public class GestionProveedores extends JFrame {
 
     private JTextField txtCodigo, txtRazon, txtNit, txtDireccion, txtTelefono, txtCorreo;
@@ -18,13 +20,15 @@ public class GestionProveedores extends JFrame {
     
 
     private co.uptc.edu.negocio.GestionProveedores gestion;
+    private ProveedorDAO proveedorDAO;
 
     public GestionProveedores(
     		co.uptc.edu.negocio.GestionProveedores gestion) {
 
     	this.gestion = gestion;
+    	this.proveedorDAO = new ProveedorDAO();
 
-        gestion = new co.uptc.edu.negocio.GestionProveedores();
+        
 
         setTitle("Gestión de Proveedores");
         setSize(1100, 700);
@@ -34,6 +38,7 @@ public class GestionProveedores extends JFrame {
 
         add(crearTabla(), BorderLayout.CENTER);
         add(crearPanelSuperior(), BorderLayout.NORTH);
+        cargarProveedoresTabla();
     }
 
     private JPanel crearPanelSuperior() {
@@ -89,7 +94,7 @@ public class GestionProveedores extends JFrame {
         btnActivar.setBackground(Color.GREEN);
         btnInactivar.setBackground(Color.RED);
 
-        // 🔥 REGISTRAR
+        // REGISTRAR
         btnRegistrar.addActionListener(e -> {
 
             if(txtCodigo.getText().isEmpty() || txtRazon.getText().isEmpty()){
@@ -106,7 +111,7 @@ public class GestionProveedores extends JFrame {
                     txtCorreo.getText()
             );
 
-            if(gestion.registrarProveedor(p)){
+            if(proveedorDAO.guardarProveedor(p)){
 
                 modelo.addRow(new Object[]{
                         txtCodigo.getText(),
@@ -124,6 +129,7 @@ public class GestionProveedores extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Proveedor ya existe");
             }
+            cargarProveedoresTabla();
         });
 
         // MODIFICAR
@@ -145,7 +151,7 @@ public class GestionProveedores extends JFrame {
                     txtCorreo.getText()
             );
 
-            if(gestion.modificarProveedor(p)){
+            if(proveedorDAO.modificarProveedor(p)){
 
                 modelo.setValueAt(txtRazon.getText(), fila, 1);
                 modelo.setValueAt(txtNit.getText(), fila, 2);
@@ -158,6 +164,8 @@ public class GestionProveedores extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Error al modificar");
             }
+            
+            cargarProveedoresTabla();
         });
 
         //  INACTIVAR
@@ -170,12 +178,17 @@ public class GestionProveedores extends JFrame {
                 return;
             }
 
-            if(gestion.inactivarProveedor(txtCodigo.getText())){
+            if(proveedorDAO.inactivarProveedor(txtCodigo.getText())){
 
                 modelo.setValueAt("Inactivo", fila, 6);
                 JOptionPane.showMessageDialog(this, "Proveedor inactivado");
+                
+                cargarProveedoresTabla();
             }
+            
         });
+        
+        //ACTIVAR
         btnActivar.addActionListener(e -> {
 
             int fila = tabla.getSelectedRow();
@@ -185,7 +198,7 @@ public class GestionProveedores extends JFrame {
                 return;
             }
 
-            if(gestion.activarProveedor(txtCodigo.getText())){
+            if(proveedorDAO.activarProveedor(txtCodigo.getText())){
 
                 modelo.setValueAt("Activo", fila, 6);
 
@@ -194,6 +207,7 @@ public class GestionProveedores extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Error al activar");
             }
+            cargarProveedoresTabla();
         });
 
         btnNuevo.addActionListener(e -> limpiar());
@@ -237,6 +251,26 @@ public class GestionProveedores extends JFrame {
         txtDireccion.setText("");
         txtTelefono.setText("");
         txtCorreo.setText("");
+    }
+    
+    public void cargarProveedoresTabla(){
+
+        modelo.setRowCount(0);
+
+        for(co.uptc.edu.modelo.Proveedor proveedor :
+                proveedorDAO.obtenerProveedores()){
+
+            modelo.addRow(new Object[]{
+
+                    proveedor.getCodigo(),
+                    proveedor.getRazonSocial(),
+                    proveedor.getNit(),
+                    proveedor.getDireccion(),
+                    proveedor.getTelefono(),
+                    proveedor.getCorreo(),
+                    proveedor.isActivo() ? "Activo" : "Inactivo"
+            });
+        }
     }
 
     public static void main(String[] args) {

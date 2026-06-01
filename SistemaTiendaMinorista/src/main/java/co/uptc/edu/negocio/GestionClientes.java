@@ -6,11 +6,15 @@ import co.uptc.edu.modelo.Cliente;
 
 public class GestionClientes {
 
-    private List<Cliente> listaClientes;
+	private static List<Cliente> listaClientes;
 
-    public GestionClientes() {
-        listaClientes = new ArrayList<>();
-    }
+	public GestionClientes() {
+
+	    if(listaClientes == null){
+
+	        listaClientes = new ArrayList<>();
+	    }
+	}
 
     // Registrar cliente
     public boolean registrarCliente(Cliente cliente) {

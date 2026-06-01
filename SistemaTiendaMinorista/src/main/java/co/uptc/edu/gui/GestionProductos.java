@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-
+import co.uptc.edu.persistencia.ProductoDAO;
 import co.uptc.edu.modelo.Producto;
 
 public class GestionProductos extends JFrame {
@@ -18,10 +18,13 @@ public class GestionProductos extends JFrame {
 
     // BACKEND
     private co.uptc.edu.negocio.GestionProductos gestion;
+    private ProductoDAO productoDAO;
 
-    public GestionProductos() {
+    public GestionProductos(
+    		co.uptc.edu.negocio.GestionProductos gestion) {
 
-        gestion = new co.uptc.edu.negocio.GestionProductos();
+        this.gestion = gestion;
+        this.productoDAO = new ProductoDAO();
 
         setTitle("Gestión de Productos");
         setSize(1100, 700);
@@ -32,6 +35,7 @@ public class GestionProductos extends JFrame {
         add(crearPanelSuperior(), BorderLayout.NORTH);
         add(crearTabla(), BorderLayout.CENTER);
         add(crearPanelMovimientos(), BorderLayout.SOUTH);
+        cargarProductosTabla();
     }
 
     private JPanel crearPanelSuperior() {
@@ -83,12 +87,12 @@ public class GestionProductos extends JFrame {
         JButton btnNuevo = new JButton("Nuevo");
         JButton btnRegistrar = new JButton("Registrar");
         JButton btnModificar = new JButton("Modificar");
-        JButton btnPrecio = new JButton("Actualizar Precios");
+        JButton btnRefrescar = new JButton("Refrescar");
 
         botones.add(btnNuevo);
         botones.add(btnRegistrar);
         botones.add(btnModificar);
-        botones.add(btnPrecio);
+        botones.add(btnRefrescar);
 
         // REGISTRAR
         btnRegistrar.addActionListener(e -> {
@@ -103,17 +107,24 @@ public class GestionProductos extends JFrame {
                         Integer.parseInt(txtStock.getText()),
                         Integer.parseInt(txtStockMin.getText())
                 );
-
                 if(gestion.registrarProducto(p)){
+
+                    productoDAO.guardarProducto(p);
+
                     modelo.addRow(new Object[]{
-                            p.getCodigo(), p.getNombre(), p.getCategoria(),
-                            p.getPrecioCompra(), p.getPrecioVenta(),
-                            p.getStockActual(), p.getStockMinimo(), p.getEstado()
+                        p.getCodigo(),
+                        p.getNombre(),
+                        p.getCategoria(),
+                        p.getPrecioCompra(),
+                        p.getPrecioVenta(),
+                        p.getStockActual(),
+                        p.getStockMinimo(),
+                        p.getEstado()
                     });
 
                     JOptionPane.showMessageDialog(this, "Producto registrado");
                     limpiar();
-                } else {
+                }else {
                     JOptionPane.showMessageDialog(this, "El producto ya existe");
                 }
 
@@ -140,7 +151,8 @@ public class GestionProductos extends JFrame {
                 //  IMPORTANTE → estado desde combo
                 p.setEstado(cbEstado.getSelectedItem().toString());
 
-                if(gestion.modificarProducto(p)){
+                if(productoDAO.modificarProducto(p)){
+                	productoDAO.modificarProducto(p);
 
                     int fila = tabla.getSelectedRow();
 
@@ -153,6 +165,7 @@ public class GestionProductos extends JFrame {
                     modelo.setValueAt(cbEstado.getSelectedItem(), fila, 7); // 🔥 AQUÍ
 
                     JOptionPane.showMessageDialog(this, "Producto actualizado");
+                    cargarProductosTabla();
 
                 }
 
@@ -161,18 +174,15 @@ public class GestionProductos extends JFrame {
             }
         });
         //  ACTUALIZAR PRECIO
-        btnPrecio.addActionListener(e -> {
+        btnRefrescar.addActionListener(e -> {
 
-            double nuevo = Double.parseDouble(txtPrecioVenta.getText());
+            cargarProductosTabla();
 
-            if(gestion.actualizarPrecio(txtCodigo.getText(), nuevo)){
-                int fila = tabla.getSelectedRow();
-                modelo.setValueAt(nuevo, fila, 4);
-
-                JOptionPane.showMessageDialog(this, "Precio actualizado");
-            }
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Tabla actualizada"
+            );
         });
-
      
         btnNuevo.addActionListener(e -> limpiar());
 
@@ -224,8 +234,33 @@ public class GestionProductos extends JFrame {
         txtStock.setText("");
         txtStockMin.setText("");
     }
+    public void cargarProductosTabla(){
+
+        modelo.setRowCount(0);
+
+        for(Producto p : productoDAO.obtenerProductos()){
+
+            modelo.addRow(new Object[]{
+
+                    p.getCodigo(),
+                    p.getNombre(),
+                    p.getCategoria(),
+                    p.getPrecioCompra(),
+                    p.getPrecioVenta(),
+                    p.getStockActual(),
+                    p.getStockMinimo(),
+                    p.getEstado()
+            });
+        }
+    }
 
     public static void main(String[] args) {
-        new GestionProductos().setVisible(true);
+
+        co.uptc.edu.negocio.GestionProductos gestion =
+                new co.uptc.edu.negocio.GestionProductos();
+
+        new GestionProductos(
+                gestion
+        ).setVisible(true);
     }
 }

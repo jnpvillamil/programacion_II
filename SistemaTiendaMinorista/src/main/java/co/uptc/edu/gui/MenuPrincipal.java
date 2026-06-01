@@ -9,12 +9,16 @@ public class MenuPrincipal extends JFrame {
 
     // ================= GESTIÓN COMPARTIDA =================
     private GestionProveedores gestionProveedores;
+    private co.uptc.edu.negocio.GestionProductos gestionProductos;
 
     // ================= CONSTRUCTOR =================
     public MenuPrincipal() {
 
         // INSTANCIA ÚNICA
         gestionProveedores = new GestionProveedores();
+        
+        gestionProductos =
+                new co.uptc.edu.negocio.GestionProductos();
 
         // CONFIGURACIÓN VENTANA
         setTitle("Sistema de Gestión Comercial y Contable");
@@ -127,7 +131,7 @@ public class MenuPrincipal extends JFrame {
 
         btnProductos.addActionListener(e -> {
 
-            new GestionProductos().setVisible(true);
+            new GestionProductos(gestionProductos).setVisible(true);
         });
 
         // ================= PROVEEDORES =================
@@ -148,7 +152,8 @@ public class MenuPrincipal extends JFrame {
         btnCompras.addActionListener(e -> {
 
             new GestionCompras(
-                    gestionProveedores
+                    gestionProveedores,
+                    gestionProductos
             ).setVisible(true);
         });
 
