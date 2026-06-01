@@ -7,11 +7,11 @@ public class ResumenClienteDTO {
 	private int cantidadCompras;
 	private double totalComprado;
 
-	public ResumenClienteDTO(String codigoCliente, String nombreCliente, int cantidadCompras, double totalComprado) {
+	public ResumenClienteDTO(String codigoCliente, String nombreCliente) {
 		this.codigoCliente = codigoCliente;
 		this.nombreCliente = nombreCliente;
-		this.cantidadCompras = cantidadCompras;
-		this.totalComprado = totalComprado;
+		this.cantidadCompras = 0;
+		this.totalComprado = 0.0;
 	}
 
 	public String getCodigoCliente() {
@@ -44,5 +44,10 @@ public class ResumenClienteDTO {
 
 	public void setTotalComprado(double totalComprado) {
 		this.totalComprado = totalComprado;
+	}
+
+	public void acumularCompra(double total) {
+		this.cantidadCompras++;
+		this.totalComprado += total;
 	}
 }

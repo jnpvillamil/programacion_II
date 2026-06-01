@@ -67,6 +67,11 @@ public class GestionCliente implements IGestionCliente {
 			throw new Exception("Ya existe un cliente con ese código.");
 		}
 
+		if (existeIdentificacionDuplicada(cliente)) {
+			throw new Exception("No se puede registrar: número de identificación duplicado (" 
+					+ cliente.getTipoIdentificacion() + "-" + cliente.getNumeroIdentificacion() + ").");
+		}
+
 		cliente.setEstado(EstadoEnum.ACTIVO);
 
 		clienteDAO.guardarCliente(cliente);
@@ -86,6 +91,11 @@ public class GestionCliente implements IGestionCliente {
 			throw new Exception("No se encontró el cliente a actualizar.");
 		}
 
+		if (existeIdentificacionDuplicada(clienteActualizado)) {
+			throw new Exception("No se puede actualizar: número de identificación duplicado (" 
+					+ clienteActualizado.getTipoIdentificacion() + "-" + clienteActualizado.getNumeroIdentificacion() + ").");
+		}
+
 		clienteExistente.setNombre(clienteActualizado.getNombre());
 
 		clienteExistente.setTipoIdentificacion(clienteActualizado.getTipoIdentificacion());
@@ -99,6 +109,31 @@ public class GestionCliente implements IGestionCliente {
 		clienteExistente.setTipoCliente(clienteActualizado.getTipoCliente());
 
 		clienteDAO.actualizarCliente(clienteExistente);
+	}
+
+	private boolean existeIdentificacionDuplicada(Cliente cliente) {
+		if (cliente == null || cliente.getNumeroIdentificacion() == null || cliente.getTipoIdentificacion() == null) {
+			return false;
+		}
+
+		String numero = cliente.getNumeroIdentificacion().trim();
+		for (Cliente c : clientes) {
+			if (c == null) {
+				continue;
+			}
+			// Ignorar el mismo cliente por código
+			if (c.getCodigo() != null && cliente.getCodigo() != null
+					&& c.getCodigo().equalsIgnoreCase(cliente.getCodigo())) {
+				continue;
+			}
+
+			if (c.getTipoIdentificacion() == cliente.getTipoIdentificacion()
+					&& c.getNumeroIdentificacion() != null
+					&& c.getNumeroIdentificacion().trim().equalsIgnoreCase(numero)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override

@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.table.DefaultTableModel;
+
 import co.uptc.edu.co.interfaces.IGestionReporte;
 import co.uptc.edu.co.interfaces.dao.CompraDAO;
 import co.uptc.edu.co.interfaces.dao.ProductoDAO;
@@ -65,15 +67,7 @@ public class GestionReporte implements IGestionReporte {
 	public List<ResumenProductoDTO> obtenerResumenProductosMasVendidos(LocalDate fechaInicio, LocalDate fechaFin)
 			throws Exception {
 		List<Venta> ventasActuales = ventaDAO.listarVentas();
-		List<ResumenProducto> resumenes = construirResumenProductos(ventasActuales, fechaInicio, fechaFin);
-		List<ResumenProductoDTO> dtos = new ArrayList<>();
-
-		for (ResumenProducto resumen : resumenes) {
-			dtos.add(new ResumenProductoDTO(resumen.getCodigoProducto(), resumen.getNombreProducto(),
-					resumen.getCantidadVendida(), resumen.getTotalVendido()));
-		}
-
-		return dtos;
+		return construirResumenProductos(ventasActuales, fechaInicio, fechaFin);
 	}
 
 	@Override
@@ -82,12 +76,11 @@ public class GestionReporte implements IGestionReporte {
 		if (codigoProducto == null || codigoProducto.isBlank()) {
 			throw new Exception("Debe seleccionar un codigo de producto valido para generar el reporte.");
 		}
-
 		List<Venta> ventasActuales = ventaDAO.listarVentas();
-		List<ResumenProducto> resumenes = construirResumenProductos(ventasActuales, fechaInicio, fechaFin);
-		ResumenProducto encontrado = null;
+		List<ResumenProductoDTO> resumenes = construirResumenProductos(ventasActuales, fechaInicio, fechaFin);
 
-		for (ResumenProducto resumen : resumenes) {
+		ResumenProductoDTO encontrado = null;
+		for (ResumenProductoDTO resumen : resumenes) {
 			if (resumen.getCodigoProducto() != null && resumen.getCodigoProducto().equalsIgnoreCase(codigoProducto)) {
 				encontrado = resumen;
 				break;
@@ -98,30 +91,39 @@ public class GestionReporte implements IGestionReporte {
 			throw new Exception("No se encontro datos de ventas para el producto seleccionado dentro del rango.");
 		}
 
-		ResumenProductoDTO dto = new ResumenProductoDTO(encontrado.getCodigoProducto(), encontrado.getNombreProducto(),
-				encontrado.getCantidadVendida(), encontrado.getTotalVendido());
-		return reporteDAO.guardarReporteProducto(dto, fechaInicio, fechaFin);
+		return reporteDAO.guardarReporteProducto(encontrado, fechaInicio, fechaFin);
+	}
+
+	@Override
+	public String generarReporteVentasDiarias(LocalDate fecha) throws Exception {
+		ResumenVentasDTO resumen = obtenerTotalVentasDiarias(fecha);
+		return reporteDAO.guardarReporteVentasDiarias(resumen, fecha);
+	}
+
+	@Override
+	public String generarReporteTabla(String tipoReporte, DefaultTableModel modeloTabla) throws Exception {
+		return reporteDAO.guardarReporteTabla(tipoReporte, modeloTabla);
 	}
 
 	@Override
 	public List<ResumenFormaPagoDTO> obtenerVentasPorFormaPago(LocalDate fechaInicio, LocalDate fechaFin)
 			throws Exception {
 		List<Venta> ventasActuales = ventaDAO.listarVentas();
-		Map<FormaPago, ResumenFormaPago> resumenPorFormaPago = new LinkedHashMap<>();
+		Map<FormaPago, Integer> cantidadMap = new LinkedHashMap<>();
+		Map<FormaPago, Double> totalMap = new LinkedHashMap<>();
 
 		for (Venta venta : ventasActuales) {
 			if (!debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin) || venta.getFormaPago() == null) {
 				continue;
 			}
-
-			ResumenFormaPago resumen = resumenPorFormaPago.computeIfAbsent(venta.getFormaPago(),
-					formaPago -> new ResumenFormaPago(formaPago));
-			resumen.acumularVenta(venta.getTotal());
+			FormaPago fp = venta.getFormaPago();
+			cantidadMap.put(fp, cantidadMap.getOrDefault(fp, 0) + 1);
+			totalMap.put(fp, totalMap.getOrDefault(fp, 0.0) + venta.getTotal());
 		}
 
 		List<ResumenFormaPagoDTO> resumenes = new ArrayList<>();
-		for (ResumenFormaPago resumen : resumenPorFormaPago.values()) {
-			resumenes.add(new ResumenFormaPagoDTO(resumen.formaPago, resumen.cantidadVentas, resumen.valorTotal));
+		for (FormaPago fp : cantidadMap.keySet()) {
+			resumenes.add(new ResumenFormaPagoDTO(fp, cantidadMap.get(fp), totalMap.getOrDefault(fp, 0.0)));
 		}
 		resumenes.sort(Comparator.comparingDouble(ResumenFormaPagoDTO::getValorTotal).reversed());
 		return resumenes;
@@ -131,7 +133,7 @@ public class GestionReporte implements IGestionReporte {
 	public List<ResumenClienteDTO> obtenerClientesMayorVolumenCompra(LocalDate fechaInicio, LocalDate fechaFin)
 			throws Exception {
 		List<Venta> ventasActuales = ventaDAO.listarVentas();
-		Map<String, ResumenCliente> resumenPorCliente = new LinkedHashMap<>();
+		Map<String, ResumenClienteDTO> resumenPorCliente = new LinkedHashMap<>();
 
 		for (Venta venta : ventasActuales) {
 			if (!debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin)) {
@@ -140,17 +142,12 @@ public class GestionReporte implements IGestionReporte {
 
 			String codigoCliente = venta.getCodigoCliente().trim();
 			String nombreCliente = venta.getCliente().trim();
-			ResumenCliente resumen = resumenPorCliente.computeIfAbsent(codigoCliente,
-					clave -> new ResumenCliente(codigoCliente, nombreCliente));
+			ResumenClienteDTO resumen = resumenPorCliente.computeIfAbsent(codigoCliente,
+					clave -> new ResumenClienteDTO(codigoCliente, nombreCliente));
 			resumen.acumularCompra(venta.getTotal());
 		}
 
-		List<ResumenClienteDTO> resumenes = new ArrayList<>();
-		for (ResumenCliente resumen : resumenPorCliente.values()) {
-			resumenes.add(new ResumenClienteDTO(resumen.codigoCliente, resumen.nombreCliente,
-					resumen.cantidadCompras, resumen.totalComprado));
-		}
-
+		List<ResumenClienteDTO> resumenes = new ArrayList<>(resumenPorCliente.values());
 		resumenes.sort(Comparator.comparingDouble(ResumenClienteDTO::getTotalComprado).reversed()
 				.thenComparing(ResumenClienteDTO::getNombreCliente, String.CASE_INSENSITIVE_ORDER));
 		return resumenes;
@@ -225,7 +222,11 @@ public class GestionReporte implements IGestionReporte {
 		validarRangoFechas(fechaInicio, fechaFin);
 
 		List<Venta> ventasActuales = ventaDAO.listarVentas();
-		Map<String, ResumenUtilidadProducto> resumenPorProducto = new LinkedHashMap<>();
+		Map<String, Integer> cantidadMap = new LinkedHashMap<>();
+		Map<String, Double> ventasMap = new LinkedHashMap<>();
+		Map<String, Double> costoMap = new LinkedHashMap<>();
+		Map<String, String> nombreMap = new LinkedHashMap<>();
+
 		double totalVentas = 0;
 		double costoVentas = 0;
 		int cantidadVentas = 0;
@@ -240,13 +241,38 @@ public class GestionReporte implements IGestionReporte {
 			costoVentas += calcularCostoVenta(venta);
 			cantidadVentas++;
 			cantidadVendida += calcularCantidadVendida(venta);
-			acumularUtilidadPorProducto(resumenPorProducto, venta);
+
+			if (venta.getDetalles() == null) {
+				continue;
+			}
+
+			for (DetalleVenta detalle : venta.getDetalles()) {
+				if (detalle == null || detalle.getProducto() == null) {
+					continue;
+				}
+
+				String codigoProducto = detalle.getProducto().getCodigoProducto();
+				if (codigoProducto == null || codigoProducto.isBlank()) {
+					codigoProducto = "SIN_CODIGO";
+				}
+
+				String nombreProducto = detalle.getProducto().getNombreProducto();
+				if (nombreProducto == null || nombreProducto.isBlank()) {
+					nombreProducto = "Producto sin nombre";
+				}
+
+				nombreMap.putIfAbsent(codigoProducto, nombreProducto);
+				cantidadMap.put(codigoProducto, cantidadMap.getOrDefault(codigoProducto, 0) + detalle.getCantidad());
+				ventasMap.put(codigoProducto, ventasMap.getOrDefault(codigoProducto, 0.0) + detalle.getSubtotal());
+				costoMap.put(codigoProducto,
+						costoMap.getOrDefault(codigoProducto, 0.0) + detalle.getCantidad() * detalle.getProducto().getPrecioCompra());
+			}
 		}
 
 		double utilidadBruta = totalVentas - costoVentas;
 		return new ResumenUtilidadBrutaDTO(construirPeriodo(fechaInicio, fechaFin),
-				construirDetallesUtilidad(resumenPorProducto), totalVentas, costoVentas, utilidadBruta, cantidadVentas,
-				cantidadVendida);
+				construirDetallesUtilidad(cantidadMap, ventasMap, costoMap, nombreMap), totalVentas, costoVentas,
+				utilidadBruta, cantidadVentas, cantidadVendida);
 	}
 
 	private ResumenVentasDTO construirResumenVentas(String periodo, LocalDate fechaInicio, LocalDate fechaFin)
@@ -273,9 +299,11 @@ public class GestionReporte implements IGestionReporte {
 		return new ResumenVentasDTO(periodo, ventasDelDia, subtotalVentas, totalVentas, cantidadVentas, impuestos);
 	}
 
-	private List<ResumenProducto> construirResumenProductos(List<Venta> ventasFuente, LocalDate fechaInicio,
+	private List<ResumenProductoDTO> construirResumenProductos(List<Venta> ventasFuente, LocalDate fechaInicio,
 			LocalDate fechaFin) {
-		Map<String, ResumenProducto> resumenPorProducto = new LinkedHashMap<>();
+		Map<String, Integer> cantidadMap = new LinkedHashMap<>();
+		Map<String, Double> totalMap = new LinkedHashMap<>();
+		Map<String, String> nombreMap = new LinkedHashMap<>();
 
 		for (Venta venta : ventasFuente) {
 			if (!debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin) || venta.getDetalles() == null) {
@@ -297,17 +325,20 @@ public class GestionReporte implements IGestionReporte {
 					nombreProducto = "Producto sin nombre";
 				}
 
-				final String codigoProductoFinal = codigoProducto;
-				final String nombreProductoFinal = nombreProducto;
-				ResumenProducto resumen = resumenPorProducto.computeIfAbsent(codigoProducto,
-						clave -> new ResumenProducto(codigoProductoFinal, nombreProductoFinal));
-				resumen.acumular(detalle.getCantidad(), detalle.getSubtotal());
+				nombreMap.putIfAbsent(codigoProducto, nombreProducto);
+				cantidadMap.put(codigoProducto, cantidadMap.getOrDefault(codigoProducto, 0) + detalle.getCantidad());
+				totalMap.put(codigoProducto, totalMap.getOrDefault(codigoProducto, 0.0) + detalle.getSubtotal());
 			}
 		}
 
-		List<ResumenProducto> resumenes = new ArrayList<>(resumenPorProducto.values());
-		resumenes.sort(Comparator.comparingInt(ResumenProducto::getCantidadVendida).reversed()
-				.thenComparing(ResumenProducto::getNombreProducto, String.CASE_INSENSITIVE_ORDER));
+		List<ResumenProductoDTO> resumenes = new ArrayList<>();
+		for (String codigo : cantidadMap.keySet()) {
+			resumenes.add(new ResumenProductoDTO(codigo, nombreMap.getOrDefault(codigo, ""),
+					cantidadMap.getOrDefault(codigo, 0), totalMap.getOrDefault(codigo, 0.0)));
+		}
+
+		resumenes.sort(Comparator.comparingInt(ResumenProductoDTO::getCantidadVendida).reversed()
+				.thenComparing(ResumenProductoDTO::getNombreProducto, String.CASE_INSENSITIVE_ORDER));
 		return resumenes;
 	}
 
@@ -401,43 +432,16 @@ public class GestionReporte implements IGestionReporte {
 		return cantidadVendida;
 	}
 
-	private void acumularUtilidadPorProducto(Map<String, ResumenUtilidadProducto> resumenPorProducto, Venta venta) {
-		if (venta.getDetalles() == null) {
-			return;
-		}
-
-		for (DetalleVenta detalle : venta.getDetalles()) {
-			if (detalle == null || detalle.getProducto() == null) {
-				continue;
-			}
-
-			String codigoProducto = detalle.getProducto().getCodigoProducto();
-			if (codigoProducto == null || codigoProducto.isBlank()) {
-				codigoProducto = "SIN_CODIGO";
-			}
-
-			String nombreProducto = detalle.getProducto().getNombreProducto();
-			if (nombreProducto == null || nombreProducto.isBlank()) {
-				nombreProducto = "Producto sin nombre";
-			}
-
-			final String codigoProductoFinal = codigoProducto;
-			final String nombreProductoFinal = nombreProducto;
-			ResumenUtilidadProducto resumen = resumenPorProducto.computeIfAbsent(codigoProducto,
-					clave -> new ResumenUtilidadProducto(codigoProductoFinal, nombreProductoFinal));
-			resumen.acumular(detalle.getCantidad(), detalle.getSubtotal(),
-					detalle.getCantidad() * detalle.getProducto().getPrecioCompra());
-		}
-	}
-
-	private List<DetalleUtilidadBrutaDTO> construirDetallesUtilidad(
-			Map<String, ResumenUtilidadProducto> resumenPorProducto) {
+	private List<DetalleUtilidadBrutaDTO> construirDetallesUtilidad(Map<String, Integer> cantidadMap,
+			Map<String, Double> ventasMap, Map<String, Double> costoMap, Map<String, String> nombreMap) {
 		List<DetalleUtilidadBrutaDTO> detalles = new ArrayList<>();
 
-		for (ResumenUtilidadProducto resumen : resumenPorProducto.values()) {
-			detalles.add(new DetalleUtilidadBrutaDTO(resumen.codigoProducto, resumen.nombreProducto,
-					resumen.cantidadVendida, resumen.ventas, resumen.costoVenta,
-					resumen.ventas - resumen.costoVenta));
+		for (String codigo : cantidadMap.keySet()) {
+			int cantidad = cantidadMap.getOrDefault(codigo, 0);
+			double ventas = ventasMap.getOrDefault(codigo, 0.0);
+			double costo = costoMap.getOrDefault(codigo, 0.0);
+			String nombre = nombreMap.getOrDefault(codigo, "");
+			detalles.add(new DetalleUtilidadBrutaDTO(codigo, nombre, cantidad, ventas, costo, ventas - costo));
 		}
 
 		detalles.sort(Comparator.comparingDouble(DetalleUtilidadBrutaDTO::getUtilidad).reversed()
@@ -467,87 +471,5 @@ public class GestionReporte implements IGestionReporte {
 		return "Hasta " + fechaFin;
 	}
 
-	private static final class ResumenProducto {
-		private final String codigoProducto;
-		private final String nombreProducto;
-		private int cantidadVendida;
-		private double totalVendido;
-
-		private ResumenProducto(String codigoProducto, String nombreProducto) {
-			this.codigoProducto = codigoProducto;
-			this.nombreProducto = nombreProducto;
-		}
-
-		private void acumular(int cantidad, double valorVendido) {
-			this.cantidadVendida += cantidad;
-			this.totalVendido += valorVendido;
-		}
-
-		private String getCodigoProducto() {
-			return codigoProducto;
-		}
-
-		private String getNombreProducto() {
-			return nombreProducto;
-		}
-
-		private int getCantidadVendida() {
-			return cantidadVendida;
-		}
-
-		private double getTotalVendido() {
-			return totalVendido;
-		}
-	}
-
-	private static final class ResumenUtilidadProducto {
-		private final String codigoProducto;
-		private final String nombreProducto;
-		private int cantidadVendida;
-		private double ventas;
-		private double costoVenta;
-
-		private ResumenUtilidadProducto(String codigoProducto, String nombreProducto) {
-			this.codigoProducto = codigoProducto;
-			this.nombreProducto = nombreProducto;
-		}
-
-		private void acumular(int cantidad, double venta, double costo) {
-			this.cantidadVendida += cantidad;
-			this.ventas += venta;
-			this.costoVenta += costo;
-		}
-	}
-
-	private static final class ResumenFormaPago {
-		private final FormaPago formaPago;
-		private int cantidadVentas;
-		private double valorTotal;
-
-		private ResumenFormaPago(FormaPago formaPago) {
-			this.formaPago = formaPago;
-		}
-
-		private void acumularVenta(double valorVenta) {
-			this.cantidadVentas++;
-			this.valorTotal += valorVenta;
-		}
-	}
-
-	private static final class ResumenCliente {
-		private final String codigoCliente;
-		private final String nombreCliente;
-		private int cantidadCompras;
-		private double totalComprado;
-
-		private ResumenCliente(String codigoCliente, String nombreCliente) {
-			this.codigoCliente = codigoCliente;
-			this.nombreCliente = nombreCliente;
-		}
-
-		private void acumularCompra(double valorCompra) {
-			this.cantidadCompras++;
-			this.totalComprado += valorCompra;
-		}
-	}
+    
 }

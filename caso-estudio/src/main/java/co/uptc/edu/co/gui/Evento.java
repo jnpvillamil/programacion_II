@@ -113,6 +113,7 @@ public class Evento implements ActionListener {
 	// CONSTANTES DE COMANDOS - CONSULTAS
 	public static final String CMD_CONSULTAR_SISTEMA = "ConsultarSistema";
 	public static final String CMD_BUSCAR_REPORTE = "BuscarReporte";
+	public static final String CMD_GENERAR_REPORTE_JSON = "GenerarReporteJson";
 
 	// ATRIBUTOS
 	private VentanaPrincipal ventana;
@@ -1078,11 +1079,31 @@ public class Evento implements ActionListener {
 	private boolean manejarEventosReportes(String comando) {
 		switch (comando) {
 		case CMD_BUSCAR_REPORTE:
-		    buscarReporte();
+			buscarReporte();
+			return true;
+
+		case CMD_GENERAR_REPORTE_JSON:
+			generarReporteJsonActual();
 			return true;
 
 		default:
 			return false;
+		}
+	}
+
+	private void generarReporteJsonActual() {
+		try {
+			PanelReportes panelReportes = ventana.getPanelReportes();
+
+			if (panelReportes.getModeloTabla().getRowCount() == 0) {
+				throw new Exception("No hay datos en la tabla para generar el reporte JSON.");
+			}
+
+			String rutaReporte = gestionReporte.generarReporteTabla(panelReportes.obtenerTipoReporteSeleccionado(),
+					panelReportes.getModeloTabla());
+			mostrarInformacion("Reporte JSON generado en: " + rutaReporte);
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
 		}
 	}
 
@@ -1156,7 +1177,7 @@ public class Evento implements ActionListener {
 			LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
 			LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
 
-			// Si hay una fila seleccionada, generar JSON solo para ese producto
+			
 			if (panelReportes.haySeleccion()) {
 				String codigoSeleccionado = panelReportes.obtenerTextoSeleccionado(0);
 				if (codigoSeleccionado == null || codigoSeleccionado.isBlank()) {
@@ -1166,8 +1187,6 @@ public class Evento implements ActionListener {
 				mostrarInformacion("Reporte JSON del producto generado en: " + rutaReporte);
 				return;
 			}
-
-			// Si no hay selección, obtener y mostrar el resumen agregado por producto
 			java.util.List<ResumenProductoDTO> resumenDTOs = gestionReporte
 					.obtenerResumenProductosMasVendidos(fechaInicio, fechaFin);
 			panelReportes.mostrarResumenProductos(resumenDTOs);

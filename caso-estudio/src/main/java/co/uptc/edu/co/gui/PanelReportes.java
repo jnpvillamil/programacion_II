@@ -34,6 +34,7 @@ public class PanelReportes extends PanelCentral {
 	private static final String TEXTO_TOTAL = "Registros del reporte: ";
 
 	private static final String TEXTO_BOTON_BUSCAR = "Buscar";
+	private static final String TEXTO_BOTON_GENERAR_REPORTE = "Generar Reportes";
 
 	private static final String REPORTE_VENTAS_DIARIAS = "Ventas diarias";
 	private static final String REPORTE_VENTAS_MENSUALES = "Ventas mensuales";
@@ -71,7 +72,7 @@ public class PanelReportes extends PanelCentral {
 	private JLabel etiquetaFechaFin;
 
 	private JButton botonBuscar;
-
+	private JButton botonGenerarReporte;
 	private JComboBox<String> comboTipoReporte;
 
 	private JFormattedTextField campoFecha;
@@ -122,7 +123,9 @@ public class PanelReportes extends PanelCentral {
 		etiquetaFechaFin = new JLabel("Hasta:");
 
 		botonBuscar = new JButton(TEXTO_BOTON_BUSCAR);
-
+		botonGenerarReporte = new JButton(TEXTO_BOTON_GENERAR_REPORTE);
+		botonGenerarReporte.setActionCommand(Evento.CMD_GENERAR_REPORTE_JSON);
+		botonGenerarReporte.setEnabled(false);
 		comboTipoReporte = new JComboBox<>();
 		comboTipoReporte.addItem(REPORTE_VENTAS_DIARIAS);
 		comboTipoReporte.addItem(REPORTE_VENTAS_MENSUALES);
@@ -173,7 +176,10 @@ public class PanelReportes extends PanelCentral {
 		panelFiltros.add(etiquetaFechaFin);
 		panelFiltros.add(campoFechaFin);
 
+		// El botón queda junto a Buscar y solo se habilita cuando la tabla ya tiene
+		// datos.
 		panelFiltros.add(botonBuscar);
+		panelFiltros.add(botonGenerarReporte);
 	}
 
 	private void actualizarFiltros() {
@@ -201,6 +207,8 @@ public class PanelReportes extends PanelCentral {
 			configurarResumenContable();
 		}
 
+		actualizarEstadoBotonGenerarReporte();
+
 		limpiarTabla();
 		actualizarTextoTotal(TEXTO_TOTAL, 0);
 
@@ -211,6 +219,15 @@ public class PanelReportes extends PanelCentral {
 	public void inicializarEventos(Evento evento) {
 		botonBuscar.setActionCommand(Evento.CMD_BUSCAR_REPORTE);
 		botonBuscar.addActionListener(evento);
+		botonGenerarReporte.addActionListener(evento);
+	}
+
+	private void actualizarEstadoBotonGenerarReporte() {
+		boolean hayDatos = modeloTabla.getRowCount() > 0;
+		botonGenerarReporte.setEnabled(hayDatos);
+		if (!hayDatos) {
+			botonGenerarReporte.setEnabled(false);
+		}
 	}
 
 	private void configurarVentasDiarias() {
@@ -386,6 +403,7 @@ public class PanelReportes extends PanelCentral {
 		limpiarTabla();
 		if (resumenes == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
 			return;
 		}
 
@@ -394,12 +412,14 @@ public class PanelReportes extends PanelCentral {
 					FORMATO_MONEDA.format(r.getTotalVendido()) });
 		}
 		actualizarTextoTotal(TEXTO_TOTAL, resumenes.size());
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	public void mostrarVentasPorFormaPago(List<ResumenFormaPagoDTO> resumen) {
 		limpiarTabla();
 		if (resumen == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
 			return;
 		}
 
@@ -408,12 +428,14 @@ public class PanelReportes extends PanelCentral {
 					FORMATO_MONEDA.format(item.getValorTotal()) });
 		}
 		actualizarTextoTotal(TEXTO_TOTAL, resumen.size());
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	public void mostrarClientesMayorCompra(List<ResumenClienteDTO> resumen) {
 		limpiarTabla();
 		if (resumen == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
 			return;
 		}
 
@@ -422,12 +444,14 @@ public class PanelReportes extends PanelCentral {
 					item.getCantidadCompras(), FORMATO_MONEDA.format(item.getTotalComprado()) });
 		}
 		actualizarTextoTotal(TEXTO_TOTAL, resumen.size());
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	public void mostrarInventarioValorizado(List<ResumenInventarioValorizadoDTO> resumen) {
 		limpiarTabla();
 		if (resumen == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
 			return;
 		}
 
@@ -441,48 +465,78 @@ public class PanelReportes extends PanelCentral {
 
 		modeloTabla.addRow(new Object[] { "TOTAL", "", "", "", "", FORMATO_MONEDA.format(valorTotalInventario) });
 		actualizarTextoTotal(TEXTO_TOTAL, resumen.size());
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	public void mostrarResumenContable(ResumenContableDTO resumen) {
 		limpiarTabla();
 		if (resumen == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
 			return;
 		}
 
 		modeloTabla.addRow(new Object[] { FORMATO_MONEDA.format(resumen.getIngresos()),
 				FORMATO_MONEDA.format(resumen.getEgresos()), FORMATO_MONEDA.format(resumen.getUtilidad()) });
 		actualizarTextoTotal(TEXTO_TOTAL, 1);
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	public void mostrarVentasDiarias(ResumenVentasDTO resumen) {
-		mostrarResumenVentas(resumen);
+		limpiarTabla();
+		if (resumen == null) {
+			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
+			return;
+		}
+
+		for (Venta venta : resumen.getVentas()) {
+			modeloTabla
+					.addRow(new Object[] { venta.getNumeroFactura(), venta.getFechaHora(),
+							venta.getCliente() != null && !venta.getCliente().isBlank() ? venta.getCliente()
+									: "ANÓNIMO",
+							venta.getFormaPago(), FORMATO_MONEDA.format(venta.getSubTotal()),
+							FORMATO_MONEDA.format(venta.getImpuestos()), FORMATO_MONEDA.format(venta.getTotal()) });
+		}
+
+		modeloTabla.addRow(new Object[] { "TOTAL", resumen.getPeriodo(), resumen.getCantidadVentas() + " ventas", "",
+				FORMATO_MONEDA.format(resumen.getSubtotalVentas()), FORMATO_MONEDA.format(resumen.getImpuestos()),
+				FORMATO_MONEDA.format(resumen.getTotalVentas()) });
+
+		actualizarTextoTotal(TEXTO_TOTAL, resumen.getCantidadVentas());
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	public void mostrarResumenVentas(ResumenVentasDTO resumen) {
 		limpiarTabla();
 		if (resumen == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
 			return;
 		}
 
 		for (Venta venta : resumen.getVentas()) {
-			modeloTabla.addRow(new Object[] { venta.getNumeroFactura(),
-					venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate() : "", venta.getCliente(),
-					venta.getFormaPago(), FORMATO_MONEDA.format(venta.getSubTotal()),
-					FORMATO_MONEDA.format(venta.getImpuestos()), FORMATO_MONEDA.format(venta.getTotal()) });
+			modeloTabla
+					.addRow(new Object[] { venta.getNumeroFactura(),
+							venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate() : "",
+							venta.getCliente() != null && !venta.getCliente().isBlank() ? venta.getCliente()
+									: "ANÓNIMO",
+							venta.getFormaPago(), FORMATO_MONEDA.format(venta.getSubTotal()),
+							FORMATO_MONEDA.format(venta.getImpuestos()), FORMATO_MONEDA.format(venta.getTotal()) });
 		}
 
 		modeloTabla.addRow(new Object[] { "TOTAL", resumen.getPeriodo(), resumen.getCantidadVentas() + " ventas", "",
 				FORMATO_MONEDA.format(resumen.getSubtotalVentas()), FORMATO_MONEDA.format(resumen.getImpuestos()),
 				FORMATO_MONEDA.format(resumen.getTotalVentas()) });
 		actualizarTextoTotal(TEXTO_TOTAL, resumen.getCantidadVentas());
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	public void mostrarUtilidadBruta(ResumenUtilidadBrutaDTO resumen) {
 		limpiarTabla();
 		if (resumen == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
+			actualizarEstadoBotonGenerarReporte();
 			return;
 		}
 
@@ -496,6 +550,7 @@ public class PanelReportes extends PanelCentral {
 				FORMATO_MONEDA.format(resumen.getTotalVentas()), FORMATO_MONEDA.format(resumen.getCostoVentas()),
 				FORMATO_MONEDA.format(resumen.getUtilidadBruta()) });
 		actualizarTextoTotal(TEXTO_TOTAL, resumen.getDetalles().size());
+		actualizarEstadoBotonGenerarReporte();
 	}
 
 	private LocalDate parsearFecha(String texto) throws Exception {
@@ -509,4 +564,9 @@ public class PanelReportes extends PanelCentral {
 			throw new Exception("La fecha debe tener formato dd/MM/yyyy.");
 		}
 	}
+
+	public javax.swing.table.DefaultTableModel getModeloTabla() {
+		return this.modeloTabla;
+	}
+
 }
