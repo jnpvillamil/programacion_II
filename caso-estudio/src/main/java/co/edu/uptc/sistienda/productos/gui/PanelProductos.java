@@ -8,8 +8,8 @@ import co.edu.uptc.sistienda.comun.gui.PanelCrudAbstracto;
 import co.edu.uptc.sistienda.gui.Evento;
 import co.edu.uptc.sistienda.modelo.Producto;
 
- //Panel concreto de Productos
- //Hereda el algoritmo de PanelCrudAbstracto y solo implementa lo que es propio de productos
+//Panel concreto de Productos
+//Hereda el algoritmo de PanelCrudAbstracto y solo implementa lo que es propio de productos
 public class PanelProductos extends PanelCrudAbstracto {
 
 	public PanelProductos(Evento evento) {
@@ -41,6 +41,7 @@ public class PanelProductos extends PanelCrudAbstracto {
 		modeloTabla.addColumn("P. Venta");
 		modeloTabla.addColumn("Stock Act.");
 		modeloTabla.addColumn("Stock Mín.");
+		modeloTabla.addColumn("Stock Máx.");
 		modeloTabla.addColumn("Estado");
 	}
 
@@ -49,20 +50,12 @@ public class PanelProductos extends PanelCrudAbstracto {
 		modeloTabla.setRowCount(0);
 		for (Object obj : listaRegistros) {
 			Producto producto = (Producto) obj;
-			String estado = producto.isActivo()
-					? (producto.tieneStockBajoMinimo() ? "BAJO MÍN." : "Normal")
-					: "Inactivo";
-			Object[] fila = {
-				producto.getCodigoInterno(),
-				producto.getNombreProducto(),
-				producto.getCategoria(),
-				producto.getTipoImpuesto(),
-				"$" + String.format("%,.0f", producto.getPrecioCompra()),
-				"$" + String.format("%,.0f", producto.getPrecioVenta()),
-				producto.getStockActual(),
-				producto.getStockMinimo(),
-				estado
-			};
+			String estado = producto.isActivo() ? (producto.tieneStockBajoMinimo() ? "BAJO MÍN."
+					: (producto.superaStockMaximo() ? "SOBRE MÁX." : "Normal")) : "Inactivo";
+			Object[] fila = { producto.getCodigoInterno(), producto.getNombreProducto(), producto.getCategoria(),
+					producto.getTipoImpuesto(), "$" + String.format("%,.0f", producto.getPrecioCompra()),
+					"$" + String.format("%,.0f", producto.getPrecioVenta()), producto.getStockActual(),
+					producto.getStockMinimo(), producto.getStockMaximo(), estado };
 			modeloTabla.addRow(fila);
 		}
 	}

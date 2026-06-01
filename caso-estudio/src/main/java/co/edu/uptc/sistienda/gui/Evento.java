@@ -14,6 +14,7 @@ public class Evento implements ActionListener {
 	public static final String MENU_CLIENTES = "MENU_CLIENTES";
 	public static final String MENU_PROVEEDORES = "MENU_PROVEEDORES";
 	public static final String MENU_CONTABILIDAD = "MENU_CONTABILIDAD";
+	public static final String MENU_COMPRAS = "MENU_COMPRAS";
 	public static final String SALIR = "SALIR";
 
 	// Productos
@@ -61,6 +62,9 @@ public class Evento implements ActionListener {
 	public static final String MOSTRAR_TODAS_VENTAS = "MOSTRAR_TODAS_VENTAS";
 	public static final String REGISTRAR_DEVOLUCION = "REGISTRAR_DEVOLUCION";
 	public static final String VER_FACTURA = "VER_FACTURA";
+
+	// Compras
+	public static final String REGISTRAR_COMPRA = "REGISTRAR_COMPRA";
 	
 	// Contabilidad
 	public static final String MENU_MOV_CONTABLES = "MENU_MOV_CONTABLES";
@@ -95,6 +99,9 @@ public class Evento implements ActionListener {
 		case MENU_CONTABILIDAD:
 		    ventana.mostrarPanelContabilidad();
 		    break;
+		case MENU_COMPRAS:
+			ventana.mostrarPanelCompras();
+			break;
 		case SALIR:
 			ventana.cerrarSesion();
 			//System.exit(0);
@@ -208,6 +215,9 @@ public class Evento implements ActionListener {
 		case CONSULTAR_VENTAS_POR_FECHA:
 			ventana.consultarVentasPorFecha();		
 			break; 
+		case MOSTRAR_TODAS_VENTAS:
+			ventana.mostrarPanelVentasRegistradas();
+			break;
 		// Contabilidad
 		case MENU_MOV_CONTABLES:
 		    ventana.mostrarMovimientosContables();
@@ -225,6 +235,9 @@ public class Evento implements ActionListener {
 			break;
 		case VER_FACTURA:
 			ventana.verFactura();
+			break;
+		case REGISTRAR_COMPRA:
+			ventana.registrarCompra();
 			break;
 		
 		}

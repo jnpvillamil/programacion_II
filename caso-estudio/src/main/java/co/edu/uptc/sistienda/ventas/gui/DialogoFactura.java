@@ -158,7 +158,8 @@ public class DialogoFactura extends JDialog {
 				String.format("$%,.2f", venta.getSubtotal()), false);
 		agregarTotal(panelTotales, restricciones, 1, "IVA:", String.format("$%,.2f", venta.getIva()), false);
 		agregarTotal(panelTotales, restricciones, 2, "TOTAL A PAGAR:", String.format("$%,.2f", venta.getTotal()), true);
-
+		agregarTotal(panelTotales, restricciones, 3, "Valor en letras:", venta.getValorEnLetras(), false);
+		agregarTotal(panelTotales, restricciones, 4, "CUFE:", venta.getCufe(), false);
 		return panelTotales;
 	}
 
