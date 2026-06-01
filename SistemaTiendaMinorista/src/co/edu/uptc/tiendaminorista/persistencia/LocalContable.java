@@ -15,7 +15,7 @@ public class LocalContable implements IGestionContable {
     private final Gson gson;
     private int ultimoCodigo;
 
-    public LocalContable() {
+    public LozzcalContable() {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
