@@ -163,9 +163,8 @@ public class VentanaPrincipal extends JFrame {
     }
     
     public void mostrarPanelReportes() {
-        JOptionPane.showMessageDialog(this, "Módulo de Reportes - Seleccione una opción del menú");
+        generarReporteCombined();
     }
-    
     public void salir() {
         int confirm = JOptionPane.showConfirmDialog(this, "¿Seguro que desea salir?", "Salir", JOptionPane.YES_NO_OPTION);
         if(confirm == JOptionPane.YES_OPTION) {

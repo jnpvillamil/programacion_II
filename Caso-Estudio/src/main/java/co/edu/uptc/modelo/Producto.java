@@ -49,12 +49,5 @@ public class Producto {
     public void setActivo(boolean activo) { this.activo = activo; }
     
     
-    public void disminuirStock(int cantidad) {
-        this.stockActual -= cantidad;
-    }
     
-   
-    public void aumentarStock(int cantidad) {
-        this.stockActual += cantidad;
-    }
 }

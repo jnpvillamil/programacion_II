@@ -40,7 +40,7 @@ public class Venta {
         detalles.add(detalle);
         
         
-        producto.disminuirStock(cantidad);
+
         
       
         recalcularTotales();
@@ -64,9 +64,7 @@ public class Venta {
         }
         
         
-        for(DetalleVenta d : detalles) {
-            d.getProducto().aumentarStock(d.getCantidad());
-        }
+       
         
         this.estado = "Anulada";
     }

@@ -18,6 +18,8 @@ public class Evento implements ActionListener {
     public static final String MOSTRAR_PROVEEDORES = "MOSTRAR_PROVEEDORES";
     public static final String MOSTRAR_VENTAS = "MOSTRAR_VENTAS";
     public static final String MOSTRAR_COMPRAS = "MOSTRAR_COMPRAS";
+    public static final String MOSTRAR_CONTABILIDAD = "MOSTRAR_CONTABILIDAD";
+    public static final String MOSTRAR_REPORTES = "MOSTRAR_REPORTES";
     
     // CLIENTES
     public static final String NUEVO_CLIENTE = "NUEVO_CLIENTE";
@@ -52,19 +54,23 @@ public class Evento implements ActionListener {
     public static final String ANULAR_COMPRA = "ANULAR_COMPRA";         
     public static final String LIMPIAR_COMPRA = "LIMPIAR_COMPRA";       
     
+    //CONTABILIDAD
+    
+    public static final String BALANCE_GENERAL = "BALANCE_GENERAL";      
+    public static final String REPORTE_CONTABLE = "REPORTE_CONTABLE";      
+    public static final String VER_DETALLE_ASIENTO = "VER_DETALLLE_ASIENTO";
     
     // REPORTES
     public static final String REPORTE_VENTAS = "REPORTE_VENTAS";
     public static final String REPORTE_COMPRAS = "REPORTE_COMPRAS";
     public static final String REPORTE_INVENTARIO = "REPORTE_INVENTARIO";
-    public static final String REPORTE_CONTABLE = "REPORTE_CONTABLE";
     public static final String GENERAR_JSON_DIARIO = "GENERAR_JSON_DIARIO";
-    public static final String MOSTRAR_CONTABILIDAD = "MOSTRAR_CONTABILIDAD";
-    public static final String BALANCE_GENERAL = "BALANCE_GENERAL";
-    public static final String MOSTRAR_REPORTES = "MOSTRAR_REPORTES";
-    
+
     public Evento(VentanaPrincipal ventana) {
         this.ventana = ventana;
+    }
+    public VentanaPrincipal getVentana() {
+        return ventana;
     }
     
     @Override
@@ -83,6 +89,8 @@ public class Evento implements ActionListener {
         else if(comando.equals(MOSTRAR_PROVEEDORES)) ventana.mostrarPanelProveedores();
         else if(comando.equals(MOSTRAR_VENTAS)) ventana.mostrarPanelVentas();
         else if(comando.equals(MOSTRAR_COMPRAS)) ventana.mostrarPanelCompras();
+        else if (comando.equals(MOSTRAR_CONTABILIDAD)) ventana.mostrarPanelContabilidad();
+        else if(comando.equals(MOSTRAR_REPORTES)) ventana.mostrarPanelReportes();
         else if(comando.equals(SALIR)) ventana.salir();
         
         // CLIENTES
@@ -117,14 +125,15 @@ public class Evento implements ActionListener {
         else if(comando.equals(ANULAR_COMPRA)) ventana.anularCompra();
         else if(comando.equals(CONSULTAR_COMPRA)) ventana.consultarCompra();
         else if(comando.equals(LIMPIAR_COMPRA)) ventana.limpiarCompras();
-        
+        // CONTABILIDAD
+        else if (comando.equals(BALANCE_GENERAL))ventana.generarBalanceGeneral();
+        else if (comando.equals(REPORTE_CONTABLE))ventana.generarReporteContable();
+       
         // REPORTES
         else if(comando.equals(REPORTE_VENTAS)) ventana.generarReporteVentas();
         else if(comando.equals(REPORTE_INVENTARIO)) ventana.generarReporteInventario();
-        else if(comando.equals(REPORTE_CONTABLE)) ventana.generarReporteContable();
+        else if(comando.equals(GENERAR_JSON_DIARIO)) ventana.generarJSONDiario();
       
-        else if(comando.equals(MOSTRAR_CONTABILIDAD)) ventana.mostrarPanelContabilidad();
-        else if(comando.equals(BALANCE_GENERAL)) ventana.generarBalanceGeneral();
-        else if(comando.equals(MOSTRAR_REPORTES)) ventana.generarReporteCombined();
+        
     }
 }

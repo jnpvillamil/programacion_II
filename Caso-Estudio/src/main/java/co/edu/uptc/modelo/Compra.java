@@ -33,8 +33,7 @@ public class Compra {
         detalles.add(detalle);
         
        
-        producto.setPrecioCompra(precioCompra);
-        producto.aumentarStock(cantidad);
+       
         
         
         recalcularTotales();
@@ -58,9 +57,6 @@ public class Compra {
         }
         
        
-        for(DetalleCompra d : detalles) {
-            d.getProducto().disminuirStock(d.getCantidad());
-        }
         
         this.estado = "Anulada";
     }

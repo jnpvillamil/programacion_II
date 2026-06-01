@@ -103,18 +103,34 @@ public class GestionContableNegocio implements IGestionContable {
         double pasivos = 0;
         double patrimonio = 0;
         
+        System.out.println("\n=== SALDOS POR CUENTA ===");
+        
         for (Map.Entry<CuentaContable, Double> entry : balance.entrySet()) {
-            if ("Activo".equals(entry.getKey().getTipo())) {
-                activos += entry.getValue();
-            } else if ("Pasivo".equals(entry.getKey().getTipo())) {
-                pasivos += entry.getValue();
-            } else if ("Patrimonio".equals(entry.getKey().getTipo())) {
-                patrimonio += entry.getValue();
+            String nombre = entry.getKey().getNombre();
+            String tipo = entry.getKey().getTipo();
+            double saldo = entry.getValue();
+            
+            System.out.printf("%s (%s): $%,.2f\n", nombre, tipo, saldo);
+            
+            if ("Activo".equals(tipo)) {
+                activos += saldo;
+            } else if ("Pasivo".equals(tipo)) {
+                pasivos += saldo;
+            } else if ("Patrimonio".equals(tipo)) {
+                patrimonio += saldo;
             }
         }
         
+        System.out.println("----------------------------------------");
+        System.out.printf("TOTAL ACTIVOS: $%,.2f\n", activos);
+        System.out.printf("TOTAL PASIVOS: $%,.2f\n", pasivos);
+        System.out.printf("TOTAL PATRIMONIO: $%,.2f\n", patrimonio);
+        System.out.printf("DIFERENCIA: $%,.2f\n", activos - (pasivos + patrimonio));
+        System.out.println("========================================\n");
+        
         if (Math.abs(activos - (pasivos + patrimonio)) > 0.01) {
-            System.err.println(" Advertencia: El balance general NO está cuadrado.");
+            System.err.println("⚠️ Advertencia: El balance general NO está cuadrado.");
+            System.err.println("   Diferencia: $" + (activos - (pasivos + patrimonio)));
         }
         
         return balance;
