@@ -37,7 +37,7 @@ import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class DialogVenta extends JDialog {
 
-	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
 
 	private JTextField campoNumeroFactura;
@@ -98,7 +98,7 @@ public class DialogVenta extends JDialog {
 		campoPrecioUnitario = new JTextField(12);
 
 		modeloTabla = new DefaultTableModel(
-				new String[] { "Codigo", "Producto", "Cantidad", "Precio Unitario", "IVA", "Subtotal" }, 0) {
+				new String[] { "Código", "Producto", "Cantidad", "Precio Unitario", "IVA", "Subtotal" }, 0) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -401,7 +401,7 @@ public class DialogVenta extends JDialog {
 			LocalTime hora = LocalTime.parse(campoHora.getText().trim(), FORMATO_HORA);
 			return LocalDateTime.of(fecha, hora);
 		} catch (Exception e) {
-			throw new Exception("La fecha y hora deben tener formato yyyy-MM-dd y hh:mm AM/PM.");
+			throw new Exception("La fecha y hora deben tener formato dd/MM/yyyy y hh:mm AM/PM.");
 		}
 	}
 

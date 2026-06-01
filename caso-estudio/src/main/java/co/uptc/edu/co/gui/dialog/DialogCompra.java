@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -33,6 +34,8 @@ import co.uptc.edu.co.modelo.enums.FormaPago;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
 public class DialogCompra extends JDialog {
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 	private JTextField campoNumeroFactura;
 	private JTextField campoFecha;
 	private JComboBox<Proveedor> comboProveedor;
@@ -70,7 +73,7 @@ public class DialogCompra extends JDialog {
 	private void inicializarComponentes() {
 		campoNumeroFactura = new JTextField(15);
 		campoFecha = new JTextField(15);
-		campoFecha.setText(LocalDate.now().toString());
+		campoFecha.setText(LocalDate.now().format(FORMATO_FECHA));
 
 		comboProveedor = new JComboBox<>();
 		comboProveedor.addItem(null);
@@ -478,7 +481,7 @@ public class DialogCompra extends JDialog {
 
 		Compra compra = new Compra();
 		compra.setNumeroFacturaProveedor(numeroFactura);
-		compra.setFecha(LocalDate.now());
+		compra.setFecha(LocalDate.parse(campoFecha.getText().trim(), FORMATO_FECHA));
 		compra.setCodigoProveedor(proveedor.getCodigoProveedor());
 		compra.setProveedor(proveedor.getRazonSocial());
 		compra.setFormaPago(formaPago);

@@ -77,16 +77,22 @@ public class ComprasBDDAO implements CompraDAO {
 	}
 
 	@Override
+	public void guardarCompra(Connection conexion, Compra compra) throws Exception {
+		LogUtil.info("Entrando a guardarCompra(conn). factura="
+				+ (compra != null ? compra.getNumeroFacturaProveedor() : "null"));
+		guardarCabeceraCompra(conexion, compra);
+		int idCompra = obtenerIdCompra(conexion, compra.getNumeroFacturaProveedor());
+		guardarDetallesCompra(conexion, compra, idCompra);
+	}
+
+	@Override
 	public void actualizarCompra(Compra compra) throws Exception {
         LogUtil.info("Entrando a actualizarCompra. factura=" + (compra != null ? compra.getNumeroFacturaProveedor() : "null"));
 		try (Connection conexion = ConexionBD.getConexion()) {
 			conexion.setAutoCommit(false);
 
 			try {
-				int idCompra = obtenerIdCompra(conexion, compra.getNumeroFacturaProveedor());
-				actualizarCabeceraCompra(conexion, compra);
-				eliminarDetallescompra(conexion, idCompra);
-				guardarDetallesCompra(conexion, compra, idCompra);
+				actualizarCompra(conexion, compra);
 				conexion.commit();
 			} catch (Exception e) {
 				conexion.rollback();
@@ -98,6 +104,16 @@ public class ComprasBDDAO implements CompraDAO {
 			throw e;
 		}
 
+	}
+
+	@Override
+	public void actualizarCompra(Connection conexion, Compra compra) throws Exception {
+		LogUtil.info("Entrando a actualizarCompra(conn). factura="
+				+ (compra != null ? compra.getNumeroFacturaProveedor() : "null"));
+		int idCompra = obtenerIdCompra(conexion, compra.getNumeroFacturaProveedor());
+		actualizarCabeceraCompra(conexion, compra);
+		eliminarDetallescompra(conexion, idCompra);
+		guardarDetallesCompra(conexion, compra, idCompra);
 	}
 
 	@Override

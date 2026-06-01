@@ -44,7 +44,7 @@ public class GestionContabilidad implements IGestionContabilidad {
 			movimientos = movimientoContableDAO.listarMovimientos();
 		} catch (Exception e) {
 			movimientos = new ArrayList<>();
-			System.out.println("Error al cargar movimientos contables: " + e.getMessage());
+			throw new IllegalStateException("Error al cargar movimientos contables.", e);
 		}
 	}
 
@@ -77,6 +77,12 @@ public class GestionContabilidad implements IGestionContabilidad {
 
 	@Override
 	public void registrarEgresoPorCompra(Compra compra) throws Exception {
+		TransaccionBD.ejecutar(conexion -> registrarEgresoPorCompra(conexion, compra));
+		recargarMovimientos();
+	}
+
+	@Override
+	public void registrarEgresoPorCompra(Connection conexion, Compra compra) throws Exception {
 		validarCompra(compra);
 
 		LocalDate fecha = compra.getFecha();
@@ -97,12 +103,17 @@ public class GestionContabilidad implements IGestionContabilidad {
 					ORIGEN_COMPRA, compra.getNumeroFacturaProveedor()));
 		}
 
-		TransaccionBD.ejecutar(conexion -> guardarMovimientos(conexion, movimientosAGuardar));
-		recargarMovimientos();
+		guardarMovimientos(conexion, movimientosAGuardar);
 	}
 
 	@Override
 	public void registrarReversoPorAnulacionCompra(Compra compra, String motivo) throws Exception {
+		TransaccionBD.ejecutar(conexion -> registrarReversoPorAnulacionCompra(conexion, compra, motivo));
+		recargarMovimientos();
+	}
+
+	@Override
+	public void registrarReversoPorAnulacionCompra(Connection conexion, Compra compra, String motivo) throws Exception {
 		validarCompra(compra);
 
 		if (motivo == null || motivo.trim().isEmpty()) {
@@ -128,8 +139,7 @@ public class GestionContabilidad implements IGestionContabilidad {
 					"Reverso IVA compra " + referencia + ". Motivo: " + motivo, ORIGEN_ANULACION_COMPRA, referencia));
 		}
 
-		TransaccionBD.ejecutar(conexion -> guardarMovimientos(conexion, movimientosAGuardar));
-		recargarMovimientos();
+		guardarMovimientos(conexion, movimientosAGuardar);
 	}
 
 	@Override
@@ -230,8 +240,8 @@ public class GestionContabilidad implements IGestionContabilidad {
 		try {
 			return movimientoContableDAO.buscarPorCodigo(codigoTransaccion);
 		} catch (Exception e) {
-			System.out.println("Error al buscar movimiento contable: " + e.getMessage());
-			return null;
+			throw new IllegalStateException("Error al buscar el movimiento contable por codigo: " + codigoTransaccion,
+					e);
 		}
 	}
 

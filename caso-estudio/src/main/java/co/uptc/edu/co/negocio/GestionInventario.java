@@ -65,11 +65,11 @@ public class GestionInventario implements IGestionInventario {
 			MovimientoInventario movimiento = new MovimientoInventario(codigoProducto,
 					TipoMovimientoInventarioEnum.SALIDA, cantidad, LocalDate.now(),
 					"Salida por venta " + venta.getNumeroFactura());
-			movimientos.add(movimiento);
 			movimientosAGuardar.add(movimiento);
 		}
 
 		movimientoInventarioDAO.registrarMovimientos(conexion, movimientosAGuardar);
+		movimientos.addAll(movimientosAGuardar);
 	}
 
 	@Override
@@ -136,10 +136,9 @@ public class GestionInventario implements IGestionInventario {
 		MovimientoInventario movimiento = new MovimientoInventario(codigoProducto, tipoMovimiento, cantidad,
 				LocalDate.now(), descripcion);
 
-		movimientos.add(movimiento);
-
 		productoDAO.actualizarProducto(conexion, producto);
 		movimientoInventarioDAO.registrarMovimiento(conexion, movimiento);
+		movimientos.add(movimiento);
 	}
 
 	public void validarStockDisponible(Connection conexion, List<DetalleVenta> detalles) throws Exception {

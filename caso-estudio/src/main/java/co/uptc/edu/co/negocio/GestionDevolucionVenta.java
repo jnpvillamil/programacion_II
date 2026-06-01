@@ -92,21 +92,28 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 				: 0;
 
 		EstadoVentaEnum nuevoEstado = calcularEstadoDespuesDeDevolucion(venta, codigoProducto, cantidad);
-		venta.setEstado(nuevoEstado);
+		EstadoVentaEnum estadoAnterior = venta.getEstado();
 
-		TransaccionBD.ejecutar(conexion -> {
+		try {
+			venta.setEstado(nuevoEstado);
 
-			gestionInventario.registrarEntrada(conexion, codigoProducto, cantidad,
-					"Entrada por devolucion de venta " + venta.getNumeroFactura()
-							+ ". Motivo: " + motivo.trim());
+			TransaccionBD.ejecutar(conexion -> {
 
-			devolucionVentaDAO.guardarDevolucion(conexion, devolucion);
+				gestionInventario.registrarEntrada(conexion, codigoProducto, cantidad,
+						"Entrada por devolucion de venta " + venta.getNumeroFactura()
+								+ ". Motivo: " + motivo.trim());
 
-			ventaDAO.actualizarEstadoVenta(conexion, venta.getNumeroFactura(), nuevoEstado);
+				devolucionVentaDAO.guardarDevolucion(conexion, devolucion);
 
-			gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta,
-					subtotalDevuelto, ivaDevuelto, motivo.trim());
-		});
+				ventaDAO.actualizarEstadoVenta(conexion, venta.getNumeroFactura(), nuevoEstado);
+
+				gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta,
+						subtotalDevuelto, ivaDevuelto, motivo.trim());
+			});
+		} catch (Exception e) {
+			venta.setEstado(estadoAnterior);
+			throw e;
+		}
 	}
 
 	@Override

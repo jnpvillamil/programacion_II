@@ -31,7 +31,7 @@ public class GestionCliente implements IGestionCliente {
 
 			clientes = new ArrayList<>();
 
-			System.out.println("Error al cargar clientes: " + e.getMessage());
+			throw new IllegalStateException("Error al cargar clientes.", e);
 		}
 	}
 
@@ -96,6 +96,8 @@ public class GestionCliente implements IGestionCliente {
 					+ clienteActualizado.getTipoIdentificacion() + "-" + clienteActualizado.getNumeroIdentificacion() + ").");
 		}
 
+		clienteDAO.actualizarCliente(clienteActualizado);
+
 		clienteExistente.setNombre(clienteActualizado.getNombre());
 
 		clienteExistente.setTipoIdentificacion(clienteActualizado.getTipoIdentificacion());
@@ -108,7 +110,6 @@ public class GestionCliente implements IGestionCliente {
 
 		clienteExistente.setTipoCliente(clienteActualizado.getTipoCliente());
 
-		clienteDAO.actualizarCliente(clienteExistente);
 	}
 
 	private boolean existeIdentificacionDuplicada(Cliente cliente) {
@@ -162,7 +163,7 @@ public class GestionCliente implements IGestionCliente {
 		try {
 			clientes = clienteDAO.listarClientes();
 		} catch (Exception e) {
-			System.out.println("Error al recargar clientes: " + e.getMessage());
+			throw new IllegalStateException("Error al recargar clientes para generar codigo.", e);
 		}
 
 		int mayor = 0;

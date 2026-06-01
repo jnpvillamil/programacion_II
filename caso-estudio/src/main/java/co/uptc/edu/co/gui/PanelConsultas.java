@@ -215,7 +215,7 @@ public class PanelConsultas extends PanelCentral {
 
         for (Venta venta : ventas) {
             Object[] fila = {
-                    venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate() : "",
+                    venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA_ENTRADA) : "",
                     venta.getCliente(),
                     FORMATO_MONEDA.format(venta.getTotal()),
                     FORMATO_MONEDA.format(venta.getImpuestos())

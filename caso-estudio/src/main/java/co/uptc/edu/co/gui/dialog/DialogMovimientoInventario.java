@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import co.uptc.edu.co.gui.Evento;
 import co.uptc.edu.co.modelo.enums.TipoMovimientoInventarioEnum;
 
 public class DialogMovimientoInventario extends JDialog {
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private JTextField campoCodigoProducto;
 	private JComboBox<TipoMovimientoInventarioEnum> comboTipoMovimiento;
@@ -50,7 +52,7 @@ public class DialogMovimientoInventario extends JDialog {
 
 		campoCantidad = new JTextField(25);
 		campoFecha = new JTextField(25);
-		campoFecha.setText(LocalDate.now().toString());
+		campoFecha.setText(LocalDate.now().format(FORMATO_FECHA));
 		campoFecha.setEditable(false);
 		campoFecha.setFocusable(false);
 		campoDescripcionMovimiento = new JTextArea(4, 25);

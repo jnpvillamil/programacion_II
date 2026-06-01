@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -51,7 +52,11 @@ import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
 
 public class Evento implements ActionListener {
+	// CONSTANTES GENERALES
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final String TIPO_MOVIMIENTO_ENTRADA = "ENTRADA";
+	private static final String TIPO_MOVIMIENTO_SALIDA = "SALIDA";
 
 	// CONSTANTES DE NAVEGACION
 	public static final String PRODUCTOS = "Productos";
@@ -110,10 +115,12 @@ public class Evento implements ActionListener {
 	// CONSTANTES DE COMANDOS - CONTABILIDAD
 	public static final String CMD_VER_DETALLE_CONTABLE = "VerDetalleContable";
 
-	// CONSTANTES DE COMANDOS - CONSULTAS
-	public static final String CMD_CONSULTAR_SISTEMA = "ConsultarSistema";
+	// CONSTANTES DE COMANDOS - REPORTES
 	public static final String CMD_BUSCAR_REPORTE = "BuscarReporte";
 	public static final String CMD_GENERAR_REPORTE_JSON = "GenerarReporteJson";
+
+	// CONSTANTES DE COMANDOS - CONSULTAS
+	public static final String CMD_CONSULTAR_SISTEMA = "ConsultarSistema";
 
 	// ATRIBUTOS
 	private VentanaPrincipal ventana;
@@ -145,21 +152,12 @@ public class Evento implements ActionListener {
 		this.gestionInventario = config.getGestionInventario();
 	}
 
+	// GETTERS NECESARIOS
 	public IGestionCompra getGestionCompra() {
 		return gestionCompra;
 	}
 
-	private static DecimalFormat crearFormatoMoneda() {
-		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
-		simbolos.setGroupingSeparator('.');
-		simbolos.setDecimalSeparator(',');
-
-		DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
-		formato.setGroupingUsed(true);
-		return formato;
-	}
-
-	// METODO PRINCIPAL DE EVENTOS
+	// ACTION PERFORMED
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String comando = e.getActionCommand();
@@ -405,9 +403,9 @@ public class Evento implements ActionListener {
 			String tipoMovimiento = dialog.obtenerTipoMovimiento();
 			int cantidad = dialog.obtenerCantidad();
 
-			if ("ENTRADA".equalsIgnoreCase(tipoMovimiento)) {
+			if (TIPO_MOVIMIENTO_ENTRADA.equalsIgnoreCase(tipoMovimiento)) {
 				gestionInventario.registrarEntrada(codigo, cantidad, "Movimiento manual de inventario");
-			} else if ("SALIDA".equalsIgnoreCase(tipoMovimiento)) {
+			} else if (TIPO_MOVIMIENTO_SALIDA.equalsIgnoreCase(tipoMovimiento)) {
 				gestionInventario.registrarSalida(codigo, cantidad, "Movimiento manual de inventario");
 			} else {
 				throw new Exception("Tipo de movimiento no valido.");
@@ -794,6 +792,7 @@ public class Evento implements ActionListener {
 
 			mostrarInformacion("Venta registrada exitosamente.");
 			refrescarTablaVentas();
+			refrescarTablaProductos();
 			dialog.dispose();
 
 		} catch (Exception ex) {
@@ -807,7 +806,7 @@ public class Evento implements ActionListener {
 
 			DialogAnularVenta dialog = new DialogAnularVenta(ventana, this);
 			dialog.cargarVenta(venta.getNumeroFactura(), venta.getCliente(),
-					venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
+					venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA) : "",
 					String.valueOf(venta.getTotal()), venta.getEstado() != null ? venta.getEstado().name() : "");
 
 			dialog.setVisible(true);
@@ -829,6 +828,7 @@ public class Evento implements ActionListener {
 
 			mostrarInformacion("Venta anulada exitosamente.");
 			refrescarTablaVentas();
+			refrescarTablaProductos();
 			dialog.dispose();
 
 		} catch (Exception ex) {
@@ -864,6 +864,7 @@ public class Evento implements ActionListener {
 
 			mostrarInformacion("Devolucion registrada exitosamente.");
 			refrescarTablaVentas();
+			refrescarTablaProductos();
 			dialog.dispose();
 
 		} catch (NumberFormatException ex) {
@@ -958,7 +959,7 @@ public class Evento implements ActionListener {
 		dialog.cargarProductos(gestionProducto.obtenerProductos());
 		dialog.cargarProveedores(gestionProveedor.obtenerProveedores());
 		dialog.getCampoNumeroFactura().setText(gestionCompra.generarNumeroFactura());
-		dialog.getCampoFecha().setText(LocalDate.now().toString());
+		dialog.getCampoFecha().setText(LocalDate.now().format(FORMATO_FECHA));
 		dialog.setVisible(true);
 	}
 
@@ -984,7 +985,7 @@ public class Evento implements ActionListener {
 			DialogDetalleCompra dialog = new DialogDetalleCompra(ventana);
 
 			dialog.cargarCompra(compra.getNumeroFacturaProveedor(),
-					compra.getFecha() != null ? compra.getFecha().toString() : "", compra.getCodigoProveedor(),
+					compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "", compra.getCodigoProveedor(),
 					compra.getFormaPago() != null ? compra.getFormaPago().toString() : "",
 					FORMATO_MONEDA.format(compra.getSubtotal()), FORMATO_MONEDA.format(compra.getImpuestos()),
 					FORMATO_MONEDA.format(compra.getTotalCompra()));
@@ -1011,7 +1012,7 @@ public class Evento implements ActionListener {
 			Compra compra = obtenerCompraSeleccionada();
 			DialogAnularCompra dialog = new DialogAnularCompra(ventana);
 			dialog.cargarCompra(compra.getNumeroFacturaProveedor(),
-					compra.getFecha() != null ? compra.getFecha().toString() : "", compra.getCodigoProveedor(),
+					compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "", compra.getCodigoProveedor(),
 					String.valueOf(compra.getTotalCompra()));
 
 			dialog.setVisible(true);
@@ -1076,6 +1077,42 @@ public class Evento implements ActionListener {
 		}
 	}
 
+	private void abrirDialogoDetalleContable() {
+		try {
+			PanelContabilidad panelContabilidad = ventana.getPanelContabilidad();
+
+			if (!panelContabilidad.haySeleccion()) {
+				throw new Exception("Debe seleccionar un movimiento contable.");
+			}
+
+			String codigo = panelContabilidad.obtenerCodigoSeleccionado();
+			MovimientoContable movimiento = gestionContabilidad.buscarMovimientoPorCodigo(codigo);
+
+			if (movimiento == null) {
+				throw new Exception("No se encontro el movimiento contable seleccionado.");
+			}
+
+			DialogDetalleContable dialog = new DialogDetalleContable(ventana);
+			dialog.cargarMovimiento(movimiento.getCodigoTransaccion(),
+					movimiento.getFecha() != null ? movimiento.getFecha().format(FORMATO_FECHA) : "",
+					movimiento.getTipoMovimientoContable() != null ? movimiento.getTipoMovimientoContable().toString()
+							: "",
+					movimiento.getCuentaContable(),
+					movimiento.getValor() != null ? formatearMoneda(movimiento.getValor()) : "",
+					movimiento.getDescripcion(), movimiento.getOrigen(), movimiento.getReferencia());
+			dialog.setVisible(true);
+
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
+	}
+
+	private void refrescarTablaContabilidad() {
+		PanelContabilidad panelContabilidad = ventana.getPanelContabilidad();
+		panelContabilidad.cargarMovimientos(gestionContabilidad.obtenerMovimientos());
+	}
+
+	// EVENTOS DE REPORTES
 	private boolean manejarEventosReportes(String comando) {
 		switch (comando) {
 		case CMD_BUSCAR_REPORTE:
@@ -1095,16 +1132,57 @@ public class Evento implements ActionListener {
 		try {
 			PanelReportes panelReportes = ventana.getPanelReportes();
 
-			if (panelReportes.getModeloTabla().getRowCount() == 0) {
-				throw new Exception("No hay datos en la tabla para generar el reporte JSON.");
-			}
-
-			String rutaReporte = gestionReporte.generarReporteTabla(panelReportes.obtenerTipoReporteSeleccionado(),
-					panelReportes.getModeloTabla());
+			String rutaReporte = generarReporteJsonDesdeNegocio(panelReportes);
 			mostrarInformacion("Reporte JSON generado en: " + rutaReporte);
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
 		}
+	}
+
+	private String generarReporteJsonDesdeNegocio(PanelReportes panelReportes) throws Exception {
+		if (panelReportes.esReporteVentasDiarias()) {
+			return gestionReporte.generarReporteVentasDiarias(panelReportes.obtenerFechaReporte());
+		}
+
+		if (panelReportes.esReporteVentasMensuales()) {
+			return gestionReporte.generarReporteVentasMensuales(panelReportes.obtenerMesReporte(),
+					panelReportes.obtenerAnioReporte());
+		}
+
+		if (panelReportes.esReporteVentasAnuales()) {
+			return gestionReporte.generarReporteVentasAnuales(panelReportes.obtenerAnioReporte());
+		}
+
+		if (panelReportes.esReporteUtilidadBruta()) {
+			return gestionReporte.generarReporteUtilidadBruta(panelReportes.obtenerFechaInicioReporte(),
+					panelReportes.obtenerFechaFinReporte());
+		}
+
+		if (panelReportes.esReporteProductosMasVendidos()) {
+			return gestionReporte.generarReporteProductosMasVendidos(panelReportes.obtenerFechaInicioReporte(),
+					panelReportes.obtenerFechaFinReporte());
+		}
+
+		if (panelReportes.esReporteClientesMayorCompra()) {
+			return gestionReporte.generarReporteClientesMayorCompra(panelReportes.obtenerFechaInicioReporte(),
+					panelReportes.obtenerFechaFinReporte());
+		}
+
+		if (panelReportes.esReporteVentasFormaPago()) {
+			return gestionReporte.generarReporteVentasFormaPago(panelReportes.obtenerFechaInicioReporte(),
+					panelReportes.obtenerFechaFinReporte());
+		}
+
+		if (panelReportes.esReporteInventarioValorizado()) {
+			return gestionReporte.generarReporteInventarioValorizado();
+		}
+
+		if (panelReportes.esReporteResumenContable()) {
+			return gestionReporte.generarReporteResumenContable(panelReportes.obtenerFechaInicioReporte(),
+					panelReportes.obtenerFechaFinReporte());
+		}
+
+		throw new Exception("El reporte seleccionado aun no tiene generacion JSON implementada.");
 	}
 
 	private void buscarReporte() {
@@ -1195,6 +1273,7 @@ public class Evento implements ActionListener {
 		}
 	}
 
+	// CONSULTAS DEL SISTEMA
 	private boolean manejarEventosConsultas(String comando) {
 		switch (comando) {
 		case CMD_CONSULTAR_SISTEMA:
@@ -1220,46 +1299,21 @@ public class Evento implements ActionListener {
 		}
 	}
 
-	private void abrirDialogoDetalleContable() {
-		try {
-			PanelContabilidad panelContabilidad = ventana.getPanelContabilidad();
+	// METODOS AUXILIARES GENERALES
+	private static DecimalFormat crearFormatoMoneda() {
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator('.');
+		simbolos.setDecimalSeparator(',');
 
-			if (!panelContabilidad.haySeleccion()) {
-				throw new Exception("Debe seleccionar un movimiento contable.");
-			}
-
-			String codigo = panelContabilidad.obtenerCodigoSeleccionado();
-			MovimientoContable movimiento = gestionContabilidad.buscarMovimientoPorCodigo(codigo);
-
-			if (movimiento == null) {
-				throw new Exception("No se encontro el movimiento contable seleccionado.");
-			}
-
-			DialogDetalleContable dialog = new DialogDetalleContable(ventana);
-			dialog.cargarMovimiento(movimiento.getCodigoTransaccion(),
-					movimiento.getFecha() != null ? movimiento.getFecha().toString() : "",
-					movimiento.getTipoMovimientoContable() != null ? movimiento.getTipoMovimientoContable().toString()
-							: "",
-					movimiento.getCuentaContable(),
-					movimiento.getValor() != null ? formatearMoneda(movimiento.getValor()) : "",
-					movimiento.getDescripcion(), movimiento.getOrigen(), movimiento.getReferencia());
-			dialog.setVisible(true);
-
-		} catch (Exception ex) {
-			mostrarError(ex.getMessage());
-		}
-	}
-
-	private void refrescarTablaContabilidad() {
-		PanelContabilidad panelContabilidad = ventana.getPanelContabilidad();
-		panelContabilidad.cargarMovimientos(gestionContabilidad.obtenerMovimientos());
+		DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+		formato.setGroupingUsed(true);
+		return formato;
 	}
 
 	private String formatearMoneda(double valor) {
 		return FORMATO_MONEDA.format(valor);
 	}
 
-	// METODOS AUXILIARES GENERALES
 	private void mostrarError(String mensaje) {
 		JOptionPane.showMessageDialog(ventana, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
 	}
@@ -1273,6 +1327,7 @@ public class Evento implements ActionListener {
 		return SwingUtilities.getWindowAncestor(componente);
 	}
 
+	// METODOS PARA OBTENER DIALOGOS
 	private DialogProducto obtenerDialogProducto(ActionEvent e) throws Exception {
 		Window ventanaPadre = obtenerVentanaPadre(e);
 

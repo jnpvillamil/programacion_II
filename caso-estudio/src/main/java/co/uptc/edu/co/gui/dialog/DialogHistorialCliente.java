@@ -24,7 +24,7 @@ public class DialogHistorialCliente extends JDialog {
 
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
-	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
 
 	private JLabel lblCodigoCliente;

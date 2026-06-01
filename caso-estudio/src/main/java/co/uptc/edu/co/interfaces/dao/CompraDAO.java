@@ -1,5 +1,6 @@
 package co.uptc.edu.co.interfaces.dao;
 
+import java.sql.Connection;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.Compra;
@@ -7,7 +8,11 @@ import co.uptc.edu.co.modelo.Compra;
 public interface CompraDAO {
 	void guardarComprar(Compra compra) throws Exception;
 
+	void guardarCompra(Connection conexion, Compra compra) throws Exception;
+
 	void actualizarCompra(Compra compra) throws Exception;
+
+	void actualizarCompra(Connection conexion, Compra compra) throws Exception;
 
 	void eliminarCompra(String numeroFactura) throws Exception;
 

@@ -24,7 +24,7 @@ public class GestionProducto implements IGestionProducto {
 			productos = productoDAO.listarProducto();
 		} catch (Exception e) {
 			productos = new ArrayList<>();
-			System.out.println("Error al cargar productos: " + e.getMessage());
+			throw new IllegalStateException("Error al cargar productos.", e);
 		}
 	}
 
@@ -37,8 +37,7 @@ public class GestionProducto implements IGestionProducto {
 		try {
 			return productoDAO.buscarPorCodigo(codigo);
 		} catch (Exception e) {
-			System.out.println("Error al buscar productos: " + e.getMessage());
-			return null;
+			throw new IllegalStateException("Error al buscar el producto por codigo: " + codigo, e);
 		}
 	}
 

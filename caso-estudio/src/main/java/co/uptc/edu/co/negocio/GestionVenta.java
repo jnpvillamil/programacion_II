@@ -48,7 +48,7 @@ public class GestionVenta implements IGestionVenta {
 			ventas = ventaDAO.listarVentas();
 		} catch (Exception e) {
 			ventas = new ArrayList<>();
-			System.out.println("Error al cargar ventas: " + e.getMessage());
+			throw new IllegalStateException("Error al cargar ventas.", e);
 		}
 
 	}
@@ -320,14 +320,28 @@ public class GestionVenta implements IGestionVenta {
 			throw new Exception("Debe ingresar un motivo de anulacion");
 		}
 
-		venta.setEstado(EstadoVentaEnum.ANULADA);
-		venta.setMotivoAnulacion(motivo.trim());
-		venta.setFechaAnulacion(LocalDateTime.now());
-		TransaccionBD.ejecutar(conexion -> {
-			ventaDAO.actualizarVenta(conexion, venta);
-			gestionInventario.registrarEntradaPorAnulacion(conexion, venta, motivo.trim());
-			gestionContabilidad.registrarReversoPorAnulacionVenta(conexion, venta, motivo.trim());
-		});
+		EstadoVentaEnum estadoAnterior = venta.getEstado();
+		String motivoAnterior = venta.getMotivoAnulacion();
+		LocalDateTime fechaAnulacionAnterior = venta.getFechaAnulacion();
+		String motivoAnulacion = motivo.trim();
+
+		try {
+			venta.setEstado(EstadoVentaEnum.ANULADA);
+			venta.setMotivoAnulacion(motivoAnulacion);
+			venta.setFechaAnulacion(LocalDateTime.now());
+
+			TransaccionBD.ejecutar(conexion -> {
+				ventaDAO.actualizarVenta(conexion, venta);
+				gestionInventario.registrarEntradaPorAnulacion(conexion, venta, motivoAnulacion);
+				gestionContabilidad.registrarReversoPorAnulacionVenta(conexion, venta, motivoAnulacion);
+			});
+		} catch (Exception e) {
+			venta.setEstado(estadoAnterior);
+			venta.setMotivoAnulacion(motivoAnterior);
+			venta.setFechaAnulacion(fechaAnulacionAnterior);
+			throw e;
+		}
+
 		actualizarVentaEnMemoria(venta);
 	}
 

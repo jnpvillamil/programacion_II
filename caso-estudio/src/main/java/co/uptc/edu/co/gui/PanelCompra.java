@@ -20,9 +20,9 @@ public class PanelCompra extends PanelCentral {
 
 	private static final String OPCION_TODOS = "Todos";
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
-	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-	private static final String[] COLUMNAS = { "Factura Proveedor", "Fecha", "Codigo Proveedor", "Proveedor",
+	private static final String[] COLUMNAS = { "Factura Proveedor", "Fecha", "Código Proveedor", "Proveedor",
 			"Forma de Pago", "Subtotal", "Impuestos", "Total", "Estado" };
 
 	private JButton botonNuevaCompra;

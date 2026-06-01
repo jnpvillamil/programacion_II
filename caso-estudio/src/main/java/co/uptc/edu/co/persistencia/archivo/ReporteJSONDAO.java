@@ -7,24 +7,32 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import javax.swing.table.DefaultTableModel;
+import com.google.gson.JsonPrimitive;
 
 import co.uptc.edu.co.interfaces.dao.ReporteDAO;
 import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.dto.DetalleUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
+import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenUtilidadBrutaDTO;
 import co.uptc.edu.co.modelo.dto.ResumenVentasDTO;
 
 public class ReporteJSONDAO implements ReporteDAO {
 
 	private static final String CARPETA_REPORTES = "reportes";
 	private static final DateTimeFormatter FORMATO_ARCHIVO = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	private static final DateTimeFormatter FORMATO_FECHA_HORA = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a",
+			Locale.US);
 
 	@Override
 	public String guardarReporteProductosMasVendidos(List<ResumenProductoDTO> resumenes, LocalDate fechaInicio,
@@ -33,9 +41,9 @@ public class ReporteJSONDAO implements ReporteDAO {
 
 		JsonObject raiz = new JsonObject();
 		raiz.addProperty("tipo_reporte", "productos_mas_vendidos");
-		raiz.addProperty("generado_en", LocalDateTime.now().toString());
-		raiz.addProperty("fecha_inicio", fechaInicio != null ? fechaInicio.toString() : null);
-		raiz.addProperty("fecha_fin", fechaFin != null ? fechaFin.toString() : null);
+		raiz.addProperty("generado_en", formatearFechaHora(LocalDateTime.now()));
+		raiz.addProperty("fecha_inicio", formatearFecha(fechaInicio));
+		raiz.addProperty("fecha_fin", formatearFecha(fechaFin));
 		raiz.addProperty("total_productos", resumenes != null ? resumenes.size() : 0);
 
 		JsonArray productos = new JsonArray();
@@ -68,9 +76,9 @@ public class ReporteJSONDAO implements ReporteDAO {
 
 		JsonObject raiz = new JsonObject();
 		raiz.addProperty("tipo_reporte", "producto_mas_vendido");
-		raiz.addProperty("generado_en", LocalDateTime.now().toString());
-		raiz.addProperty("fecha_inicio", fechaInicio != null ? fechaInicio.toString() : null);
-		raiz.addProperty("fecha_fin", fechaFin != null ? fechaFin.toString() : null);
+		raiz.addProperty("generado_en", formatearFechaHora(LocalDateTime.now()));
+		raiz.addProperty("fecha_inicio", formatearFecha(fechaInicio));
+		raiz.addProperty("fecha_fin", formatearFecha(fechaFin));
 		raiz.addProperty("codigo_producto", resumen.getCodigoProducto());
 		raiz.addProperty("nombre_producto", resumen.getNombreProducto());
 		raiz.addProperty("cantidad_vendida", resumen.getCantidadVendida());
@@ -87,21 +95,55 @@ public class ReporteJSONDAO implements ReporteDAO {
 		}
 
 		File archivo = crearArchivo("ventas_diarias_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+		JsonObject raiz = construirReporteVentas("ventas_diarias", resumen);
+		raiz.addProperty("fecha", formatearFecha(fecha));
 
+		escribirJson(archivo, raiz);
+		return archivo.getPath();
+	}
+
+	@Override
+	public String guardarReporteVentasMensuales(ResumenVentasDTO resumen) throws Exception {
+		if (resumen == null) {
+			throw new Exception("No hay datos de ventas mensuales para guardar el reporte.");
+		}
+
+		File archivo = crearArchivo("ventas_mensuales_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+		JsonObject raiz = construirReporteVentas("ventas_mensuales", resumen);
+
+		escribirJson(archivo, raiz);
+		return archivo.getPath();
+	}
+
+	@Override
+	public String guardarReporteVentasAnuales(ResumenVentasDTO resumen) throws Exception {
+		if (resumen == null) {
+			throw new Exception("No hay datos de ventas anuales para guardar el reporte.");
+		}
+
+		File archivo = crearArchivo("ventas_anuales_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+		JsonObject raiz = construirReporteVentas("ventas_anuales", resumen);
+
+		escribirJson(archivo, raiz);
+		return archivo.getPath();
+	}
+
+	private JsonObject construirReporteVentas(String tipoReporte, ResumenVentasDTO resumen) {
 		JsonObject raiz = new JsonObject();
-		raiz.addProperty("tipo_reporte", "ventas_diarias");
-		raiz.addProperty("generado_en", LocalDateTime.now().toString());
-		raiz.addProperty("fecha_reporte", fecha != null ? fecha.toString() : resumen.getPeriodo());
-		raiz.addProperty("cantidad_registros", resumen.getCantidadVentas());
-		raiz.addProperty("subtotal_total", resumen.getSubtotalVentas());
-		raiz.addProperty("impuestos_total", resumen.getImpuestos());
+		raiz.addProperty("tipo_reporte", tipoReporte);
+		raiz.addProperty("generado_en", formatearFechaHora(LocalDateTime.now()));
+		raiz.addProperty("periodo", formatearPeriodo(resumen.getPeriodo()));
+		raiz.addProperty("cantidad_ventas", resumen.getCantidadVentas());
+		raiz.addProperty("subtotal_ventas", resumen.getSubtotalVentas());
+		raiz.addProperty("impuestos", resumen.getImpuestos());
 		raiz.addProperty("total_ventas", resumen.getTotalVentas());
 
 		JsonArray ventas = new JsonArray();
 		for (Venta venta : resumen.getVentas()) {
 			JsonObject item = new JsonObject();
 			item.addProperty("factura", venta.getNumeroFactura());
-			item.addProperty("fecha", venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "");
+			item.addProperty("fecha",
+					venta.getFechaHora() != null ? formatearFecha(venta.getFechaHora().toLocalDate()) : "");
 			item.addProperty("cliente", venta.getCliente() != null && !venta.getCliente().isBlank() ? venta.getCliente()
 					: "ANONIMO");
 			item.addProperty("codigo_cliente", venta.getCodigoCliente());
@@ -114,79 +156,161 @@ public class ReporteJSONDAO implements ReporteDAO {
 		}
 		raiz.add("ventas", ventas);
 
-		JsonObject resumenJson = new JsonObject();
-		resumenJson.addProperty("factura", "TOTAL");
-		resumenJson.addProperty("fecha", fecha != null ? fecha.toString() : resumen.getPeriodo());
-		resumenJson.addProperty("cliente", resumen.getCantidadVentas() + " ventas");
-		resumenJson.addProperty("forma_pago", "");
-		resumenJson.addProperty("subtotal", resumen.getSubtotalVentas());
-		resumenJson.addProperty("impuestos", resumen.getImpuestos());
-		resumenJson.addProperty("total", resumen.getTotalVentas());
-		raiz.add("resumen", resumenJson);
+		return raiz;
+	}
+
+	@Override
+	public String guardarReporteUtilidadBruta(ResumenUtilidadBrutaDTO resumen) throws Exception {
+		if (resumen == null) {
+			throw new Exception("No hay datos de utilidad bruta para guardar el reporte.");
+		}
+
+		File archivo = crearArchivo("utilidad_bruta_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+
+		JsonObject raiz = new JsonObject();
+		raiz.addProperty("tipo_reporte", "utilidad_bruta");
+		raiz.addProperty("generado_en", formatearFechaHora(LocalDateTime.now()));
+		raiz.addProperty("periodo", resumen.getPeriodo());
+		raiz.addProperty("total_ventas", resumen.getTotalVentas());
+		raiz.addProperty("costo_ventas", resumen.getCostoVentas());
+		raiz.addProperty("utilidad_bruta", resumen.getUtilidadBruta());
+		raiz.addProperty("cantidad_ventas", resumen.getCantidadVentas());
+		raiz.addProperty("cantidad_vendida", resumen.getCantidadVendida());
+
+		JsonArray productos = new JsonArray();
+		for (DetalleUtilidadBrutaDTO detalle : resumen.getDetalles()) {
+			JsonObject item = new JsonObject();
+			item.addProperty("codigo", detalle.getCodigoProducto());
+			item.addProperty("producto", detalle.getNombreProducto());
+			item.addProperty("cantidad_vendida", detalle.getCantidadVendida());
+			item.addProperty("ventas", detalle.getVentas());
+			item.addProperty("costo_venta", detalle.getCostoVenta());
+			item.addProperty("utilidad", detalle.getUtilidad());
+			productos.add(item);
+		}
+		raiz.add("productos", productos);
 
 		escribirJson(archivo, raiz);
 		return archivo.getPath();
 	}
 
 	@Override
-	public String guardarReporteTabla(String tipoReporte, DefaultTableModel modeloTabla) throws Exception {
-		if (modeloTabla == null || modeloTabla.getRowCount() == 0) {
-			throw new Exception("No hay datos en la tabla para generar el reporte JSON.");
-		}
+	public String guardarReporteVentasFormaPago(List<ResumenFormaPagoDTO> resumenes, LocalDate fechaInicio,
+			LocalDate fechaFin) throws Exception {
+		File archivo = crearArchivo("ventas_por_forma_pago_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
 
-		File archivo = crearArchivo(obtenerPrefijoArchivo(tipoReporte) + "_" + LocalDateTime.now().format(FORMATO_ARCHIVO)
-				+ ".json");
+		JsonObject raiz = crearRaizConPeriodo("ventas_por_forma_pago", fechaInicio, fechaFin);
+		JsonArray formasPago = new JsonArray();
+		double total = 0;
+		int cantidadVentas = 0;
 
-		JsonObject raiz = new JsonObject();
-		raiz.addProperty("tipo_reporte", normalizarTipoReporte(tipoReporte));
-		raiz.addProperty("generado_en", LocalDateTime.now().toString());
-
-		JsonArray columnas = new JsonArray();
-		for (int i = 0; i < modeloTabla.getColumnCount(); i++) {
-			columnas.add(modeloTabla.getColumnName(i));
-		}
-		raiz.add("columnas", columnas);
-
-		JsonArray registros = new JsonArray();
-		for (int fila = 0; fila < modeloTabla.getRowCount(); fila++) {
-			JsonObject registro = new JsonObject();
-			for (int columna = 0; columna < modeloTabla.getColumnCount(); columna++) {
-				String nombreColumna = modeloTabla.getColumnName(columna);
-				Object valor = modeloTabla.getValueAt(fila, columna);
-				registro.addProperty(normalizarClaveJson(nombreColumna), valor != null ? valor.toString() : "");
+		if (resumenes != null) {
+			for (ResumenFormaPagoDTO resumen : resumenes) {
+				JsonObject item = new JsonObject();
+				item.addProperty("tipo", resumen.getFormaPago() != null ? resumen.getFormaPago().toString() : "");
+				item.addProperty("cantidad_ventas", resumen.getCantidadVentas());
+				item.addProperty("valor", resumen.getValorTotal());
+				formasPago.add(item);
+				total += resumen.getValorTotal();
+				cantidadVentas += resumen.getCantidadVentas();
 			}
-			registros.add(registro);
 		}
-		raiz.add("registros", registros);
-		raiz.addProperty("cantidad_registros", modeloTabla.getRowCount());
+
+		raiz.addProperty("cantidad_ventas", cantidadVentas);
+		raiz.addProperty("total_ventas", total);
+		raiz.add("formas_pago", formasPago);
 
 		escribirJson(archivo, raiz);
 		return archivo.getPath();
 	}
 
-	private String obtenerPrefijoArchivo(String tipoReporte) {
-		String normalizado = normalizarTipoReporte(tipoReporte);
-		if (normalizado.isBlank()) {
-			return "reporte";
+	@Override
+	public String guardarReporteClientesMayorCompra(List<ResumenClienteDTO> resumenes, LocalDate fechaInicio,
+			LocalDate fechaFin) throws Exception {
+		File archivo = crearArchivo("clientes_mayor_compra_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+
+		JsonObject raiz = crearRaizConPeriodo("clientes_mayor_compra", fechaInicio, fechaFin);
+		JsonArray clientes = new JsonArray();
+		double totalComprado = 0;
+
+		if (resumenes != null) {
+			for (ResumenClienteDTO resumen : resumenes) {
+				JsonObject item = new JsonObject();
+				item.addProperty("codigo_cliente", resumen.getCodigoCliente());
+				item.addProperty("cliente", resumen.getNombreCliente());
+				item.addProperty("cantidad_compras", resumen.getCantidadCompras());
+				item.addProperty("total_comprado", resumen.getTotalComprado());
+				clientes.add(item);
+				totalComprado += resumen.getTotalComprado();
+			}
 		}
-		return normalizado;
+
+		raiz.addProperty("cantidad_clientes", resumenes != null ? resumenes.size() : 0);
+		raiz.addProperty("total_comprado", totalComprado);
+		raiz.add("clientes", clientes);
+
+		escribirJson(archivo, raiz);
+		return archivo.getPath();
 	}
 
-	private String normalizarTipoReporte(String tipoReporte) {
-		if (tipoReporte == null || tipoReporte.isBlank()) {
-			return "reporte";
+	@Override
+	public String guardarReporteInventarioValorizado(List<ResumenInventarioValorizadoDTO> resumenes) throws Exception {
+		File archivo = crearArchivo("inventario_valorizado_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+
+		JsonObject raiz = new JsonObject();
+		raiz.addProperty("tipo_reporte", "inventario_valorizado");
+		raiz.addProperty("generado_en", formatearFechaHora(LocalDateTime.now()));
+
+		JsonArray productos = new JsonArray();
+		double valorTotalInventario = 0;
+
+		if (resumenes != null) {
+			for (ResumenInventarioValorizadoDTO resumen : resumenes) {
+				JsonObject item = new JsonObject();
+				item.addProperty("codigo", resumen.getCodigoProducto());
+				item.addProperty("producto", resumen.getNombreProducto());
+				item.addProperty("categoria", resumen.getCategoria() != null ? resumen.getCategoria().toString() : "");
+				item.addProperty("stock_actual", resumen.getStockActual());
+				item.addProperty("precio_compra", resumen.getPrecioCompra());
+				item.addProperty("valor_inventario", resumen.getValorInventario());
+				productos.add(item);
+				valorTotalInventario += resumen.getValorInventario();
+			}
 		}
 
-		String normalizado = tipoReporte.trim().toLowerCase();
-		normalizado = normalizado.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o')
-				.replace('ú', 'u').replace('ñ', 'n');
-		normalizado = normalizado.replaceAll("[^a-z0-9]+", "_");
-		normalizado = normalizado.replaceAll("_+", "_");
-		return normalizado.replaceAll("^_|_$", "");
+		raiz.addProperty("cantidad_productos", resumenes != null ? resumenes.size() : 0);
+		raiz.addProperty("valor_total_inventario", valorTotalInventario);
+		raiz.add("productos", productos);
+
+		escribirJson(archivo, raiz);
+		return archivo.getPath();
 	}
 
-	private String normalizarClaveJson(String texto) {
-		return normalizarTipoReporte(texto);
+	@Override
+	public String guardarReporteResumenContable(ResumenContableDTO resumen, LocalDate fechaInicio, LocalDate fechaFin)
+			throws Exception {
+		if (resumen == null) {
+			throw new Exception("No hay datos contables para guardar el reporte.");
+		}
+
+		File archivo = crearArchivo("resumen_contable_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+
+		JsonObject raiz = crearRaizConPeriodo("resumen_contable", fechaInicio, fechaFin);
+		raiz.addProperty("ingresos", resumen.getIngresos());
+		raiz.addProperty("egresos", resumen.getEgresos());
+		raiz.addProperty("utilidad", resumen.getUtilidad());
+
+		escribirJson(archivo, raiz);
+		return archivo.getPath();
+	}
+
+	private JsonObject crearRaizConPeriodo(String tipoReporte, LocalDate fechaInicio, LocalDate fechaFin) {
+		JsonObject raiz = new JsonObject();
+		raiz.addProperty("tipo_reporte", tipoReporte);
+		raiz.addProperty("generado_en", formatearFechaHora(LocalDateTime.now()));
+		raiz.addProperty("fecha_inicio", formatearFecha(fechaInicio));
+		raiz.addProperty("fecha_fin", formatearFecha(fechaFin));
+		return raiz;
 	}
 
 	private File crearArchivo(String nombreArchivo) throws Exception {
@@ -199,10 +323,42 @@ public class ReporteJSONDAO implements ReporteDAO {
 	}
 
 	private void escribirJson(File archivo, JsonObject contenido) throws Exception {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = crearGson();
 		try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
 			writer.print(gson.toJson(contenido));
 		}
+	}
+
+	private String formatearFecha(LocalDate fecha) {
+		return fecha != null ? fecha.format(FORMATO_FECHA) : null;
+	}
+
+	private String formatearFechaHora(LocalDateTime fechaHora) {
+		return fechaHora != null ? fechaHora.format(FORMATO_FECHA_HORA) : null;
+	}
+
+	private String formatearPeriodo(String periodo) {
+		if (periodo == null || periodo.isBlank()) {
+			return periodo;
+		}
+
+		try {
+			return formatearFecha(LocalDate.parse(periodo));
+		} catch (Exception e) {
+			return periodo;
+		}
+	}
+
+	private Gson crearGson() {
+		return new GsonBuilder()
+				.registerTypeAdapter(LocalDate.class,
+						(com.google.gson.JsonSerializer<LocalDate>) (fecha, tipo, contexto) ->
+								new JsonPrimitive(formatearFecha(fecha)))
+				.registerTypeAdapter(LocalDateTime.class,
+						(com.google.gson.JsonSerializer<LocalDateTime>) (fechaHora, tipo, contexto) ->
+								new JsonPrimitive(formatearFechaHora(fechaHora)))
+				.setPrettyPrinting()
+				.create();
 	}
 
 	

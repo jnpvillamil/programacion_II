@@ -3,8 +3,6 @@ package co.uptc.edu.co.interfaces;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.swing.table.DefaultTableModel;
-
 import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
 import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
@@ -24,7 +22,19 @@ public interface IGestionReporte {
 
 	String generarReporteVentasDiarias(LocalDate fecha) throws Exception;
 
-	String generarReporteTabla(String tipoReporte, DefaultTableModel modeloTabla) throws Exception;
+	String generarReporteVentasMensuales(int mes, int anio) throws Exception;
+
+	String generarReporteVentasAnuales(int anio) throws Exception;
+
+	String generarReporteUtilidadBruta(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
+
+	String generarReporteVentasFormaPago(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
+
+	String generarReporteClientesMayorCompra(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
+
+	String generarReporteInventarioValorizado() throws Exception;
+
+	String generarReporteResumenContable(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
 
 	List<ResumenFormaPagoDTO> obtenerVentasPorFormaPago(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
 

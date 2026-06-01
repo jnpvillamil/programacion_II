@@ -7,8 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.table.DefaultTableModel;
-
 import co.uptc.edu.co.interfaces.IGestionReporte;
 import co.uptc.edu.co.interfaces.dao.CompraDAO;
 import co.uptc.edu.co.interfaces.dao.ProductoDAO;
@@ -101,8 +99,41 @@ public class GestionReporte implements IGestionReporte {
 	}
 
 	@Override
-	public String generarReporteTabla(String tipoReporte, DefaultTableModel modeloTabla) throws Exception {
-		return reporteDAO.guardarReporteTabla(tipoReporte, modeloTabla);
+	public String generarReporteVentasMensuales(int mes, int anio) throws Exception {
+		return reporteDAO.guardarReporteVentasMensuales(obtenerTotalVentasMensuales(mes, anio));
+	}
+
+	@Override
+	public String generarReporteVentasAnuales(int anio) throws Exception {
+		return reporteDAO.guardarReporteVentasAnuales(obtenerTotalVentasAnuales(anio));
+	}
+
+	@Override
+	public String generarReporteUtilidadBruta(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		return reporteDAO.guardarReporteUtilidadBruta(obtenerUtilidadBruta(fechaInicio, fechaFin));
+	}
+
+	@Override
+	public String generarReporteVentasFormaPago(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		return reporteDAO.guardarReporteVentasFormaPago(obtenerVentasPorFormaPago(fechaInicio, fechaFin), fechaInicio,
+				fechaFin);
+	}
+
+	@Override
+	public String generarReporteClientesMayorCompra(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		return reporteDAO.guardarReporteClientesMayorCompra(obtenerClientesMayorVolumenCompra(fechaInicio, fechaFin),
+				fechaInicio, fechaFin);
+	}
+
+	@Override
+	public String generarReporteInventarioValorizado() throws Exception {
+		return reporteDAO.guardarReporteInventarioValorizado(obtenerInventarioValorizado());
+	}
+
+	@Override
+	public String generarReporteResumenContable(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		return reporteDAO.guardarReporteResumenContable(obtenerResumenContable(fechaInicio, fechaFin), fechaInicio,
+				fechaFin);
 	}
 
 	@Override

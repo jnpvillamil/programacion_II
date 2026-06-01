@@ -492,14 +492,15 @@ public class PanelReportes extends PanelCentral {
 
 		for (Venta venta : resumen.getVentas()) {
 			modeloTabla
-					.addRow(new Object[] { venta.getNumeroFactura(), venta.getFechaHora(),
+					.addRow(new Object[] { venta.getNumeroFactura(),
+							venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA) : "",
 							venta.getCliente() != null && !venta.getCliente().isBlank() ? venta.getCliente()
 									: "ANÓNIMO",
 							venta.getFormaPago(), FORMATO_MONEDA.format(venta.getSubTotal()),
 							FORMATO_MONEDA.format(venta.getImpuestos()), FORMATO_MONEDA.format(venta.getTotal()) });
 		}
 
-		modeloTabla.addRow(new Object[] { "TOTAL", resumen.getPeriodo(), resumen.getCantidadVentas() + " ventas", "",
+		modeloTabla.addRow(new Object[] { "TOTAL", formatearPeriodo(resumen.getPeriodo()), resumen.getCantidadVentas() + " ventas", "",
 				FORMATO_MONEDA.format(resumen.getSubtotalVentas()), FORMATO_MONEDA.format(resumen.getImpuestos()),
 				FORMATO_MONEDA.format(resumen.getTotalVentas()) });
 
@@ -518,14 +519,14 @@ public class PanelReportes extends PanelCentral {
 		for (Venta venta : resumen.getVentas()) {
 			modeloTabla
 					.addRow(new Object[] { venta.getNumeroFactura(),
-							venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate() : "",
+							venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA) : "",
 							venta.getCliente() != null && !venta.getCliente().isBlank() ? venta.getCliente()
 									: "ANÓNIMO",
 							venta.getFormaPago(), FORMATO_MONEDA.format(venta.getSubTotal()),
 							FORMATO_MONEDA.format(venta.getImpuestos()), FORMATO_MONEDA.format(venta.getTotal()) });
 		}
 
-		modeloTabla.addRow(new Object[] { "TOTAL", resumen.getPeriodo(), resumen.getCantidadVentas() + " ventas", "",
+		modeloTabla.addRow(new Object[] { "TOTAL", formatearPeriodo(resumen.getPeriodo()), resumen.getCantidadVentas() + " ventas", "",
 				FORMATO_MONEDA.format(resumen.getSubtotalVentas()), FORMATO_MONEDA.format(resumen.getImpuestos()),
 				FORMATO_MONEDA.format(resumen.getTotalVentas()) });
 		actualizarTextoTotal(TEXTO_TOTAL, resumen.getCantidadVentas());
@@ -565,8 +566,16 @@ public class PanelReportes extends PanelCentral {
 		}
 	}
 
-	public javax.swing.table.DefaultTableModel getModeloTabla() {
-		return this.modeloTabla;
+	private String formatearPeriodo(String periodo) {
+		if (periodo == null || periodo.isBlank()) {
+			return "";
+		}
+
+		try {
+			return LocalDate.parse(periodo).format(FORMATO_FECHA);
+		} catch (Exception e) {
+			return periodo;
+		}
 	}
 
 }

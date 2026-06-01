@@ -7,6 +7,7 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,6 +28,7 @@ import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 
 public class DialogDevolucionVenta extends JDialog {
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private JTextField campoNumeroFactura;
 	private JTextField campoCliente;
@@ -222,7 +224,7 @@ public class DialogDevolucionVenta extends JDialog {
 		cargarVenta(
 				venta.getNumeroFactura(),
 				venta.getCliente(),
-				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
+				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA) : "",
 				String.valueOf(venta.getTotal()),
 				venta.getEstado() != null ? venta.getEstado().name() : "");
 

@@ -27,6 +27,7 @@ import co.uptc.edu.co.modelo.dto.DetalleVentaDevolucionDTO;
 public class DialogDetalleVenta extends JDialog {
 
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("hh:mm a");
 	private static final DateTimeFormatter FORMATO_FECHA_ANULACION = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -222,7 +223,7 @@ public class DialogDetalleVenta extends JDialog {
 
 	public void cargarVenta(Venta venta, List<DetalleVentaDevolucionDTO> detallesResumen) {
 		cargarVenta(venta.getNumeroFactura(),
-				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().toString() : "",
+				venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA) : "",
 				venta.getFechaHora() != null ? venta.getFechaHora().format(FORMATO_HORA) : "",
 				venta.getCliente(),
 				venta.getFormaPago() != null ? venta.getFormaPago().toString() : "",

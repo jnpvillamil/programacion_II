@@ -17,6 +17,10 @@ public interface IGestionContabilidad {
 
 	void registrarIngresoPorVenta(Connection conexion, Venta venta) throws Exception;
 
+	void registrarEgresoPorCompra(Connection conexion, Compra compra) throws Exception;
+
+	void registrarReversoPorAnulacionCompra(Connection conexion, Compra compra, String motivo) throws Exception;
+
 	void registrarReversoPorAnulacionVenta(Venta venta, String motivo) throws Exception;
 
 	void registrarReversoPorAnulacionVenta(Connection conexion, Venta venta, String motivo) throws Exception;

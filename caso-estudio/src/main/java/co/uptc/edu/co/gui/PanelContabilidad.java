@@ -2,6 +2,7 @@ package co.uptc.edu.co.gui;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,16 +14,17 @@ import co.uptc.edu.co.modelo.MovimientoContable;
 
 public class PanelContabilidad extends PanelCentral {
 
-    private static final String TITULO_PANEL = "Gestion Contable";
+    private static final String TITULO_PANEL = "Gestión Contable";
     private static final String TEXTO_TOTAL_INICIAL = "Total de movimientos: 0";
     private static final String TEXTO_TOTAL = "Total de movimientos: ";
 
     private static final String OPCION_TODOS = "Todos";
     private static final String OPCION_TODAS = "Todas";
     private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
+    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private static final String[] COLUMNAS = {
-            "Codigo Movimiento",
+            "Código Movimiento",
             "Referencia",
             "Origen",
             "Fecha",
@@ -145,7 +147,7 @@ public class PanelContabilidad extends PanelCentral {
             String codigo = valorTexto(movimiento.getCodigoTransaccion());
             String referencia = valorTexto(movimiento.getReferencia());
             String origen = valorTexto(movimiento.getOrigen());
-            String fecha = movimiento.getFecha() != null ? movimiento.getFecha().toString() : "";
+            String fecha = movimiento.getFecha() != null ? movimiento.getFecha().format(FORMATO_FECHA) : "";
             String tipo = movimiento.getTipoMovimientoContable() != null
                     ? movimiento.getTipoMovimientoContable().toString()
                     : "";

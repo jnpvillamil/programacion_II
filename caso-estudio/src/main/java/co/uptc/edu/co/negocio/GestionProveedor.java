@@ -27,7 +27,7 @@ public class GestionProveedor implements IGestionProveedor {
 			proveedores = proveedorDAO.listarProveedor();
 		} catch (Exception e) {
 			proveedores = new ArrayList<>();
-			System.out.println("Error al cargar proveedor: " + e.getMessage());
+			throw new IllegalStateException("Error al cargar proveedores.", e);
 		}
 
 	}
@@ -70,12 +70,13 @@ public class GestionProveedor implements IGestionProveedor {
 			throw new Exception("No se encontró el proveedor a actualizar.");
 		}
 
+		proveedorDAO.actualizarProveedor(proveedorActualizado);
+
 		proveedorExistente.setRazonSocial(proveedorActualizado.getRazonSocial());
 		proveedorExistente.setNit(proveedorActualizado.getNit());
 		proveedorExistente.setDireccion(proveedorActualizado.getDireccion());
 		proveedorExistente.setTelefono(proveedorActualizado.getTelefono());
 		proveedorExistente.setCorreoElectronico(proveedorActualizado.getCorreoElectronico());
-		proveedorDAO.actualizarProveedor(proveedorExistente);
 	}
 
 	@Override

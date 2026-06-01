@@ -1,15 +1,20 @@
 package co.uptc.edu.co.negocio;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.dao.CompraDAO;
 import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
+import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
@@ -42,7 +47,7 @@ public class GestionCompra implements IGestionCompra {
 			compras = compraDAO.listarCompra();
 		} catch (Exception e) {
 			compras = new ArrayList<>();
-			System.out.println("Error al carga compras:" + e.getMessage());
+			throw new IllegalStateException("Error al cargar compras.", e);
 		}
 	}
 
@@ -79,7 +84,9 @@ public class GestionCompra implements IGestionCompra {
 		}
 
 		compra.setNumeroFacturaProveedor(numeroFactura);
-		compra.setFecha(LocalDate.now());
+		if (compra.getFecha() == null) {
+			compra.setFecha(LocalDate.now());
+		}
 		compra.setEstado(EstadoCompraEnum.ACTIVA);
 
 		if (compra.getFormaPago() == null) {
@@ -90,20 +97,13 @@ public class GestionCompra implements IGestionCompra {
 		compra.setImpuestos(calcularimpuestos(compra.getDetalles()));
 		compra.setTotalCompra(compra.getSubtotal() + compra.getImpuestos());
 
-		
-		registrarEntradaInventario(compra);
-		try {
-			compraDAO.guardarComprar(compra);
-			gestionContabilidad.registrarEgresoPorCompra(compra);
-			compras.add(compra);
-		} catch (Exception e) {
-			try {
-				compraDAO.eliminarCompra(compra.getNumeroFacturaProveedor());
-			} catch (Exception ignored) {
-			}
-			revertirEntradaInventario(compra);
-			throw e;
-		}
+		TransaccionBD.ejecutar(conexion -> {
+			compraDAO.guardarCompra(conexion, compra);
+			registrarEntradaInventario(conexion, compra);
+			gestionContabilidad.registrarEgresoPorCompra(conexion, compra);
+		});
+
+		compras.add(compra);
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class GestionCompra implements IGestionCompra {
 		try {
 			return compraDAO.buscarComprarpornumero(numeroFactura);
 		} catch (Exception e) {
-			return null;
+			throw new Exception("Error al buscar la compra por numero de factura: " + numeroFactura, e);
 		}
 	}
 
@@ -197,16 +197,22 @@ public class GestionCompra implements IGestionCompra {
 			throw new Exception("Debe ingresar un motivo de anulacion.");
 		}
 
-		revertirEntradaInventario(compra);
-		compra.setEstado(EstadoCompraEnum.ANULADA);
-		compra.setMotivoAnulacion(motivoAnulacion.trim());
+		String motivo = motivoAnulacion.trim();
+		EstadoCompraEnum estadoAnterior = compra.getEstado();
+		String motivoAnterior = compra.getMotivoAnulacion();
+
 		try {
-			compraDAO.actualizarCompra(compra);
-			gestionContabilidad.registrarReversoPorAnulacionCompra(compra, motivoAnulacion.trim());
+			TransaccionBD.ejecutar(conexion -> {
+				validarStockParaAnulacion(conexion, compra);
+				revertirEntradaInventario(conexion, compra);
+				compra.setEstado(EstadoCompraEnum.ANULADA);
+				compra.setMotivoAnulacion(motivo);
+				compraDAO.actualizarCompra(conexion, compra);
+				gestionContabilidad.registrarReversoPorAnulacionCompra(conexion, compra, motivo);
+			});
 		} catch (Exception e) {
-			compra.setEstado(EstadoCompraEnum.ACTIVA);
-			compra.setMotivoAnulacion(null);
-			registrarEntradaInventario(compra);
+			compra.setEstado(estadoAnterior);
+			compra.setMotivoAnulacion(motivoAnterior);
 			throw e;
 		}
 
@@ -220,23 +226,54 @@ public class GestionCompra implements IGestionCompra {
 		}
 	}
 
-	private void registrarEntradaInventario(Compra compra) throws Exception {
+	private void registrarEntradaInventario(Connection conexion, Compra compra) throws Exception {
 		for (DetalleCompra detalle : compra.getDetalles()) {
-			gestionInventario.registrarEntrada(detalle.getProducto().getCodigoProducto(), detalle.getCantidad(),
+			gestionInventario.registrarEntrada(conexion, detalle.getProducto().getCodigoProducto(), detalle.getCantidad(),
 					"Entrada por compra " + compra.getNumeroFacturaProveedor());
 		}
 	}
 
-	private void revertirEntradaInventario(Compra compra) throws Exception {
+	private void revertirEntradaInventario(Connection conexion, Compra compra) throws Exception {
 		for (DetalleCompra detalle : compra.getDetalles()) {
-			gestionInventario.registrarSalida(detalle.getProducto().getCodigoProducto(), detalle.getCantidad(),
+			gestionInventario.registrarSalida(conexion, detalle.getProducto().getCodigoProducto(), detalle.getCantidad(),
 					"Reversion de compra " + compra.getNumeroFacturaProveedor());
 		}
 	}
 
+	private void validarStockParaAnulacion(Connection conexion, Compra compra) throws Exception {
+		try {
+			gestionInventario.validarStockDisponible(conexion, convertirDetallesCompraAVenta(compra));
+		} catch (Exception e) {
+			throw new Exception(
+					"No se puede anular la compra porque el inventario disponible no alcanza para revertirla. "
+							+ e.getMessage(),
+					e);
+		}
+	}
+
+	private List<DetalleVenta> convertirDetallesCompraAVenta(Compra compra) {
+		Map<String, DetalleVenta> detallesPorProducto = new LinkedHashMap<>();
+
+		for (DetalleCompra detalleCompra : compra.getDetalles()) {
+			String codigoProducto = detalleCompra.getProducto().getCodigoProducto();
+			DetalleVenta detalleVenta = detallesPorProducto.get(codigoProducto);
+
+			if (detalleVenta == null) {
+				detalleVenta = new DetalleVenta(detalleCompra.getProducto(), detalleCompra.getCantidad(),
+						detalleCompra.getCostoUnitario(), detalleCompra.getSubtotal());
+				detallesPorProducto.put(codigoProducto, detalleVenta);
+			} else {
+				detalleVenta.setCantidad(detalleVenta.getCantidad() + detalleCompra.getCantidad());
+				detalleVenta.setSubtotal(detalleVenta.getSubtotal() + detalleCompra.getSubtotal());
+			}
+		}
+
+		return new ArrayList<>(detallesPorProducto.values());
+	}
+
 	private void validarCompra(Compra compra) throws Exception {
 		if (compra == null) {
-			throw new Exception("El codigo del proveedor es obligatorio.");
+			throw new Exception("La compra no puede ser nula.");
 		}
 		if (compra.getCodigoProveedor() == null || compra.getCodigoProveedor().trim().isEmpty()) {
 			throw new Exception("El código del proveedor es obligatorio.");
