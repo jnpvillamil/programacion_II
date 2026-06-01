@@ -113,12 +113,6 @@ public class PanelPrincipal extends JFrame {
         return gestionProducto;
     }
 
-    public static void main(String[] args) {
-        co.edu.uptc.tiendaminorista.persistencia.DatabaseConnection.inicializarTablas();
-        PanelPrincipal ventana = new PanelPrincipal();
-        ventana.setVisible(true);
-    }
-
     public void mostrarRegistroCliente() {
         panelInicial.mostrarRegistroCliente();
     }
