@@ -4,45 +4,55 @@ import co.edu.uptc.sistienda.modelo.Producto;
 
 public class DetalleCompra {
 
-    private Producto producto;
+	private Producto producto;
 
-    private int cantidad;
+	private int cantidad;
 
-    private double precioCompra;
+	private double precioCompra;
 
-    private double subtotal;
+	private double subtotal;
 
-    public Producto getProducto() {
-        return producto;
-    }
+	public DetalleCompra() {
+	}
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
+	public DetalleCompra(Producto producto, int cantidad, double precioCompra) {
+		this.producto = producto;
+		this.cantidad = cantidad;
+		this.precioCompra = precioCompra;
+		calcularSubtotal();
+	}
 
-    public int getCantidad() {
-        return cantidad;
-    }
+	public Producto getProducto() {
+		return producto;
+	}
 
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-        calcularSubtotal();
-    }
+	public void setProducto(Producto producto) {
+		this.producto = producto;
+	}
 
-    public double getPrecioCompra() {
-        return precioCompra;
-    }
+	public int getCantidad() {
+		return cantidad;
+	}
 
-    public void setPrecioCompra(double precioCompra) {
-        this.precioCompra = precioCompra;
-        calcularSubtotal();
-    }
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
+		calcularSubtotal();
+	}
 
-    public double getSubtotal() {
-        return subtotal;
-    }
+	public double getPrecioCompra() {
+		return precioCompra;
+	}
 
-    private void calcularSubtotal() {
-        subtotal = cantidad * precioCompra;
-    }
+	public void setPrecioCompra(double precioCompra) {
+		this.precioCompra = precioCompra;
+		calcularSubtotal();
+	}
+
+	public double getSubtotal() {
+		return subtotal;
+	}
+
+	private void calcularSubtotal() {
+		subtotal = cantidad * precioCompra;
+	}
 }

@@ -8,64 +8,69 @@ import co.edu.uptc.sistienda.modelo.enums.FormaPagoEnum;
 
 public class Venta {
 
-	private String          numeroFactura;
-	private LocalDateTime   fechaHora;
-	private LocalDateTime   fechaVencimiento;
-	private Cliente         cliente;
-	private FormaPagoEnum   formaPago;
-	private String          medioPago;
-	private boolean         anulada;
-	private List<DetalleVenta> items; 
-	
-	public Venta(){
-		this.items              =new ArrayList<>();
-		this.fechaHora          =LocalDateTime.now();
-		this.fechaVencimiento   =fechaHora.plusDays(7);
-		this.anulada            =false; 
-		this.medioPago          ="";
+	private String numeroFactura;
+	private LocalDateTime fechaHora;
+	private LocalDateTime fechaVencimiento;
+	private Cliente cliente;
+	private FormaPagoEnum formaPago;
+	private String medioPago;
+	private boolean anulada;
+	private List<DetalleVenta> items;
+	private String cufe;
+	private String valorEnLetras;
+
+	public Venta() {
+		this.items = new ArrayList<>();
+		this.fechaHora = LocalDateTime.now();
+		this.fechaVencimiento = fechaHora.plusDays(7);
+		this.anulada = false;
+		this.medioPago = "";
+		this.cufe = "";
+		this.valorEnLetras = "";
 	}
-	
-	public Venta(String numeroFactura, Cliente cliente, FormaPagoEnum formaPago){
+
+	public Venta(String numeroFactura, Cliente cliente, FormaPagoEnum formaPago) {
 		this();
-		this.numeroFactura   =numeroFactura;
-		this.cliente         =cliente;
-		this.formaPago       =formaPago;
-		this.medioPago       =formaPago !=null ? formaPago.getDescripcion() : "";	
+		this.numeroFactura = numeroFactura;
+		this.cliente = cliente;
+		this.formaPago = formaPago;
+		this.medioPago = formaPago != null ? formaPago.getDescripcion() : "";
 	}
-	
-	//Gestión de Items 
-	
+
+	// Gestión de Items
+
 	public void agregarItem(DetalleVenta item) {
 		items.add(item);
 	}
-	
+
 	public void eliminarItem(int i) {
-		if(i>=0 && i < items.size()){
+		if (i >= 0 && i < items.size()) {
 			items.remove(i);
 		}
-		
+
 	}
-	
-	//Cálculos financieros no están en variables, pues estos valores van cambiando a medida que se hacen los calculos 
-	
-	//Suma de subtotales netos (sin impuesto) hace referencia a todos los items
-	public double getSubtotal(){
-		double subtotal = 0; 
-		for(DetalleVenta i : items) {
+
+	// Cálculos financieros no están en variables, pues estos valores van cambiando
+	// a medida que se hacen los calculos
+
+	// Suma de subtotales netos (sin impuesto) hace referencia a todos los items
+	public double getSubtotal() {
+		double subtotal = 0;
+		for (DetalleVenta i : items) {
 			subtotal += i.getSubtotal();
 		}
-		return subtotal; 
+		return subtotal;
 	}
-	
-	//Suma del impuesto de cada ítem (solo los que aplican IVA)
+
+	// Suma del impuesto de cada ítem (solo los que aplican IVA)
 	public double getIva() {
-		double valorImpuesto =0; 
-		for(DetalleVenta i : items) {
+		double valorImpuesto = 0;
+		for (DetalleVenta i : items) {
 			valorImpuesto += i.getValorImpuesto();
 		}
-		return valorImpuesto; 
+		return valorImpuesto;
 	}
-	
+
 	public double getTotal() {
 		return getSubtotal() + getIva();
 	}
@@ -134,4 +139,19 @@ public class Venta {
 		this.items = items;
 	}
 
+	public String getCufe() {
+		return cufe;
+	}
+
+	public void setCufe(String cufe) {
+		this.cufe = cufe;
+	}
+
+	public String getValorEnLetras() {
+		return valorEnLetras;
+	}
+
+	public void setValorEnLetras(String valorEnLetras) {
+		this.valorEnLetras = valorEnLetras;
+	}
 }

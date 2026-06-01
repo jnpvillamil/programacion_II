@@ -12,17 +12,18 @@ public class Producto {
 	private double precioVenta;
 	private int stockActual;
 	private int stockMinimo;
+	private int stockMaximo;
 	private boolean activo;
-	
-	private TipoImpuestoEnum tipoImpuesto; 
+
+	private TipoImpuestoEnum tipoImpuesto;
 
 	public Producto() {
 		this.activo = true;
-		this.tipoImpuesto =TipoImpuestoEnum.IVA;
+		this.tipoImpuesto = TipoImpuestoEnum.IVA;
 	}
 
-	public Producto(String codigoInterno, String nombreProducto, CategoriaProductoEnum categoria,
-			double precioCompra, double precioVenta, int stockActual, int stockMinimo) {
+	public Producto(String codigoInterno, String nombreProducto, CategoriaProductoEnum categoria, double precioCompra,
+			double precioVenta, int stockActual, int stockMinimo) {
 		this.codigoInterno = codigoInterno;
 		this.nombreProducto = nombreProducto;
 		this.categoria = categoria;
@@ -30,6 +31,7 @@ public class Producto {
 		this.precioVenta = precioVenta;
 		this.stockActual = stockActual;
 		this.stockMinimo = stockMinimo;
+		this.stockMaximo = stockMinimo * 4;
 		this.activo = true;
 		this.tipoImpuesto = TipoImpuestoEnum.IVA;
 	}
@@ -90,6 +92,14 @@ public class Producto {
 		this.stockMinimo = stockMinimo;
 	}
 
+	public int getStockMaximo() {
+		return stockMaximo;
+	}
+
+	public void setStockMaximo(int stockMaximo) {
+		this.stockMaximo = stockMaximo;
+	}
+
 	public boolean isActivo() {
 		return activo;
 	}
@@ -97,16 +107,20 @@ public class Producto {
 	public void setActivo(boolean activo) {
 		this.activo = activo;
 	}
-	
+
 	public TipoImpuestoEnum getTipoImpuesto() {
-		return tipoImpuesto; 
+		return tipoImpuesto;
 	}
-	
+
 	public void setTipoImpuesto(TipoImpuestoEnum tipoImpuesto) {
-		this.tipoImpuesto = tipoImpuesto; 
+		this.tipoImpuesto = tipoImpuesto;
 	}
 
 	public boolean tieneStockBajoMinimo() {
 		return stockActual < stockMinimo;
+	}
+
+	public boolean superaStockMaximo() {
+		return stockMaximo > 0 && stockActual > stockMaximo;
 	}
 }
