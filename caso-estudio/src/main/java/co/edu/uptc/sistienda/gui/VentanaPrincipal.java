@@ -18,6 +18,8 @@ import javax.swing.JPanel;
 
 import co.edu.uptc.sistienda.clientes.gui.DialogoCliente;
 import co.edu.uptc.sistienda.clientes.gui.PanelClientes;
+import co.edu.uptc.sistienda.compras.gui.PanelRegistrarCompra;
+import co.edu.uptc.sistienda.compras.modelo.Compra;
 import co.edu.uptc.sistienda.contabilidad.gui.PanelContabilidad;
 import co.edu.uptc.sistienda.modelo.Cliente;
 import co.edu.uptc.sistienda.modelo.DetalleVenta;
@@ -46,6 +48,7 @@ public class VentanaPrincipal extends JFrame {
 	private static final String TARJETA_CAJERO = "CAJERO";
 	private static final String TARJETA_BIENVENIDA = "BIENVENIDA";
 	private static final String TARJETA_CONTADOR = "CONTADOR";
+	private static final String TARJETA_COMPRAS = "COMPRAS";
 
 	// Capa de negocio
 	private SistiendaConfig configuracion;
@@ -61,12 +64,16 @@ public class VentanaPrincipal extends JFrame {
 	private PanelProveedores panelProveedores;
 	private PanelCajero panelCajero;
 	private PanelContabilidad panelContabilidad;
-	
+	private PanelContabilidad panelContabilidadAdministrador;
+	private PanelRegistrarCompra panelRegistrarCompra;
+	private PanelRegistrarCompra panelComprasEncargado;
+
 	// Botones del menú (para control de permisos)
 	private JButton btnProductos;
 	private JButton btnClientes;
 	private JButton btnProveedores;
 	private JButton btnContabilidad;
+	private JButton btnCompras;
 
 	// Diálogos activos
 	private DialogoProducto dialogoProducto;
@@ -113,14 +120,20 @@ public class VentanaPrincipal extends JFrame {
 		envCajero.add(construirBarraSuperior(), BorderLayout.NORTH);
 		envCajero.add(panelCajero, BorderLayout.CENTER);
 		panelRaiz.add(envCajero, TARJETA_CAJERO);
-		
+
 		// Tarjeta CONTADOR
 		JPanel panelContador = new JPanel(new BorderLayout());
 		panelContador.add(construirBarraSuperior(), BorderLayout.NORTH);
 		panelContabilidad = new PanelContabilidad();
 		panelContador.add(panelContabilidad, BorderLayout.CENTER);
 		panelRaiz.add(panelContador, TARJETA_CONTADOR);
-		
+
+		// Tarjeta ENCARGADO DE COMPRAS
+		JPanel panelCompras = new JPanel(new BorderLayout());
+		panelCompras.add(construirBarraSuperior(), BorderLayout.NORTH);
+		panelComprasEncargado = new PanelRegistrarCompra(evento);
+		panelCompras.add(panelComprasEncargado, BorderLayout.CENTER);
+		panelRaiz.add(panelCompras, TARJETA_COMPRAS);
 
 		// Tarjeta BIENVENIDA
 		// La verán todos los roles que no sean Administrador
@@ -169,13 +182,15 @@ public class VentanaPrincipal extends JFrame {
 		panelProductos = new PanelProductos(evento);
 		panelClientes = new PanelClientes(evento);
 		panelProveedores = new PanelProveedores(evento);
-		
+		panelRegistrarCompra = new PanelRegistrarCompra(evento);
+		panelContabilidadAdministrador = new PanelContabilidad();
+
 		panelContenidoCentral.add(panelDashboard, Evento.MENU_DASHBOARD);
 		panelContenidoCentral.add(panelProductos, Evento.MENU_PRODUCTOS);
 		panelContenidoCentral.add(panelClientes, Evento.MENU_CLIENTES);
 		panelContenidoCentral.add(panelProveedores, Evento.MENU_PROVEEDORES);
-		
-		
+		panelContenidoCentral.add(panelRegistrarCompra, Evento.MENU_COMPRAS);
+		panelContenidoCentral.add(panelContabilidadAdministrador, Evento.MENU_CONTABILIDAD);
 
 		raiz.add(panelContenidoCentral, BorderLayout.CENTER);
 		return raiz;
@@ -202,15 +217,12 @@ public class VentanaPrincipal extends JFrame {
 		menu.add(crearBotonMenu("Dashboard", Evento.MENU_DASHBOARD));
 		menu.add(crearSeparadorMenu("CATÁLOGOS"));
 		btnProductos = crearBotonMenu("Productos", Evento.MENU_PRODUCTOS);
-	    btnClientes = crearBotonMenu("Clientes", Evento.MENU_CLIENTES);
-	    btnProveedores = crearBotonMenu("Proveedores", Evento.MENU_PROVEEDORES);
-		btnContabilidad = crearBotonMenu("Contabilidad", Evento.MENU_CONTABILIDAD);
-		
+		btnClientes = crearBotonMenu("Clientes", Evento.MENU_CLIENTES);
+		btnProveedores = crearBotonMenu("Proveedores", Evento.MENU_PROVEEDORES);
 		menu.add(btnProductos);
-	    menu.add(btnClientes);
-	    menu.add(btnProveedores);
-	    menu.add(btnContabilidad);
-		
+		menu.add(btnClientes);
+		menu.add(btnProveedores);
+
 		return menu;
 	}
 
@@ -238,8 +250,8 @@ public class VentanaPrincipal extends JFrame {
 			CredencialDto credencial = panelLogin.obtenerCredencialesIngresadas();
 			if (configuracion.getGestionDeSeguridad().validarLogueo(credencial)) {
 				rolActivo = credencial.getRol();
-				usuarioActivo = credencial.getUsuario(); 
-			    GestorLog.registrar(usuarioActivo, "LOGIN", "Rol: " + rolActivo);
+				usuarioActivo = credencial.getUsuario();
+				GestorLog.registrar(usuarioActivo, "LOGIN", "Rol: " + rolActivo);
 				setTitle("Sistienda – " + rolActivo);
 				mostrarPantallaInicial();
 			} else {
@@ -252,21 +264,24 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	public void mostrarPantallaInicial() {
-		
+
 		if ("Administrador".equals(rolActivo)) {
 			// Administrador: muestra la tarjeta con menú lateral y el dashboard
 			mostrarDashboard();
-		    layoutPrincipal.show(panelRaiz, TARJETA_PRINCIPAL);
-		    
+			layoutPrincipal.show(panelRaiz, TARJETA_PRINCIPAL);
+
 		} else if ("Contador".equals(rolActivo)) {
 
-	        mostrarPanelContabilidad();
-	        layoutPrincipal.show(panelRaiz, TARJETA_CONTADOR);
+			mostrarPanelContabilidad();
+			layoutPrincipal.show(panelRaiz, TARJETA_CONTADOR);
 
-	    } else if ("Cajero".equals(rolActivo)) {
+		} else if ("Cajero".equals(rolActivo)) {
 			// Cajero: muestra la tarjeta del cajeero con el panel de ventas
 			mostrarPanelRegistrarVenta();
 			layoutPrincipal.show(panelRaiz, TARJETA_CAJERO);
+		} else if ("Encargado de compras".equals(rolActivo)) {
+			mostrarPanelCompras();
+			layoutPrincipal.show(panelRaiz, TARJETA_COMPRAS);
 		} else {
 			// Cualquier otro rol: muestra solo la pantalla de bienvenida, sin menú
 			layoutPrincipal.show(panelRaiz, TARJETA_BIENVENIDA);
@@ -294,24 +309,52 @@ public class VentanaPrincipal extends JFrame {
 		refrescarTablaProveedores();
 		layoutContenido.show(panelContenidoCentral, Evento.MENU_PROVEEDORES);
 	}
-	public void mostrarPanelContabilidad() {
 
-	    panelContabilidad.cargarVentas(configuracion.getGestionVenta().obtenerListaVentas());
-	    layoutContenido.show(panelContenidoCentral, "CONTABILIDAD");
+	public void mostrarPanelCompras() {
+		PanelRegistrarCompra panelComprasActivo = "Encargado de compras".equals(rolActivo) ? panelComprasEncargado
+				: panelRegistrarCompra;
+		panelComprasActivo.iniciarNuevaCompra(configuracion.getGestionCompra().generarNumeroCompra(),
+				java.time.LocalDate.now(), configuracion.getGestionProveedor().obtenerListaProveedores(),
+				configuracion.getGestionProducto().obtenerListaProductos(),
+				configuracion.getGestionCompra().obtenerListaCompras());
+		if ("Encargado de compras".equals(rolActivo)) {
+			layoutPrincipal.show(panelRaiz, TARJETA_COMPRAS);
+		} else {
+			layoutContenido.show(panelContenidoCentral, Evento.MENU_COMPRAS);
+		}
 	}
-	
+
+	public void mostrarPanelContabilidad() {
+		if ("Administrador".equals(rolActivo)) {
+			panelContabilidadAdministrador.cargarDatos(configuracion.getGestionVenta().obtenerListaVentas(),
+					configuracion.getGestionCompra().obtenerListaCompras(),
+					configuracion.getGestionProducto().obtenerListaProductos(),
+					configuracion.getGestionContabilidad().obtenerListaMovimientos());
+			layoutContenido.show(panelContenidoCentral, Evento.MENU_CONTABILIDAD);
+		} else {
+			panelContabilidad.cargarDatos(configuracion.getGestionVenta().obtenerListaVentas(),
+					configuracion.getGestionCompra().obtenerListaCompras(),
+					configuracion.getGestionProducto().obtenerListaProductos(),
+					configuracion.getGestionContabilidad().obtenerListaMovimientos());
+		}
+	}
+
 	// Navegación Contabilidad
-	
+
 	public void mostrarMovimientosContables() {
-	    panelContabilidad.mostrarMovimientos();
+		obtenerPanelContabilidadActivo().mostrarMovimientos();
 	}
 
 	public void mostrarReportesContables() {
-	    panelContabilidad.mostrarReportes();
+		obtenerPanelContabilidadActivo().mostrarReportes();
 	}
 
 	public void mostrarConsultasContables() {
-	    panelContabilidad.mostrarConsultas();
+		obtenerPanelContabilidadActivo().mostrarConsultas();
+	}
+
+	private PanelContabilidad obtenerPanelContabilidadActivo() {
+		return "Administrador".equals(rolActivo) ? panelContabilidadAdministrador : panelContabilidad;
 	}
 
 	// Navegación Cajero
@@ -344,31 +387,46 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	public void registrarVenta() {
-	    try {
-	        String codigoClienteVenta = panelCajero.getCodigoClienteSeleccionado();
-	        if (codigoClienteVenta == null) {
-	            JOptionPane.showMessageDialog(this, "Seleccione un cliente", "Aviso", JOptionPane.WARNING_MESSAGE);
-	            return;
-	        }
-	        if (panelCajero.getProductosAgregados().isEmpty()) {
-	            JOptionPane.showMessageDialog(this, "Agregue al menos un producto", "Aviso",
-	                    JOptionPane.WARNING_MESSAGE);
-	            return;
-	        }
-	        Cliente clienteDeVenta = configuracion.getGestionCliente().consultarClientePorCodigo(codigoClienteVenta);
-	        Venta nuevaVenta = new Venta(panelCajero.getNumeroFactura(), clienteDeVenta,
-	                panelCajero.getFormaPagoSeleccionada());
-	        for (DetalleVenta itemDeVenta : panelCajero.getProductosAgregados()) {
-	            nuevaVenta.agregarItem(itemDeVenta);
-	        }
-	        configuracion.getGestionVenta().resgistrarVenta(nuevaVenta);
-	        GestorLog.registrar(usuarioActivo, "REGISTRAR_VENTA", "Factura: " + nuevaVenta.getNumeroFactura());
-	        JOptionPane.showMessageDialog(this, "Venta Registrada correctamente");
-	        mostrarPanelRegistrarVenta();
-	    } catch (Exception ex) {
-	        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	    }
+		try {
+			String codigoClienteVenta = panelCajero.getCodigoClienteSeleccionado();
+			if (codigoClienteVenta == null) {
+				JOptionPane.showMessageDialog(this, "Seleccione un cliente", "Aviso", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			if (panelCajero.getProductosAgregados().isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Agregue al menos un producto", "Aviso",
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			Cliente clienteDeVenta = configuracion.getGestionCliente().consultarClientePorCodigo(codigoClienteVenta);
+			Venta nuevaVenta = new Venta(panelCajero.getNumeroFactura(), clienteDeVenta,
+					panelCajero.getFormaPagoSeleccionada());
+			for (DetalleVenta itemDeVenta : panelCajero.getProductosAgregados()) {
+				nuevaVenta.agregarItem(itemDeVenta);
+			}
+			configuracion.getGestionVenta().resgistrarVenta(nuevaVenta);
+			GestorLog.registrar(usuarioActivo, "REGISTRAR_VENTA", "Factura: " + nuevaVenta.getNumeroFactura());
+			JOptionPane.showMessageDialog(this, "Venta Registrada correctamente");
+			mostrarPanelRegistrarVenta();
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
+
+	public void registrarCompra() {
+		try {
+			PanelRegistrarCompra panelComprasActivo = "Encargado de compras".equals(rolActivo) ? panelComprasEncargado
+					: panelRegistrarCompra;
+			Compra nuevaCompra = panelComprasActivo.construirCompraDesdeFormulario();
+			configuracion.getGestionCompra().registrarCompra(nuevaCompra);
+			GestorLog.registrar(usuarioActivo, "REGISTRAR_COMPRA", "Compra: " + nuevaCompra.getNumeroCompra());
+			JOptionPane.showMessageDialog(this, "Compra registrada correctamente. El stock fue actualizado.");
+			mostrarPanelCompras();
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
 	public void cancelarVenta() {
 		mostrarPanelRegistrarVenta();
 	}
@@ -404,27 +462,29 @@ public class VentanaPrincipal extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
+
 	public void registrarDevolucion() {
 		String numeroFacturaDevolucion = panelCajero.obtenerNumeroFacturaSeleccionada();
-		if(numeroFacturaDevolucion == null) {
+		if (numeroFacturaDevolucion == null) {
 			JOptionPane.showMessageDialog(this, "No se encontró la venta.", "Aviso", JOptionPane.ERROR_MESSAGE);
-			return; 
+			return;
 		}
 		Venta ventaADevolver = configuracion.getGestionVenta().consultarVentaPorFactura(numeroFacturaDevolucion);
-		if(ventaADevolver == null) {
+		if (ventaADevolver == null) {
 			JOptionPane.showMessageDialog(this, "No se encontró la venta.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		if(ventaADevolver.isAnulada()) {
-			JOptionPane.showMessageDialog(this, "No se puede devolver sobre una venta anulada.", "Aviso", JOptionPane.ERROR_MESSAGE);
+		if (ventaADevolver.isAnulada()) {
+			JOptionPane.showMessageDialog(this, "No se puede devolver sobre una venta anulada.", "Aviso",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		DialogoDevolucion dialogoDevolucion = new DialogoDevolucion(this, ventaADevolver);
 		dialogoDevolucion.setVisible(true);
-		if(dialogoDevolucion.isConfirmado()) {
+		if (dialogoDevolucion.isConfirmado()) {
 			try {
-				configuracion.getGestionVenta().registrarDevolucion(numeroFacturaDevolucion, dialogoDevolucion.getDetalles(), dialogoDevolucion.getMotivoResultado());
+				configuracion.getGestionVenta().registrarDevolucion(numeroFacturaDevolucion,
+						dialogoDevolucion.getDetalles(), dialogoDevolucion.getMotivoResultado());
 				JOptionPane.showMessageDialog(this, "Devolución registrada.");
 				mostrarPanelVentasRegistradas();
 			} catch (Exception ex) {
@@ -435,12 +495,12 @@ public class VentanaPrincipal extends JFrame {
 
 	public void verFactura() {
 		String numeroFacturaConsulta = panelCajero.obtenerNumeroFacturaSeleccionada();
-		if(numeroFacturaConsulta == null) {
+		if (numeroFacturaConsulta == null) {
 			JOptionPane.showMessageDialog(this, "Seleccione una venta", "Aviso", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		Venta ventaConsultada = configuracion.getGestionVenta().consultarVentaPorFactura(numeroFacturaConsulta);
-		if(ventaConsultada == null) {
+		if (ventaConsultada == null) {
 			JOptionPane.showMessageDialog(this, "No se encontró la venta", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -497,7 +557,7 @@ public class VentanaPrincipal extends JFrame {
 		try {
 			Producto editado = dialogoProducto.capturarDatosFormulario();
 			configuracion.getGestionProducto().modificarProducto(editado);
-			GestorLog.registrar(usuarioActivo, "EDITAR_PRODUCTO", "Código: " + editado.getCodigoInterno()); 
+			GestorLog.registrar(usuarioActivo, "EDITAR_PRODUCTO", "Código: " + editado.getCodigoInterno());
 			cerrarDialogoProducto();
 			refrescarTablaProductos();
 			JOptionPane.showMessageDialog(this, "Producto actualizado correctamente.");
