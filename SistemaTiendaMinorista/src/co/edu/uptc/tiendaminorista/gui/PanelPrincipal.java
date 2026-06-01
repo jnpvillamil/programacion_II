@@ -167,7 +167,11 @@ public class PanelPrincipal extends JFrame {
 
             gestionCompasCliente.registrarCompra(clienteSel, productoSel, cantidad);
 
-            JOptionPane.showMessageDialog(this, "Compra registrada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            //REGISTRAR EN CONTABILIDAD (INGRESO)
+            double totalVenta = productoSel.getPrecioVenta() * cantidad;
+            registrarVenta(productoSel.getNombre(), totalVenta, clienteSel.getCodigo());
+
+            JOptionPane.showMessageDialog(this, "Compra registrada con éxito.\nTotal: $" + totalVenta, "Éxito", JOptionPane.INFORMATION_MESSAGE);
             panelCompra.actualizarTablaCompras(gestionCompasCliente.listarTodasLasCompras());
             panelCompra.limpiarCampos();
 
@@ -420,5 +424,12 @@ public class PanelPrincipal extends JFrame {
         }
 
         panelHistorial.actualizarTabla(comprasDelCliente);
+    }
+    
+    public void registrarVenta(String producto, double valor, String idCliente) {
+        if (panelInicial.getPanelGestionContable() != null) {
+            panelInicial.getPanelGestionContable().getGestionContable().registrarIngreso(producto, valor, idCliente);
+            panelInicial.getPanelGestionContable().actualizarDatos();
+        }
     }
 }
