@@ -129,7 +129,7 @@ public class GestionContableNegocio implements IGestionContable {
         System.out.println("========================================\n");
         
         if (Math.abs(activos - (pasivos + patrimonio)) > 0.01) {
-            System.err.println("⚠️ Advertencia: El balance general NO está cuadrado.");
+            System.err.println(" Advertencia: El balance general NO está cuadrado.");
             System.err.println("   Diferencia: $" + (activos - (pasivos + patrimonio)));
         }
         
