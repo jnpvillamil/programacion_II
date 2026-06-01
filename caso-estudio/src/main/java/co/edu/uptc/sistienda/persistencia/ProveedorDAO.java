@@ -73,7 +73,8 @@ public class ProveedorDAO implements IGestionProveedor {
 			existente.setCorreoElectronico(proveedorActualizado.getCorreoElectronico());
 			existente.setResponsabilidadFiscal(proveedorActualizado.getResponsabilidadFiscal());
 			existente.setResponsabilidadTributaria(proveedorActualizado.getResponsabilidadTributaria());
-			existente.setActividadEcocomica(proveedorActualizado.getActividadEconomica());
+			existente.setActividadEconomica(proveedorActualizado.getActividadEconomica());
+			guardarEnArchivo();
 		}
 	}
 
@@ -82,6 +83,7 @@ public class ProveedorDAO implements IGestionProveedor {
 		Proveedor existente = buscarProveedorPorCodigo(codigoProveedor);
 		if (existente != null) {
 			existente.setActivo(false);
+			guardarEnArchivo();
 		}
 	}
 
@@ -90,6 +92,7 @@ public class ProveedorDAO implements IGestionProveedor {
 		Proveedor existente = buscarProveedorPorCodigo(codigoProveedor);
 		if (existente != null) {
 			existente.setActivo(true);
+			guardarEnArchivo();
 		}
 	}
 
@@ -105,7 +108,7 @@ public class ProveedorDAO implements IGestionProveedor {
 
 	@Override
 	public List<Proveedor> obtenerListaProveedores() {
-		return listaProveedores;
+		return new ArrayList<>(listaProveedores);
 	}
 
 }

@@ -28,8 +28,7 @@ public class VentaDAO implements IGestionVenta {
 	private final Gson gson;
 
 	public VentaDAO() {
-		gson = new GsonBuilder()
-				.setPrettyPrinting()
+		gson = new GsonBuilder().setPrettyPrinting()
 				.registerTypeAdapter(LocalDateTime.class, new TypeAdapter<LocalDateTime>() {
 					private final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
@@ -50,8 +49,7 @@ public class VentaDAO implements IGestionVenta {
 						}
 						return LocalDateTime.parse(in.nextString(), formatter);
 					}
-				})
-				.create();
+				}).create();
 		listaVentas = cargarDesdeArchivo();
 	}
 
@@ -96,6 +94,7 @@ public class VentaDAO implements IGestionVenta {
 		for (Venta v : listaVentas) {
 			if (v.getNumeroFactura().equals(numeroFactura)) {
 				v.setAnulada(true);
+				guardarEnArchivo();
 				return;
 			}
 		}

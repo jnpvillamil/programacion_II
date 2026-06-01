@@ -80,6 +80,7 @@ public class ClienteDAO implements IGestionCliente {
 			existente.setTipoPersona(clienteActualizado.getTipoPersona());
 			existente.setResponsabilidadFiscal(clienteActualizado.getResponsabilidadFiscal());
 			existente.setResponsabilidadTributaria(clienteActualizado.getResponsabilidadTributaria());
+			guardarEnArchivo();
 		}
 	}
 
@@ -88,6 +89,7 @@ public class ClienteDAO implements IGestionCliente {
 		Cliente existente = buscarClientePorCodigo(codigoCliente);
 		if (existente != null) {
 			existente.setActivo(false);
+			guardarEnArchivo();
 		}
 	}
 
@@ -96,6 +98,7 @@ public class ClienteDAO implements IGestionCliente {
 		Cliente existente = buscarClientePorCodigo(codigoCliente);
 		if (existente != null) {
 			existente.setActivo(true);
+			guardarEnArchivo();
 		}
 	}
 
@@ -111,6 +114,6 @@ public class ClienteDAO implements IGestionCliente {
 
 	@Override
 	public List<Cliente> obtenerListaClientes() {
-		return listaClientes;
+		return new ArrayList<>(listaClientes);
 	}
 }

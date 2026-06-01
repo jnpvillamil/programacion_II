@@ -73,6 +73,8 @@ public class ProductoDAO implements IGestionProducto {
 			existente.setPrecioVenta(productoActualizado.getPrecioVenta());
 			existente.setStockActual(productoActualizado.getStockActual());
 			existente.setStockMinimo(productoActualizado.getStockMinimo());
+			existente.setStockMaximo(productoActualizado.getStockMaximo());
+			guardarEnArchivo();
 		}
 	}
 
@@ -81,6 +83,7 @@ public class ProductoDAO implements IGestionProducto {
 		Producto existente = buscarProductoPorCodigo(codigoInterno);
 		if (existente != null) {
 			existente.setActivo(false);
+			guardarEnArchivo();
 		}
 	}
 
@@ -89,6 +92,7 @@ public class ProductoDAO implements IGestionProducto {
 		Producto existente = buscarProductoPorCodigo(codigoInterno);
 		if (existente != null) {
 			existente.setActivo(true);
+			guardarEnArchivo();
 		}
 	}
 
@@ -104,7 +108,7 @@ public class ProductoDAO implements IGestionProducto {
 
 	@Override
 	public List<Producto> obtenerListaProductos() {
-		return listaProductos;
+		return new ArrayList<>(listaProductos);
 	}
 
 	@Override
