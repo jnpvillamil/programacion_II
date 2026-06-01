@@ -5,13 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Gestiona la conexión a MySQL (XAMPP).
- *
- * Al llamar iniciarBaseDatos() desde Main, se crea automáticamente
- * la base de datos y todas las tablas si aún no existen.
- * No se requiere importar el SQL manualmente para que el proyecto funcione.
- */
+
 public class DatabaseConnection {
 
     private static final String HOST     = "jdbc:mysql://localhost:3306/";
@@ -19,23 +13,17 @@ public class DatabaseConnection {
     private static final String URL      = HOST + DB_NAME
             + "?useSSL=false&serverTimezone=America/Bogota&allowPublicKeyRetrieval=true";
     private static final String USER     = "root";
-    private static final String PASSWORD = "";  // En XAMPP la contraseña de root es vacía por defecto
-
-    /** Conexión normal (ya con la BD seleccionada). */
+    private static final String PASSWORD = "";  
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    /**
-     * Llamar UNA VEZ al arrancar la aplicación (desde Main).
-     * Crea la base de datos y todas las tablas si no existen todavía.
-     */
+    
     public static void iniciarBaseDatos() {
         crearBaseDeDatos();
         crearTablas();
     }
 
-    // ── privados ────────────────────────────────────────────────────────────
 
     private static void crearBaseDeDatos() {
         String urlSinBD = HOST + "?useSSL=false&serverTimezone=America/Bogota&allowPublicKeyRetrieval=true";

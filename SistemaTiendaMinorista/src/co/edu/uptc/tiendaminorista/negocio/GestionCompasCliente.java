@@ -1,30 +1,25 @@
 package co.edu.uptc.tiendaminorista.negocio;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import co.edu.uptc.tiendaminorista.interfaces.IGestionCompraCli;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
 import co.edu.uptc.tiendaminorista.modelo.CompasCliente;
 import co.edu.uptc.tiendaminorista.modelo.Producto;
 import co.edu.uptc.tiendaminorista.persistencia.LocalCompraCliente;
 
-// Agregue un constructor con parametro para poder inyectar la persistencia desde TiendaConfig
-// Deje el constructor vacio por si algun panel lo usa directamente
 public class GestionCompasCliente {
 
-    private IGestionCompraCli persistenciaCompra;
+    private LocalCompraCliente localCompraCliente;
 
     public GestionCompasCliente() {
-        this.persistenciaCompra = new LocalCompraCliente();
-    }
-
-    public GestionCompasCliente(IGestionCompraCli persistenciaCompra) {
-        this.persistenciaCompra = persistenciaCompra;
+        this.localCompraCliente = new LocalCompraCliente();
     }
 
     public void registrarCompra(Cliente cliente, Producto producto, int cantidad) throws Exception {
-
+        // 1. Validaciones básicas de nulidad y valores coherentes
         if (cliente == null) {
             throw new Exception("Debe seleccionar un cliente válido.");
         }
@@ -34,6 +29,8 @@ public class GestionCompasCliente {
         if (cantidad <= 0) {
             throw new Exception("La cantidad debe ser mayor a cero.");
         }
+
+        // 2. Validaciones de Reglas de Negocio (Clientes y Inventario)
         if (!cliente.isActivo()) {
             throw new Exception("No se puede registrar la compra porque el cliente está INACTIVO.");
         }
@@ -42,27 +39,59 @@ public class GestionCompasCliente {
         }
         if (producto.getStockActual() < cantidad) {
             throw new Exception("Stock insuficiente para \"" + producto.getNombre() + 
-                "\". Disponible: " + producto.getStockActual() + " unidades.");
+                                "\". Disponible: " + producto.getStockActual() + " unidades.");
         }
 
-        CompasCliente nuevaCompra = new CompasCliente(cliente, producto, cantidad);
+        // 3. Construcción y asignación del objeto de compra
+        CompasCliente nuevaCompra = new CompasCliente();
+        nuevaCompra.setCliente(cliente);
+        nuevaCompra.setProducto(producto);
+        nuevaCompra.setCantidad(cantidad);
         nuevaCompra.setTotalCompra(producto.getPrecioVenta() * cantidad);
-        nuevaCompra.setFecha(new Date());
+        nuevaCompra.setFecha(new java.util.Date());
 
-        persistenciaCompra.guardarCompra(nuevaCompra);
+        // 4. Persistencia en Base de Datos
+        localCompraCliente.guardarCompra(nuevaCompra);
     }
 
     public List<CompasCliente> listarTodasLasCompras() {
-        return persistenciaCompra.obtenerTodasLasCompras();
+        return localCompraCliente.obtenerTodasLasCompras();
     }
 
-    public List<CompasCliente> listarComprasPorCliente(String cedulaCliente) {
-        List<CompasCliente> comprasCliente = new ArrayList<>();
-        for (CompasCliente compra : persistenciaCompra.obtenerTodasLasCompras()) {
-            if (compra.getCliente().getNumeroIdentificacion().equals(cedulaCliente)) {
-                comprasCliente.add(compra);
+    public List<CompasCliente> listarComprasPorCliente(String codigoCliente) {
+        return localCompraCliente.listarComprasPorCliente(codigoCliente);
+    }
+
+    public List<CompasCliente> listarComprasPorCliente(String codigoCliente, String nombreCliente) {
+        return localCompraCliente.listarComprasPorCliente(codigoCliente, nombreCliente);
+    }
+
+    public List<CompasCliente> obtenerVentasPorFecha(Date fechaBusqueda) {
+        List<CompasCliente> filtradas = new ArrayList<>();
+        if (fechaBusqueda == null) return filtradas;
+
+        LocalDate fechaFiltro = fechaBusqueda.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        for (CompasCliente compra : listarTodasLasCompras()) {
+            if (compra.getFecha() != null) {
+                LocalDate fechaVenta = compra.getFecha().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                
+                if (fechaVenta.equals(fechaFiltro)) {
+                    filtradas.add(compra);
+                }
             }
         }
-        return comprasCliente;
+        return filtradas;
+    }
+
+    public List<CompasCliente> obtenerHistorialCliente(String codigoCliente) {
+        if (codigoCliente == null || codigoCliente.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        return listarComprasPorCliente(codigoCliente);
     }
 }

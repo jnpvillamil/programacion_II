@@ -16,7 +16,7 @@ import co.edu.uptc.tiendaminorista.modelo.Cliente;
 public class PanelActualizarCliente extends JPanel {
 
     private JComboBox<String> comboClientes;
-    private java.util.List<Cliente> clientes;
+    private List<Cliente> clientes;
     private JTextField nombre;
     private JComboBox<String> tipoDocumento;
     private JTextField numeroDocumento;
@@ -155,7 +155,7 @@ public class PanelActualizarCliente extends JPanel {
         add(butones);
     }
 
-    public void setClientes(java.util.List<Cliente> clientes) {
+    public void setClientes(List<Cliente> clientes) {
         this.clientes = new ArrayList<>(clientes);
         comboClientes.removeAllItems();
         for (Cliente cliente : clientes) {

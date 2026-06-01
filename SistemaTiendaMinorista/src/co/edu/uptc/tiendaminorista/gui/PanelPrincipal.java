@@ -1,6 +1,10 @@
 package co.edu.uptc.tiendaminorista.gui;
 
 import java.awt.BorderLayout;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -14,6 +18,7 @@ import co.edu.uptc.tiendaminorista.dto.CredencialDto;
 import co.edu.uptc.tiendaminorista.enums.TipoDocumentoEnum;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
 import co.edu.uptc.tiendaminorista.modelo.CompasCliente;
+import co.edu.uptc.tiendaminorista.modelo.CompraPro;
 import co.edu.uptc.tiendaminorista.modelo.Empleado;
 import co.edu.uptc.tiendaminorista.modelo.Proveedor;
 import co.edu.uptc.tiendaminorista.modelo.Producto; 
@@ -24,6 +29,7 @@ import co.edu.uptc.tiendaminorista.negocio.SistemaSeguridad;
 import co.edu.uptc.tiendaminorista.negocio.GestionEmpleado;
 import co.edu.uptc.tiendaminorista.negocio.GestionCompasCliente; 
 import co.edu.uptc.tiendaminorista.negocio.TiendaConfig;
+import co.edu.uptc.tiendaminorista.modelo.MovimientoContable;
 
 public class PanelPrincipal extends JFrame {
 
@@ -92,8 +98,22 @@ public class PanelPrincipal extends JFrame {
         
         if (seguridad.validarInicio(credencial)) {
             cambiarPanel(panelInicial);
+            
+            if (panelInicial.getPanelCliente() != null) {
+                panelInicial.getPanelCliente().cargarClientes(gestionCliente.listarClientes());
+            }
+            panelInicial.cargarProveedores(gestionProveedor.listarProveedores());
+            
+            revalidate();
+            repaint();
         } else {
             JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
+        }
+    }
+
+    public void cambiarVistaConsulta(String identificadorTarjeta) {
+        if (panelInicial != null && panelInicial.getPanelConsultas() != null) {
+            panelInicial.getPanelConsultas().conmutarVista(identificadorTarjeta);
         }
     }
 
@@ -118,7 +138,12 @@ public class PanelPrincipal extends JFrame {
     }
 
     public void mostrarPanelCliente() {
+        if (panelInicial.getPanelCliente() != null) {
+            panelInicial.getPanelCliente().cargarClientes(gestionCliente.listarClientes());
+        }
         panelInicial.mostrarClienteLista();
+        revalidate();
+        repaint();
     }
 
     public void regresarAlInicial() {
@@ -134,7 +159,10 @@ public class PanelPrincipal extends JFrame {
     }
 
     public void mostrarProveedores() {
+        panelInicial.cargarProveedores(gestionProveedor.listarProveedores());
         panelInicial.mostrarProveedorLista();
+        revalidate();
+        repaint();
     }
 
     public void mostrarActualizarProveedor() {
@@ -398,8 +426,12 @@ public class PanelPrincipal extends JFrame {
 
     public void filtrarClientes(String texto) {
         List<Cliente> filtrados = gestionCliente.consultarClientes(texto);
-        panelInicial.getPanelCliente().cargarClientes(filtrados);
-    }public void mostrarPantallaHistorial() {
+        if (panelInicial.getPanelCliente() != null) {
+            panelInicial.getPanelCliente().cargarClientes(filtrados);
+        }
+    }
+
+    public void mostrarPantallaHistorial() {
         panelInicial.mostrarPantallaHistorial();
     }
 
@@ -414,21 +446,112 @@ public class PanelPrincipal extends JFrame {
             return;
         }
 
-        String cedula = clienteSel.getNumeroIdentificacion();
-        java.util.List<CompasCliente> comprasDelCliente = gestionCompasCliente.listarComprasPorCliente(cedula);
+        String codigoCliente = clienteSel.getCodigo();
+        String nombreCliente = clienteSel.getNombre();
+        java.util.List<CompasCliente> comprasDelCliente = gestionCompasCliente.listarComprasPorCliente(codigoCliente, nombreCliente);
 
-        if (comprasDelCliente.isEmpty()) {
+        if (comprasDelCliente == null || comprasDelCliente.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Este cliente no tiene compras registradas.", "Información", JOptionPane.INFORMATION_MESSAGE);
         }
 
         panelHistorial.actualizarTabla(comprasDelCliente);
+        
+        revalidate();
+        repaint();
     }
+
     public void registrarVenta(String producto, double valor, String idCliente) {
         if (panelInicial.getPanelGestionContable() != null) {
-            //Llama a GestionContable para registrar el ingreso
             panelInicial.getPanelGestionContable().getGestionContable().registrarIngreso(producto, valor, idCliente);
-            //Actualiza la tabla de contabilidad
             panelInicial.getPanelGestionContable().actualizarDatos();
+        }
+    } 
+
+    public void ejecutarConsultaCompraProveedor() {
+        if (panelInicial.getPanelConsultas() == null) return;
+        try {
+            String nit = panelInicial.getPanelConsultas().getTxtNitProveedor().getText().trim();
+            String fD = panelInicial.getPanelConsultas().getTxtFechaDesde().getText().trim();
+            String fH = panelInicial.getPanelConsultas().getTxtFechaHasta().getText().trim();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            List<CompraPro> lista = gestionProveedor.listarComprasProveedorPorFecha(
+                                        nit, LocalDate.parse(fD, formatter), LocalDate.parse(fH, formatter));
+
+            panelInicial.getPanelConsultas().actualizarTablaComprasPro(lista);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: Verifique el formato de fecha (dd/MM/yyyy) y los datos.");
+        }
+    }
+
+    public void ejecutarConsultaVentasPorFecha() {
+        if (panelInicial.getPanelConsultas() == null) return;
+        try {
+            String fechaTexto = panelInicial.getPanelConsultas().getTxtFechaVentas().getText().trim();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate fecha = LocalDate.parse(fechaTexto, formatter);
+            Date fechaBusqueda = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            java.util.List<CompasCliente> ventas = gestionCompasCliente.obtenerVentasPorFecha(fechaBusqueda);
+            panelInicial.getPanelConsultas().actualizarTablaVentasFecha(ventas);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: Verifique el formato de fecha (dd/MM/yyyy).", "Consulta", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    public void mostrarPanelStockMinimo() {
+        if (panelInicial.getPanelConsultas() == null) return;
+        java.util.List<Producto> lista = gestionProducto.listarProductosBajoStock();
+        panelInicial.getPanelConsultas().actualizarTablaStockMinimo(lista);
+        panelInicial.getPanelConsultas().conmutarVista("STOCK_MIN");
+    }
+
+    public void ejecutarConsultaStockMinimo() {
+        if (panelInicial.getPanelConsultas() == null) return;
+        java.util.List<Producto> lista = gestionProducto.listarProductosBajoStock();
+        panelInicial.getPanelConsultas().actualizarTablaStockMinimo(lista);
+    }
+
+    public void mostrarHistorialClienteConsulta() {
+        if (panelInicial.getPanelConsultas() == null) return;
+        panelInicial.getPanelConsultas().getTxtDocumentoCliente().setText("");
+        panelInicial.getPanelConsultas().actualizarTablaHistorialCliente(null);
+        panelInicial.getPanelConsultas().conmutarVista("HISTORIAL_CLIENTE");
+    }
+
+    public void ejecutarConsultaHistorialClienteConsulta() {
+        if (panelInicial.getPanelConsultas() == null) return;
+        try {
+            String documento = panelInicial.getPanelConsultas().getTxtDocumentoCliente().getText().trim();
+            if (documento == null || documento.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese el documento del cliente para buscar su historial.", "Consulta", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            java.util.List<CompasCliente> compras = gestionCompasCliente.listarComprasPorCliente(documento);
+            if (compras == null || compras.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se encontraron compras para ese cliente.", "Consulta", JOptionPane.INFORMATION_MESSAGE);
+            }
+            panelInicial.getPanelConsultas().actualizarTablaHistorialCliente(compras);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al ejecutar la consulta. Verifique los datos.", "Consulta", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    public void ejecutarConsultaMovimientosContables() {
+        if (panelInicial.getPanelConsultas() == null) return;
+        try {
+            String cuenta = panelInicial.getPanelConsultas().getTxtCuentaContable().getText().trim();
+            String fD = panelInicial.getPanelConsultas().getTxtFechaDesdeMov().getText().trim();
+            String fH = panelInicial.getPanelConsultas().getTxtFechaHastaMov().getText().trim();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate desde = LocalDate.parse(fD, formatter);
+            LocalDate hasta = LocalDate.parse(fH, formatter);
+            java.util.List<MovimientoContable> movimientos = panelInicial.getPanelGestionContable() != null
+                    ? panelInicial.getPanelGestionContable().getGestionContable().obtenerMovimientosPorCuentaYPeriodo(cuenta.isEmpty() ? "TODAS" : cuenta, desde, hasta)
+                    : new java.util.ArrayList<>();
+            panelInicial.getPanelConsultas().actualizarTablaMovimientosContables(movimientos);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: Verifique el formato de fecha (dd/MM/yyyy) y los datos.", "Consulta", JOptionPane.WARNING_MESSAGE);
         }
     }
 }

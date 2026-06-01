@@ -47,7 +47,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
 
         JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
         
-        //PanelFormulario
         JPanel panelFormulario = new JPanel(new GridBagLayout());
         panelFormulario.setBorder(BorderFactory.createTitledBorder("Registrar Compra"));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -55,7 +54,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        //Proveedor
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         panelFormulario.add(new JLabel("Proveedor:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1;
@@ -72,7 +70,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         comboProductos.addActionListener(evt -> actualizarPrecioYTotal());
         panelFormulario.add(comboProductos, gbc);
 
-        //Cantidad
         gbc.gridx = 0; gbc.gridy = 2;
         panelFormulario.add(new JLabel("Cantidad:"), gbc);
         gbc.gridx = 1;
@@ -85,7 +82,7 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         });
         panelFormulario.add(txtCantidad, gbc);
 
-        //PrecioUnitario
+        
         gbc.gridx = 0; gbc.gridy = 3;
         panelFormulario.add(new JLabel("Precio Unitario:"), gbc);
         gbc.gridx = 1;
@@ -94,7 +91,7 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         lblPrecioUnitario.setForeground(new Color(0, 100, 0));
         panelFormulario.add(lblPrecioUnitario, gbc);
 
-        //Total
+        
         gbc.gridx = 0; gbc.gridy = 4;
         panelFormulario.add(new JLabel("Total:"), gbc);
         gbc.gridx = 1;
@@ -103,7 +100,7 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         lblTotal.setForeground(new Color(0, 0, 150));
         panelFormulario.add(lblTotal, gbc);
 
-        //BotonesDeAccion
+        
         gbc.gridx = 0; gbc.gridy = 5;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -121,7 +118,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         panelBotones.add(btnLimpiar);
         panelFormulario.add(panelBotones, gbc);
 
-        //TablaHistorial 
         String[] columnas = {"Fecha", "Proveedor", "Producto", "Cantidad", "Total"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -152,7 +148,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
     }
 
     private void cargarDatos() {
-        //CargarProveedores
         List<Proveedor> proveedores = gestionProveedor.listarProveedores();
         comboProveedores.removeAllItems();
         for (Proveedor p : proveedores) {
@@ -161,7 +156,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
             }
         }
 
-        //CargarProductosYActualizar
         actualizarListaProductos();
         actualizarHistorial();
     }
@@ -256,11 +250,9 @@ public class PanelComprasPro extends JPanel implements ActionListener {
             return;
         }
 
-        //ActualizarStock
         producto.setStockActual(producto.getStockActual() + cantidad);
         gestionProducto.actualizarProducto(producto);
 
-        //GuardarEnHistorial
         CompraPro nuevaCompra = new CompraPro(
             LocalDate.now(),
             proveedor.getNombre(),
@@ -272,7 +264,6 @@ public class PanelComprasPro extends JPanel implements ActionListener {
         historialCompras.add(nuevaCompra);
         localCompra.guardar(nuevaCompra);
 
-        //RegistrarContabilidad
         PanelPrincipal ventana = (PanelPrincipal) SwingUtilities.getWindowAncestor(this);
         if (ventana != null) {
             ventana.registrarCompra(producto.getNombre(), totalCompra, proveedor.getNit());

@@ -6,12 +6,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Arregle el bug del guardar() - faltaba setString(4) para numeroIdentificacion
-// y el parametro 3 estaba mal puesto (le mandaba numeroIdentificacion en vez de tipoIdentificacion)
-// Tambien arregle el actualizar() que tenia el mismo problema con tipoIdentificacion
+
 public class LocalCliente implements IGestionCliente {
 
-    //CRUD PRINCIPAL
+    
     @Override
     public void guardar(Cliente cliente) {
         String sql = "INSERT INTO clientes (codigo, nombre, tipoIdentificacion, numeroIdentificacion, direccion, telefono, tipoCliente, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -117,11 +115,18 @@ public class LocalCliente implements IGestionCliente {
         return resultado;
     }
 
-    // MÉTODOS AUXILIARES
     private Cliente mapearCliente(ResultSet rs) throws SQLException {
         Cliente c = new Cliente();
         c.setCodigo(rs.getString("codigo"));
         c.setNombre(rs.getString("nombre"));
+        String tipoIdentificacion = rs.getString("tipoIdentificacion");
+        if (tipoIdentificacion != null && !tipoIdentificacion.isEmpty()) {
+            try {
+                c.setTipodoc(co.edu.uptc.tiendaminorista.enums.TipoDocumentoEnum.valueOf(tipoIdentificacion));
+            } catch (IllegalArgumentException e) {
+                c.setTipodoc(null);
+            }
+        }
         c.setNumeroIdentificacion(rs.getString("numeroIdentificacion"));
         c.setDireccion(rs.getString("direccion"));
         c.setTelefono(rs.getString("telefono"));

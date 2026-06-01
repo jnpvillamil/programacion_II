@@ -42,4 +42,14 @@ public class CompraPro implements Serializable {
     public String getFechaFormateada() {
         return fecha != null ? fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
     }
+
+	public void setProveedor(Proveedor prov) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String METODO_PARA_SACAR_EL_NIT() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

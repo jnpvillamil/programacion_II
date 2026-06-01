@@ -15,7 +15,6 @@ import java.util.List;
 
 public class PanelProductos extends JPanel {
 
-    // campos del formulario
     private JTextField txtCodigo;
     private JTextField txtNombre;
     private JComboBox<CategoriaProducto> comboCategorias;
@@ -25,11 +24,9 @@ public class PanelProductos extends JPanel {
     private JTextField txtStockMinimo;
     private JTextField txtBuscar;
 
-    // tabla de productos
     private JTable tabla;
     private DefaultTableModel modeloTabla;
 
-    // botones de accion
     private JButton btnAgregar;
     private JButton btnModificar;
     private JButton btnEliminar;
@@ -38,7 +35,6 @@ public class PanelProductos extends JPanel {
     private JButton btnReporteJSON;
     private JButton btnStockBajo;
 
-    // capa de negocio
     private GestionProducto gestionProducto;
 
     public PanelProductos(Evento e) {
@@ -58,7 +54,6 @@ public class PanelProductos extends JPanel {
         this(null);
     }
 
-    // ───────── CONSTRUCCION DE PANTALLA ─────────
 
     private JPanel crearPanelTitulo() {
         JPanel panelTitulo = new JPanel(new BorderLayout());
@@ -89,7 +84,6 @@ public class PanelProductos extends JPanel {
     private JPanel crearPanelCentral() {
         JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
 
-        // formulario de datos
         JPanel panelForm = new JPanel(new GridBagLayout());
         panelForm.setBorder(BorderFactory.createTitledBorder("Datos del producto"));
         panelForm.setPreferredSize(new Dimension(320, 0));
@@ -123,7 +117,6 @@ public class PanelProductos extends JPanel {
             panelForm.add((Component) campos[i][1], gbc);
         }
 
-        // tabla con columnas del caso de estudio
         String[] columnas = {"Código", "Nombre", "Categoría", "P.Compra", "P.Venta", "Stock", "StockMín.", "Estado"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -177,10 +170,8 @@ public class PanelProductos extends JPanel {
         return panelBotones;
     }
 
-    // ───────── LISTENERS / EVENTOS ─────────
 
     private void configurarListeners(Evento evento) {
-        // al hacer click en la tabla se cargan los datos en el formulario
         tabla.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent ev) {
@@ -196,7 +187,6 @@ public class PanelProductos extends JPanel {
                     txtPrecioVenta.setText(modeloTabla.getValueAt(fila, 4).toString());
                     txtStockActual.setText(modeloTabla.getValueAt(fila, 5).toString());
                     txtStockMinimo.setText(modeloTabla.getValueAt(fila, 6).toString());
-                    // no dejar editar el codigo al modificar
                     txtCodigo.setEditable(false);
                 }
             }
@@ -211,14 +201,12 @@ public class PanelProductos extends JPanel {
         btnStockBajo.addActionListener(ev -> mostrarProductosBajoStock());
     }
 
-    // ───────── OPERACIONES CRUD ─────────
 
     private void agregarProducto() {
         if (!validarCampos()) return;
 
         String codigo = txtCodigo.getText().trim();
 
-        // verificar que no exista ya ese codigo en la BD
         Producto existente = gestionProducto.buscarPorCodigo(codigo);
         if (existente != null) {
             JOptionPane.showMessageDialog(this,
@@ -259,7 +247,6 @@ public class PanelProductos extends JPanel {
             "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // inactivar - no borra el registro, solo cambia el estado a inactivo
     private void inactivarProducto() {
         int fila = tabla.getSelectedRow();
         if (fila < 0) {
@@ -294,7 +281,6 @@ public class PanelProductos extends JPanel {
         }
     }
 
-    // activar un producto que estaba inactivo
     private void activarProducto() {
         int fila = tabla.getSelectedRow();
         if (fila < 0) {
@@ -322,7 +308,6 @@ public class PanelProductos extends JPanel {
             "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // buscar en la tabla por codigo o nombre
     private void buscarProducto() {
         String busqueda = txtBuscar.getText().trim().toLowerCase();
         if (busqueda.isEmpty()) {
@@ -338,7 +323,6 @@ public class PanelProductos extends JPanel {
         }
     }
 
-    // mostrar productos con stock por debajo del minimo
     private void mostrarProductosBajoStock() {
         List<Producto> bajos = gestionProducto.listarProductosBajoStock();
         if (bajos.isEmpty()) {
@@ -355,8 +339,6 @@ public class PanelProductos extends JPanel {
             "Se encontraron " + bajos.size() + " producto(s) bajo el stock mínimo.",
             "Alerta de stock", JOptionPane.WARNING_MESSAGE);
     }
-
-    // ───────── REPORTE JSON ─────────
 
     private void generarReporteJSON() {
         List<Producto> lista = gestionProducto.listarProductos();
@@ -388,9 +370,6 @@ public class PanelProductos extends JPanel {
         }
     }
 
-    // ───────── UTILIDADES ─────────
-
-    // construir objeto Producto a partir de lo que el usuario ingreso
     private Producto construirProductoDesdeFormulario() {
         Producto p = new Producto();
         p.setCodigo(txtCodigo.getText().trim());
@@ -404,7 +383,6 @@ public class PanelProductos extends JPanel {
         return p;
     }
 
-    // validar que todos los campos requeridos esten llenos y sean validos
     private boolean validarCampos() {
         if (txtCodigo.getText().trim().isEmpty()
                 || txtNombre.getText().trim().isEmpty()
@@ -437,7 +415,6 @@ public class PanelProductos extends JPanel {
         return true;
     }
 
-    // cargar todos los productos en la tabla
     public void cargarTabla() {
         modeloTabla.setRowCount(0);
         for (Producto p : gestionProducto.listarProductos()) {
@@ -445,7 +422,6 @@ public class PanelProductos extends JPanel {
         }
     }
 
-    // agregar una fila a la tabla con los datos del producto
     private void agregarFilaTabla(Producto p) {
         String estado = p.isActivo() ? "Activo" : "Inactivo";
         modeloTabla.addRow(new Object[]{
@@ -460,7 +436,6 @@ public class PanelProductos extends JPanel {
         });
     }
 
-    // limpiar todos los campos del formulario
     private void limpiarCampos() {
         txtCodigo.setText("");
         txtNombre.setText("");

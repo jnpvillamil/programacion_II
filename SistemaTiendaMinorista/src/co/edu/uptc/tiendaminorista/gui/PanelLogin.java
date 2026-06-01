@@ -24,7 +24,6 @@ public class PanelLogin extends JPanel {
 
         plogin.add(Box.createVerticalStrut(15));
         
-        //Etiqueta Usuario
         JLabel lblUsuario = new JLabel("Usuario:");
         lblUsuario.setAlignmentX(Component.CENTER_ALIGNMENT);
         plogin.add(lblUsuario);
@@ -36,7 +35,7 @@ public class PanelLogin extends JPanel {
 
         plogin.add(Box.createVerticalStrut(10));
         
-        //Etiqueta Contraseña
+        
         JLabel lblContrasena = new JLabel("Contraseña:");
         lblContrasena.setAlignmentX(Component.CENTER_ALIGNMENT);
         plogin.add(lblContrasena);
@@ -63,7 +62,6 @@ public class PanelLogin extends JPanel {
         
         plogin.add(Box.createVerticalStrut(20));
         
-        //Credenciales de prueba
         JLabel lblAyuda = new JLabel("-Prueba con usr: admin / pw: 1234");
         lblAyuda.setFont(new Font("Arial", Font.ITALIC, 12));
         lblAyuda.setForeground(new Color(25, 70, 120));

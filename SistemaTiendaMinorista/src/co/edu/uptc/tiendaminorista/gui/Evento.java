@@ -2,111 +2,133 @@ package co.edu.uptc.tiendaminorista.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JOptionPane;
-import co.edu.uptc.tiendaminorista.gui.administrador.PanelProductos;
 
 public class Evento implements ActionListener {
-
+    // Constantes de eventos base
     public final static String SALIR = "Salir";
     public final static String ENTRAR = "Entrar";
     public final static String REGISTRARCLIENTE = "Registrar cliente";
-    public final static String MODIFICARCLIENTE = "Modificar cliente";
-    public final static String HISTORIALCLIENTE = "Historial de compra cliente";
-    public final static String BUSQUEDACLI = "busquedacliente";
     public final static String CANCELAR = "Cancelar";
     public final static String REGISTRAR = "Registrar";
+    public final static String MODIFICARCLIENTE = "Modificar cliente";
     public final static String ACTUALIZARCLI = "Actualizar cliente";
     public final static String DESACTIVARCLI = "Desactivar cliente";
     public final static String ACTIVARCLI = "Activar cliente";
     public final static String REGISTRARPROVEDORES = "Registrar Proveedores";
-    public final static String ACTUALIZARPRO = "Actualizar Proveedores";
-    public final static String COMPRASPRO = "Compras realizadas a los proveedores";
-    public final static String CANCELARPRO = "Cancelar";
     public final static String REGISTRARPROV = "Registrar Proveedor";
+    public final static String ACTUALIZARPRO = "Actualizar Proveedores";
     public final static String ACTUALIZARPRO1 = "Actualizar Proveedor";
     public final static String DESACTIVARPRO = "Desactivar proveedor";
     public final static String ACTIVARPRO = "Activar proveedor";
+    public final static String COMPRASPRO = "Compras realizadas a los proveedores";
+    public final static String CANCELARPRO = "Cancelar";
     public final static String REGISTRAREM = "Registar Empleado";
     public final static String ACTUALIZAREM = "Actualizar Empleado";
     public final static String ELIMINAREM = "Eliminar";
-    public final static String BUSCAR_HISTORIAL_CLI = "Buscar Historial Cliente";
-    
     public final static String COMPRASCLI = "Realizar compra"; 
     public final static String REALIZARCOM = "Ejecutar Compra Desde Panel"; 
     public final static String VOLVER = "Volver de Compra"; 
+    public final static String HISTORIALCLIENTE = "Historial de compra cliente";
+    public final static String BUSCAR_HISTORIAL_CLI = "Buscar Historial Cliente";
+    
+    // Constantes de Consultas (Mapeadas a los Botones Laterales del Boceto)
+    public final static String EJECUTAR_CONS_COMPRA_PROV = "Ejecutar Consulta Compra Proveedor";
+    public final static String MOSTRAR_VENTAS_FECHA = "Mostrar Ventas Por Fecha";
+    public final static String MOSTRAR_COMPRA_PROV = "Mostrar Compra Por Proveedor";
+    public final static String MOSTRAR_STOCK_MIN = "Mostrar Productos Stock Minimo";
+    public final static String MOSTRAR_HISTORIAL_CLI_CONS = "Mostrar Historial Cliente Consulta";
+    public final static String MOSTRAR_MOV_CONTABLE = "Mostrar Movimiento Contable";
+
+    public final static String EJECUTAR_CONS_VENTAS_FECHA = "Ejecutar Consulta Ventas Fecha";
+    public final static String EJECUTAR_CONS_STOCK_MIN = "Ejecutar Consulta Stock Minimo";
+    public final static String EJECUTAR_CONS_HISTORIAL_CLI = "Ejecutar Consulta Historial Cliente";
+    public final static String EJECUTAR_CONS_MOV_CONTABLE = "Ejecutar Consulta Movimientos Contables";
 
     private PanelPrincipal ventana;
-    private PanelProductos panelProductos;
 
     public Evento(PanelPrincipal V) {
-        ventana = V;
+        this.ventana = V;
+    }
+
+    // CORRECCIÓN FUNDAMENTAL PARA EL FILTRADO EN CALIENTE (Borra error de image_e01451.png)
+    public PanelPrincipal getVentana() {
+        return this.ventana;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String evento = e.getActionCommand();
+        String comando = e.getActionCommand();
 
-        if (evento.equals(SALIR)) {
-            int confirm = JOptionPane.showConfirmDialog(null, 
-                "¿Seguro que quiere salir del sistema?", 
-                "Salida del sistema", 
-                JOptionPane.YES_NO_OPTION);
-            
-            if (confirm == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            }
-        } else if (evento.equals(ENTRAR)) {
+        if (comando.equals(SALIR)) {
+            System.exit(0);
+        } else if (comando.equals(ENTRAR)) {
             ventana.loguear();
-        } else if (evento.equals(REGISTRARCLIENTE)) {
+        } else if (comando.equals(REGISTRARCLIENTE)) {
             ventana.mostrarRegistroCliente();
-        } else if (evento.equals(CANCELAR)) {
+        } else if (comando.equals(CANCELAR)) {
             ventana.regresarAlInicial();
-        } else if (evento.equals(REGISTRAR)) {
+        } else if (comando.equals(REGISTRAR)) {
             ventana.registrarCliente();
-        } else if (evento.equals(MODIFICARCLIENTE)) {
+        } else if (comando.equals(MODIFICARCLIENTE)) {
             ventana.mostrarActualizarCliente();
-        } else if (evento.equals(ACTUALIZARCLI)) {
+        } else if (comando.equals(ACTUALIZARCLI)) {
             ventana.actualizarCliente();
-        } else if (evento.equals(DESACTIVARCLI)) {
+        } else if (comando.equals(DESACTIVARCLI)) {
             ventana.desactivarCliente();
-        } else if (evento.equals(ACTIVARCLI)) {
+        } else if (comando.equals(ACTIVARCLI)) {
             ventana.activarCliente();
-        } else if (evento.equals(REGISTRARPROVEDORES)) {
+        } else if (comando.equals(REGISTRARPROVEDORES)) {
             ventana.mostrarRegistrarProveedor();
-        } else if (evento.equals(REGISTRARPROV)) {
+        } else if (comando.equals(REGISTRARPROV)) {
             ventana.registrarProveedor();
-        } else if (evento.equals(ACTUALIZARPRO)) {
+        } else if (comando.equals(ACTUALIZARPRO)) {
             ventana.mostrarActualizarProveedor();
-        } else if (evento.equals(ACTUALIZARPRO1)) {
+        } else if (comando.equals(ACTUALIZARPRO1)) {
             ventana.actualizarProveedor();
-        } else if (evento.equals(DESACTIVARPRO)) {
+        } else if (comando.equals(DESACTIVARPRO)) {
             ventana.desactivarProveedor();
-        } else if (evento.equals(ACTIVARPRO)) {
+        } else if (comando.equals(ACTIVARPRO)) {
             ventana.activarProveedor();
-        } else if (evento.equals(COMPRASPRO)) {
+        } else if (comando.equals(COMPRASPRO)) {
             ventana.mostrarComprasPro();    
-        } else if (evento.equals(CANCELARPRO)) {
-            ventana.regresarAlInicial();
-        } else if (evento.equals(REGISTRAREM)) {
+        } else if (comando.equals(REGISTRAREM)) {
             ventana.registrarEmpleado();
-        } else if (evento.equals(ACTUALIZAREM)) {
+        } else if (comando.equals(ACTUALIZAREM)) {
             ventana.actualizarEmpleado();
-        } else if (evento.equals(ELIMINAREM)) { 
+        } else if (comando.equals(ELIMINAREM)) { 
             ventana.eliminarEmpleado();
-        } else if (evento.equals(COMPRASCLI)) {
+        } else if (comando.equals(COMPRASCLI)) {
             ventana.mostrarCompraCliente(); 
-        } else if (evento.equals(REALIZARCOM)) {
-            ventana.ejecutarCompraCliente(); 
-        } else if (evento.equals(VOLVER)) {
-            ventana.mostrarPanelCliente(); 
-        } else if (evento.equals(HISTORIALCLIENTE)) {
-            ventana.mostrarPantallaHistorial(); 
-        } else if (evento.equals(BUSCAR_HISTORIAL_CLI)) {
+        } else if (comando.equals(HISTORIALCLIENTE)) {
+            ventana.mostrarPantallaHistorial();
+        } else if (comando.equals(BUSCAR_HISTORIAL_CLI)) {
             ventana.buscarHistorialCliente();
+        } else if (comando.equals(VOLVER)) {
+            ventana.regresarAlInicial();
+        } else if (comando.equals(REALIZARCOM)) {
+            ventana.ejecutarCompraCliente(); 
         } 
-    }
-
-    public PanelPrincipal getVentana() {
-        return this.ventana;
+        // ENRUTADORES DINÁMICOS DE LAS CONSULTAS LATERALES
+        else if (comando.equals(EJECUTAR_CONS_COMPRA_PROV)) {
+            ventana.ejecutarConsultaCompraProveedor(); 
+        } else if (comando.equals(EJECUTAR_CONS_VENTAS_FECHA)) {
+            ventana.ejecutarConsultaVentasPorFecha();
+        } else if (comando.equals(EJECUTAR_CONS_STOCK_MIN)) {
+            ventana.ejecutarConsultaStockMinimo();
+        } else if (comando.equals(EJECUTAR_CONS_HISTORIAL_CLI)) {
+            ventana.ejecutarConsultaHistorialClienteConsulta();
+        } else if (comando.equals(EJECUTAR_CONS_MOV_CONTABLE)) {
+            ventana.ejecutarConsultaMovimientosContables();
+        } else if (comando.equals(MOSTRAR_VENTAS_FECHA)) {
+            ventana.getPanelInicial().getPanelConsultas().conmutarVista("VENTAS_FECHA");
+        } else if (comando.equals(MOSTRAR_COMPRA_PROV)) {
+            ventana.getPanelInicial().getPanelConsultas().conmutarVista("COMPRA_PROVEEDOR");
+        } else if (comando.equals(MOSTRAR_STOCK_MIN)) {
+            ventana.mostrarPanelStockMinimo();
+        } else if (comando.equals(MOSTRAR_HISTORIAL_CLI_CONS)) {
+            ventana.mostrarHistorialClienteConsulta();
+        } else if (comando.equals(MOSTRAR_MOV_CONTABLE)) {
+            ventana.getPanelInicial().getPanelConsultas().conmutarVista("MOV_CONTABLE");
+        }
     }
 }

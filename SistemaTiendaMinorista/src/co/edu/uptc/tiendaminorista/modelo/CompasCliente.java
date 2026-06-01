@@ -1,6 +1,7 @@
 package co.edu.uptc.tiendaminorista.modelo;
 
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class CompasCliente {
     
@@ -69,5 +70,13 @@ public class CompasCliente {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public String getFechaFormateada() {
+        if (fecha == null) {
+            return "";
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(fecha);
     }
 }

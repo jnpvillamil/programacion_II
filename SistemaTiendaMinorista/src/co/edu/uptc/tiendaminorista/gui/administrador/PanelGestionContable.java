@@ -71,7 +71,6 @@ public class PanelGestionContable extends JPanel {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        //Mostrar
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -99,7 +98,6 @@ public class PanelGestionContable extends JPanel {
 
         panelFiltros.add(panelRadios, gbc);
 
-        //CuentaContable
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -110,7 +108,6 @@ public class PanelGestionContable extends JPanel {
         txtCuentaContable = new JTextField(25);
         panelFiltros.add(txtCuentaContable, gbc);
 
-        //Fechas
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
@@ -129,7 +126,6 @@ public class PanelGestionContable extends JPanel {
         txtHasta.setText(LocalDate.now().format(formatter));
         panelFiltros.add(txtHasta, gbc);
 
-        //Botones
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 4;
@@ -148,7 +144,6 @@ public class PanelGestionContable extends JPanel {
 
         panelPrincipal.add(panelFiltros, BorderLayout.CENTER);
 
-        //Acciones
         btnGenerar.addActionListener(e -> generarReporte());
         btnFiltrar.addActionListener(e -> aplicarFiltros());
         btnBuscar.addActionListener(e -> buscarPorCuenta());
@@ -224,7 +219,6 @@ public class PanelGestionContable extends JPanel {
         List<MovimientoContable> resultado = gestionContable.listarMovimientos();
         List<MovimientoContable> filtrados = new ArrayList<>(resultado);
 
-        //FiltroPortTipo
         if (rbCadaVenta.isSelected()) {
             filtrados.clear();
             for (MovimientoContable m : resultado) {
@@ -241,7 +235,6 @@ public class PanelGestionContable extends JPanel {
             }
         }
 
-        //FiltroPorFechas
         try {
             String desdeStr = txtDesde.getText().trim();
             String hastaStr = txtHasta.getText().trim();
@@ -260,7 +253,6 @@ public class PanelGestionContable extends JPanel {
             JOptionPane.showMessageDialog(this, "Error en formato de fecha. Use dd/mm/aaaa");
         }
 
-        //FiltroPorCuentaContable
         String cuenta = txtCuentaContable.getText().trim();
         if (!cuenta.isEmpty()) {
             List<MovimientoContable> cuentaFiltrados = new ArrayList<>();

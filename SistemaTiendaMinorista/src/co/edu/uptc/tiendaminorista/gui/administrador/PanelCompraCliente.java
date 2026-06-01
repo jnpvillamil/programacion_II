@@ -156,7 +156,7 @@ public class PanelCompraCliente extends JPanel {
         if (clientes != null) {
             for (Cliente c : clientes) {
                 if (c.isActivo()) {
-                    comboClientes.addItem(c.getNombre() + " (" + c.getNumeroIdentificacion() + ")");
+                    comboClientes.addItem(c.getNombre());
                 }
             }
         }

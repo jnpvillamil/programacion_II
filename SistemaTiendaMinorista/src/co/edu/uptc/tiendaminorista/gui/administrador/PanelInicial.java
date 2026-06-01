@@ -34,9 +34,10 @@ public class PanelInicial extends JPanel {
     private GestionProducto gestionProducto; 
     private PanelGestionContable panelGestionContable;
     private PanelReportes panelReportes;
+    
+    private PanelConsultas panelConsultas;
 
     public PanelInicial(Evento e, GestionProducto gestionProducto, GestionCliente gestionCliente, GestionProveedor gestionProveedor, PanelRegistrosEmpleados Empleados) {
-
         setLayout(new BorderLayout());
         this.gestionCliente = gestionCliente;
         this.gestionProveedor = gestionProveedor;
@@ -58,6 +59,9 @@ public class PanelInicial extends JPanel {
 
         panelReportes = new PanelReportes();
         pestanas.addTab("Reportes", panelReportes);
+        
+        this.panelConsultas = new PanelConsultas(e);
+        pestanas.addTab("Consultas", this.panelConsultas);
 
         add(pestanas, BorderLayout.CENTER);
     }
@@ -102,6 +106,11 @@ public class PanelInicial extends JPanel {
         clienteLayout.show(clienteCards, "CLIENTE_LIST");
     }
 
+    public void mostrarCampestreCliente() {
+        pestanas.setSelectedIndex(0);
+        clienteLayout.show(clienteCards, "CLIENTE_REGISTRAR");
+    }
+
     public void mostrarRegistroCliente() {
         pestanas.setSelectedIndex(0);
         clienteLayout.show(clienteCards, "CLIENTE_REGISTRAR");
@@ -135,7 +144,6 @@ public class PanelInicial extends JPanel {
         proveedorLayout.show(proveedorCards, "PROVEEDOR_COMPRAS");
     }
 
-
     public PanelRegistrosEmpleados getPanelRegistrosEmpleados() {
         return Empleados;
     }
@@ -147,6 +155,10 @@ public class PanelInicial extends JPanel {
         } else if (indice == 2) {
             mostrarProveedorLista();
         }
+    }
+
+    public PanelConsultas getPanelConsultas() {
+        return this.panelConsultas;
     }
 
     public PanelCliente getPanelCliente() {
@@ -190,6 +202,7 @@ public class PanelInicial extends JPanel {
         panelProveedores.cargarProveedores(proveedores);
         panelActualizarProveedor.setProveedores(proveedores);
     }
+    
     public PanelHistorialCliente getPanelHistorialCliente() {
         return panelHistorialCliente;
     }
@@ -210,9 +223,7 @@ public class PanelInicial extends JPanel {
 
     public void mostrarCompraCliente() {
         pestanas.setSelectedIndex(0); 
-        
         clienteLayout.show(clienteCards, "CLIENTE_COMPRA"); 
-        
         if (this.compracliente != null) {
             this.compracliente.cargarClientesEnCombo(this.gestionCliente.listarClientes());
             this.compracliente.cargarProductosEnCombo(this.gestionProducto.listarProductos());

@@ -61,7 +61,6 @@ public class PanelCliente extends JPanel {
         btnComprasCliente.addActionListener(evento);
         btnComprasCliente.setActionCommand(Evento.COMPRASCLI); 
         panelBotones.add(btnComprasCliente);
-   
 
         add(panelBotones);
 
@@ -70,7 +69,7 @@ public class PanelCliente extends JPanel {
         JPanel motor = new JPanel();
         motor.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel motorcli = new JLabel("Motor de busqueda cliente ");
+        JLabel motorcli = new JLabel("Motor de búsqueda cliente ");
         motor.add(motorcli);
 
         Motolcli = new JTextField(20);
@@ -106,7 +105,6 @@ public class PanelCliente extends JPanel {
             private void ejecutarFiltro() {
                 SwingUtilities.invokeLater(() -> {
                     String texto = Motolcli.getText();
-                    
                     if (evento != null && evento.getVentana() != null) {
                         evento.getVentana().filtrarClientes(texto);
                     }

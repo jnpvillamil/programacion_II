@@ -1,6 +1,7 @@
 package co.edu.uptc.tiendaminorista.negocio;
 
 import java.util.List;
+import java.util.ArrayList;
 import co.edu.uptc.tiendaminorista.interfaces.IGestionProducto;
 import co.edu.uptc.tiendaminorista.modelo.Producto;
 import co.edu.uptc.tiendaminorista.persistencia.LocalProducto;
@@ -62,15 +63,17 @@ public class GestionProducto {
         return null;
     }
 
-    // listar productos con stock por debajo del minimo
+    /**
+     * REQUERIMIENTO CONSULTA 3: Listar productos con stock por debajo del minimo
+     */
     public List<Producto> listarProductosBajoStock() {
         if (productos instanceof LocalProducto) {
             return ((LocalProducto) productos).listarBajoStockMinimo();
         }
         // fallback manual
-        List<Producto> lista = new java.util.ArrayList<>();
+        List<Producto> lista = new ArrayList<>();
         for (Producto p : productos.listar()) {
-            if (p.getStockActual() < p.getStockMinimo() && p.isActivo()) {
+            if (p.getStockActual() <= 10 && p.isActivo()) {
                 lista.add(p);
             }
         }

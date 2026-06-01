@@ -162,7 +162,7 @@ public class LocalProducto implements IGestionProducto {
     public List<Producto> listarBajoStockMinimo() {
         List<Producto> lista = new ArrayList<>();
         String sql = "SELECT codigo, nombre, categoria, precio_compra, precio_venta, stock_actual, stock_minimo, activo "
-                + "FROM productos WHERE stock_actual < stock_minimo AND activo = 1";
+                + "FROM productos WHERE stock_actual <= 10 AND activo = 1";
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();

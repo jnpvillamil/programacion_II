@@ -76,12 +76,13 @@ public class PanelHistorialCliente extends JPanel {
         add(scrollPane);
         add(Box.createVerticalStrut(20));
 
-        // --- BOTÓN VOLVER ---
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton btnVolver = new JButton("Volver");
         btnVolver.addActionListener(evento);
         btnVolver.setActionCommand(Evento.VOLVER);
-        btnVolver.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(btnVolver);
+        panelBotones.add(btnVolver);
+        panelBotones.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(panelBotones);
     }
 
    
@@ -90,8 +91,7 @@ public class PanelHistorialCliente extends JPanel {
         comboClientes.removeAllItems();
         if (clientes != null) {
             for (Cliente c : clientes) {
-             
-                comboClientes.addItem(c.getNombre() + " - " + c.getNumeroIdentificacion());
+                comboClientes.addItem(c.getNombre());
             }
         }
     }
@@ -114,8 +114,8 @@ public class PanelHistorialCliente extends JPanel {
                 modeloTabla.addRow(new Object[]{
                     nombreProd,
                     c.getCantidad(),
-                    c.getTotalCompra(),
-                    c.getFecha() != null ? c.getFecha().toString() : "N/A"
+                    String.format("$%,.2f", c.getTotalCompra()),
+                    c.getFechaFormateada()
                 });
             }
         }
