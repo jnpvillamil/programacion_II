@@ -969,6 +969,7 @@ public class Evento implements ActionListener {
 			gestionCompra.registrarCompra(compra);
 			mostrarInformacion("Compra registrada con número " + compra.getNumeroFacturaProveedor() + ".");
 			dialog.dispose();
+			gestionProducto.recargar();
 			refrescarTablaCompras();
 			refrescarTablaProductos();
 		} catch (Exception ex) {
@@ -1016,6 +1017,7 @@ public class Evento implements ActionListener {
 
 			if (dialog.isCompraAnulada()) {
 				gestionCompra.anularCompra(compra.getNumeroFacturaProveedor(), dialog.getMotivoAnulacion());
+				gestionProducto.recargar();
 				refrescarTablaCompras();
 				refrescarTablaProductos();
 				mostrarInformacion("Compra anulada exitosamente.");

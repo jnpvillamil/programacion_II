@@ -480,7 +480,7 @@ public class DialogCompra extends JDialog {
 		compra.setNumeroFacturaProveedor(numeroFactura);
 		compra.setFecha(LocalDate.now());
 		compra.setCodigoProveedor(proveedor.getCodigoProveedor());
-		compra.setProveedor(proveedor.toString());
+		compra.setProveedor(proveedor.getRazonSocial());
 		compra.setFormaPago(formaPago);
 		compra.setDetalles(detalles);
 		compra.setSubtotal(subtotalCompra);

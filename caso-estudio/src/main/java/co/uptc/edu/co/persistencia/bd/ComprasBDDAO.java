@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Date;
-import java.time.LocalDate;
 
 import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.interfaces.dao.CompraDAO;
@@ -34,17 +33,20 @@ public class ComprasBDDAO implements CompraDAO {
 			+ " SET numeroFacturaProveedor = ?, fecha = ?, codigoProveedor = ?, formaPago = ?, subtotal = ?, impuestos = ?, totalCompra = ?, estado = ?, motivoAnulacion = ?"
 			+ " WHERE numeroFacturaProveedor = ?";
 
-	private static final String SQL_BUSCAR_COMPRA = "SELECT numeroFacturaProveedor, fecha, codigoProveedor, formaPago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
-			+ " FROM " + TABLA_COMPRAS + " WHERE numeroFacturaProveedor = ?";
+	private static final String SQL_BUSCAR_COMPRA = "SELECT c.numeroFacturaProveedor, c.fecha, c.codigoProveedor, p.razonSocial, c.formaPago, c.subtotal, c.impuestos, c.totalCompra, c.estado, c.motivoAnulacion"
+			+ " FROM " + TABLA_COMPRAS + " c LEFT JOIN proveedores p ON c.codigoProveedor = p.codigoProveedor"
+			+ " WHERE c.numeroFacturaProveedor = ?";
 
 	private static final String SQL_BUSCAR_ID_COMPRA = "SELECT idCompra FROM " + TABLA_COMPRAS
 			+ " WHERE numeroFacturaProveedor = ?";
 
-	private static final String SQL_LISTAR_COMPRAS = "SELECT numeroFacturaProveedor, fecha, codigoProveedor, formaPago, subtotal, impuestos, totalCompra, estado, motivoAnulacion"
-			+ " FROM " + TABLA_COMPRAS + " ORDER BY fecha DESC";
+	private static final String SQL_LISTAR_COMPRAS = "SELECT c.numeroFacturaProveedor, c.fecha, c.codigoProveedor, p.razonSocial, c.formaPago, c.subtotal, c.impuestos, c.totalCompra, c.estado, c.motivoAnulacion"
+			+ " FROM " + TABLA_COMPRAS + " c LEFT JOIN proveedores p ON c.codigoProveedor = p.codigoProveedor"
+			+ " ORDER BY c.fecha DESC";
 
-	private static final String SQL_LISTAR_DETALLES = "SELECT idDetalle, idCompra, codigoProducto, cantidad, costoUnitario, subtotal, impuestos, total"
-			+ " FROM " + TABLA_DETALLE_COMPRAS + " WHERE idCompra = ?";
+	private static final String SQL_LISTAR_DETALLES = "SELECT dc.idDetalle, dc.idCompra, dc.codigoProducto, p.nombreProducto, dc.cantidad, dc.costoUnitario, dc.subtotal, dc.impuestos, dc.total"
+			+ " FROM " + TABLA_DETALLE_COMPRAS + " dc LEFT JOIN productos p ON dc.codigoProducto = p.codigoProducto"
+			+ " WHERE dc.idCompra = ?";
 
 	private static final String SQL_ELIMINAR_DETALLES = "DELETE FROM " + TABLA_DETALLE_COMPRAS + " WHERE idCompra = ?";
 
@@ -245,6 +247,7 @@ public class ComprasBDDAO implements CompraDAO {
 			compra.setFecha(fechaSql.toLocalDate());
 		}
 		compra.setCodigoProveedor(resultado.getString("codigoProveedor"));
+		compra.setProveedor(resultado.getString("razonSocial"));
 		compra.setFormaPago(parseFormaPago(resultado.getString("formaPago")));
 		compra.setSubtotal(resultado.getDouble("subtotal"));
 		compra.setImpuestos(resultado.getDouble("impuestos"));
@@ -280,6 +283,7 @@ public class ComprasBDDAO implements CompraDAO {
 		DetalleCompra detalle = new DetalleCompra();
 		Producto producto = new Producto();
 		producto.setCodigoProducto(resultado.getString("codigoProducto"));
+		producto.setNombreProducto(resultado.getString("nombreProducto"));
 		detalle.setProducto(producto);
 		detalle.setCantidad(resultado.getInt("cantidad"));
 		detalle.setCostoUnitario(resultado.getDouble("costoUnitario"));

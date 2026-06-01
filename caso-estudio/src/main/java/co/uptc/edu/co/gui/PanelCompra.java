@@ -22,8 +22,8 @@ public class PanelCompra extends PanelCentral {
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	private static final String[] COLUMNAS = { "Factura Proveedor", "Fecha", "Proveedor", "Forma de Pago", "Subtotal",
-			"Impuestos", "Total", "Estado" };
+	private static final String[] COLUMNAS = { "Factura Proveedor", "Fecha", "Codigo Proveedor", "Proveedor",
+			"Forma de Pago", "Subtotal", "Impuestos", "Total", "Estado" };
 
 	private JButton botonNuevaCompra;
 	private JButton botonAnular;
@@ -182,7 +182,8 @@ public class PanelCompra extends PanelCentral {
 			if (coincideBusqueda && coincideProveedor && coincideFormaPago && coincideEstado) {
 				String factura = compra.getNumeroFacturaProveedor();
 				String fecha = compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "";
-				String proveedor = compra.getCodigoProveedor();
+				String codigoProveedor = compra.getCodigoProveedor();
+				String proveedor = obtenerNombreProveedor(compra);
 				String formaPago = compra.getFormaPago() != null
 				        ? compra.getFormaPago().toString()
 				        : "";
@@ -192,7 +193,8 @@ public class PanelCompra extends PanelCentral {
 				String estado = estadoCompra;
 
 				modeloTabla.addRow(
-						new Object[] { factura, fecha, proveedor, formaPago, subtotal, impuestos, total, estado });
+						new Object[] { factura, fecha, codigoProveedor, proveedor, formaPago, subtotal, impuestos, total,
+								estado });
 				totalFiltrados++;
 			}
 		}
@@ -209,27 +211,27 @@ public class PanelCompra extends PanelCentral {
 	}
 
 	public String obtenerProveedorSeleccionado() {
-		return obtenerTextoSeleccionado(2);
-	}
-
-	public String obtenerFormaPagoSeleccionada() {
 		return obtenerTextoSeleccionado(3);
 	}
 
-	public String obtenerSubtotalSeleccionado() {
+	public String obtenerFormaPagoSeleccionada() {
 		return obtenerTextoSeleccionado(4);
 	}
 
-	public String obtenerImpuestosSeleccionados() {
+	public String obtenerSubtotalSeleccionado() {
 		return obtenerTextoSeleccionado(5);
 	}
 
-	public String obtenerTotalSeleccionado() {
+	public String obtenerImpuestosSeleccionados() {
 		return obtenerTextoSeleccionado(6);
 	}
 
-	public String obtenerEstadoSeleccionadoCompra() {
+	public String obtenerTotalSeleccionado() {
 		return obtenerTextoSeleccionado(7);
+	}
+
+	public String obtenerEstadoSeleccionadoCompra() {
+		return obtenerTextoSeleccionado(8);
 	}
 
 	private static DecimalFormat crearFormatoMoneda() {
@@ -244,6 +246,13 @@ public class PanelCompra extends PanelCentral {
 
 	private String formatearMoneda(double valor) {
 		return FORMATO_MONEDA.format(valor);
+	}
+
+	private String obtenerNombreProveedor(Compra compra) {
+		if (compra.getProveedor() != null && !compra.getProveedor().trim().isEmpty()) {
+			return compra.getProveedor();
+		}
+		return compra.getCodigoProveedor() != null ? compra.getCodigoProveedor() : "";
 	}
 
 	public JButton getBotonFactura() {

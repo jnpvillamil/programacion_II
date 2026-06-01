@@ -17,7 +17,8 @@ import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
 public class GestionVenta implements IGestionVenta {
 
-	private static final String PREFIJO_FACTURA = "factura_";
+	private static final String PREFIJO_FACTURA = "FV-";
+	private static final String PREFIJO_FACTURA_ANTERIOR = "factura_";
 	private static final int DIGITOS_FACTURA = 6;
 	private static final double IVA = 0.19;
 
@@ -353,16 +354,34 @@ public class GestionVenta implements IGestionVenta {
 		for (Venta venta : ventas) {
 			String numeroFactura = venta.getNumeroFactura();
 
-			if (numeroFactura != null && numeroFactura.startsWith(PREFIJO_FACTURA)) {
-				String consecutivo = numeroFactura.substring(PREFIJO_FACTURA.length());
+			if (numeroFactura == null || numeroFactura.trim().isEmpty()) {
+				continue;
+			}
 
-				if (consecutivo.matches("\\d+")) {
-					mayorConsecutivo = Math.max(mayorConsecutivo, Integer.parseInt(consecutivo));
-				}
+			Integer consecutivo = obtenerConsecutivoFactura(numeroFactura);
+			if (consecutivo != null) {
+				mayorConsecutivo = Math.max(mayorConsecutivo, consecutivo);
 			}
 		}
 
 		return mayorConsecutivo + 1;
+	}
+
+	private Integer obtenerConsecutivoFactura(String numeroFactura) {
+		String numeroNormalizado = numeroFactura.trim();
+		String consecutivo = null;
+
+		if (numeroNormalizado.toUpperCase().startsWith(PREFIJO_FACTURA)) {
+			consecutivo = numeroNormalizado.substring(PREFIJO_FACTURA.length());
+		} else if (numeroNormalizado.startsWith(PREFIJO_FACTURA_ANTERIOR)) {
+			consecutivo = numeroNormalizado.substring(PREFIJO_FACTURA_ANTERIOR.length());
+		}
+
+		if (consecutivo == null || !consecutivo.matches("\\d+")) {
+			return null;
+		}
+
+		return Integer.parseInt(consecutivo);
 	}
 
 }

@@ -14,7 +14,9 @@ import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
 public class GestionCompra implements IGestionCompra {
-	private static final long NUMERO_FACTURA_INICIAL = 708507L;
+	private static final String PREFIJO_FACTURA_COMPRA = "FC-";
+	private static final int DIGITOS_FACTURA_COMPRA = 5;
+	private static final int CONSECUTIVO_FACTURA_INICIAL = 513;
 	private final CompraDAO compraDAO;
 	private final IGestionInventario gestionInventario;
 	private final IGestionContabilidad gestionContabilidad;
@@ -131,7 +133,7 @@ public class GestionCompra implements IGestionCompra {
 
 	@Override
 	public String generarNumeroFactura() {
-		long siguienteNumero = NUMERO_FACTURA_INICIAL;
+		int siguienteNumero = CONSECUTIVO_FACTURA_INICIAL;
 
 		for (Compra compra : compras) {
 			String numeroFactura = compra.getNumeroFacturaProveedor();
@@ -140,17 +142,27 @@ public class GestionCompra implements IGestionCompra {
 				continue;
 			}
 
-			try {
-				long numeroActual = Long.parseLong(numeroFactura.trim());
-				if (numeroActual >= siguienteNumero) {
-					siguienteNumero = numeroActual + 1;
-				}
-			} catch (NumberFormatException e) {
-
+			Integer consecutivo = obtenerConsecutivoFacturaCompra(numeroFactura);
+			if (consecutivo != null && consecutivo >= siguienteNumero) {
+				siguienteNumero = consecutivo + 1;
 			}
 		}
 
-		return String.valueOf(siguienteNumero);
+		return PREFIJO_FACTURA_COMPRA + String.format("%0" + DIGITOS_FACTURA_COMPRA + "d", siguienteNumero);
+	}
+
+	private Integer obtenerConsecutivoFacturaCompra(String numeroFactura) {
+		String numeroNormalizado = numeroFactura.trim().toUpperCase();
+		if (!numeroNormalizado.startsWith(PREFIJO_FACTURA_COMPRA)) {
+			return null;
+		}
+
+		String consecutivo = numeroNormalizado.substring(PREFIJO_FACTURA_COMPRA.length());
+		if (!consecutivo.matches("\\d+")) {
+			return null;
+		}
+
+		return Integer.parseInt(consecutivo);
 	}
 
 	private double calcularimpuestos(List<DetalleCompra> detalles) {
@@ -265,8 +277,9 @@ public class GestionCompra implements IGestionCompra {
 		}
 
 		String numeroFactura = compra.getNumeroFacturaProveedor();
-		if (numeroFactura != null && !numeroFactura.trim().isEmpty() && !numeroFactura.trim().matches("\\d+")) {
-			throw new Exception("El número de factura debe contener solo dígitos.");
+		if (numeroFactura != null && !numeroFactura.trim().isEmpty()
+				&& !numeroFactura.trim().matches("(?i)(\\d+|FC-\\d{5})")) {
+			throw new Exception("El número de factura debe ser numérico o tener formato FC-00000.");
 		}
 	}
 }
