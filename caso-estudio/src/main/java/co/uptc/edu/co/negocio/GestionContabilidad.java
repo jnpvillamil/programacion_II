@@ -7,7 +7,7 @@ import java.util.List;
 
 import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
-import co.uptc.edu.co.interfaces.MovimientoContableDAO;
+import co.uptc.edu.co.interfaces.dao.MovimientoContableDAO;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Venta;

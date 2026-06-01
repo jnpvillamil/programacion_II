@@ -3,8 +3,8 @@ package co.uptc.edu.co.negocio;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-import co.uptc.edu.co.interfaces.FacturaDAO;
 import co.uptc.edu.co.interfaces.IGestionFactura;
+import co.uptc.edu.co.interfaces.dao.FacturaDAO;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.DetalleCompra;

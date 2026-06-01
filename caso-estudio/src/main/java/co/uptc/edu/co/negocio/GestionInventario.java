@@ -9,8 +9,8 @@ import java.util.Map;
 
 import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionInventario;
-import co.uptc.edu.co.interfaces.MovimientoInventarioDAO;
-import co.uptc.edu.co.interfaces.ProductoDAO;
+import co.uptc.edu.co.interfaces.dao.MovimientoInventarioDAO;
+import co.uptc.edu.co.interfaces.dao.ProductoDAO;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.modelo.Producto;

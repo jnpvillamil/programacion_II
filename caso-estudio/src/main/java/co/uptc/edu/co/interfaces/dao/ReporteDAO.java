@@ -1,9 +1,9 @@
-package co.uptc.edu.co.interfaces;
+package co.uptc.edu.co.interfaces.dao;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import co.uptc.edu.co.modelo.ResumenProductoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
 
 public interface ReporteDAO {
 

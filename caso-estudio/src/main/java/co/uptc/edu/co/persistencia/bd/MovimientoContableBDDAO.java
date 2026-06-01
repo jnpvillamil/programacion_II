@@ -1,4 +1,4 @@
-package co.uptc.edu.co.persistencia;
+package co.uptc.edu.co.persistencia.bd;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
-import co.uptc.edu.co.interfaces.MovimientoContableDAO;
+import co.uptc.edu.co.interfaces.dao.MovimientoContableDAO;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.enums.TipoMovimientoContable;
 import co.uptc.edu.co.util.LogUtil;

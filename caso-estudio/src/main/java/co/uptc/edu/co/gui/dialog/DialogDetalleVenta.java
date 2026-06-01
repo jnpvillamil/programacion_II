@@ -21,8 +21,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import co.uptc.edu.co.modelo.DetalleVentaDevolucionDTO;
 import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.dto.DetalleVentaDevolucionDTO;
 
 public class DialogDetalleVenta extends JDialog {
 

@@ -1,4 +1,4 @@
-package co.uptc.edu.co.persistencia;
+package co.uptc.edu.co.persistencia.bd;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
-import co.uptc.edu.co.interfaces.MovimientoInventarioDAO;
+import co.uptc.edu.co.interfaces.dao.MovimientoInventarioDAO;
 import co.uptc.edu.co.modelo.MovimientoInventario;
 import co.uptc.edu.co.util.LogUtil;
 

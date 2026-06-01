@@ -3,8 +3,8 @@ package co.uptc.edu.co.negocio;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.uptc.edu.co.interfaces.ProveedorDAO;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
+import co.uptc.edu.co.interfaces.dao.ProveedorDAO;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;

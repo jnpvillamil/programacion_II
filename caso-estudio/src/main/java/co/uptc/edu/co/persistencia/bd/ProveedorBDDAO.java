@@ -1,4 +1,4 @@
-package co.uptc.edu.co.persistencia;
+package co.uptc.edu.co.persistencia.bd;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
-import co.uptc.edu.co.interfaces.ProveedorDAO;
+import co.uptc.edu.co.interfaces.dao.ProveedorDAO;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.util.LogUtil;

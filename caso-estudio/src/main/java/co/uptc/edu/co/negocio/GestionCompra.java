@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.uptc.edu.co.interfaces.CompraDAO;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionInventario;
+import co.uptc.edu.co.interfaces.dao.CompraDAO;
 import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;

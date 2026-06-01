@@ -3,10 +3,10 @@ package co.uptc.edu.co.interfaces;
 import java.time.LocalDate;
 import java.util.List;
 
-import co.uptc.edu.co.modelo.ResumenFormaPagoDTO;
-import co.uptc.edu.co.modelo.ResumenProductoDTO;
-import co.uptc.edu.co.modelo.ResumenUtilidadBrutaDTO;
-import co.uptc.edu.co.modelo.ResumenVentasDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.dto.ResumenVentasDTO;
 
 public interface IGestionReporte {
 

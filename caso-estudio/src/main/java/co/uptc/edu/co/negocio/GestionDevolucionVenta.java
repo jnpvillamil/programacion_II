@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import co.uptc.edu.co.conexion.TransaccionBD;
-import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.interfaces.IGestionInventario;
-import co.uptc.edu.co.interfaces.VentaDAO;
+import co.uptc.edu.co.interfaces.dao.DevolucionVentaDAO;
+import co.uptc.edu.co.interfaces.dao.VentaDAO;
 import co.uptc.edu.co.modelo.DetalleVenta;
-import co.uptc.edu.co.modelo.DetalleVentaDevolucionDTO;
 import co.uptc.edu.co.modelo.DevolucionVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
+import co.uptc.edu.co.modelo.dto.DetalleVentaDevolucionDTO;
 
 public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	private static final double IVA = 0.19;

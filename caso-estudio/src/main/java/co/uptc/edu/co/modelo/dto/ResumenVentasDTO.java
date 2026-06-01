@@ -1,7 +1,9 @@
-package co.uptc.edu.co.modelo;
+package co.uptc.edu.co.modelo.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import co.uptc.edu.co.modelo.Venta;
 
 public class ResumenVentasDTO {
 

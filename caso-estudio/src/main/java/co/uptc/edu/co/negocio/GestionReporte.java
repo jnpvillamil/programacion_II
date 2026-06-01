@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import co.uptc.edu.co.interfaces.IGestionReporte;
-import co.uptc.edu.co.interfaces.ReporteDAO;
-import co.uptc.edu.co.interfaces.VentaDAO;
-import co.uptc.edu.co.modelo.DetalleUtilidadBrutaDTO;
+import co.uptc.edu.co.interfaces.dao.ReporteDAO;
+import co.uptc.edu.co.interfaces.dao.VentaDAO;
 import co.uptc.edu.co.modelo.DetalleVenta;
-import co.uptc.edu.co.modelo.ResumenFormaPagoDTO;
-import co.uptc.edu.co.modelo.ResumenProductoDTO;
-import co.uptc.edu.co.modelo.ResumenUtilidadBrutaDTO;
-import co.uptc.edu.co.modelo.ResumenVentasDTO;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 import co.uptc.edu.co.modelo.enums.FormaPago;
+import co.uptc.edu.co.modelo.dto.DetalleUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.dto.ResumenVentasDTO;
 
 public class GestionReporte implements IGestionReporte {
 

@@ -2,9 +2,9 @@ package co.uptc.edu.co.interfaces;
 
 import java.util.List;
 
-import co.uptc.edu.co.modelo.DetalleVentaDevolucionDTO;
 import co.uptc.edu.co.modelo.DevolucionVenta;
 import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.dto.DetalleVentaDevolucionDTO;
 
 public interface IGestionDevolucionVenta {
 

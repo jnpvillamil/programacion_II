@@ -1,10 +1,10 @@
-package co.uptc.edu.co.persistencia;
+package co.uptc.edu.co.persistencia.archivo;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import co.uptc.edu.co.interfaces.FacturaDAO;
+import co.uptc.edu.co.interfaces.dao.FacturaDAO;
 import co.uptc.edu.co.util.LogUtil;
 
 public class FacturaTxtDAO implements FacturaDAO {

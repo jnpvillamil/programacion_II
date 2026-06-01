@@ -1,4 +1,4 @@
-package co.uptc.edu.co.modelo;
+package co.uptc.edu.co.modelo.dto;
 
 import co.uptc.edu.co.modelo.enums.FormaPago;
 

@@ -1,4 +1,4 @@
-package co.uptc.edu.co.persistencia;
+package co.uptc.edu.co.persistencia.bd;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 import co.uptc.edu.co.conexion.ConexionBD;
-import co.uptc.edu.co.interfaces.CompraDAO;
+import co.uptc.edu.co.interfaces.dao.CompraDAO;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.Producto;

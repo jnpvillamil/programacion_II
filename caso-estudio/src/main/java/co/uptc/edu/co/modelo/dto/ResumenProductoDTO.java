@@ -1,4 +1,4 @@
-package co.uptc.edu.co.modelo;
+package co.uptc.edu.co.modelo.dto;
 
 public class ResumenProductoDTO {
     private final String codigoProducto;

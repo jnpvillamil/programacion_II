@@ -1,4 +1,4 @@
-package co.uptc.edu.co.interfaces;
+package co.uptc.edu.co.interfaces.dao;
 
 import java.sql.Connection;
 import java.util.List;

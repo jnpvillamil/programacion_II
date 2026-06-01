@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.IGestionConsultas;
-import co.uptc.edu.co.interfaces.VentaDAO;
+import co.uptc.edu.co.interfaces.dao.VentaDAO;
 import co.uptc.edu.co.modelo.Venta;
 
 public class GestionConsultas implements IGestionConsultas {

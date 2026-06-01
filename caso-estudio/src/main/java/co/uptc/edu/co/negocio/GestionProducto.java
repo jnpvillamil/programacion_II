@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.IGestionProducto;
-import co.uptc.edu.co.interfaces.ProductoDAO;
+import co.uptc.edu.co.interfaces.dao.ProductoDAO;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 

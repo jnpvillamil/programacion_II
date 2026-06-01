@@ -1,4 +1,4 @@
-package co.uptc.edu.co.persistencia;
+package co.uptc.edu.co.persistencia.archivo;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -13,8 +13,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import co.uptc.edu.co.interfaces.ReporteDAO;
-import co.uptc.edu.co.modelo.ResumenProductoDTO;
+import co.uptc.edu.co.interfaces.dao.ReporteDAO;
+import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
 
 public class ReporteJSONDAO implements ReporteDAO {
 

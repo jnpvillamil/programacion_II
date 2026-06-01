@@ -43,9 +43,9 @@ import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
-import co.uptc.edu.co.modelo.ResumenFormaPagoDTO;
-import co.uptc.edu.co.modelo.ResumenProductoDTO;
 import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
 
 public class Evento implements ActionListener {
 	private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();

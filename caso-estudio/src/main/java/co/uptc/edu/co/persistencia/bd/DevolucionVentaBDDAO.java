@@ -1,4 +1,4 @@
-package co.uptc.edu.co.persistencia;
+package co.uptc.edu.co.persistencia.bd;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
-import co.uptc.edu.co.interfaces.DevolucionVentaDAO;
+import co.uptc.edu.co.interfaces.dao.DevolucionVentaDAO;
 import co.uptc.edu.co.modelo.DevolucionVenta;
 import co.uptc.edu.co.util.LogUtil;
 
