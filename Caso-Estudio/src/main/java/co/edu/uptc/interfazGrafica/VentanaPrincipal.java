@@ -239,6 +239,7 @@ public class VentanaPrincipal extends JFrame {
         DialogoCliente d = new DialogoCliente(this, true, null);
         d.setVisible(true);
         if(d.isOk()) {
+        	
             TiendaConfig.getInstancia().getGestionCliente().crear(d.getCliente());
             panelCliente.poblarTabla();
             JOptionPane.showMessageDialog(this, "Cliente creado exitosamente");
