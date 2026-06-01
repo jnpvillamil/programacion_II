@@ -18,6 +18,7 @@ import co.uptc.edu.co.interfaces.MovimientoContableDAO;
 import co.uptc.edu.co.interfaces.MovimientoInventarioDAO;
 import co.uptc.edu.co.interfaces.ProductoDAO;
 import co.uptc.edu.co.interfaces.ProveedorDAO;
+import co.uptc.edu.co.interfaces.ReporteDAO;
 import co.uptc.edu.co.interfaces.ClienteDAO;
 import co.uptc.edu.co.interfaces.VentaDAO;
 
@@ -40,6 +41,7 @@ import co.uptc.edu.co.persistencia.MovimientoContableBDDAO;
 import co.uptc.edu.co.persistencia.MovimientoInventarioBDDAO;
 import co.uptc.edu.co.persistencia.ProductoBDDAO;
 import co.uptc.edu.co.persistencia.ProveedorBDDAO;
+import co.uptc.edu.co.persistencia.ReporteJSONDAO;
 import co.uptc.edu.co.persistencia.VentaBDDAO;
 
 public class TiendaConfig {
@@ -79,7 +81,8 @@ public class TiendaConfig {
 		gestionContabilidad = new GestionContabilidad(movimientoContableDAO);
 		
 		gestionVenta = new GestionVenta(ventaDAO, gestionInventario, gestionContabilidad);
-		gestionReporte = new GestionReporte(ventaDAO);
+		ReporteDAO reporteDAO = new ReporteJSONDAO();
+		gestionReporte = new GestionReporte(ventaDAO, reporteDAO);
 		gestionConsultas = new GestionConsultas(ventaDAO);
 		gestionDevolucionVenta = new GestionDevolucionVenta(ventaDAO, devolucionVentaDAO, gestionInventario,
 				gestionContabilidad);

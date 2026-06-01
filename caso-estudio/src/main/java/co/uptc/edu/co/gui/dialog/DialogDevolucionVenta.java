@@ -21,6 +21,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import co.uptc.edu.co.gui.Evento;
+import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
@@ -42,6 +43,7 @@ public class DialogDevolucionVenta extends JDialog {
 	private JButton botonConfirmarDevolucion;
 	private JButton botonCancelar;
 	private Venta venta;
+	private IGestionDevolucionVenta gestionDevolucionVenta;
 
 	public DialogDevolucionVenta(Frame propietario) {
 		this(propietario, null);
@@ -53,6 +55,10 @@ public class DialogDevolucionVenta extends JDialog {
 		configurarDialogo();
 		agregarComponentes();
 		inicializarEventos(evento);
+	}
+
+	public void setGestionDevolucionVenta(IGestionDevolucionVenta gestionDevolucionVenta) {
+		this.gestionDevolucionVenta = gestionDevolucionVenta;
 	}
 
 	private void inicializarComponentes() {
@@ -291,8 +297,7 @@ public class DialogDevolucionVenta extends JDialog {
 	}
 
 	private void actualizarValorDevolucion() {
-		DetalleVenta detalle = obtenerDetalleSeleccionado();
-		if (detalle == null) {
+		if (gestionDevolucionVenta == null) {
 			campoValorDevolucion.setText("");
 			return;
 		}
@@ -304,25 +309,13 @@ public class DialogDevolucionVenta extends JDialog {
 				return;
 			}
 
-			campoValorDevolucion.setText(String.valueOf(cantidad * detalle.getPrecioUnitario()));
+			double valor = gestionDevolucionVenta.calcularValorDevolucion(
+					venta, obtenerCodigoProductoSeleccionado(), cantidad);
+			campoValorDevolucion.setText(String.valueOf(valor));
 		} catch (NumberFormatException e) {
 			campoValorDevolucion.setText("");
+		} catch (Exception e) {
+			campoValorDevolucion.setText("");
 		}
-	}
-
-	private DetalleVenta obtenerDetalleSeleccionado() {
-		String codigoProducto = obtenerCodigoProductoSeleccionado();
-		if (venta == null || codigoProducto.isEmpty() || venta.getDetalles() == null) {
-			return null;
-		}
-
-		for (DetalleVenta detalle : venta.getDetalles()) {
-			if (detalle.getProducto() != null
-					&& codigoProducto.equals(detalle.getProducto().getCodigoProducto())) {
-				return detalle;
-			}
-		}
-
-		return null;
 	}
 }

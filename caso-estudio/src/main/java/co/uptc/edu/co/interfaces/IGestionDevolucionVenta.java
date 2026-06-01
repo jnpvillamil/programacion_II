@@ -12,6 +12,8 @@ public interface IGestionDevolucionVenta {
 
 	void devolverVenta(Venta venta, String codigoProducto, int cantidad, String motivo) throws Exception;
 
+	double calcularValorDevolucion(Venta venta, String codigoProducto, int cantidad) throws Exception;
+
 	DevolucionVenta buscarDevolucionPorCodigo(String codigoDevolucion) throws Exception;
 
 	List<DetalleVentaDevolucionDTO> obtenerResumenDetalleVenta(Venta venta) throws Exception;

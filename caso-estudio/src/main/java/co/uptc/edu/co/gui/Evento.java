@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -42,6 +43,7 @@ import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
+import co.uptc.edu.co.modelo.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.ResumenProductoDTO;
 import co.uptc.edu.co.modelo.Venta;
 
@@ -836,6 +838,7 @@ public class Evento implements ActionListener {
 			Venta venta = obtenerVentaSeleccionada();
 
 			DialogDevolucionVenta dialog = new DialogDevolucionVenta(ventana, this);
+			dialog.setGestionDevolucionVenta(gestionDevolucionVenta);
 			dialog.cargarVenta(venta);
 			dialog.setVisible(true);
 
@@ -1091,8 +1094,43 @@ public class Evento implements ActionListener {
 		try {
 			PanelReportes panelReportes = ventana.getPanelReportes();
 
+			if (panelReportes.esReporteVentasDiarias()) {
+				LocalDate fecha = panelReportes.obtenerFechaReporte();
+				panelReportes.mostrarResumenVentas(gestionReporte.obtenerTotalVentasDiarias(fecha));
+				return;
+			}
+
+			if (panelReportes.esReporteVentasMensuales()) {
+				int mes = panelReportes.obtenerMesReporte();
+				int anio = panelReportes.obtenerAnioReporte();
+				panelReportes.mostrarResumenVentas(gestionReporte.obtenerTotalVentasMensuales(mes, anio));
+				return;
+			}
+
+			if (panelReportes.esReporteVentasAnuales()) {
+				int anio = panelReportes.obtenerAnioReporte();
+				panelReportes.mostrarResumenVentas(gestionReporte.obtenerTotalVentasAnuales(anio));
+				return;
+			}
+
+			if (panelReportes.esReporteUtilidadBruta()) {
+				LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
+				LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
+				panelReportes.mostrarUtilidadBruta(gestionReporte.obtenerUtilidadBruta(fechaInicio, fechaFin));
+				return;
+			}
+
+			if (panelReportes.esReporteVentasFormaPago()) {
+				LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
+				LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
+				List<ResumenFormaPagoDTO> resumenFormaPago = gestionReporte.obtenerVentasPorFormaPago(fechaInicio,
+						fechaFin);
+				panelReportes.mostrarVentasPorFormaPago(resumenFormaPago);
+				return;
+			}
+
 			if (!panelReportes.esReporteProductosMasVendidos()) {
-				throw new Exception("Seleccione 'Productos más vendidos' en el tipo de reporte.");
+				throw new Exception("El reporte seleccionado aun no esta implementado: " + panelReportes.obtenerTipoReporteSeleccionado());
 			}
 
 			LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
@@ -1289,3 +1327,4 @@ public class Evento implements ActionListener {
 		return (DialogDevolucionVenta) ventanaPadre;
 	}
 }
+

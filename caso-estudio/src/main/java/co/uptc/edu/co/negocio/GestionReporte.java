@@ -1,49 +1,46 @@
 package co.uptc.edu.co.negocio;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import co.uptc.edu.co.interfaces.IGestionReporte;
+import co.uptc.edu.co.interfaces.ReporteDAO;
 import co.uptc.edu.co.interfaces.VentaDAO;
+import co.uptc.edu.co.modelo.DetalleUtilidadBrutaDTO;
 import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.ResumenProductoDTO;
+import co.uptc.edu.co.modelo.ResumenUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.ResumenVentasDTO;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class GestionReporte implements IGestionReporte {
 
-	private static final String CARPETA_REPORTES = "reportes";
-	private static final DateTimeFormatter FORMATO_ARCHIVO = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-
 	private final VentaDAO ventaDAO;
+	private final ReporteDAO reporteDAO;
 
-	public GestionReporte(VentaDAO ventaDAO) {
+	public GestionReporte(VentaDAO ventaDAO, ReporteDAO reporteDAO) {
 		if (ventaDAO == null) {
 			throw new IllegalArgumentException("La ventaDAO no puede ser nula.");
 		}
+		if (reporteDAO == null) {
+			throw new IllegalArgumentException("El reporteDAO no puede ser nulo.");
+		}
 
 		this.ventaDAO = ventaDAO;
+		this.reporteDAO = reporteDAO;
 	}
 
 	@Override
 	public String generarReporteProductosMasVendidos(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
-		List<Venta> ventasActuales = ventaDAO.listarVentas();
-		List<ResumenProducto> resumenProductos = construirResumenProductos(ventasActuales, fechaInicio, fechaFin);
-		return guardarReporteProductosMasVendidos(resumenProductos, fechaInicio, fechaFin);
+		return reporteDAO.guardarReporteProductosMasVendidos(
+				obtenerResumenProductosMasVendidos(fechaInicio, fechaFin), fechaInicio, fechaFin);
 	}
 
 	@Override
@@ -55,7 +52,7 @@ public class GestionReporte implements IGestionReporte {
 
 		for (ResumenProducto resumen : resumenes) {
 			dtos.add(new ResumenProductoDTO(resumen.getCodigoProducto(), resumen.getNombreProducto(),
-					resumen.getCantidadVendida()));
+					resumen.getCantidadVendida(), resumen.getTotalVendido()));
 		}
 
 		return dtos;
@@ -83,30 +80,122 @@ public class GestionReporte implements IGestionReporte {
 			throw new Exception("No se encontro datos de ventas para el producto seleccionado dentro del rango.");
 		}
 
-		File carpeta = new File(CARPETA_REPORTES);
-		if (!carpeta.exists() && !carpeta.mkdirs()) {
-			throw new Exception("No se pudo crear la carpeta de reportes.");
+		ResumenProductoDTO dto = new ResumenProductoDTO(encontrado.getCodigoProducto(), encontrado.getNombreProducto(),
+				encontrado.getCantidadVendida(), encontrado.getTotalVendido());
+		return reporteDAO.guardarReporteProducto(dto, fechaInicio, fechaFin);
+	}
+
+	@Override
+	public List<ResumenFormaPagoDTO> obtenerVentasPorFormaPago(LocalDate fechaInicio, LocalDate fechaFin)
+			throws Exception {
+		List<Venta> ventasActuales = ventaDAO.listarVentas();
+		Map<FormaPago, ResumenFormaPago> resumenPorFormaPago = new LinkedHashMap<>();
+
+		for (Venta venta : ventasActuales) {
+			if (!debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin) || venta.getFormaPago() == null) {
+				continue;
+			}
+
+			ResumenFormaPago resumen = resumenPorFormaPago.computeIfAbsent(venta.getFormaPago(),
+					formaPago -> new ResumenFormaPago(formaPago));
+			resumen.acumularVenta(venta.getTotal());
 		}
 
-		String nombreArchivo = "producto_" + encontrado.getCodigoProducto() + "_"
-				+ LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json";
-		File archivo = new File(carpeta, nombreArchivo);
+		List<ResumenFormaPagoDTO> resumenes = new ArrayList<>();
+		for (ResumenFormaPago resumen : resumenPorFormaPago.values()) {
+			resumenes.add(new ResumenFormaPagoDTO(resumen.formaPago, resumen.cantidadVentas, resumen.valorTotal));
+		}
+		resumenes.sort(Comparator.comparingDouble(ResumenFormaPagoDTO::getValorTotal).reversed());
+		return resumenes;
+	}
 
-		JsonObject raiz = new JsonObject();
-		raiz.addProperty("tipo_reporte", "producto_mas_vendido");
-		raiz.addProperty("generado_en", LocalDateTime.now().toString());
-		raiz.addProperty("fecha_inicio", fechaInicio != null ? fechaInicio.toString() : null);
-		raiz.addProperty("fecha_fin", fechaFin != null ? fechaFin.toString() : null);
-		raiz.addProperty("codigo_producto", encontrado.getCodigoProducto());
-		raiz.addProperty("nombre_producto", encontrado.getNombreProducto());
-		raiz.addProperty("cantidad_vendida", encontrado.getCantidadVendida());
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
-			writer.print(gson.toJson(raiz));
+	@Override
+	public ResumenVentasDTO obtenerTotalVentasDiarias(LocalDate fecha) throws Exception {
+		if (fecha == null) {
+			throw new Exception("La fecha es obligatoria.");
 		}
 
-		return archivo.getPath();
+		return construirResumenVentas(fecha.toString(), fecha, fecha);
+	}
+
+	@Override
+	public ResumenVentasDTO obtenerTotalVentasMensuales(int mes, int anio) throws Exception {
+		if (mes < 1 || mes > 12) {
+			throw new Exception("El mes debe estar entre 1 y 12.");
+		}
+
+		if (anio <= 0) {
+			throw new Exception("El aÃ±o debe ser valido.");
+		}
+
+		LocalDate fechaInicio = LocalDate.of(anio, mes, 1);
+		LocalDate fechaFin = fechaInicio.withDayOfMonth(fechaInicio.lengthOfMonth());
+		String periodo = String.format("%02d/%d", mes, anio);
+		return construirResumenVentas(periodo, fechaInicio, fechaFin);
+	}
+
+	@Override
+	public ResumenVentasDTO obtenerTotalVentasAnuales(int anio) throws Exception {
+		if (anio <= 0) {
+			throw new Exception("El aÃ±o debe ser valido.");
+		}
+
+		LocalDate fechaInicio = LocalDate.of(anio, 1, 1);
+		LocalDate fechaFin = LocalDate.of(anio, 12, 31);
+		return construirResumenVentas(String.valueOf(anio), fechaInicio, fechaFin);
+	}
+
+	@Override
+	public ResumenUtilidadBrutaDTO obtenerUtilidadBruta(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		validarRangoFechas(fechaInicio, fechaFin);
+
+		List<Venta> ventasActuales = ventaDAO.listarVentas();
+		Map<String, ResumenUtilidadProducto> resumenPorProducto = new LinkedHashMap<>();
+		double totalVentas = 0;
+		double costoVentas = 0;
+		int cantidadVentas = 0;
+		int cantidadVendida = 0;
+
+		for (Venta venta : ventasActuales) {
+			if (!debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin)) {
+				continue;
+			}
+
+			totalVentas += venta.getSubTotal();
+			costoVentas += calcularCostoVenta(venta);
+			cantidadVentas++;
+			cantidadVendida += calcularCantidadVendida(venta);
+			acumularUtilidadPorProducto(resumenPorProducto, venta);
+		}
+
+		double utilidadBruta = totalVentas - costoVentas;
+		return new ResumenUtilidadBrutaDTO(construirPeriodo(fechaInicio, fechaFin),
+				construirDetallesUtilidad(resumenPorProducto), totalVentas, costoVentas, utilidadBruta, cantidadVentas,
+				cantidadVendida);
+	}
+
+	private ResumenVentasDTO construirResumenVentas(String periodo, LocalDate fechaInicio, LocalDate fechaFin)
+			throws Exception {
+		List<Venta> ventasActuales = ventaDAO.listarVentas();
+		List<Venta> ventasDelDia = new ArrayList<>();
+		double subtotalVentas = 0;
+		double totalVentas = 0;
+		double impuestos = 0;
+		int cantidadVentas = 0;
+
+		for (Venta venta : ventasActuales) {
+			if (!debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin)) {
+				continue;
+			}
+
+			ventasDelDia.add(venta);
+			subtotalVentas += venta.getSubTotal();
+			totalVentas += venta.getTotal();
+			impuestos += venta.getImpuestos();
+			cantidadVentas++;
+		}
+
+		return new ResumenVentasDTO(periodo, ventasDelDia, subtotalVentas, totalVentas, cantidadVentas, impuestos);
 	}
 
 	private List<ResumenProducto> construirResumenProductos(List<Venta> ventasFuente, LocalDate fechaInicio,
@@ -137,7 +226,7 @@ public class GestionReporte implements IGestionReporte {
 				final String nombreProductoFinal = nombreProducto;
 				ResumenProducto resumen = resumenPorProducto.computeIfAbsent(codigoProducto,
 						clave -> new ResumenProducto(codigoProductoFinal, nombreProductoFinal));
-				resumen.sumarCantidad(detalle.getCantidad());
+				resumen.acumular(detalle.getCantidad(), detalle.getSubtotal());
 			}
 		}
 
@@ -163,53 +252,120 @@ public class GestionReporte implements IGestionReporte {
 		return true;
 	}
 
-	private String guardarReporteProductosMasVendidos(List<ResumenProducto> resumenes, LocalDate fechaInicio,
-			LocalDate fechaFin) throws Exception {
-		File carpeta = new File(CARPETA_REPORTES);
-		if (!carpeta.exists() && !carpeta.mkdirs()) {
-			throw new Exception("No se pudo crear la carpeta de reportes.");
+	private double calcularCostoVenta(Venta venta) {
+		double costoVenta = 0;
+
+		if (venta.getDetalles() == null) {
+			return costoVenta;
 		}
 
-		String nombreArchivo = "productos_mas_vendidos_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json";
-		File archivo = new File(carpeta, nombreArchivo);
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			if (detalle == null || detalle.getProducto() == null) {
+				continue;
+			}
 
-		JsonObject raiz = new JsonObject();
-		raiz.addProperty("tipo_reporte", "productos_mas_vendidos");
-		raiz.addProperty("generado_en", LocalDateTime.now().toString());
-		raiz.addProperty("fecha_inicio", fechaInicio != null ? fechaInicio.toString() : null);
-		raiz.addProperty("fecha_fin", fechaFin != null ? fechaFin.toString() : null);
-		raiz.addProperty("total_productos", resumenes.size());
-
-		JsonArray productos = new JsonArray();
-		for (ResumenProducto resumen : resumenes) {
-			JsonObject item = new JsonObject();
-			item.addProperty("codigo_producto", resumen.getCodigoProducto());
-			item.addProperty("nombre_producto", resumen.getNombreProducto());
-			item.addProperty("cantidad_vendida", resumen.getCantidadVendida());
-			productos.add(item);
-		}
-		raiz.add("productos", productos);
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
-			writer.print(gson.toJson(raiz));
+			costoVenta += detalle.getCantidad() * detalle.getProducto().getPrecioCompra();
 		}
 
-		return archivo.getPath();
+		return costoVenta;
+	}
+
+	private int calcularCantidadVendida(Venta venta) {
+		int cantidadVendida = 0;
+
+		if (venta.getDetalles() == null) {
+			return cantidadVendida;
+		}
+
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			if (detalle != null) {
+				cantidadVendida += detalle.getCantidad();
+			}
+		}
+
+		return cantidadVendida;
+	}
+
+	private void acumularUtilidadPorProducto(Map<String, ResumenUtilidadProducto> resumenPorProducto, Venta venta) {
+		if (venta.getDetalles() == null) {
+			return;
+		}
+
+		for (DetalleVenta detalle : venta.getDetalles()) {
+			if (detalle == null || detalle.getProducto() == null) {
+				continue;
+			}
+
+			String codigoProducto = detalle.getProducto().getCodigoProducto();
+			if (codigoProducto == null || codigoProducto.isBlank()) {
+				codigoProducto = "SIN_CODIGO";
+			}
+
+			String nombreProducto = detalle.getProducto().getNombreProducto();
+			if (nombreProducto == null || nombreProducto.isBlank()) {
+				nombreProducto = "Producto sin nombre";
+			}
+
+			final String codigoProductoFinal = codigoProducto;
+			final String nombreProductoFinal = nombreProducto;
+			ResumenUtilidadProducto resumen = resumenPorProducto.computeIfAbsent(codigoProducto,
+					clave -> new ResumenUtilidadProducto(codigoProductoFinal, nombreProductoFinal));
+			resumen.acumular(detalle.getCantidad(), detalle.getSubtotal(),
+					detalle.getCantidad() * detalle.getProducto().getPrecioCompra());
+		}
+	}
+
+	private List<DetalleUtilidadBrutaDTO> construirDetallesUtilidad(
+			Map<String, ResumenUtilidadProducto> resumenPorProducto) {
+		List<DetalleUtilidadBrutaDTO> detalles = new ArrayList<>();
+
+		for (ResumenUtilidadProducto resumen : resumenPorProducto.values()) {
+			detalles.add(new DetalleUtilidadBrutaDTO(resumen.codigoProducto, resumen.nombreProducto,
+					resumen.cantidadVendida, resumen.ventas, resumen.costoVenta,
+					resumen.ventas - resumen.costoVenta));
+		}
+
+		detalles.sort(Comparator.comparingDouble(DetalleUtilidadBrutaDTO::getUtilidad).reversed()
+				.thenComparing(DetalleUtilidadBrutaDTO::getNombreProducto, String.CASE_INSENSITIVE_ORDER));
+		return detalles;
+	}
+
+	private void validarRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		if (fechaInicio != null && fechaFin != null && fechaInicio.isAfter(fechaFin)) {
+			throw new Exception("La fecha de inicio no puede ser posterior a la fecha final.");
+		}
+	}
+
+	private String construirPeriodo(LocalDate fechaInicio, LocalDate fechaFin) {
+		if (fechaInicio == null && fechaFin == null) {
+			return "Todos";
+		}
+
+		if (fechaInicio != null && fechaFin != null) {
+			return fechaInicio + " a " + fechaFin;
+		}
+
+		if (fechaInicio != null) {
+			return "Desde " + fechaInicio;
+		}
+
+		return "Hasta " + fechaFin;
 	}
 
 	private static final class ResumenProducto {
 		private final String codigoProducto;
 		private final String nombreProducto;
 		private int cantidadVendida;
+		private double totalVendido;
 
 		private ResumenProducto(String codigoProducto, String nombreProducto) {
 			this.codigoProducto = codigoProducto;
 			this.nombreProducto = nombreProducto;
 		}
 
-		private void sumarCantidad(int cantidad) {
+		private void acumular(int cantidad, double valorVendido) {
 			this.cantidadVendida += cantidad;
+			this.totalVendido += valorVendido;
 		}
 
 		private String getCodigoProducto() {
@@ -222,6 +378,44 @@ public class GestionReporte implements IGestionReporte {
 
 		private int getCantidadVendida() {
 			return cantidadVendida;
+		}
+
+		private double getTotalVendido() {
+			return totalVendido;
+		}
+	}
+
+	private static final class ResumenUtilidadProducto {
+		private final String codigoProducto;
+		private final String nombreProducto;
+		private int cantidadVendida;
+		private double ventas;
+		private double costoVenta;
+
+		private ResumenUtilidadProducto(String codigoProducto, String nombreProducto) {
+			this.codigoProducto = codigoProducto;
+			this.nombreProducto = nombreProducto;
+		}
+
+		private void acumular(int cantidad, double venta, double costo) {
+			this.cantidadVendida += cantidad;
+			this.ventas += venta;
+			this.costoVenta += costo;
+		}
+	}
+
+	private static final class ResumenFormaPago {
+		private final FormaPago formaPago;
+		private int cantidadVentas;
+		private double valorTotal;
+
+		private ResumenFormaPago(FormaPago formaPago) {
+			this.formaPago = formaPago;
+		}
+
+		private void acumularVenta(double valorVenta) {
+			this.cantidadVentas++;
+			this.valorTotal += valorVenta;
 		}
 	}
 }

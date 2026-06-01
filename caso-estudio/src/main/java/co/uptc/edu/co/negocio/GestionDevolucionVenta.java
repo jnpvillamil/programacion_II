@@ -86,7 +86,7 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		}
 
 		DevolucionVenta devolucion = crearDevolucion(venta, detalleDevuelto, cantidad, motivo.trim());
-		double subtotalDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
+		double subtotalDevuelto = calcularValorDevolucion(venta, codigoProducto, cantidad);
 		double ivaDevuelto = detalleDevuelto.getProducto() != null && detalleDevuelto.getProducto().isAplicaIva()
 				? subtotalDevuelto * IVA
 				: 0;
@@ -108,6 +108,30 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 					subtotalDevuelto, ivaDevuelto, motivo.trim());
 		});
 	}
+
+	@Override
+	public double calcularValorDevolucion(Venta venta, String codigoProducto, int cantidad) throws Exception {
+		if (venta == null) {
+			throw new Exception("No se encontro la venta.");
+		}
+
+		if (codigoProducto == null || codigoProducto.trim().isEmpty()) {
+			throw new Exception("Debe seleccionar un producto.");
+		}
+
+		if (cantidad <= 0) {
+			throw new Exception("La cantidad debe ser mayor que cero.");
+		}
+
+		DetalleVenta detalle = buscarDetalleVenta(venta, codigoProducto.trim());
+
+		if (detalle == null) {
+			throw new Exception("El producto seleccionado no pertenece a la venta.");
+		}
+
+		return calcularSubtotal(cantidad, detalle.getPrecioUnitario());
+	}
+
 	@Override
 	public DevolucionVenta buscarDevolucionPorCodigo(String codigoDevolucion) throws Exception {
 		if (codigoDevolucion == null || codigoDevolucion.trim().isEmpty()) {
@@ -280,7 +304,7 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 
 		String codigoProducto = detalleDevuelto.getProducto().getCodigoProducto();
 		String nombreProducto = detalleDevuelto.getProducto().getNombreProducto();
-		double valorDevuelto = cantidad * detalleDevuelto.getPrecioUnitario();
+		double valorDevuelto = calcularSubtotal(cantidad, detalleDevuelto.getPrecioUnitario());
 
 		return new DevolucionVenta(generarCodigoDevolucion(), venta.getNumeroFactura(), codigoProducto, nombreProducto,
 				cantidad, valorDevuelto, LocalDateTime.now(), motivo);

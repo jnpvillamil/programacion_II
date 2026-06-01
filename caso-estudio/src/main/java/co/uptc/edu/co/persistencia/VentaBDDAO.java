@@ -46,7 +46,7 @@ public class VentaBDDAO implements VentaDAO {
 	private static final String SQL_LISTAR_VENTAS_POR_FECHA = "SELECT numeroFactura, fechaHora, cliente, codigoCliente, formaPago, subtotal, impuestos, total, estado, motivoAnulacion, fechaAnulacion"
 			+ " FROM " + TABLA_VENTAS + " WHERE DATE(fechaHora) = ? ORDER BY fechaHora DESC";
 
-	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigoProducto, p.nombreProducto, p.aplicaIva, dv.cantidad, dv.precioUnitario, dv.subtotal"
+	private static final String SQL_LISTAR_DETALLES = "SELECT dv.codigoProducto, p.nombreProducto, p.aplicaIva, p.precioCompra, dv.cantidad, dv.precioUnitario, dv.subtotal"
 			+ " FROM " + TABLA_DETALLE_VENTAS + " dv"
 			+ " LEFT JOIN productos p ON dv.codigoProducto = p.codigoProducto" + " WHERE dv.numeroFactura = ?";
 
@@ -269,6 +269,7 @@ public class VentaBDDAO implements VentaDAO {
 		producto.setCodigoProducto(resultado.getString("codigoProducto"));
 		producto.setNombreProducto(resultado.getString("nombreProducto"));
 		producto.setAplicaIva(resultado.getBoolean("aplicaIva"));
+		producto.setPrecioCompra(resultado.getDouble("precioCompra"));
 
 		DetalleVenta detalle = new DetalleVenta();
 		detalle.setProducto(producto);

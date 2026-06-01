@@ -2,10 +2,17 @@ package co.uptc.edu.co.gui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.List;
 
+import co.uptc.edu.co.modelo.DetalleUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.ResumenProductoDTO;
+import co.uptc.edu.co.modelo.ResumenUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.ResumenVentasDTO;
+import co.uptc.edu.co.modelo.Venta;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,6 +24,7 @@ import javax.swing.text.MaskFormatter;
 public class PanelReportes extends PanelCentral {
 
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
     private static final String TITULO_PANEL = "Gestión de Reportes";
     private static final String TEXTO_TOTAL_INICIAL = "Registros del reporte: 0";
@@ -36,31 +44,31 @@ public class PanelReportes extends PanelCentral {
 
     private static final String[] COLUMNAS_INICIALES = { "Resultado" };
     private static final String[] COLUMNAS_VENTAS_DIARIAS = {
-            "Fecha", "Total Ventas"
+            "Factura", "Fecha", "Cliente", "Forma Pago", "Subtotal", "Impuestos", "Total"
     };
     private static final String[] COLUMNAS_VENTAS_MENSUALES = {
-            "Mes", "Año", "Total Ventas"
+            "Factura", "Fecha", "Cliente", "Forma Pago", "Subtotal", "Impuestos", "Total"
     };
     private static final String[] COLUMNAS_VENTAS_ANUALES = {
-            "Año", "Total Ventas"
+            "Factura", "Fecha", "Cliente", "Forma Pago", "Subtotal", "Impuestos", "Total"
     };
     private static final String[] COLUMNAS_UTILIDAD_BRUTA = {
-            "Total Ventas", "Costo de Ventas", "Utilidad Bruta"
+            "Producto", "Cantidad Vendida", "Ventas", "Costo de Venta", "Utilidad"
     };
     private static final String[] COLUMNAS_PRODUCTOS_MAS_VENDIDOS = {
-            "Código", "Producto", "Cantidad Vendida"
+            "Código", "Producto", "Cantidad Vendida", "Total Vendido"
     };
     private static final String[] COLUMNAS_CLIENTES_MAYOR_COMPRA = {
-            "Cliente", "Total Comprado"
+            "Código Cliente", "Cliente", "Cantidad Ventas", "Total Comprado"
     };
     private static final String[] COLUMNAS_VENTAS_FORMA_PAGO = {
-            "Forma de Pago", "Valor"
+            "Forma de Pago", "Cantidad Ventas", "Valor Total"
     };
     private static final String[] COLUMNAS_INVENTARIO_VALORIZADO = {
-            "Código", "Producto", "Stock", "Costo Unitario", "Valor Total"
+            "Código", "Producto", "Categoría", "Stock Actual", "Costo Unitario", "Valor Total"
     };
     private static final String[] COLUMNAS_RESUMEN_CONTABLE = {
-            "Ingresos", "Egresos", "Utilidad"
+            "Ingresos", "Egresos", "IVA Generado", "IVA Descontable", "Utilidad"
     };
 
     private JLabel etiquetaTipoReporte;
@@ -79,6 +87,16 @@ public class PanelReportes extends PanelCentral {
     private JFormattedTextField campoAnio;
     private JFormattedTextField campoFechaInicio;
     private JFormattedTextField campoFechaFin;
+
+    private static DecimalFormat crearFormatoMoneda() {
+        DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+        simbolos.setGroupingSeparator('.');
+        simbolos.setDecimalSeparator(',');
+
+        DecimalFormat formato = new DecimalFormat("$ #,##0", simbolos);
+        formato.setGroupingUsed(true);
+        return formato;
+    }
 
     public PanelReportes() {
         super();
@@ -281,12 +299,84 @@ public class PanelReportes extends PanelCentral {
         return seleccionado != null && REPORTE_PRODUCTOS_MAS_VENDIDOS.equals(seleccionado.toString());
     }
 
+    public boolean esReporteVentasDiarias() {
+        Object seleccionado = comboTipoReporte.getSelectedItem();
+        return seleccionado != null && REPORTE_VENTAS_DIARIAS.equals(seleccionado.toString());
+    }
+
+    public boolean esReporteVentasMensuales() {
+        Object seleccionado = comboTipoReporte.getSelectedItem();
+        return seleccionado != null && REPORTE_VENTAS_MENSUALES.equals(seleccionado.toString());
+    }
+
+    public boolean esReporteVentasAnuales() {
+        Object seleccionado = comboTipoReporte.getSelectedItem();
+        return seleccionado != null && REPORTE_VENTAS_ANUALES.equals(seleccionado.toString());
+    }
+
+    public boolean esReporteUtilidadBruta() {
+        Object seleccionado = comboTipoReporte.getSelectedItem();
+        return seleccionado != null && REPORTE_UTILIDAD_BRUTA.equals(seleccionado.toString());
+    }
+
+    public boolean esReporteVentasFormaPago() {
+        Object seleccionado = comboTipoReporte.getSelectedItem();
+        return seleccionado != null && REPORTE_VENTAS_FORMA_PAGO.equals(seleccionado.toString());
+    }
+
+    public String obtenerTipoReporteSeleccionado() {
+        Object seleccionado = comboTipoReporte.getSelectedItem();
+        return seleccionado != null ? seleccionado.toString() : "";
+    }
+
     public LocalDate obtenerFechaInicioReporte() throws Exception {
         return parsearFecha(campoFechaInicio.getText().trim());
     }
 
     public LocalDate obtenerFechaFinReporte() throws Exception {
         return parsearFecha(campoFechaFin.getText().trim());
+    }
+
+    public LocalDate obtenerFechaReporte() throws Exception {
+        LocalDate fecha = parsearFecha(campoFecha.getText().trim());
+        if (fecha == null) {
+            throw new Exception("Debe ingresar una fecha completa con formato dd/MM/yyyy.");
+        }
+        return fecha;
+    }
+
+    public int obtenerMesReporte() throws Exception {
+        String textoMes = campoMes.getText().trim();
+        if (textoMes.isBlank()) {
+            throw new Exception("Debe ingresar el mes.");
+        }
+
+        try {
+            int mes = Integer.parseInt(textoMes);
+            if (mes < 1 || mes > 12) {
+                throw new NumberFormatException();
+            }
+            return mes;
+        } catch (NumberFormatException e) {
+            throw new Exception("El mes debe ser un numero entre 1 y 12.");
+        }
+    }
+
+    public int obtenerAnioReporte() throws Exception {
+        String textoAnio = campoAnio.getText().trim();
+        if (textoAnio.isBlank() || textoAnio.contains("_")) {
+            throw new Exception("Debe ingresar un aÃ±o completo.");
+        }
+
+        try {
+            int anio = Integer.parseInt(textoAnio);
+            if (anio <= 0) {
+                throw new NumberFormatException();
+            }
+            return anio;
+        } catch (NumberFormatException e) {
+            throw new Exception("El aÃ±o debe ser un numero valido.");
+        }
     }
 
     public void mostrarResumenProductos(List<ResumenProductoDTO> resumenes) {
@@ -297,9 +387,93 @@ public class PanelReportes extends PanelCentral {
         }
 
         for (ResumenProductoDTO r : resumenes) {
-            modeloTabla.addRow(new Object[] { r.getCodigoProducto(), r.getNombreProducto(), r.getCantidadVendida() });
+            modeloTabla.addRow(new Object[] {
+                    r.getCodigoProducto(),
+                    r.getNombreProducto(),
+                    r.getCantidadVendida(),
+                    FORMATO_MONEDA.format(r.getTotalVendido())
+            });
         }
         actualizarTextoTotal(TEXTO_TOTAL, resumenes.size());
+    }
+
+    public void mostrarVentasPorFormaPago(List<ResumenFormaPagoDTO> resumen) {
+        limpiarTabla();
+        if (resumen == null) {
+            actualizarTextoTotal(TEXTO_TOTAL, 0);
+            return;
+        }
+
+        for (ResumenFormaPagoDTO item : resumen) {
+            modeloTabla.addRow(new Object[] {
+                    item.getFormaPago(),
+                    item.getCantidadVentas(),
+                    FORMATO_MONEDA.format(item.getValorTotal())
+            });
+        }
+        actualizarTextoTotal(TEXTO_TOTAL, resumen.size());
+    }
+
+    public void mostrarVentasDiarias(ResumenVentasDTO resumen) {
+        mostrarResumenVentas(resumen);
+    }
+
+    public void mostrarResumenVentas(ResumenVentasDTO resumen) {
+        limpiarTabla();
+        if (resumen == null) {
+            actualizarTextoTotal(TEXTO_TOTAL, 0);
+            return;
+        }
+
+        for (Venta venta : resumen.getVentas()) {
+            modeloTabla.addRow(new Object[] {
+                    venta.getNumeroFactura(),
+                    venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate() : "",
+                    venta.getCliente(),
+                    venta.getFormaPago(),
+                    FORMATO_MONEDA.format(venta.getSubTotal()),
+                    FORMATO_MONEDA.format(venta.getImpuestos()),
+                    FORMATO_MONEDA.format(venta.getTotal())
+            });
+        }
+
+        modeloTabla.addRow(new Object[] {
+                "TOTAL",
+                resumen.getPeriodo(),
+                resumen.getCantidadVentas() + " ventas",
+                "",
+                FORMATO_MONEDA.format(resumen.getSubtotalVentas()),
+                FORMATO_MONEDA.format(resumen.getImpuestos()),
+                FORMATO_MONEDA.format(resumen.getTotalVentas())
+        });
+        actualizarTextoTotal(TEXTO_TOTAL, resumen.getCantidadVentas());
+    }
+
+    public void mostrarUtilidadBruta(ResumenUtilidadBrutaDTO resumen) {
+        limpiarTabla();
+        if (resumen == null) {
+            actualizarTextoTotal(TEXTO_TOTAL, 0);
+            return;
+        }
+
+        for (DetalleUtilidadBrutaDTO detalle : resumen.getDetalles()) {
+            modeloTabla.addRow(new Object[] {
+                    detalle.getNombreProducto(),
+                    detalle.getCantidadVendida(),
+                    FORMATO_MONEDA.format(detalle.getVentas()),
+                    FORMATO_MONEDA.format(detalle.getCostoVenta()),
+                    FORMATO_MONEDA.format(detalle.getUtilidad())
+            });
+        }
+
+        modeloTabla.addRow(new Object[] {
+                "TOTAL",
+                resumen.getCantidadVendida(),
+                FORMATO_MONEDA.format(resumen.getTotalVentas()),
+                FORMATO_MONEDA.format(resumen.getCostoVentas()),
+                FORMATO_MONEDA.format(resumen.getUtilidadBruta())
+        });
+        actualizarTextoTotal(TEXTO_TOTAL, resumen.getDetalles().size());
     }
 
     private LocalDate parsearFecha(String texto) throws Exception {
@@ -314,3 +488,6 @@ public class PanelReportes extends PanelCentral {
         }
     }
 }
+
+
+

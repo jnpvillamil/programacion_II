@@ -22,7 +22,9 @@ public class PanelContabilidad extends PanelCentral {
     private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
     private static final String[] COLUMNAS = {
-            "Codigo Transaccion",
+            "Codigo Movimiento",
+            "Referencia",
+            "Origen",
             "Fecha",
             "Tipo Movimiento",
             "Cuenta Contable",
@@ -141,6 +143,8 @@ public class PanelContabilidad extends PanelCentral {
 
         for (MovimientoContable movimiento : movimientosCargados) {
             String codigo = valorTexto(movimiento.getCodigoTransaccion());
+            String referencia = valorTexto(movimiento.getReferencia());
+            String origen = valorTexto(movimiento.getOrigen());
             String fecha = movimiento.getFecha() != null ? movimiento.getFecha().toString() : "";
             String tipo = movimiento.getTipoMovimientoContable() != null
                     ? movimiento.getTipoMovimientoContable().toString()
@@ -151,6 +155,8 @@ public class PanelContabilidad extends PanelCentral {
 
             boolean coincideBusqueda =
                     codigo.toLowerCase().contains(textoBusqueda) ||
+                    referencia.toLowerCase().contains(textoBusqueda) ||
+                    origen.toLowerCase().contains(textoBusqueda) ||
                     cuenta.toLowerCase().contains(textoBusqueda) ||
                     descripcion.toLowerCase().contains(textoBusqueda);
 
@@ -165,6 +171,8 @@ public class PanelContabilidad extends PanelCentral {
             if (coincideBusqueda && coincideTipo && coincideCuenta) {
                 Object[] fila = {
                         codigo,
+                        referencia,
+                        origen,
                         fecha,
                         tipo,
                         cuenta,
