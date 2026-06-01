@@ -1,22 +1,42 @@
 [
   {
-    "codigo": "576675",
-    "nombre": "765675",
-    "categoria": "GRANOS",
-    "precioCompra": 756756.0,
-    "precioVenta": 756.0,
-    "stockActual": 567567,
-    "stockMinimo": 576567,
+    "codigo": "MOV-200",
+    "nombre": "Yogurt Griego",
+    "categoria": "LACTEOS",
+    "precioCompra": 3500.0,
+    "precioVenta": 4000.0,
+    "stockActual": 20,
+    "stockMinimo": 5,
     "activo": true
   },
   {
-    "codigo": "1920",
-    "nombre": "Agua",
-    "categoria": "AGUA",
-    "precioCompra": 2000.0,
-    "precioVenta": 3000.0,
-    "stockActual": 56,
+    "codigo": "MOV-201",
+    "nombre": "Carne de Res",
+    "categoria": "CARNES",
+    "precioCompra": 5000.0,
+    "precioVenta": 5500.0,
+    "stockActual": 15,
+    "stockMinimo": 2,
+    "activo": true
+  },
+  {
+    "codigo": "MOV-202",
+    "nombre": "Tostacos",
+    "categoria": "EMBUTIDOS",
+    "precioCompra": 1950.0,
+    "precioVenta": 2999.0,
+    "stockActual": 100,
     "stockMinimo": 10,
     "activo": true
+  },
+  {
+    "codigo": "MOV-203",
+    "nombre": "COCACOLA",
+    "categoria": "JUGOS",
+    "precioCompra": 2000.0,
+    "precioVenta": 3000.0,
+    "stockActual": 50,
+    "stockMinimo": 5,
+    "activo": false
   }
 ]

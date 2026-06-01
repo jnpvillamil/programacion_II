@@ -163,12 +163,13 @@ public class PanelCompraCliente extends JPanel {
     }
 
     public void cargarProductosEnCombo(List<Producto> productos) {
-        this.listaProductosAux = productos;
+        this.listaProductosAux = new java.util.ArrayList<>();
         comboProductos.removeAllItems();
         if (productos != null) {
             for (Producto p : productos) {
-                if (p.isActivo()) { 
-                    comboProductos.addItem(p.getNombre() + " - $" + p.getPrecioVenta());
+                if (p.isActivo() && p.getStockActual() > 0) {
+                    listaProductosAux.add(p);
+                    comboProductos.addItem(p.getNombre() + " - $" + p.getPrecioVenta() + " [Stock: " + p.getStockActual() + "]");
                 }
             }
         }

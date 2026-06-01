@@ -37,6 +37,13 @@ public class GestionCompasCliente {
         if (!cliente.isActivo()) {
             throw new Exception("No se puede registrar la compra porque el cliente está INACTIVO.");
         }
+        if (producto.getStockActual() <= 0) {
+            throw new Exception("El producto \"" + producto.getNombre() + "\" no tiene stock disponible.");
+        }
+        if (producto.getStockActual() < cantidad) {
+            throw new Exception("Stock insuficiente para \"" + producto.getNombre() + 
+                "\". Disponible: " + producto.getStockActual() + " unidades.");
+        }
 
         CompasCliente nuevaCompra = new CompasCliente(cliente, producto, cantidad);
         nuevaCompra.setTotalCompra(producto.getPrecioVenta() * cantidad);

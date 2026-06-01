@@ -162,11 +162,15 @@ public class PanelPrincipal extends JFrame {
 
             gestionCompasCliente.registrarCompra(clienteSel, productoSel, cantidad);
 
+            // Descontar stock del producto vendido
+            gestionProducto.registrarMovimientoInventario(productoSel.getCodigo(), -cantidad);
+
             double totalVenta = productoSel.getPrecioVenta() * cantidad;
             registrarVenta(productoSel.getNombre(), totalVenta, clienteSel.getCodigo());
 
             JOptionPane.showMessageDialog(this, "Compra registrada con éxito.\nTotal: $" + totalVenta, "Éxito", JOptionPane.INFORMATION_MESSAGE);
             panelCompra.actualizarTablaCompras(gestionCompasCliente.listarTodasLasCompras());
+            panelCompra.cargarProductosEnCombo(gestionProducto.listarProductos());
             panelCompra.limpiarCampos();
 
         } catch (NumberFormatException nfe) {
