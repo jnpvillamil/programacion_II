@@ -33,6 +33,7 @@ public class PanelInicial extends JPanel {
     private GestionProveedor gestionProveedor;
     private GestionProducto gestionProducto; 
     private PanelGestionContable panelGestionContable;
+    private PanelReportes panelReportes;
 
     public PanelInicial(Evento e, GestionProducto gestionProducto, GestionCliente gestionCliente, GestionProveedor gestionProveedor, PanelRegistrosEmpleados Empleados) {
 
@@ -51,15 +52,14 @@ public class PanelInicial extends JPanel {
         pestanas.addTab("Producto", new PanelProductos(e));
         pestanas.addTab("Proveedores", proveedorCards);
         pestanas.addTab("Empleados", this.Empleados); 
- 
-        
 
-        add(pestanas, BorderLayout.CENTER);
-        cargarClientes(gestionCliente.listarClientes());
-        cargarProveedores(gestionProveedor.listarProveedores());
-        
         panelGestionContable = new PanelGestionContable();
         pestanas.addTab("Contabilidad", panelGestionContable);
+
+        panelReportes = new PanelReportes();
+        pestanas.addTab("Reportes", panelReportes);
+
+        add(pestanas, BorderLayout.CENTER);
     }
 
     private void panelesCliente(Evento e) {

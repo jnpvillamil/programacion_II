@@ -47,7 +47,14 @@ public class Evento implements ActionListener {
         String evento = e.getActionCommand();
 
         if (evento.equals(SALIR)) {
-            JOptionPane.showMessageDialog(null, "pelo");
+            int confirm = JOptionPane.showConfirmDialog(null, 
+                "¿Seguro que quiere salir del sistema?", 
+                "Salida del sistema", 
+                JOptionPane.YES_NO_OPTION);
+            
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
         } else if (evento.equals(ENTRAR)) {
             ventana.loguear();
         } else if (evento.equals(REGISTRARCLIENTE)) {

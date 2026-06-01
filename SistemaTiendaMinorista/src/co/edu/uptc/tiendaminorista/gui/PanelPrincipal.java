@@ -167,7 +167,6 @@ public class PanelPrincipal extends JFrame {
 
             gestionCompasCliente.registrarCompra(clienteSel, productoSel, cantidad);
 
-            //REGISTRAR EN CONTABILIDAD (INGRESO)
             double totalVenta = productoSel.getPrecioVenta() * cantidad;
             registrarVenta(productoSel.getNombre(), totalVenta, clienteSel.getCodigo());
 
@@ -425,10 +424,11 @@ public class PanelPrincipal extends JFrame {
 
         panelHistorial.actualizarTabla(comprasDelCliente);
     }
-    
     public void registrarVenta(String producto, double valor, String idCliente) {
         if (panelInicial.getPanelGestionContable() != null) {
+            //Llama a GestionContable para registrar el ingreso
             panelInicial.getPanelGestionContable().getGestionContable().registrarIngreso(producto, valor, idCliente);
+            //Actualiza la tabla de contabilidad
             panelInicial.getPanelGestionContable().actualizarDatos();
         }
     }
