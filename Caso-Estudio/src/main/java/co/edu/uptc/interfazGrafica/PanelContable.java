@@ -31,7 +31,7 @@ public class PanelContable extends PanelCentral {
         limpiarTabla();
         String filtro = getTextoBuscar();
         
-        for(AsientoContable a : TiendaConfig.getInstancia().getGestionContable().listarAsientos()) {
+        for(AsientoContable a : TiendaConfig.getInstancia().getNegocioContable().listarAsientos()) {
             if(filtro.isEmpty() || a.getCodigoAsiento().contains(filtro)) {
                 Object[] fila = {
                     a.getCodigoAsiento(),

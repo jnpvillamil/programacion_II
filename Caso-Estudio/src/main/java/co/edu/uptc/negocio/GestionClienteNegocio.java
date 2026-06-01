@@ -1,15 +1,15 @@
 package co.edu.uptc.negocio;
 
-import co.edu.uptc.interfaces.GestionCliente;
+import co.edu.uptc.interfaces.IGestionCliente;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.enums.TipoDocumentoEnum;
 import java.util.List;
 
 public class GestionClienteNegocio {
 
-    private final GestionCliente persistencia;
+    private final IGestionCliente persistencia;
 
-    public GestionClienteNegocio(GestionCliente persistencia) {
+    public GestionClienteNegocio(IGestionCliente persistencia) {
         this.persistencia = persistencia;
     }
 
