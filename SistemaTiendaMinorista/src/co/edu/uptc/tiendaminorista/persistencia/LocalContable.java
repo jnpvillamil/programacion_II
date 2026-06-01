@@ -10,12 +10,14 @@ import com.google.gson.reflect.TypeToken;
 import co.edu.uptc.tiendaminorista.interfaces.IGestionContable;
 import co.edu.uptc.tiendaminorista.modelo.MovimientoContable;
 
+// Este se queda en JSON porque los movimientos contables son los reportes/logs del sistema
+// No lo toque - sigue igual
 public class LocalContable implements IGestionContable {
     private static final String RUTA = "movimientos.json";
     private final Gson gson;
     private int ultimoCodigo;
 
-    public LozzcalContable() {
+    public LocalContable() {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())

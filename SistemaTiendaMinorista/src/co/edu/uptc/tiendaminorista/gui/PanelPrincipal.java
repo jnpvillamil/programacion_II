@@ -114,6 +114,7 @@ public class PanelPrincipal extends JFrame {
     }
 
     public static void main(String[] args) {
+        co.edu.uptc.tiendaminorista.persistencia.DatabaseConnection.inicializarTablas();
         PanelPrincipal ventana = new PanelPrincipal();
         ventana.setVisible(true);
     }

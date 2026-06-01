@@ -6,14 +6,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// Arregle el bug del guardar() - faltaba setString(4) para numeroIdentificacion
+// y el parametro 3 estaba mal puesto (le mandaba numeroIdentificacion en vez de tipoIdentificacion)
+// Tambien arregle el actualizar() que tenia el mismo problema con tipoIdentificacion
 public class LocalCliente implements IGestionCliente {
 
-    //CRUD PRINCIPAL 
+    //CRUD PRINCIPAL
     @Override
     public void guardar(Cliente cliente) {
         String sql = "INSERT INTO clientes (codigo, nombre, tipoIdentificacion, numeroIdentificacion, direccion, telefono, tipoCliente, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) { 
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             if (cliente.getCodigo() == null || cliente.getCodigo().isEmpty()) {
                 cliente.setCodigo(generarCodigo());
             }
@@ -21,8 +24,8 @@ public class LocalCliente implements IGestionCliente {
 
             pstmt.setString(1, cliente.getCodigo());
             pstmt.setString(2, cliente.getNombre());
-            pstmt.setString(3, cliente.getNumeroIdentificacion());
-         
+            pstmt.setString(3, cliente.getTipodoc() != null ? cliente.getTipodoc().name() : "");
+            pstmt.setString(4, cliente.getNumeroIdentificacion());
             pstmt.setString(5, cliente.getDireccion());
             pstmt.setString(6, cliente.getTelefono());
             pstmt.setString(7, cliente.getTipoCliente());
@@ -58,7 +61,7 @@ public class LocalCliente implements IGestionCliente {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, cliente.getNombre());
-            pstmt.setString(2, cliente.getNumeroIdentificacion());
+            pstmt.setString(2, cliente.getTipodoc() != null ? cliente.getTipodoc().name() : "");
             pstmt.setString(3, cliente.getNumeroIdentificacion());
             pstmt.setString(4, cliente.getDireccion());
             pstmt.setString(5, cliente.getTelefono());
@@ -97,7 +100,6 @@ public class LocalCliente implements IGestionCliente {
     @Override
     public List<Cliente> buscar(String texto) {
         List<Cliente> resultado = new ArrayList<>();
-    
         String sql = "SELECT * FROM clientes WHERE nombre LIKE ? OR numeroIdentificacion LIKE ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -115,7 +117,7 @@ public class LocalCliente implements IGestionCliente {
         return resultado;
     }
 
-    // MÉTODOS AUXILIARES 
+    // MÉTODOS AUXILIARES
     private Cliente mapearCliente(ResultSet rs) throws SQLException {
         Cliente c = new Cliente();
         c.setCodigo(rs.getString("codigo"));
@@ -128,9 +130,7 @@ public class LocalCliente implements IGestionCliente {
         return c;
     }
 
-  
     private String generarCodigo() {
-
         String ultimo = "";
         String sql = "SELECT codigo FROM clientes ORDER BY codigo DESC LIMIT 1";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -149,9 +149,6 @@ public class LocalCliente implements IGestionCliente {
             } catch (NumberFormatException e) {
                 num = 1;
             }
-        } else {
-            // si no hay registros, empezamos desde el 1
-            num = 1;
         }
         return "CLI" + num;
     }
