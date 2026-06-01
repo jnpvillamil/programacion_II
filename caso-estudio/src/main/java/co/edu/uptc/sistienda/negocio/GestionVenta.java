@@ -15,13 +15,21 @@ public class GestionVenta {
 
 	private IGestionVenta repositorioVenta;
 	private GestionProducto gestionProducto;
+	private GestionContabilidad gestionContabilidad;
 	private int correlativoFactura = 1;
-	private int correlativoDevolucion =1;
-	private List<Devolucion> devoluciones = new ArrayList();
+	private int correlativoDevolucion = 1;
+	private List<Devolucion> devoluciones = new ArrayList<>();
 
 	public GestionVenta(IGestionVenta repositorioVenta, GestionProducto gestionProducto) {
+		this(repositorioVenta, gestionProducto, null);
+	}
+
+	public GestionVenta(IGestionVenta repositorioVenta, GestionProducto gestionProducto,
+			GestionContabilidad gestionContabilidad) {
 		this.repositorioVenta = repositorioVenta;
 		this.gestionProducto = gestionProducto;
+		this.gestionContabilidad = gestionContabilidad;
+		this.correlativoFactura = calcularSiguienteConsecutivoFactura();
 	}
 
 	public String generarNumeroFactura() {
@@ -51,7 +59,12 @@ public class GestionVenta {
 			item.getProducto().setStockActual(item.getProducto().getStockActual() - item.getCantidad());
 			gestionProducto.modificarProducto(item.getProducto());
 		}
+		venta.setCufe(generarCufe(venta));
+		venta.setValorEnLetras(convertirValorALetras(venta.getTotal()));
 		repositorioVenta.guardarVenta(venta);
+		if (gestionContabilidad != null) {
+			gestionContabilidad.registrarMovimientoPorVenta(venta);
+		}
 	}
 
 	public void anularVenta(String numeroFactura) throws Exception {
@@ -67,6 +80,9 @@ public class GestionVenta {
 			gestionProducto.modificarProducto(item.getProducto());
 		}
 		repositorioVenta.anularVenta(numeroFactura);
+		if (gestionContabilidad != null) {
+			gestionContabilidad.anularMovimientoPorDocumento(numeroFactura);
+		}
 	}
 
 	public Venta consultarVentaPorFactura(String numeroFactura) {
@@ -81,6 +97,22 @@ public class GestionVenta {
 		return repositorioVenta.obtenerListaVentas().stream().filter(v -> v.getFechaHora().toLocalDate().equals(fecha))
 				.collect(Collectors.toList());
 	}
+
+	public List<Venta> consultarHistorialComprasCliente(String codigoCliente) {
+		return repositorioVenta
+				.obtenerListaVentas().stream().filter(v -> v.getCliente() != null
+						&& v.getCliente().getCodigoCliente().equalsIgnoreCase(codigoCliente) && !v.isAnulada())
+				.collect(Collectors.toList());
+	}
+
+	public List<Venta> consultarVentasPorRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+		return repositorioVenta.obtenerListaVentas().stream().filter(v -> {
+			LocalDate fechaVenta = v.getFechaHora().toLocalDate();
+			return (fechaInicio == null || !fechaVenta.isBefore(fechaInicio))
+					&& (fechaFin == null || !fechaVenta.isAfter(fechaFin));
+		}).collect(Collectors.toList());
+	}
+
 	public String generarNumeroDevolucion() {
 		return String.format("DEV-%05d", correlativoDevolucion++);
 	}
@@ -117,5 +149,31 @@ public class GestionVenta {
 		return devoluciones;
 	}
 
-}
+	private int calcularSiguienteConsecutivoFactura() {
+		int mayor = 0;
+		for (Venta venta : repositorioVenta.obtenerListaVentas()) {
+			String numero = venta.getNumeroFactura();
+			if (numero != null && numero.startsWith("FV-")) {
+				try {
+					mayor = Math.max(mayor, Integer.parseInt(numero.substring(3)));
+				} catch (NumberFormatException ignored) {
+					// Si hay una factura con formato manual, no afecta el consecutivo automatico.
+				}
+			}
+		}
+		return mayor + 1;
+	}
 
+	private String generarCufe(Venta venta) {
+
+		return "CUFE-" + venta.getNumeroFactura() + "-" + System.currentTimeMillis();
+	}
+
+	private String convertirValorALetras(double total) {
+
+		long valor = Math.round(total);
+
+		return valor + " PESOS M/CTE";
+	}
+
+}

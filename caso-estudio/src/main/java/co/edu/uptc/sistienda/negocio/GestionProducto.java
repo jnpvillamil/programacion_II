@@ -26,6 +26,7 @@ public class GestionProducto {
 		if (producto.getPrecioVenta() <= 0) {
 			throw new Exception("El precio de venta debe ser mayor a cero.");
 		}
+		validarStockProducto(producto);
 		if (repositorioProducto.buscarProductoPorCodigo(producto.getCodigoInterno()) != null) {
 			throw new Exception("Ya existe un producto con el código: " + producto.getCodigoInterno());
 		}
@@ -36,6 +37,7 @@ public class GestionProducto {
 		if (repositorioProducto.buscarProductoPorCodigo(producto.getCodigoInterno()) == null) {
 			throw new Exception("No se encontró el producto con código: " + producto.getCodigoInterno());
 		}
+		validarStockProducto(producto);
 		repositorioProducto.actualizarProducto(producto);
 	}
 
@@ -45,7 +47,7 @@ public class GestionProducto {
 		}
 		repositorioProducto.inactivarProducto(codigoInterno);
 	}
-	
+
 	public void activarProducto(String codigoInterno) throws Exception {
 		if (repositorioProducto.buscarProductoPorCodigo(codigoInterno) == null) {
 			throw new Exception("No se encontró el producto con código: " + codigoInterno);
@@ -63,5 +65,17 @@ public class GestionProducto {
 
 	public List<Producto> obtenerProductosConStockBajoMinimo() {
 		return repositorioProducto.obtenerProductosConStockBajoMinimo();
+	}
+
+	private void validarStockProducto(Producto producto) throws Exception {
+		if (producto.getStockActual() < 0) {
+			throw new Exception("El stock actual no puede ser negativo.");
+		}
+		if (producto.getStockMinimo() < 0) {
+			throw new Exception("El stock minimo no puede ser negativo.");
+		}
+		if (producto.getStockMaximo() > 0 && producto.getStockMaximo() < producto.getStockMinimo()) {
+			throw new Exception("El stock maximo no puede ser menor que el stock minimo.");
+		}
 	}
 }
