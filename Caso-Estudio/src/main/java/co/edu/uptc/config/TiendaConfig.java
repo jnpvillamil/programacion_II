@@ -20,8 +20,10 @@ public class TiendaConfig {
     
     
     private GestionProductoNegocio negocioProducto;
-   
     private GestionContableNegocio negocioContable;
+    
+    private GestionProveedorNegocio negocioProveedor;
+    private GestionVentaNegocio negocioVenta;
     
     
     // TODO Actualizar el sistema de base de datos de acuerdo a las nuevas clases
@@ -51,6 +53,10 @@ public class TiendaConfig {
         negocioProducto = new GestionProductoNegocio(gestionProducto);
         negocioContable = new GestionContableNegocio(gestionContable);
         
+        negocioProveedor = new GestionProveedorNegocio(gestionProveedor);
+        negocioVenta = new GestionVentaNegocio(gestionVenta);
+
+        
     }
     
     public static TiendaConfig getInstancia() {
@@ -67,6 +73,9 @@ public class TiendaConfig {
 
     public GestionProductoNegocio getNegocioProducto() { return negocioProducto; }
     public GestionContableNegocio getNegocioContable() { return negocioContable; }
+    
+    public GestionProveedorNegocio getNegocioProveedor() { return negocioProveedor; }
+    public GestionVentaNegocio getNegocioVenta() { return negocioVenta; }
     
     //------------------Metodos Iguales---------------------
     public IGestionProducto getGestionProducto() { return gestionProducto; }
