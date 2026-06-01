@@ -31,6 +31,7 @@
           "precioVenta": 2500.0,
           "stockActual": 15,
           "stockMinimo": 5,
+          "stockMaximo": 0,
           "activo": true,
           "tipoImpuesto": "IVA"
         },
@@ -72,6 +73,7 @@
           "precioVenta": 9500.0,
           "stockActual": 4,
           "stockMinimo": 15,
+          "stockMaximo": 0,
           "activo": true,
           "tipoImpuesto": "EXLUIDO"
         },
@@ -80,5 +82,49 @@
         "descuentoDto": 0.0
       }
     ]
+  },
+  {
+    "numeroFactura": "FV-00006",
+    "fechaHora": "2026-06-01T14:48:02.3979211",
+    "fechaVencimiento": "2026-06-08T14:48:02.3979211",
+    "cliente": {
+      "codigoCliente": "C001",
+      "nombreCompletoORazonSocial": "Juan Pérez García",
+      "tipoIdentificacion": "CC",
+      "numeroIdentificacion": "1012345678",
+      "direccion": "Calle 10 # 5-20, Bogotá",
+      "ciudad": "Bogotá, D.C.",
+      "telefono": "3101234567",
+      "correoElectronico": "juan.perez@correo.com",
+      "tipoCliente": "MINORISTA",
+      "activo": true,
+      "tipoPersona": "NATURAL",
+      "responsabilidadFiscal": "R-99-PN",
+      "responsabilidadTributaria": "No aplica"
+    },
+    "formaPago": "TRANSFERENCIA",
+    "medioPago": "Transferencia",
+    "anulada": false,
+    "items": [
+      {
+        "producto": {
+          "codigoInterno": "P001",
+          "nombreProducto": "Arroz",
+          "categoria": "VIVERES",
+          "precioCompra": 2200.0,
+          "precioVenta": 2500.0,
+          "stockActual": 7,
+          "stockMinimo": 10,
+          "stockMaximo": 13,
+          "activo": true,
+          "tipoImpuesto": "IVA"
+        },
+        "cantidad": 5,
+        "precioUnitario": 2500.0,
+        "descuentoDto": 0.0
+      }
+    ],
+    "cufe": "CUFE-FV-00006-1780343284048",
+    "valorEnLetras": "14875 PESOS M/CTE"
   }
 ]

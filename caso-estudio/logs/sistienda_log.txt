@@ -1,1 +1,10 @@
-2026-05-30 18:33:27 | admin | LOGIN | Rol: Administrador
+2026-06-01 14:00:28 | admin | LOGIN | Rol: Administrador
+2026-06-01 14:01:19 | admin | LOGOUT | Sesión cerrada
+2026-06-01 14:02:20 | cajero | LOGIN | Rol: Cajero
+2026-06-01 14:04:22 | admin | LOGIN | Rol: Administrador
+2026-06-01 14:46:27 | admin | LOGIN | Rol: Administrador
+2026-06-01 14:47:31 | admin | GUARDAR_PRODUCTO | Código: P001
+2026-06-01 14:47:36 | admin | LOGOUT | Sesión cerrada
+2026-06-01 14:47:47 | cajero | LOGIN | Rol: Cajero
+2026-06-01 14:48:04 | cajero | REGISTRAR_VENTA | Factura: FV-00006
+2026-06-01 14:51:23 | encargado de compras | LOGIN | Rol: Encargado de compras
