@@ -76,4 +76,9 @@ public class GestionCliente implements
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public void registrarClienteLocal(Cliente cliente) {
+		// TODO Auto-generated method stub
+		
+	}
 }

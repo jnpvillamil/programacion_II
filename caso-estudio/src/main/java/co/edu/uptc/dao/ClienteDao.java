@@ -2,73 +2,89 @@ package co.edu.uptc.dao;
 
 import co.edu.uptc.conexion.Conexion;
 import co.edu.uptc.gui.modelo.Cliente;
-import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 
 public class ClienteDao {
 
-    public void registrarCliente(Cliente miCliente) {
+    public void registrarCliente(Cliente miCliente) throws SQLException {
         Conexion conex = new Conexion();
-        try {
-            Statement estatuto = conex.getConnection().createStatement();
-
-
-            String consulta = "INSERT INTO cliente (codigo, nombre, apellido, tipo_documento, numero_documento, "
-                    + "telefono, direccion, pais_id, ciudad_id, tipo_cliente, activo, correo_electronico, responsable_tributario) VALUES ('"
-                    + miCliente.getCodigo() + "', '"
-                    + miCliente.getNombre() + "', '"
-                    + miCliente.getApellido() + "', '"
-                    + (miCliente.getTipoDocumento() != null ? miCliente.getTipoDocumento().name() : "") + "', '"
-                    + miCliente.getNumeroDocumento() + "', '"
-                    + miCliente.getTelefono() + "', '"
-                    + miCliente.getDireccion() + "', "
-                    + miCliente.getPaisId() + ", "
-                    + miCliente.getCiudadId() + ", '" 
-                    + (miCliente.getTipoCliente() != null ? miCliente.getTipoCliente().name() : "") + "', "
-                    + (miCliente.isActivo() ? 1 : 0) + ", '"
-                    + miCliente.getCorreoElectronico() + "', '"
-                    + (miCliente.getResponsableTributariamente() != null ? miCliente.getResponsableTributariamente().name() : "") + "')";
-
-            estatuto.executeUpdate(consulta);
-            JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente en la BD", "Información", JOptionPane.INFORMATION_MESSAGE);
-
-            estatuto.close();
+        String sql = "INSERT INTO cliente (codigo, nombre, apellido, tipo_documento, numero_documento, "
+                   + "telefono, direccion, pais_id, ciudad_id, tipo_cliente, activo, correo_electronico, "
+                   + "responsable_tributario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection c = conex.getConnection();
+             PreparedStatement pst = c.prepareStatement(sql)) {
+            
+            pst.setString(1, miCliente.getCodigo());
+            pst.setString(2, miCliente.getNombre());
+            pst.setString(3, miCliente.getApellido());
+            pst.setString(4, miCliente.getTipoDocumento() != null ? miCliente.getTipoDocumento().name() : "");
+            pst.setString(5, miCliente.getNumeroDocumento());
+            pst.setString(6, miCliente.getTelefono());
+            pst.setString(7, miCliente.getDireccion());
+            pst.setInt(8, miCliente.getPaisId());
+            pst.setInt(9, miCliente.getCiudadId());
+            pst.setString(10, miCliente.getTipoCliente() != null ? miCliente.getTipoCliente().name() : "");
+            pst.setInt(11, miCliente.isActivo() ? 1 : 0);
+            pst.setString(12, miCliente.getCorreoElectronico());
+            pst.setString(13, miCliente.getResponsableTributariamente() != null ? miCliente.getResponsableTributariamente().name() : "");
+            
+            pst.executeUpdate();
+        } finally {
             conex.desconectar();
-        } catch (SQLException e) {
-            System.out.println("Error SQL al registrar: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, "No se pudo registrar el cliente en la BD", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public void actualizarCliente(Cliente miCliente) {
+    public void actualizarCliente(Cliente miCliente) throws SQLException {
         Conexion conex = new Conexion();
-        try {
-            Statement estatuto = conex.getConnection().createStatement();
-
-            String consulta = "UPDATE cliente SET "
-                    + "nombre = '" + miCliente.getNombre() + "', "
-                    + "apellido = '" + miCliente.getApellido() + "', "
-                    + "tipo_documento = '" + (miCliente.getTipoDocumento() != null ? miCliente.getTipoDocumento().name() : "") + "', "
-                    + "numero_documento = '" + miCliente.getNumeroDocumento() + "', "
-                    + "telefono = '" + miCliente.getTelefono() + "', "
-                    + "direccion = '" + miCliente.getDireccion() + "', "
-                    + "pais_id = " + miCliente.getPaisId() + ", "
-                    + "ciudad_id = " + miCliente.getCiudadId() + ", "
-                    + "tipo_cliente = '" + (miCliente.getTipoCliente() != null ? miCliente.getTipoCliente().name() : "") + "', "
-                    + "activo = " + (miCliente.isActivo() ? 1 : 0) + ", "
-                    + "correo_electronico = '" + miCliente.getCorreoElectronico() + "', "
-                    + "responsable_tributario = '" + (miCliente.getResponsableTributariamente() != null ? miCliente.getResponsableTributariamente().name() : "") + "' "
-                    + "WHERE codigo = '" + miCliente.getCodigo() + "'";
-
-            estatuto.executeUpdate(consulta);
-            JOptionPane.showMessageDialog(null, "Cliente actualizado correctamente en la BD", "Información", JOptionPane.INFORMATION_MESSAGE);
-
-            estatuto.close();
+        String sql = "UPDATE cliente SET nombre = ?, apellido = ?, tipo_documento = ?, numero_documento = ?, "
+                   + "telefono = ?, direccion = ?, pais_id = ?, ciudad_id = ?, tipo_cliente = ?, activo = ?, "
+                   + "correo_electronico = ?, responsable_tributario = ? WHERE codigo = ?";
+        
+        try (Connection c = conex.getConnection();
+             PreparedStatement pst = c.prepareStatement(sql)) {
+            
+            pst.setString(1, miCliente.getNombre());
+            pst.setString(2, miCliente.getApellido());
+            pst.setString(3, miCliente.getTipoDocumento() != null ? miCliente.getTipoDocumento().name() : "");
+            pst.setString(4, miCliente.getNumeroDocumento());
+            pst.setString(5, miCliente.getTelefono());
+            pst.setString(6, miCliente.getDireccion());
+            pst.setInt(7, miCliente.getPaisId());
+            pst.setInt(8, miCliente.getCiudadId());
+            pst.setString(9, miCliente.getTipoCliente() != null ? miCliente.getTipoCliente().name() : "");
+            pst.setInt(10, miCliente.isActivo() ? 1 : 0);
+            pst.setString(11, miCliente.getCorreoElectronico());
+            pst.setString(12, miCliente.getResponsableTributariamente() != null ? miCliente.getResponsableTributariamente().name() : "");
+            pst.setString(13, miCliente.getCodigo()); 
+            
+            int filasAfectadas = pst.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new SQLException("No se encontró ningún cliente registrado con el código: " + miCliente.getCodigo());
+            }
+        } finally {
             conex.desconectar();
-        } catch (SQLException e) {
-            System.out.println("Error SQL al actualizar: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, "No se pudo actualizar el cliente en la BD", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    public void eliminarCliente(String codigo) throws SQLException {
+        Conexion conex = new Conexion();
+        String sql = "DELETE FROM cliente WHERE codigo = ?";
+        
+        try (Connection c = conex.getConnection();
+             PreparedStatement pst = c.prepareStatement(sql)) {
+            
+            pst.setString(1, codigo);
+            
+            int filasAfectadas = pst.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new SQLException("No se pudo eliminar. No existe un cliente con el código especificado.");
+            }
+        } finally {
+            conex.desconectar();
         }
     }
 }

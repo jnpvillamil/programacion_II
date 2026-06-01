@@ -1,22 +1,10 @@
 package co.edu.uptc.gui.negocio;
 
-import co.edu.uptc.gui.interfaces.RF13_RegistrarProveedor;
-import co.edu.uptc.gui.interfaces.RF14_ValidarCampoNitObligatorio;
-import co.edu.uptc.gui.interfaces.RF15_ValidarRazonSocialObligatoria;
-import co.edu.uptc.gui.interfaces.RF16_AsignarResponsabilidadTributaria;
-import co.edu.uptc.gui.interfaces.RF17_ActualizarDatosProveedor;
-import co.edu.uptc.gui.interfaces.RF18_InactivarProveedor;
-import co.edu.uptc.gui.modelo.Proveedor;
-import co.edu.uptc.dao.ProveedorDao;
 import java.util.List;
+import co.edu.uptc.dao.ProveedorDao;
+import co.edu.uptc.gui.modelo.Proveedor;
 
-public class GestionProveedor implements 
-    RF13_RegistrarProveedor, 
-    RF14_ValidarCampoNitObligatorio, 
-    RF15_ValidarRazonSocialObligatoria, 
-    RF16_AsignarResponsabilidadTributaria, 
-    RF17_ActualizarDatosProveedor, 
-    RF18_InactivarProveedor {
+public class GestionProveedor {
 
     private ProveedorDao proveedorDao;
 
@@ -24,25 +12,58 @@ public class GestionProveedor implements
         this.proveedorDao = new ProveedorDao();
     }
 
-    @Override
-    public void ejecutarOperacionProveedor(Proveedor proveedor) {
-        if (proveedor == null) {
-            throw new IllegalArgumentException("El proveedor no puede ser nulo.");
+    public void registrarProveedorLocal(Proveedor proveedor) {
+        if (proveedor == null || proveedor.getNit() == null || proveedor.getNit().trim().isEmpty()) {
+            throw new IllegalArgumentException("Error de Negocio: El NIT es obligatorio.");
         }
-
-        if (proveedor.getNit() == null || proveedor.getNit().trim().isEmpty()) {
-            throw new IllegalArgumentException("Error de Negocio: El NIT es un campo obligatorio.");
-        }
-
         if (proveedor.getRazonSocial() == null || proveedor.getRazonSocial().trim().isEmpty()) {
-            throw new IllegalArgumentException("Error de Negocio: La Razón Social es un campo obligatorio.");
+            throw new IllegalArgumentException("Error de Negocio: La Razón Social es obligatoria.");
         }
-
-        proveedorDao.registrarProveedor(proveedor);
+        try {
+            proveedorDao.registrarProveedor(proveedor);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al registrar proveedor: " + e.getMessage(), e);
+        }
     }
 
-    @Override
+    public void actualizarProveedorLocal(Proveedor proveedor) {
+        if (proveedor == null || proveedor.getNit() == null) {
+            throw new IllegalArgumentException("Datos insuficientes para actualizar.");
+        }
+        try {
+            proveedorDao.actualizarProveedor(proveedor);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al actualizar proveedor: " + e.getMessage(), e);
+        }
+    }
+
+    public void inactivarProveedorLocal(String nit) {
+        if (nit == null || nit.trim().isEmpty()) {
+            throw new IllegalArgumentException("El NIT no puede estar vacío para inactivar.");
+        }
+        try {
+            proveedorDao.inactivarProveedor(nit);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al inactivar proveedor: " + e.getMessage(), e);
+        }
+    }
+
+    public void eliminarProveedorLocal(String nit) {
+        if (nit == null || nit.trim().isEmpty()) {
+            throw new IllegalArgumentException("El NIT no puede estar vacío para eliminar.");
+        }
+        try {
+            proveedorDao.eliminarProveedor(nit);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al eliminar proveedor: " + e.getMessage(), e);
+        }
+    }
+
     public List<Proveedor> listarProveedores() {
-        return proveedorDao.listarProveedores();
+        try {
+            return proveedorDao.listarProveedores();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al listar proveedores: " + e.getMessage(), e);
+        }
     }
 }

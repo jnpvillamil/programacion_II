@@ -1,64 +1,82 @@
 package co.edu.uptc.dao;
 
-import co.edu.uptc.conexion.Conexion;
-import co.edu.uptc.gui.modelo.Producto;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import javax.swing.JOptionPane;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import co.edu.uptc.gui.modelo.Producto;
+import co.edu.uptc.conexion.Conexion;
 
 public class ProductoDao {
 
-    public void registrarProducto(Producto prod) {
-        Conexion conex = new Conexion();
+    public List<Producto> listarProductos() throws Exception {
+        List<Producto> lista = new ArrayList<>();
 
-        String consulta = "INSERT INTO producto (codigo, nombre, precio_venta, stock, nit_proveedor) VALUES (?, ?, ?, ?, ?)";
+        String sql = "SELECT codigo, nombre, precio_compra, precio_venta, stock, stock_minimo FROM producto ORDER BY codigo ASC";
         
-        try (java.sql.Connection c = conex.getConnection();
-             PreparedStatement pst = c.prepareStatement(consulta)) {
-            
-            pst.setString(1, prod.getCodigo());
-            pst.setString(2, prod.getNombre());
-            pst.setDouble(3, prod.getPrecio()); 
-            pst.setInt(4, prod.getCantidadInventario()); 
-            pst.setString(5, "800123456-1"); 
+        Conexion conex = new Conexion();
+        
+        try (Connection c = conex.getConnection();
+             PreparedStatement pst = c.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
+             
+            while (rs.next()) {
+                Producto p = new Producto(
+                    rs.getString("codigo"),
+                    rs.getString("nombre"),
+                    rs.getDouble("precio_compra"),
+                    rs.getDouble("precio_venta"),
+                    rs.getInt("stock"),
+                    rs.getInt("stock_minimo")
+                );
+                lista.add(p);
+            }
+        } catch (Exception e) {
+            System.out.println("Error interno en ProductoDao.listarProductos: " + e.getMessage());
+            throw e; // Propagamos el error para diagnosticarlo si la conexión falla
+        }
+        
+        return lista; // Retorna la lista (vacía o con datos), jamás null
+    }
 
+    public void eliminarProducto(String codigo) throws Exception {
+        String sql = "DELETE FROM producto WHERE codigo = ?";
+        Conexion conex = new Conexion();
+        try (Connection c = conex.getConnection(); 
+             PreparedStatement pst = c.prepareStatement(sql)) {
+            pst.setString(1, codigo);
             pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Producto e Inventario guardados exitosamente en la BD", "Información", JOptionPane.INFORMATION_MESSAGE);
-            
-        } catch (SQLException e) {
-            System.out.println("Error SQL al registrar producto: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, "Error al guardar producto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            conex.desconectar();
         }
     }
 
-    public void actualizarProducto(Producto prod) {
+    public void registrarProducto(Producto p) throws Exception {
+        String sql = "INSERT INTO producto (codigo, nombre, precio_compra, precio_venta, stock, stock_minimo) VALUES (?, ?, ?, ?, ?, ?)";
         Conexion conex = new Conexion();
- 
-        String consulta = "UPDATE producto SET nombre = ?, precio_venta = ?, stock = ? WHERE codigo = ?";
-        
-        try (java.sql.Connection c = conex.getConnection();
-             PreparedStatement pst = c.prepareStatement(consulta)) {
-            
-            pst.setString(1, prod.getNombre());
-            pst.setDouble(2, prod.getPrecio());
-            pst.setInt(3, prod.getCantidadInventario());
-            pst.setString(4, prod.getCodigo());
+        try (Connection c = conex.getConnection(); 
+             PreparedStatement pst = c.prepareStatement(sql)) {
+            pst.setString(1, p.getCodigo());
+            pst.setString(2, p.getNombre());
+            pst.setDouble(3, p.getPrecioCompra());
+            pst.setDouble(4, p.getPrecioVenta());
+            pst.setInt(5, p.getStock());
+            pst.setInt(6, p.getStockMinimo());
+            pst.executeUpdate();
+        }
+    }
 
-            int filasAfectadas = pst.executeUpdate();
-            
-            if (filasAfectadas > 0) {
-                JOptionPane.showMessageDialog(null, "Inventario y Producto actualizados correctamente en MySQL", "Información", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontró ningún producto con el código especificado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            }
-            
-        } catch (SQLException e) {
-            System.out.println("Error SQL al actualizar producto: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, "Error al modificar inventario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            conex.desconectar();
+    public void actualizarProducto(Producto p) throws Exception {
+        String sql = "UPDATE producto SET nombre=?, precio_compra=?, precio_venta=?, stock=?, stock_minimo=? WHERE codigo=?";
+        Conexion conex = new Conexion();
+        try (Connection c = conex.getConnection(); 
+             PreparedStatement pst = c.prepareStatement(sql)) {
+            pst.setString(1, p.getNombre());
+            pst.setDouble(2, p.getPrecioCompra());
+            pst.setDouble(3, p.getPrecioVenta());
+            pst.setInt(4, p.getStock());
+            pst.setInt(5, p.getStockMinimo());
+            pst.setString(6, p.getCodigo());
+            pst.executeUpdate();
         }
     }
 }

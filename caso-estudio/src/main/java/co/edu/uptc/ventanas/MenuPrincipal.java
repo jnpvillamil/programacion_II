@@ -75,7 +75,7 @@ public class MenuPrincipal extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnClientes) {
-            VentanaInsertar vClientes = new VentanaInsertar();
+            VentanaCliente vClientes = new VentanaCliente();
             vClientes.setVisible(true);
             vClientes.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         } else if (e.getSource() == btnProveedores) {

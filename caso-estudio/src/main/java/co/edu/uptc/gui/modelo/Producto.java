@@ -4,17 +4,20 @@ public class Producto {
     private String codigo;
     private String nombre;
     private double precioCompra;
-    private double precioVenta;  
-    private int cantidadInventario;
+    private double precioVenta;
+    private int stock;
+    private int stockMinimo;
 
     public Producto() {}
 
-    public Producto(String codigo, String nombre, double precioCompra, double precioVenta, int cantidadInventario) {
+    // Constructor 
+    public Producto(String codigo, String nombre, double precioCompra, double precioVenta, int stock, int stockMinimo) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.precioCompra = precioCompra;
         this.precioVenta = precioVenta;
-        this.cantidadInventario = cantidadInventario;
+        this.stock = stock;
+        this.stockMinimo = stockMinimo;
     }
 
     // Getters y Setters
@@ -30,21 +33,9 @@ public class Producto {
     public double getPrecioVenta() { return precioVenta; }
     public void setPrecioVenta(double precioVenta) { this.precioVenta = precioVenta; }
 
-    public int getCantidadInventario() { return cantidadInventario; }
-    public void setCantidadInventario(int cantidadInventario) { this.cantidadInventario = cantidadInventario; }
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 
-	public double getPrecio() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void registrar() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void modificar() {
-		// TODO Auto-generated method stub
-		
-	}
+    public int getStockMinimo() { return stockMinimo; }
+    public void setStockMinimo(int stockMinimo) { this.stockMinimo = stockMinimo; }
 }
