@@ -28,23 +28,26 @@ import co.uptc.edu.co.gui.dialog.DialogProveedor;
 import co.uptc.edu.co.gui.dialog.DialogVenta;
 import co.uptc.edu.co.interfaces.IGestionCliente;
 import co.uptc.edu.co.interfaces.IGestionCompra;
-import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionConsultas;
+import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
+import co.uptc.edu.co.interfaces.IGestionFactura;
+import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.IGestionProducto;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
-import co.uptc.edu.co.interfaces.IGestionVenta;
-import co.uptc.edu.co.interfaces.IGestionInventario;
-import co.uptc.edu.co.modelo.Compra;
-import co.uptc.edu.co.interfaces.IGestionFactura;
 import co.uptc.edu.co.interfaces.IGestionReporte;
+import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.Cliente;
+import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.Venta;
+import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
+import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
 
 public class Evento implements ActionListener {
@@ -109,7 +112,7 @@ public class Evento implements ActionListener {
 
 	// CONSTANTES DE COMANDOS - CONSULTAS
 	public static final String CMD_CONSULTAR_SISTEMA = "ConsultarSistema";
-	public static final String CMD_GENERAR_REPORTE_PRODUCTOS_MAS_VENDIDOS = "GenerarReporteProductosMasVendidos";
+	public static final String CMD_BUSCAR_REPORTE = "BuscarReporte";
 
 	// ATRIBUTOS
 	private VentanaPrincipal ventana;
@@ -648,13 +651,12 @@ public class Evento implements ActionListener {
 	private void abrirDialogoNuevoProveedor() {
 		DialogProveedor dialog = new DialogProveedor(ventana, this);
 		try {
-			
+
 			dialog.cargarCodigoGenerado(gestionProveedor.generarCodigoProveedor());
 		} catch (Exception ex) {
 			mostrarError("No se pudo generar el código del proveedor: " + ex.getMessage());
 		}
 
-		
 		dialog.setVisible(true);
 	}
 
@@ -979,26 +981,20 @@ public class Evento implements ActionListener {
 			Compra compra = obtenerCompraSeleccionada();
 			DialogDetalleCompra dialog = new DialogDetalleCompra(ventana);
 
-			dialog.cargarCompra(
-				compra.getNumeroFacturaProveedor(),
-				compra.getFecha() != null ? compra.getFecha().toString() : "",
-				compra.getCodigoProveedor(),
-				compra.getFormaPago() != null ? compra.getFormaPago().toString() : "",
-				FORMATO_MONEDA.format(compra.getSubtotal()),
-				FORMATO_MONEDA.format(compra.getImpuestos()),
-				FORMATO_MONEDA.format(compra.getTotalCompra()));
+			dialog.cargarCompra(compra.getNumeroFacturaProveedor(),
+					compra.getFecha() != null ? compra.getFecha().toString() : "", compra.getCodigoProveedor(),
+					compra.getFormaPago() != null ? compra.getFormaPago().toString() : "",
+					FORMATO_MONEDA.format(compra.getSubtotal()), FORMATO_MONEDA.format(compra.getImpuestos()),
+					FORMATO_MONEDA.format(compra.getTotalCompra()));
 
 			dialog.limpiarTabla();
 			if (compra.getDetalles() != null) {
 				for (DetalleCompra detalle : compra.getDetalles()) {
-					dialog.agregarDetalle(
-						detalle.getProducto().getCodigoProducto(),
-						detalle.getProducto().getNombreProducto(),
-						String.valueOf(detalle.getCantidad()),
-						FORMATO_MONEDA.format(detalle.getCostoUnitario()),
-						FORMATO_MONEDA.format(detalle.getImpuestos()),
-						FORMATO_MONEDA.format(detalle.getSubtotal()),
-						FORMATO_MONEDA.format(detalle.getTotalCompra()));
+					dialog.agregarDetalle(detalle.getProducto().getCodigoProducto(),
+							detalle.getProducto().getNombreProducto(), String.valueOf(detalle.getCantidad()),
+							FORMATO_MONEDA.format(detalle.getCostoUnitario()),
+							FORMATO_MONEDA.format(detalle.getImpuestos()), FORMATO_MONEDA.format(detalle.getSubtotal()),
+							FORMATO_MONEDA.format(detalle.getTotalCompra()));
 				}
 			}
 
@@ -1012,11 +1008,9 @@ public class Evento implements ActionListener {
 		try {
 			Compra compra = obtenerCompraSeleccionada();
 			DialogAnularCompra dialog = new DialogAnularCompra(ventana);
-			dialog.cargarCompra(
-				compra.getNumeroFacturaProveedor(),
-				compra.getFecha() != null ? compra.getFecha().toString() : "",
-				compra.getCodigoProveedor(),
-				String.valueOf(compra.getTotalCompra()));
+			dialog.cargarCompra(compra.getNumeroFacturaProveedor(),
+					compra.getFecha() != null ? compra.getFecha().toString() : "", compra.getCodigoProveedor(),
+					String.valueOf(compra.getTotalCompra()));
 
 			dialog.setVisible(true);
 
@@ -1081,8 +1075,8 @@ public class Evento implements ActionListener {
 
 	private boolean manejarEventosReportes(String comando) {
 		switch (comando) {
-		case CMD_GENERAR_REPORTE_PRODUCTOS_MAS_VENDIDOS:
-			generarReporteProductosMasVendidos();
+		case CMD_BUSCAR_REPORTE:
+		    buscarReporte();
 			return true;
 
 		default:
@@ -1090,7 +1084,7 @@ public class Evento implements ActionListener {
 		}
 	}
 
-	private void generarReporteProductosMasVendidos() {
+	private void buscarReporte() {
 		try {
 			PanelReportes panelReportes = ventana.getPanelReportes();
 
@@ -1129,8 +1123,32 @@ public class Evento implements ActionListener {
 				return;
 			}
 
+			if (panelReportes.esReporteClientesMayorCompra()) {
+				LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
+				LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
+				List<ResumenClienteDTO> resumenClientes = gestionReporte.obtenerClientesMayorVolumenCompra(fechaInicio,
+						fechaFin);
+				panelReportes.mostrarClientesMayorCompra(resumenClientes);
+				return;
+			}
+
+			if (panelReportes.esReporteInventarioValorizado()) {
+				List<ResumenInventarioValorizadoDTO> resumenInventario = gestionReporte.obtenerInventarioValorizado();
+				panelReportes.mostrarInventarioValorizado(resumenInventario);
+				return;
+			}
+
+			if (panelReportes.esReporteResumenContable()) {
+				LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
+				LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
+				ResumenContableDTO resumenContable = gestionReporte.obtenerResumenContable(fechaInicio, fechaFin);
+				panelReportes.mostrarResumenContable(resumenContable);
+				return;
+			}
+
 			if (!panelReportes.esReporteProductosMasVendidos()) {
-				throw new Exception("El reporte seleccionado aun no esta implementado: " + panelReportes.obtenerTipoReporteSeleccionado());
+				throw new Exception("El reporte seleccionado aun no esta implementado: "
+						+ panelReportes.obtenerTipoReporteSeleccionado());
 			}
 
 			LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
@@ -1148,8 +1166,8 @@ public class Evento implements ActionListener {
 			}
 
 			// Si no hay selección, obtener y mostrar el resumen agregado por producto
-			java.util.List<ResumenProductoDTO> resumenDTOs = gestionReporte.obtenerResumenProductosMasVendidos(
-					fechaInicio, fechaFin);
+			java.util.List<ResumenProductoDTO> resumenDTOs = gestionReporte
+					.obtenerResumenProductosMasVendidos(fechaInicio, fechaFin);
 			panelReportes.mostrarResumenProductos(resumenDTOs);
 		} catch (Exception ex) {
 			mostrarError(ex.getMessage());
@@ -1197,16 +1215,13 @@ public class Evento implements ActionListener {
 			}
 
 			DialogDetalleContable dialog = new DialogDetalleContable(ventana);
-			dialog.cargarMovimiento(
-					movimiento.getCodigoTransaccion(),
+			dialog.cargarMovimiento(movimiento.getCodigoTransaccion(),
 					movimiento.getFecha() != null ? movimiento.getFecha().toString() : "",
 					movimiento.getTipoMovimientoContable() != null ? movimiento.getTipoMovimientoContable().toString()
 							: "",
 					movimiento.getCuentaContable(),
 					movimiento.getValor() != null ? formatearMoneda(movimiento.getValor()) : "",
-					movimiento.getDescripcion(),
-					movimiento.getOrigen(),
-					movimiento.getReferencia());
+					movimiento.getDescripcion(), movimiento.getOrigen(), movimiento.getReferencia());
 			dialog.setVisible(true);
 
 		} catch (Exception ex) {
@@ -1327,4 +1342,3 @@ public class Evento implements ActionListener {
 		return (DialogDevolucionVenta) ventanaPadre;
 	}
 }
-

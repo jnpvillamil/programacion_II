@@ -1,16 +1,16 @@
 package co.uptc.edu.co.config;
 
 import co.uptc.edu.co.interfaces.IGestionCliente;
+import co.uptc.edu.co.interfaces.IGestionCompra;
+import co.uptc.edu.co.interfaces.IGestionConsultas;
+import co.uptc.edu.co.interfaces.IGestionContabilidad;
+import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
+import co.uptc.edu.co.interfaces.IGestionFactura;
+import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.IGestionProducto;
 import co.uptc.edu.co.interfaces.IGestionProveedor;
-import co.uptc.edu.co.interfaces.IGestionVenta;
-import co.uptc.edu.co.interfaces.IGestionCompra;
-import co.uptc.edu.co.interfaces.IGestionContabilidad;
-import co.uptc.edu.co.interfaces.IGestionInventario;
-import co.uptc.edu.co.interfaces.IGestionFactura;
 import co.uptc.edu.co.interfaces.IGestionReporte;
-import co.uptc.edu.co.interfaces.IGestionConsultas;
-import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
+import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.interfaces.dao.ClienteDAO;
 import co.uptc.edu.co.interfaces.dao.CompraDAO;
 import co.uptc.edu.co.interfaces.dao.DevolucionVentaDAO;
@@ -23,15 +23,15 @@ import co.uptc.edu.co.interfaces.dao.ReporteDAO;
 import co.uptc.edu.co.interfaces.dao.VentaDAO;
 import co.uptc.edu.co.negocio.GestionCliente;
 import co.uptc.edu.co.negocio.GestionCompra;
-import co.uptc.edu.co.negocio.GestionContabilidad;
 import co.uptc.edu.co.negocio.GestionConsultas;
+import co.uptc.edu.co.negocio.GestionContabilidad;
 import co.uptc.edu.co.negocio.GestionDevolucionVenta;
+import co.uptc.edu.co.negocio.GestionFactura;
+import co.uptc.edu.co.negocio.GestionInventario;
 import co.uptc.edu.co.negocio.GestionProducto;
 import co.uptc.edu.co.negocio.GestionProveedor;
-import co.uptc.edu.co.negocio.GestionVenta;
-import co.uptc.edu.co.negocio.GestionInventario;
-import co.uptc.edu.co.negocio.GestionFactura;
 import co.uptc.edu.co.negocio.GestionReporte;
+import co.uptc.edu.co.negocio.GestionVenta;
 import co.uptc.edu.co.persistencia.archivo.FacturaTxtDAO;
 import co.uptc.edu.co.persistencia.archivo.ReporteJSONDAO;
 import co.uptc.edu.co.persistencia.bd.ClienteBDDAO;
@@ -71,17 +71,18 @@ public class TiendaConfig {
 		ProveedorDAO proveedorDAO = new ProveedorBDDAO();
 		gestionProveedor = new GestionProveedor(proveedorDAO);
 
-		ClienteDAO clienteDAO = new  ClienteBDDAO();
+		ClienteDAO clienteDAO = new ClienteBDDAO();
 		gestionCliente = new GestionCliente(clienteDAO);
 
 		VentaDAO ventaDAO = new VentaBDDAO();
 		DevolucionVentaDAO devolucionVentaDAO = new DevolucionVentaBDDAO();
 		MovimientoContableDAO movimientoContableDAO = new MovimientoContableBDDAO();
 		gestionContabilidad = new GestionContabilidad(movimientoContableDAO);
-		
+
 		gestionVenta = new GestionVenta(ventaDAO, gestionInventario, gestionContabilidad);
+		CompraDAO compraDAO = new ComprasBDDAO();
 		ReporteDAO reporteDAO = new ReporteJSONDAO();
-		gestionReporte = new GestionReporte(ventaDAO, reporteDAO);
+		gestionReporte = new GestionReporte(ventaDAO, reporteDAO, productoDAO, compraDAO);
 		gestionConsultas = new GestionConsultas(ventaDAO);
 		gestionDevolucionVenta = new GestionDevolucionVenta(ventaDAO, devolucionVentaDAO, gestionInventario,
 				gestionContabilidad);
@@ -89,7 +90,7 @@ public class TiendaConfig {
 		FacturaDAO facturaDAO = new FacturaTxtDAO();
 		gestionFactura = new GestionFactura(facturaDAO);
 
-		CompraDAO compraDAO = new ComprasBDDAO();
+		
 		gestionCompra = new GestionCompra(compraDAO, gestionInventario, gestionContabilidad);
 	}
 

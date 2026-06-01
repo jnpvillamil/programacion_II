@@ -8,33 +8,51 @@ import java.util.List;
 import java.util.Map;
 
 import co.uptc.edu.co.interfaces.IGestionReporte;
+import co.uptc.edu.co.interfaces.dao.CompraDAO;
+import co.uptc.edu.co.interfaces.dao.ProductoDAO;
 import co.uptc.edu.co.interfaces.dao.ReporteDAO;
 import co.uptc.edu.co.interfaces.dao.VentaDAO;
+import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleVenta;
+import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
-import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
-import co.uptc.edu.co.modelo.enums.FormaPago;
 import co.uptc.edu.co.modelo.dto.DetalleUtilidadBrutaDTO;
+import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
+import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
+import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenUtilidadBrutaDTO;
 import co.uptc.edu.co.modelo.dto.ResumenVentasDTO;
+import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
+import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
+import co.uptc.edu.co.modelo.enums.FormaPago;
 
 public class GestionReporte implements IGestionReporte {
 
 	private final VentaDAO ventaDAO;
 	private final ReporteDAO reporteDAO;
+	private final ProductoDAO productoDAO;
+	private final CompraDAO compraDAO;
 
-	public GestionReporte(VentaDAO ventaDAO, ReporteDAO reporteDAO) {
+	public GestionReporte(VentaDAO ventaDAO, ReporteDAO reporteDAO, ProductoDAO productoDAO, CompraDAO compraDAO) {
 		if (ventaDAO == null) {
 			throw new IllegalArgumentException("La ventaDAO no puede ser nula.");
 		}
 		if (reporteDAO == null) {
 			throw new IllegalArgumentException("El reporteDAO no puede ser nulo.");
 		}
+		if (productoDAO == null) {
+			throw new IllegalArgumentException("El productoDAO no puede ser nulo.");
+		}
+		if (compraDAO == null) {
+			throw new IllegalArgumentException("El compraDAO no puede ser nulo.");
+		}
 
 		this.ventaDAO = ventaDAO;
 		this.reporteDAO = reporteDAO;
+		this.productoDAO = productoDAO;
+		this.compraDAO = compraDAO;
 	}
 
 	@Override
@@ -110,6 +128,63 @@ public class GestionReporte implements IGestionReporte {
 	}
 
 	@Override
+	public List<ResumenClienteDTO> obtenerClientesMayorVolumenCompra(LocalDate fechaInicio, LocalDate fechaFin)
+			throws Exception {
+		List<Venta> ventasActuales = ventaDAO.listarVentas();
+		Map<String, ResumenCliente> resumenPorCliente = new LinkedHashMap<>();
+
+		for (Venta venta : ventasActuales) {
+			if (!debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin)) {
+				continue;
+			}
+
+			String codigoCliente = venta.getCodigoCliente().trim();
+			String nombreCliente = venta.getCliente().trim();
+			ResumenCliente resumen = resumenPorCliente.computeIfAbsent(codigoCliente,
+					clave -> new ResumenCliente(codigoCliente, nombreCliente));
+			resumen.acumularCompra(venta.getTotal());
+		}
+
+		List<ResumenClienteDTO> resumenes = new ArrayList<>();
+		for (ResumenCliente resumen : resumenPorCliente.values()) {
+			resumenes.add(new ResumenClienteDTO(resumen.codigoCliente, resumen.nombreCliente,
+					resumen.cantidadCompras, resumen.totalComprado));
+		}
+
+		resumenes.sort(Comparator.comparingDouble(ResumenClienteDTO::getTotalComprado).reversed()
+				.thenComparing(ResumenClienteDTO::getNombreCliente, String.CASE_INSENSITIVE_ORDER));
+		return resumenes;
+	}
+
+	@Override
+	public List<ResumenInventarioValorizadoDTO> obtenerInventarioValorizado() throws Exception {
+		List<Producto> productos = productoDAO.listarProducto();
+		List<ResumenInventarioValorizadoDTO> resumenes = new ArrayList<>();
+
+		for (Producto producto : productos) {
+			double valorInventario = producto.getStockActual() * producto.getPrecioCompra();
+			resumenes.add(new ResumenInventarioValorizadoDTO(producto.getCodigoProducto(),
+					producto.getNombreProducto(), producto.getCategoria(), producto.getStockActual(),
+					producto.getPrecioCompra(), valorInventario));
+		}
+
+		resumenes.sort(Comparator.comparingDouble(ResumenInventarioValorizadoDTO::getValorInventario).reversed()
+				.thenComparing(ResumenInventarioValorizadoDTO::getNombreProducto, String.CASE_INSENSITIVE_ORDER));
+		return resumenes;
+	}
+
+	@Override
+	public ResumenContableDTO obtenerResumenContable(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		validarRangoFechas(fechaInicio, fechaFin);
+
+		double ingresos = calcularIngresosPeriodo(fechaInicio, fechaFin);
+		double egresos = calcularEgresosPeriodo(fechaInicio, fechaFin);
+		double utilidad = ingresos - egresos;
+
+		return new ResumenContableDTO(ingresos, egresos, utilidad);
+	}
+
+	@Override
 	public ResumenVentasDTO obtenerTotalVentasDiarias(LocalDate fecha) throws Exception {
 		if (fecha == null) {
 			throw new Exception("La fecha es obligatoria.");
@@ -125,7 +200,7 @@ public class GestionReporte implements IGestionReporte {
 		}
 
 		if (anio <= 0) {
-			throw new Exception("El aÃ±o debe ser valido.");
+			throw new Exception("El año debe ser valido.");
 		}
 
 		LocalDate fechaInicio = LocalDate.of(anio, mes, 1);
@@ -137,7 +212,7 @@ public class GestionReporte implements IGestionReporte {
 	@Override
 	public ResumenVentasDTO obtenerTotalVentasAnuales(int anio) throws Exception {
 		if (anio <= 0) {
-			throw new Exception("El aÃ±o debe ser valido.");
+			throw new Exception("El añoo debe ser valido.");
 		}
 
 		LocalDate fechaInicio = LocalDate.of(anio, 1, 1);
@@ -250,6 +325,46 @@ public class GestionReporte implements IGestionReporte {
 		}
 
 		return true;
+	}
+
+	private boolean debeIncluirCompraEnReporte(Compra compra, LocalDate fechaInicio, LocalDate fechaFin) {
+		if (compra == null || compra.getEstado() == EstadoCompraEnum.ANULADA || compra.getFecha() == null) {
+			return false;
+		}
+
+		LocalDate fechaCompra = compra.getFecha();
+		if (fechaInicio != null && fechaCompra.isBefore(fechaInicio)) {
+			return false;
+		}
+		if (fechaFin != null && fechaCompra.isAfter(fechaFin)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private double calcularIngresosPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		double ingresos = 0;
+
+		for (Venta venta : ventaDAO.listarVentas()) {
+			if (debeIncluirVentaEnReporte(venta, fechaInicio, fechaFin)) {
+				ingresos += venta.getTotal();
+			}
+		}
+
+		return ingresos;
+	}
+
+	private double calcularEgresosPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws Exception {
+		double egresos = 0;
+
+		for (Compra compra : compraDAO.listarCompra()) {
+			if (debeIncluirCompraEnReporte(compra, fechaInicio, fechaFin)) {
+				egresos += compra.getTotalCompra();
+			}
+		}
+
+		return egresos;
 	}
 
 	private double calcularCostoVenta(Venta venta) {
@@ -416,6 +531,23 @@ public class GestionReporte implements IGestionReporte {
 		private void acumularVenta(double valorVenta) {
 			this.cantidadVentas++;
 			this.valorTotal += valorVenta;
+		}
+	}
+
+	private static final class ResumenCliente {
+		private final String codigoCliente;
+		private final String nombreCliente;
+		private int cantidadCompras;
+		private double totalComprado;
+
+		private ResumenCliente(String codigoCliente, String nombreCliente) {
+			this.codigoCliente = codigoCliente;
+			this.nombreCliente = nombreCliente;
+		}
+
+		private void acumularCompra(double valorCompra) {
+			this.cantidadCompras++;
+			this.totalComprado += valorCompra;
 		}
 	}
 }
