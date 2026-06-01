@@ -38,6 +38,7 @@ import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.interfaces.IGestionReporte;
 import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.Cliente;
+import co.uptc.edu.co.util.LogUtil;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.MovimientoContable;
@@ -240,6 +241,7 @@ public class Evento implements ActionListener {
 
 		case CONSULTAS:
 			ventana.irConsultas();
+			refrescarDatosConsultas();
 			return true;
 
 		default:
@@ -1206,16 +1208,111 @@ public class Evento implements ActionListener {
 		}
 	}
 
+	private void refrescarDatosConsultas() {
+		try {
+			LogUtil.info("Refrescando datos para PanelConsultas");
+			PanelConsultas panelConsultas = ventana.getPanelConsultas();
+			panelConsultas.cargarProveedores(gestionProveedor.obtenerProveedores());
+			panelConsultas.cargarClientes(gestionCliente.obtenerClientes());
+			panelConsultas.cargarCuentas();
+		} catch (Exception ex) {
+			LogUtil.error("Error al refrescar datos de consultas: " + ex.getMessage(), ex);
+			mostrarError(ex.getMessage());
+		}
+	}
+
 	private void ejecutarConsultaSistema() {
 		try {
+			LogUtil.info("Ejecutando consulta del sistema desde GUI");
 			PanelConsultas panelConsultas = ventana.getPanelConsultas();
 
 			if (panelConsultas.esConsultaVentasPorFecha()) {
 				LocalDate fecha = panelConsultas.obtenerFechaConsulta();
 				panelConsultas.cargarVentasPorFecha(gestionConsultas.obtenerVentasPorFecha(fecha));
+				return;
+			}
+
+			if (panelConsultas.esConsultaComprasPorProveedor()) {
+				String codigoProveedor = panelConsultas.obtenerProveedorSeleccionado();
+				LocalDate fechaInicio = panelConsultas.obtenerFechaInicio();
+				LocalDate fechaFin = panelConsultas.obtenerFechaFin();
+
+				if (codigoProveedor == null || codigoProveedor.isEmpty()) {
+					throw new Exception("Debe seleccionar un proveedor.");
+				}
+
+				List<Compra> compras = gestionCompra.obtenerCompras();
+				List<Compra> comprasFiltradas = new java.util.ArrayList<>();
+				for (Compra c : compras) {
+					if (c.getCodigoProveedor() != null && c.getCodigoProveedor().equalsIgnoreCase(codigoProveedor)) {
+						if (c.getFecha() != null) {
+							if (!c.getFecha().isBefore(fechaInicio) && !c.getFecha().isAfter(fechaFin)) {
+								comprasFiltradas.add(c);
+							}
+						}
+					}
+				}
+				panelConsultas.cargarComprasPorProveedor(comprasFiltradas);
+				return;
+			}
+
+			if (panelConsultas.esConsultaStockBajo()) {
+				panelConsultas.cargarProductosStockBajo(gestionProducto.obtenerProductos());
+				return;
+			}
+
+			if (panelConsultas.esConsultaHistorialCliente()) {
+				String codigoCliente = panelConsultas.obtenerClienteSeleccionado();
+
+				if (codigoCliente == null || codigoCliente.isEmpty()) {
+					throw new Exception("Debe seleccionar un cliente.");
+				}
+
+				Cliente cliente = gestionCliente.buscarClientePorCodigo(codigoCliente);
+				if (cliente != null) {
+					panelConsultas.cargarHistorialCliente(gestionVenta.obtenerVentasPorCliente(cliente));
+				} else {
+					throw new Exception("No se encontro el cliente seleccionado.");
+				}
+				return;
+			}
+
+			if (panelConsultas.esConsultaMovimientosContables()) {
+				String cuenta = panelConsultas.obtenerCuentaSeleccionada();
+				String tipoMovimiento = panelConsultas.obtenerTipoMovimientoSeleccionado();
+				LocalDate fechaInicio = panelConsultas.obtenerFechaInicio();
+				LocalDate fechaFin = panelConsultas.obtenerFechaFin();
+
+				if (cuenta == null || cuenta.isEmpty()) {
+					throw new Exception("Debe seleccionar una cuenta.");
+				}
+
+				List<MovimientoContable> movimientos = gestionContabilidad.obtenerMovimientos();
+				List<MovimientoContable> movimientosFiltrados = new java.util.ArrayList<>();
+				for (MovimientoContable m : movimientos) {
+					if (m.getCuentaContable() != null && m.getCuentaContable().equalsIgnoreCase(cuenta)) {
+						if (m.getFecha() != null) {
+							boolean enPeriodo = !m.getFecha().isBefore(fechaInicio) && !m.getFecha().isAfter(fechaFin);
+							boolean coincideTipo = true;
+							if (tipoMovimiento != null && !tipoMovimiento.isBlank() && !"Todos".equalsIgnoreCase(tipoMovimiento)) {
+								if (m.getTipoMovimientoContable() == null) {
+									coincideTipo = false;
+								} else {
+								coincideTipo = m.getTipoMovimientoContable().name().equalsIgnoreCase(tipoMovimiento);
+								}
+							}
+							if (enPeriodo && coincideTipo) {
+								movimientosFiltrados.add(m);
+							}
+						}
+					}
+				}
+				panelConsultas.cargarMovimientosContables(movimientosFiltrados);
+				return;
 			}
 
 		} catch (Exception ex) {
+			LogUtil.error("Error al ejecutar consulta del sistema: " + ex.getMessage(), ex);
 			mostrarError(ex.getMessage());
 		}
 	}

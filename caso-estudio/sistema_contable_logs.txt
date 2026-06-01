@@ -1,0 +1,248 @@
+[2026-05-31 21:02:22] [INFO] Entrando a listarProducto
+[2026-05-31 21:04:13] [INFO] Entrando a listarProducto
+[2026-05-31 21:09:23] [INFO] Entrando a listarProducto
+[2026-05-31 21:09:25] [INFO] Listado de proveedores exitoso.
+[2026-05-31 21:09:25] [INFO] Entrando a listarClientes
+[2026-05-31 21:09:25] [INFO] Entrando a listarMovimientos
+[2026-05-31 21:09:25] [INFO] Entrando a listarVentas
+[2026-05-31 21:09:25] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:09:26] [INFO] Entrando a listarCompra
+[2026-05-31 21:10:17] [INFO] Entrando a listarVentas
+[2026-05-31 21:10:17] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:10:33] [INFO] Entrando a listarVentas
+[2026-05-31 21:10:33] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:10:39] [INFO] Entrando a listarVentas
+[2026-05-31 21:10:39] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:10:57] [INFO] Entrando a listarVentas
+[2026-05-31 21:10:57] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:11:03] [INFO] Entrando a listarVentas
+[2026-05-31 21:11:03] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:11:03] [INFO] Entrando a listarVentas
+[2026-05-31 21:11:04] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:11:13] [INFO] Entrando a listarVentas
+[2026-05-31 21:11:13] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:11:22] [INFO] Entrando a listarVentas
+[2026-05-31 21:11:22] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:11:26] [INFO] Entrando a listarVentas
+[2026-05-31 21:11:26] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:31:13] [INFO] Entrando a listarProducto
+[2026-05-31 21:31:15] [INFO] Listado de proveedores exitoso.
+[2026-05-31 21:31:15] [INFO] Entrando a listarClientes
+[2026-05-31 21:31:15] [INFO] Entrando a listarMovimientos
+[2026-05-31 21:31:15] [INFO] Entrando a listarVentas
+[2026-05-31 21:31:16] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-05-31 21:31:16] [INFO] Entrando a listarCompra
+[2026-06-01 08:27:59] [INFO] Entrando a listarProducto
+[2026-06-01 08:28:02] [INFO] Listado de proveedores exitoso.
+[2026-06-01 08:28:02] [INFO] Entrando a listarClientes
+[2026-06-01 08:28:02] [INFO] Entrando a listarMovimientos
+[2026-06-01 08:28:02] [INFO] Entrando a listarVentas
+[2026-06-01 08:28:03] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:28:03] [INFO] Entrando a listarCompra
+[2026-06-01 08:28:26] [INFO] Entrando a listarVentas
+[2026-06-01 08:28:26] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:29:10] [INFO] Entrando a listarVentas
+[2026-06-01 08:29:10] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:29:40] [INFO] Entrando a listarVentas
+[2026-06-01 08:29:40] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:30:22] [INFO] Entrando a listarVentas
+[2026-06-01 08:30:22] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:31:13] [INFO] Entrando a buscarVentaPorNumero. numeroFactura=factura_000002
+[2026-06-01 08:31:14] [INFO] Entrando a guardarVenta(conn). numeroFactura=factura_000002
+[2026-06-01 08:31:14] [INFO] Entrando a guardarCabeceraVenta. numeroFactura=factura_000002
+[2026-06-01 08:31:14] [INFO] Entrando a guardarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:31:15] [INFO] Entrando a descontarStockPorVenta. codigo=P00001 cantidad=56
+[2026-06-01 08:31:15] [INFO] Entrando a registrarMovimientos. count=1
+[2026-06-01 08:31:16] [INFO] Entrando a guardarMovimientos. count=3
+[2026-06-01 08:31:16] [INFO] Entrando a listarProducto
+[2026-06-01 08:33:25] [INFO] Entrando a listarVentas
+[2026-06-01 08:33:26] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:33:26] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:33:50] [INFO] Entrando a listarVentas
+[2026-06-01 08:33:50] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:33:50] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:34:07] [INFO] Entrando a listarVentas
+[2026-06-01 08:34:07] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:34:08] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:34:20] [INFO] Entrando a listarVentas
+[2026-06-01 08:34:20] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:34:20] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:34:26] [INFO] Entrando a listarVentas
+[2026-06-01 08:34:26] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:34:26] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:34:35] [INFO] Entrando a listarProducto
+[2026-06-01 08:52:27] [INFO] Entrando a listarProducto
+[2026-06-01 08:52:29] [INFO] Listado de proveedores exitoso.
+[2026-06-01 08:52:29] [INFO] Entrando a listarClientes
+[2026-06-01 08:52:29] [INFO] Entrando a listarMovimientos
+[2026-06-01 08:52:29] [INFO] Entrando a listarVentas
+[2026-06-01 08:52:29] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:52:30] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 08:52:30] [INFO] Entrando a listarCompra
+[2026-06-01 08:52:59] [INFO] Entrando a listarVentas
+[2026-06-01 08:52:59] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 08:53:00] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 09:06:44] [INFO] Entrando a listarProducto
+[2026-06-01 09:06:45] [INFO] Listado de proveedores exitoso.
+[2026-06-01 09:06:45] [INFO] Entrando a listarClientes
+[2026-06-01 09:06:46] [INFO] Entrando a listarMovimientos
+[2026-06-01 09:06:46] [INFO] Entrando a listarVentas
+[2026-06-01 09:06:46] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 09:06:46] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 09:06:47] [INFO] Entrando a listarCompra
+[2026-06-01 09:13:20] [INFO] Entrando a listarProducto
+[2026-06-01 09:13:22] [INFO] Listado de proveedores exitoso.
+[2026-06-01 09:13:22] [INFO] Entrando a listarClientes
+[2026-06-01 09:13:22] [INFO] Entrando a listarMovimientos
+[2026-06-01 09:13:22] [INFO] Entrando a listarVentas
+[2026-06-01 09:13:22] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 09:13:23] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 09:13:23] [INFO] Entrando a listarCompra
+[2026-06-01 09:14:03] [INFO] Entrando a listarVentas
+[2026-06-01 09:14:04] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 09:14:04] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 09:43:04] [INFO] Entrando a listarProducto
+[2026-06-01 09:43:07] [INFO] Listado de proveedores exitoso.
+[2026-06-01 09:43:07] [INFO] Entrando a listarClientes
+[2026-06-01 09:43:07] [INFO] Entrando a listarMovimientos
+[2026-06-01 09:43:07] [INFO] Entrando a listarVentas
+[2026-06-01 09:43:07] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 09:43:08] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 09:43:08] [INFO] Entrando a listarCompra
+[2026-06-01 10:31:16] [INFO] Entrando a listarProducto
+[2026-06-01 10:31:18] [INFO] Listado de proveedores exitoso.
+[2026-06-01 10:31:18] [INFO] Entrando a listarClientes
+[2026-06-01 10:31:18] [INFO] Entrando a listarMovimientos
+[2026-06-01 10:31:18] [INFO] Entrando a listarVentas
+[2026-06-01 10:31:19] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 10:31:19] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 10:31:19] [INFO] Entrando a listarCompra
+[2026-06-01 10:31:37] [INFO] Entrando a listarVentas
+[2026-06-01 10:31:37] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 10:31:37] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 10:59:52] [INFO] Entrando a listarProducto
+[2026-06-01 10:59:54] [INFO] Listado de proveedores exitoso.
+[2026-06-01 10:59:54] [INFO] Entrando a listarClientes
+[2026-06-01 10:59:54] [INFO] Entrando a listarMovimientos
+[2026-06-01 10:59:55] [INFO] Entrando a listarVentas
+[2026-06-01 10:59:55] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 10:59:55] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 10:59:55] [INFO] Entrando a listarCompra
+[2026-06-01 11:00:20] [INFO] Entrando a listarVentas
+[2026-06-01 11:00:20] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 11:00:21] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 11:08:12] [INFO] Entrando a listarProducto
+[2026-06-01 11:08:15] [INFO] Listado de proveedores exitoso.
+[2026-06-01 11:08:15] [INFO] Entrando a listarClientes
+[2026-06-01 11:08:15] [INFO] Entrando a listarMovimientos
+[2026-06-01 11:08:15] [INFO] Entrando a listarVentas
+[2026-06-01 11:08:15] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 11:08:15] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 11:08:16] [INFO] Entrando a listarCompra
+[2026-06-01 11:09:05] [INFO] Entrando a listarVentas
+[2026-06-01 11:09:05] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 11:09:05] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 11:11:56] [INFO] Entrando a listarProducto
+[2026-06-01 11:11:58] [INFO] Listado de proveedores exitoso.
+[2026-06-01 11:11:58] [INFO] Entrando a listarClientes
+[2026-06-01 11:11:59] [INFO] Entrando a listarMovimientos
+[2026-06-01 11:11:59] [INFO] Entrando a listarVentas
+[2026-06-01 11:11:59] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 11:11:59] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 11:11:59] [INFO] Entrando a listarCompra
+[2026-06-01 11:12:32] [INFO] Entrando a listarVentas
+[2026-06-01 11:12:33] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 11:12:33] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 11:12:57] [INFO] Entrando a listarProducto
+[2026-06-01 11:22:02] [INFO] Entrando a listarProducto
+[2026-06-01 11:22:04] [INFO] Listado de proveedores exitoso.
+[2026-06-01 11:22:04] [INFO] Entrando a listarClientes
+[2026-06-01 11:22:05] [INFO] Entrando a listarMovimientos
+[2026-06-01 11:22:05] [INFO] Entrando a listarVentas
+[2026-06-01 11:22:05] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 11:22:05] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 11:22:05] [INFO] Entrando a listarCompra
+[2026-06-01 11:22:06] [INFO] Entrando a listarProducto
+[2026-06-01 11:22:08] [INFO] Listado de proveedores exitoso.
+[2026-06-01 11:22:08] [INFO] Entrando a listarClientes
+[2026-06-01 11:22:08] [INFO] Entrando a listarMovimientos
+[2026-06-01 11:22:09] [INFO] Entrando a listarVentas
+[2026-06-01 11:22:09] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 11:22:09] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 11:22:09] [INFO] Entrando a listarCompra
+[2026-06-01 11:22:17] [INFO] Entrando a listarClientes
+[2026-06-01 13:17:07] [INFO] Entrando a listarProducto
+[2026-06-01 13:17:09] [INFO] Listado de proveedores exitoso.
+[2026-06-01 13:17:09] [INFO] Entrando a listarClientes
+[2026-06-01 13:17:09] [INFO] Entrando a listarMovimientos
+[2026-06-01 13:17:09] [INFO] Entrando a listarVentas
+[2026-06-01 13:17:10] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 13:17:10] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 13:17:10] [INFO] Entrando a listarCompra
+[2026-06-01 13:18:45] [INFO] Entrando a listarProducto
+[2026-06-01 13:18:48] [INFO] Listado de proveedores exitoso.
+[2026-06-01 13:18:48] [INFO] Entrando a listarClientes
+[2026-06-01 13:18:48] [INFO] Entrando a listarMovimientos
+[2026-06-01 13:18:49] [INFO] Entrando a listarVentas
+[2026-06-01 13:18:49] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 13:18:49] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 13:18:50] [INFO] Entrando a listarCompra
+[2026-06-01 13:19:16] [INFO] Entrando a listarProducto
+[2026-06-01 13:19:19] [INFO] Listado de proveedores exitoso.
+[2026-06-01 13:19:19] [INFO] Entrando a listarClientes
+[2026-06-01 13:19:19] [INFO] Entrando a listarMovimientos
+[2026-06-01 13:19:19] [INFO] Entrando a listarVentas
+[2026-06-01 13:19:20] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 13:19:20] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 13:19:20] [INFO] Entrando a listarCompra
+[2026-06-01 13:19:57] [INFO] Entrando a listarVentas
+[2026-06-01 13:19:58] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 13:19:58] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:11:20] [INFO] Entrando a listarProducto
+[2026-06-01 16:11:22] [INFO] Listado de proveedores exitoso.
+[2026-06-01 16:11:22] [INFO] Entrando a listarClientes
+[2026-06-01 16:11:23] [INFO] Entrando a listarMovimientos
+[2026-06-01 16:11:23] [INFO] Entrando a listarVentas
+[2026-06-01 16:11:23] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 16:11:23] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:11:24] [INFO] Entrando a listarCompra
+[2026-06-01 16:12:47] [INFO] Entrando a listarProducto
+[2026-06-01 16:12:48] [INFO] Listado de proveedores exitoso.
+[2026-06-01 16:12:48] [INFO] Entrando a listarClientes
+[2026-06-01 16:12:49] [INFO] Entrando a listarMovimientos
+[2026-06-01 16:12:49] [INFO] Entrando a listarVentas
+[2026-06-01 16:12:49] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 16:12:49] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:12:50] [INFO] Entrando a listarCompra
+[2026-06-01 16:13:42] [INFO] Entrando a listarVentasPorFecha fecha=2026-05-31
+[2026-06-01 16:13:42] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:13:52] [INFO] Entrando a listarVentasPorFecha fecha=2026-05-31
+[2026-06-01 16:13:53] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:22:27] [INFO] Entrando a listarProducto
+[2026-06-01 16:22:30] [INFO] Listado de proveedores exitoso.
+[2026-06-01 16:22:30] [INFO] Entrando a listarClientes
+[2026-06-01 16:22:30] [INFO] Entrando a listarMovimientos
+[2026-06-01 16:22:30] [INFO] Entrando a listarVentas
+[2026-06-01 16:22:30] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 16:22:30] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:22:31] [INFO] Entrando a listarCompra
+[2026-06-01 16:24:48] [INFO] Entrando a buscarVentaPorNumero. numeroFactura=factura_000001
+[2026-06-01 16:24:48] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:24:49] [INFO] Entrando a buscarPorFactura devoluciones. numeroFactura=factura_000001
+[2026-06-01 16:34:16] [INFO] Entrando a listarProducto
+[2026-06-01 16:34:18] [INFO] Listado de proveedores exitoso.
+[2026-06-01 16:34:18] [INFO] Entrando a listarClientes
+[2026-06-01 16:34:18] [INFO] Entrando a listarMovimientos
+[2026-06-01 16:34:18] [INFO] Entrando a listarVentas
+[2026-06-01 16:34:19] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 16:34:19] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:34:19] [INFO] Entrando a listarCompra
+[2026-06-01 16:40:10] [INFO] Entrando a listarClientes
+[2026-06-01 16:51:02] [INFO] Entrando a listarProducto
+[2026-06-01 16:51:04] [INFO] Listado de proveedores exitoso.
+[2026-06-01 16:51:04] [INFO] Entrando a listarClientes
+[2026-06-01 16:51:04] [INFO] Entrando a listarMovimientos
+[2026-06-01 16:51:05] [INFO] Entrando a listarVentas
+[2026-06-01 16:51:05] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000002
+[2026-06-01 16:51:05] [INFO] Entrando a listarDetallesVenta. numeroFactura=factura_000001
+[2026-06-01 16:51:05] [INFO] Entrando a listarCompra

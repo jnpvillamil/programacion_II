@@ -8,8 +8,8 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class ConexionBD {
 
-	private static final String SERVIDOR = "mysql-256a53-proyecto-sistema-gestion-contable.d.aivencloud.com";
-	private static final String PUERTO = "19516";
+	private static final String SERVIDOR = "localhost";
+	private static final String PUERTO = "3306";
 	private static final String NOMBRE_BASE_DATOS = "proyecto_sistema_gestion_contable";
 
 	private static final String URL = "jdbc:mysql://" + SERVIDOR + ":" + PUERTO + "/" + NOMBRE_BASE_DATOS
@@ -19,7 +19,7 @@ public class ConexionBD {
 			+ "&useLocalSessionState=true"
 			+ "&elideSetAutoCommits=true";
 
-	private static final String USUARIO = "";
+	private static final String USUARIO = "root";
 	private static final String PASSWORD = "";
 
 	private static final HikariDataSource DATA_SOURCE = crearDataSource();
