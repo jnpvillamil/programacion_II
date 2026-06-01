@@ -9,12 +9,18 @@ import co.edu.uptc.tiendaminorista.modelo.CompasCliente;
 import co.edu.uptc.tiendaminorista.modelo.Producto;
 import co.edu.uptc.tiendaminorista.persistencia.LocalCompraCliente;
 
+// Agregue un constructor con parametro para poder inyectar la persistencia desde TiendaConfig
+// Deje el constructor vacio por si algun panel lo usa directamente
 public class GestionCompasCliente {
 
     private IGestionCompraCli persistenciaCompra;
 
     public GestionCompasCliente() {
         this.persistenciaCompra = new LocalCompraCliente();
+    }
+
+    public GestionCompasCliente(IGestionCompraCli persistenciaCompra) {
+        this.persistenciaCompra = persistenciaCompra;
     }
 
     public void registrarCompra(Cliente cliente, Producto producto, int cantidad) throws Exception {
@@ -33,7 +39,6 @@ public class GestionCompasCliente {
         }
 
         CompasCliente nuevaCompra = new CompasCliente(cliente, producto, cantidad);
-        
         nuevaCompra.setTotalCompra(producto.getPrecioVenta() * cantidad);
         nuevaCompra.setFecha(new Date());
 
@@ -43,7 +48,7 @@ public class GestionCompasCliente {
     public List<CompasCliente> listarTodasLasCompras() {
         return persistenciaCompra.obtenerTodasLasCompras();
     }
-     
+
     public List<CompasCliente> listarComprasPorCliente(String cedulaCliente) {
         List<CompasCliente> comprasCliente = new ArrayList<>();
         for (CompasCliente compra : persistenciaCompra.obtenerTodasLasCompras()) {

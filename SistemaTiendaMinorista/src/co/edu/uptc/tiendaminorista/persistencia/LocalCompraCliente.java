@@ -1,55 +1,87 @@
 package co.edu.uptc.tiendaminorista.persistencia;
 
-import java.io.*;
-import java.lang.reflect.Type;
-import java.util.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import co.edu.uptc.tiendaminorista.interfaces.IGestionCompraCli;
+import co.edu.uptc.tiendaminorista.modelo.Cliente;
 import co.edu.uptc.tiendaminorista.modelo.CompasCliente;
+import co.edu.uptc.tiendaminorista.modelo.Producto;
 
 public class LocalCompraCliente implements IGestionCompraCli {
-    
-    private static final String RUTA = System.getProperty("user.dir") + File.separator + "compras_clientes.json";
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-    private List<CompasCliente> leer() {
-        File archivo = new File(RUTA);
-        if (!archivo.exists()) {
-            return new ArrayList<>();
-        }
-        
-        try (FileReader reader = new FileReader(archivo)) {
-            Type tipo = new TypeToken<List<CompasCliente>>() {}.getType();
-            List<CompasCliente> lista = gson.fromJson(reader, tipo);
-            return lista != null ? lista : new ArrayList<>();
-        } catch (Exception e) {
-            System.err.println("Error leyendo el archivo: " + RUTA);
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    private void escribir(List<CompasCliente> lista) {
-        try (FileWriter writer = new FileWriter(RUTA)) {
-            gson.toJson(lista, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void guardarCompra(CompasCliente compra) {
-        List<CompasCliente> lista = leer();
-        if (compra != null) {
-            lista.add(compra);
-            escribir(lista);
+        if (compra == null) return;
+
+        String sql = "INSERT INTO ventas_cliente (codigo_cliente, nombre_cliente, codigo_producto, nombre_producto, cantidad, total, fecha) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            Cliente c = compra.getCliente();
+            Producto p = compra.getProducto();
+
+            pstmt.setString(1, c != null ? c.getCodigo() : "");
+            pstmt.setString(2, c != null ? c.getNombre() : "");
+            pstmt.setString(3, p != null ? p.getCodigo() : "");
+            pstmt.setString(4, p != null ? p.getNombre() : "");
+            pstmt.setInt(5, compra.getCantidad());
+            pstmt.setDouble(6, compra.getTotalCompra());
+
+            Date fecha = compra.getFecha();
+            if (fecha != null) {
+                pstmt.setString(7, fecha.toString());
+            } else {
+                pstmt.setString(7, new Date().toString());
+            }
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public List<CompasCliente> obtenerTodasLasCompras() {
-        return leer();
+        List<CompasCliente> lista = new ArrayList<>();
+        String sql = "SELECT codigo_cliente, nombre_cliente, codigo_producto, nombre_producto, cantidad, total, fecha FROM ventas_cliente";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                CompasCliente compra = new CompasCliente();
+
+                Cliente cliente = new Cliente();
+                cliente.setCodigo(rs.getString("codigo_cliente"));
+                cliente.setNombre(rs.getString("nombre_cliente"));
+                compra.setCliente(cliente);
+
+                Producto producto = new Producto();
+                producto.setCodigo(rs.getString("codigo_producto"));
+                producto.setNombre(rs.getString("nombre_producto"));
+                compra.setProducto(producto);
+
+                compra.setCantidad(rs.getInt("cantidad"));
+                compra.setTotalCompra(rs.getDouble("total"));
+
+                lista.add(compra);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 }

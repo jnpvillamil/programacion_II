@@ -1,97 +1,155 @@
 package co.edu.uptc.tiendaminorista.persistencia;
 
-import java.io.*;
-import java.lang.reflect.Type;
-import java.util.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import co.edu.uptc.tiendaminorista.interfaces.IGestionCliente;
 import co.edu.uptc.tiendaminorista.modelo.Cliente;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
+// Arregle el bug del guardar() - faltaba setString(4) para numeroIdentificacion
+// y el parametro 3 estaba mal puesto (le mandaba numeroIdentificacion en vez de tipoIdentificacion)
+// Tambien arregle el actualizar() que tenia el mismo problema con tipoIdentificacion
 public class LocalCliente implements IGestionCliente {
-    private static final String RUTA = "clientes.json";
-    private final Gson gson = new Gson();
 
-    private List<Cliente> leer() {
-        try (FileReader reader = new FileReader(RUTA)) {
-            Type tipo = new TypeToken<List<Cliente>>() {}.getType();
-            List<Cliente> lista = gson.fromJson(reader, tipo);
-            return lista != null ? lista : new ArrayList<>();
-        } catch (IOException e) {
-            return new ArrayList<>();
-        }
-    }
+    //CRUD PRINCIPAL
+    @Override
+    public void guardar(Cliente cliente) {
+        String sql = "INSERT INTO clientes (codigo, nombre, tipoIdentificacion, numeroIdentificacion, direccion, telefono, tipoCliente, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            if (cliente.getCodigo() == null || cliente.getCodigo().isEmpty()) {
+                cliente.setCodigo(generarCodigo());
+            }
+            cliente.setActivo(true);
 
-    private void escribir(List<Cliente> lista) {
-        try (FileWriter writer = new FileWriter(RUTA)) {
-            gson.toJson(lista, writer);
-        } catch (IOException e) {
+            pstmt.setString(1, cliente.getCodigo());
+            pstmt.setString(2, cliente.getNombre());
+            pstmt.setString(3, cliente.getTipodoc() != null ? cliente.getTipodoc().name() : "");
+            pstmt.setString(4, cliente.getNumeroIdentificacion());
+            pstmt.setString(5, cliente.getDireccion());
+            pstmt.setString(6, cliente.getTelefono());
+            pstmt.setString(7, cliente.getTipoCliente());
+            pstmt.setBoolean(8, cliente.isActivo());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void guardar(Cliente cliente) {
-        List<Cliente> lista = leer();
-        if (cliente.getCodigo() == null || cliente.getCodigo().isEmpty()) {
-            cliente.setCodigo("CLI" + (lista.size() + 1));
-        }
-        cliente.setActivo(true);
-        lista.add(cliente);
-        escribir(lista);
-    }
+    public List<Cliente> listar() {
+        List<Cliente> clientes = new ArrayList<>();
+        String sql = "SELECT * FROM clientes";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
-    @Override
-    public List<Cliente> listar() { return leer(); }
+            while (rs.next()) {
+                clientes.add(mapearCliente(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return clientes;
+    }
 
     @Override
     public void actualizar(Cliente cliente) {
-        List<Cliente> lista = leer();
-        for (int i = 0; i < lista.size(); i++) {
-            if (lista.get(i).getCodigo().equals(cliente.getCodigo())) {
-                lista.set(i, cliente);
-                break;
-            }
+        String sql = "UPDATE clientes SET nombre=?, tipoIdentificacion=?, numeroIdentificacion=?, direccion=?, telefono=?, tipoCliente=?, activo=? WHERE codigo=?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, cliente.getNombre());
+            pstmt.setString(2, cliente.getTipodoc() != null ? cliente.getTipodoc().name() : "");
+            pstmt.setString(3, cliente.getNumeroIdentificacion());
+            pstmt.setString(4, cliente.getDireccion());
+            pstmt.setString(5, cliente.getTelefono());
+            pstmt.setString(6, cliente.getTipoCliente());
+            pstmt.setBoolean(7, cliente.isActivo());
+            pstmt.setString(8, cliente.getCodigo());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        escribir(lista);
     }
 
     @Override
-    public void desactivar(String codigo) { cambiarEstado(codigo, false); }
+    public void desactivar(String codigo) {
+        cambiarEstado(codigo, false);
+    }
 
     @Override
-    public void activar(String codigo) { cambiarEstado(codigo, true); }
+    public void activar(String codigo) {
+        cambiarEstado(codigo, true);
+    }
 
-    private void cambiarEstado(String codigo, boolean estado) {
-        List<Cliente> lista = leer();
-        for (Cliente c : lista) {
-            if (c.getCodigo().equals(codigo)) {
-                c.setActivo(estado);
-                break;
-            }
+    private void cambiarEstado(String codigo, boolean activo) {
+        String sql = "UPDATE clientes SET activo = ? WHERE codigo = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBoolean(1, activo);
+            pstmt.setString(2, codigo);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        escribir(lista);
-        
-        
-        
     }
 
     @Override
     public List<Cliente> buscar(String texto) {
-        List<Cliente> todos = leer(); 
-        if (texto == null || texto.trim().isEmpty()) {
-            return todos;
+        List<Cliente> resultado = new ArrayList<>();
+        String sql = "SELECT * FROM clientes WHERE nombre LIKE ? OR numeroIdentificacion LIKE ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            String like = "%" + (texto == null ? "" : texto) + "%";
+            pstmt.setString(1, like);
+            pstmt.setString(2, like);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    resultado.add(mapearCliente(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        
-        List<Cliente> filtrados = new ArrayList<>();
-        String query = texto.trim().toLowerCase();
-        
-        for (Cliente c : todos) {
-            if ((c.getNombre() != null && c.getNombre().toLowerCase().contains(query)) ||
-                (c.getNumeroIdentificacion() != null && c.getNumeroIdentificacion().contains(query))) {
-                filtrados.add(c);
+        return resultado;
+    }
+
+    // MÉTODOS AUXILIARES
+    private Cliente mapearCliente(ResultSet rs) throws SQLException {
+        Cliente c = new Cliente();
+        c.setCodigo(rs.getString("codigo"));
+        c.setNombre(rs.getString("nombre"));
+        c.setNumeroIdentificacion(rs.getString("numeroIdentificacion"));
+        c.setDireccion(rs.getString("direccion"));
+        c.setTelefono(rs.getString("telefono"));
+        c.setTipoCliente(rs.getString("tipoCliente"));
+        c.setActivo(rs.getBoolean("activo"));
+        return c;
+    }
+
+    private String generarCodigo() {
+        String ultimo = "";
+        String sql = "SELECT codigo FROM clientes ORDER BY codigo DESC LIMIT 1";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                ultimo = rs.getString("codigo");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        int num = 1;
+        if (ultimo != null && ultimo.startsWith("CLI")) {
+            try {
+                num = Integer.parseInt(ultimo.substring(3)) + 1;
+            } catch (NumberFormatException e) {
+                num = 1;
             }
         }
-        return filtrados;
+        return "CLI" + num;
     }
 }
