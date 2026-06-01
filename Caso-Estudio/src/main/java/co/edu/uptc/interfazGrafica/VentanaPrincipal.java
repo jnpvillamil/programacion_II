@@ -182,7 +182,7 @@ public class VentanaPrincipal extends JFrame {
         DialogoProducto d = new DialogoProducto(this, true, null);
         d.setVisible(true);
         if(d.isOk()) {
-            TiendaConfig.getInstancia().getGestionProducto().crear(d.getProducto());
+            TiendaConfig.getInstancia().getNegocioProducto().crear(d.getProducto());
             panelProducto.poblarTabla();
             
     
@@ -199,12 +199,12 @@ public class VentanaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Seleccione un producto de la tabla");
             return;
         }
-        Producto p = TiendaConfig.getInstancia().getGestionProducto().buscar(codigo);
+        Producto p = TiendaConfig.getInstancia().getNegocioProducto().buscar(codigo);
         if(p != null) {
             DialogoProducto d = new DialogoProducto(this, false, p);
             d.setVisible(true);
             if(d.isOk()) {
-                TiendaConfig.getInstancia().getGestionProducto().actualizar(d.getProducto());
+                TiendaConfig.getInstancia().getNegocioProducto().actualizar(d.getProducto());
                 panelProducto.poblarTabla();
                 JOptionPane.showMessageDialog(this, "Producto actualizado");
             }
@@ -219,7 +219,7 @@ public class VentanaPrincipal extends JFrame {
         }
         int confirm = JOptionPane.showConfirmDialog(this, "¿Inactivar producto?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if(confirm == JOptionPane.YES_OPTION) {
-            TiendaConfig.getInstancia().getGestionProducto().eliminar(codigo);
+            TiendaConfig.getInstancia().getNegocioProducto().eliminar(codigo);
             panelProducto.poblarTabla();
             JOptionPane.showMessageDialog(this, "Producto inactivado");
         }
@@ -556,7 +556,7 @@ public void generarReporteContable() {
             LocalDate fin = LocalDate.parse(txtFechaFin.getText());
             
             var resultados = TiendaConfig.getInstancia()
-                .getGestionContable().generarEstadoResultados(inicio, fin);
+                .getNegocioContable().generarEstadoResultados(inicio, fin);
             
             StringBuilder sb = new StringBuilder();
             sb.append("=== ESTADO DE RESULTADOS ===\n");
@@ -587,7 +587,7 @@ public void generarBalanceGeneral() {
     LocalDate fechaCorte = LocalDate.now();
     
     var balance = TiendaConfig.getInstancia()
-        .getGestionContable().generarBalanceGeneral(fechaCorte);
+        .getNegocioContable().generarBalanceGeneral(fechaCorte);
     
     StringBuilder sb = new StringBuilder();
     sb.append("=== BALANCE GENERAL ===\n");

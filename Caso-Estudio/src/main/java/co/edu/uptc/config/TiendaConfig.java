@@ -2,6 +2,7 @@ package co.edu.uptc.config;
 
 import co.edu.uptc.interfaces.*;
 import co.edu.uptc.persistencia.*;
+import co.edu.uptc.negocio.*;
 
 public class TiendaConfig {
     
@@ -16,6 +17,11 @@ public class TiendaConfig {
     private IGestionVenta gestionVenta;
     private IGestionCompra gestionCompra;
     private IGestionContable gestionContable;
+    
+    
+    private GestionProductoNegocio negocioProducto;
+   
+    private GestionContableNegocio negocioContable;
     
     
     // TODO Actualizar el sistema de base de datos de acuerdo a las nuevas clases
@@ -41,6 +47,10 @@ public class TiendaConfig {
             gestionContable = new LocalContable();
             System.out.println(" Usando persistencia en MEMORIA");
         }
+        
+        negocioProducto = new GestionProductoNegocio(gestionProducto);
+        negocioContable = new GestionContableNegocio(gestionContable);
+        
     }
     
     public static TiendaConfig getInstancia() {
@@ -50,6 +60,15 @@ public class TiendaConfig {
         return instancia;
     }
     
+    
+    
+    
+    //-----------------Metodos Nuevos (Capa de negocio)--------
+
+    public GestionProductoNegocio getNegocioProducto() { return negocioProducto; }
+    public GestionContableNegocio getNegocioContable() { return negocioContable; }
+    
+    //------------------Metodos Iguales---------------------
     public IGestionProducto getGestionProducto() { return gestionProducto; }
     public IGestionCliente getGestionCliente() { return gestionCliente; }
     public IGestionProveedor getGestionProveedor() { return gestionProveedor; }

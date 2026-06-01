@@ -28,7 +28,7 @@ public class PanelProducto extends PanelCentral {
         limpiarTabla();
         String filtro = getTextoBuscar();
         
-        for(Producto p : TiendaConfig.getInstancia().getGestionProducto().listar()) {
+        for(Producto p : TiendaConfig.getInstancia().getNegocioProducto().listar()) {
             
             if(filtro.isEmpty() || p.getCodigo().contains(filtro) || p.getNombre().contains(filtro)) {
                 Object[] fila = {
@@ -57,9 +57,9 @@ public class PanelProducto extends PanelCentral {
                 
                 if(!isSelected) {
                     String codigo = table.getValueAt(row, 0).toString();
-                    Producto p = TiendaConfig.getInstancia().getGestionProducto().buscar(codigo);
+                    Producto p = TiendaConfig.getInstancia().getNegocioProducto().buscar(codigo);
                     if(p != null && p.getStockActual() < p.getStockMinimo()) {
-                        c.setBackground(new java.awt.Color(255, 200, 200)); // Rojo claro
+                        c.setBackground(new java.awt.Color(255, 200, 200)); 
                     } else {
                         c.setBackground(java.awt.Color.WHITE);
                     }
