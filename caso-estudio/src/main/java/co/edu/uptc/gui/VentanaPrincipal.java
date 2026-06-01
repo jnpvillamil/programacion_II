@@ -1,5 +1,6 @@
 package co.edu.uptc.gui;
 
+import co.edu.uptc.negocio.AppConfig;
 import co.edu.uptc.utilidades.ConstructorComponentes;
 
 import javax.swing.*;

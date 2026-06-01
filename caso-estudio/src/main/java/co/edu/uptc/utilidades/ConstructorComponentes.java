@@ -6,6 +6,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -164,6 +166,23 @@ public class ConstructorComponentes {
         JButton boton = crearBotonEstilizado(texto, AZUL_OSCURO, COLOR_HOVER);
         boton.setHorizontalAlignment(SwingConstants.LEFT);
         return boton;
+    }
+
+    public static void vincularEvento(AbstractButton boton, ActionListener oyente) {
+        boton.addActionListener(oyente);
+    }
+
+    public static void vincularEvento(JComboBox<?> combo, ActionListener oyente) {
+        combo.addActionListener(oyente);
+    }
+
+    public static ActionListener crearOyente(final Runnable accion) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                accion.run();
+            }
+        };
     }
 
     public static void estilizarTabla(JTable tabla) {
