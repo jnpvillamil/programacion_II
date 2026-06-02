@@ -9,9 +9,6 @@ import co.edu.uptc.modelo.Venta;
 
 import java.util.List;
 
-/**
- * Contrato unificado para operaciones transaccionales de venta y compra.
- */
 public interface ManejadorEventoComercial {
 
     String realizarVenta(Venta venta);

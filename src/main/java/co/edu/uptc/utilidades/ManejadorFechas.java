@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ManejadorFechas {
-    
+
     private static final String FORMATO = "dd/MM/yyyy HH:mm:ss";
 
     public static String formatearFecha(LocalDateTime fecha) {

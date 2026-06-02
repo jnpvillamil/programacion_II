@@ -1,8 +1,8 @@
-package co.edu.uptc.enums; 
+package co.edu.uptc.enums;
 
-public enum FormaPago { 
-    EFECTIVO, 
-    TRANSFERENCIA, 
-    TARJETA, 
-    CREDITO 
+public enum FormaPago {
+    EFECTIVO,
+    TRANSFERENCIA,
+    TARJETA,
+    CREDITO
 }

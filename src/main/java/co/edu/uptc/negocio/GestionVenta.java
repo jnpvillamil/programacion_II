@@ -1,41 +1,42 @@
 package co.edu.uptc.negocio;
 
 import co.edu.uptc.dto.VentaDTO;
-import co.edu.uptc.enums.TipoMovimiento;
+import co.edu.uptc.interfaces.ProveedorUsuarioSesion;
 import co.edu.uptc.interfaces.RepositorioComercial;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.modelo.DetalleVenta;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.modelo.Venta;
-import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
-import co.edu.uptc.utilidades.ExportadorDatos;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class GestionVenta {
 
     private static final double PORCENTAJE_IVA = 0.19;
-    private static final String RUTA_LOG_AUDITORIA = "logs/auditoria_venta.txt";
 
     private final RepositorioComercial persistenciaComercial;
     private final GestionProducto gestionProducto;
     private final GestionContable gestionContable;
     private final GestionCliente gestionCliente;
+    private final ServicioAuditoria servicioAuditoria;
+    private final ProveedorUsuarioSesion proveedorUsuarioSesion;
 
     public GestionVenta(RepositorioComercial persistenciaComercial, GestionProducto gestionProducto,
-                        GestionContable gestionContable, GestionCliente gestionCliente) {
+                        GestionContable gestionContable, GestionCliente gestionCliente,
+                        ServicioAuditoria servicioAuditoria, ProveedorUsuarioSesion proveedorUsuarioSesion) {
         this.persistenciaComercial = persistenciaComercial;
         this.gestionProducto = gestionProducto;
         this.gestionContable = gestionContable;
         this.gestionCliente = gestionCliente;
+        this.servicioAuditoria = servicioAuditoria;
+        this.proveedorUsuarioSesion = proveedorUsuarioSesion;
     }
 
     public String realizarVenta(Venta venta) {
         validarVenta(venta);
         calcularTotales(venta);
         persistenciaComercial.guardarVenta(venta, gestionContable::construirAsientoVenta);
-        registrarLogVenta(venta, "REGISTRADA");
+        servicioAuditoria.registrarVenta(venta, proveedorUsuarioSesion.obtenerLoginOperador());
         return "Venta registrada correctamente. Factura N° " + venta.getNumeroFactura();
     }
 
@@ -51,7 +52,7 @@ public class GestionVenta {
 
         persistenciaComercial.anularVenta(numeroFactura, gestionContable::construirAsientoAnulacionVenta);
         ventaAnulada.setEstado(co.edu.uptc.enums.EstadoVenta.ANULADA);
-        registrarLogVenta(ventaAnulada, "ANULADA");
+        servicioAuditoria.anularVenta(ventaAnulada, proveedorUsuarioSesion.obtenerLoginOperador());
         return "Factura " + numeroFactura + " anulada. Inventario restaurado.";
     }
 
@@ -130,19 +131,6 @@ public class GestionVenta {
 
     private Venta consultarVenta(String numeroFactura) {
         return persistenciaComercial.buscarVentaPorNumeroFactura(numeroFactura);
-    }
-
-    private void registrarLogVenta(Venta venta, String accion) {
-        String linea = String.format(
-                "VENTA|%s|Factura=%s|Cliente=%s|Subtotal=%.2f|Iva=%.2f|Total=%.2f|Fecha=%s",
-                accion,
-                venta.getNumeroFactura(),
-                venta.getCliente().getIdentificacion(),
-                venta.getSubtotal(),
-                venta.getIva(),
-                venta.getTotal(),
-                LocalDateTime.now());
-        ExportadorDatos.exportarPlano(List.of(linea), RUTA_LOG_AUDITORIA);
     }
 
     private double redondear(double valor) {

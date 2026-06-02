@@ -5,14 +5,18 @@ import co.edu.uptc.dto.UsuarioDTO;
 import co.edu.uptc.gui.evento.EventoSistema;
 import co.edu.uptc.interfaces.ManejadorEventoSistema;
 import co.edu.uptc.negocio.ExcepcionAutenticacion;
+import co.edu.uptc.interfaces.ProveedorUsuarioSesion;
+import co.edu.uptc.interfaces.RegistradorAuditoria;
 import co.edu.uptc.negocio.GestionContable;
 import co.edu.uptc.negocio.GestionUsuario;
+import co.edu.uptc.negocio.ServicioAuditoria;
 import co.edu.uptc.negocio.ServicioAutenticacion;
 import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
 import co.edu.uptc.persistencia.PersistenciaAdministracion;
 import co.edu.uptc.persistencia.PersistenciaContable;
 import co.edu.uptc.utilidades.CentradorVentanas;
 import co.edu.uptc.utilidades.ConstructorComponentes;
+import co.edu.uptc.utilidades.RegistradorAuditoriaArchivo;
 import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
 
 import javax.swing.*;
@@ -25,11 +29,17 @@ public class VentanaLogin extends JFrame {
     private final ManejadorEventoSistema manejadorEventoSistema;
     private final GestionUsuario gestionUsuario;
     private final GestionContable gestionContable;
+    private final ServicioAutenticacion servicioAutenticacion;
+    private final ProveedorUsuarioSesion proveedorUsuarioSesion;
+    private final ServicioAuditoria servicioAuditoria;
 
     public VentanaLogin() {
         PersistenciaAdministracion persistenciaAdministracion = new PersistenciaAdministracion();
         gestionUsuario = new GestionUsuario(persistenciaAdministracion);
-        ServicioAutenticacion servicioAutenticacion = new ServicioAutenticacion(gestionUsuario);
+        RegistradorAuditoria registradorAuditoria = new RegistradorAuditoriaArchivo();
+        servicioAuditoria = new ServicioAuditoria(registradorAuditoria);
+        servicioAutenticacion = new ServicioAutenticacion(gestionUsuario, servicioAuditoria);
+        proveedorUsuarioSesion = servicioAutenticacion;
         gestionContable = new GestionContable(new PersistenciaContable());
         manejadorEventoSistema = new EventoSistema(servicioAutenticacion, gestionContable);
 
@@ -93,7 +103,9 @@ public class VentanaLogin extends JFrame {
                         usuarioAutenticado,
                         manejadorEventoSistema,
                         gestionUsuario,
-                        gestionContable);
+                        gestionContable,
+                        servicioAuditoria,
+                        proveedorUsuarioSesion);
                 ventanaPrincipal.setVisible(true);
             });
         } catch (ExcepcionAutenticacion excepcion) {

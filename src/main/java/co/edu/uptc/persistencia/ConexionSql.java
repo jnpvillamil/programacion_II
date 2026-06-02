@@ -6,9 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * Punto único de acceso JDBC hacia MySQL en Aiven Cloud mediante pool HikariCP.
- */
 public final class ConexionSql {
 
     private static final HikariDataSource FUENTE_DATO;

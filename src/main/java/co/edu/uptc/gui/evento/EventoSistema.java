@@ -18,9 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.JPanel;
 
-/**
- * Intermediario unificado para autenticación, navegación y consolidados contables.
- */
 public class EventoSistema implements ManejadorEventoSistema {
 
     private final ServicioAutenticacion servicioAutenticacion;

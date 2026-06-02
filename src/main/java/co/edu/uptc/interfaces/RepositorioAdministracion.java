@@ -10,9 +10,6 @@ import co.edu.uptc.modelo.Usuario;
 
 import java.util.List;
 
-/**
- * Contrato unificado de persistencia para maestros del sistema.
- */
 public interface RepositorioAdministracion {
 
     void guardarCliente(Cliente cliente);

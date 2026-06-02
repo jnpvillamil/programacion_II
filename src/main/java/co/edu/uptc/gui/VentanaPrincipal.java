@@ -11,17 +11,16 @@ import co.edu.uptc.negocio.GestionCompra;
 import co.edu.uptc.negocio.GestionContable;
 import co.edu.uptc.negocio.GestionProducto;
 import co.edu.uptc.negocio.GestionProveedor;
+import co.edu.uptc.interfaces.ProveedorUsuarioSesion;
 import co.edu.uptc.negocio.GestionUsuario;
 import co.edu.uptc.negocio.GestionVenta;
+import co.edu.uptc.negocio.ServicioAuditoria;
 import co.edu.uptc.persistencia.PersistenciaAdministracion;
 import co.edu.uptc.persistencia.PersistenciaComercial;
 import co.edu.uptc.utilidades.ConstructorComponentes;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Punto de entrada (main) y gestiona los paneles mediante CardLayout.
- */
 public class VentanaPrincipal extends JFrame {
     private JPanel panelContenedor;
     private CardLayout cardLayout;
@@ -29,20 +28,30 @@ public class VentanaPrincipal extends JFrame {
     public VentanaPrincipal(UsuarioDTO usuarioAutenticado,
                             ManejadorEventoSistema manejadorEventoSistema,
                             GestionUsuario gestionUsuario,
-                            GestionContable gestionContable) {
+                            GestionContable gestionContable,
+                            ServicioAuditoria servicioAuditoria,
+                            ProveedorUsuarioSesion proveedorUsuarioSesion) {
         setTitle("Sistema de Gestión - Tienda Minorista");
         setSize(1100, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        inicializarComponentes(usuarioAutenticado, manejadorEventoSistema, gestionUsuario, gestionContable);
+        inicializarComponentes(
+                usuarioAutenticado,
+                manejadorEventoSistema,
+                gestionUsuario,
+                gestionContable,
+                servicioAuditoria,
+                proveedorUsuarioSesion);
         setLocationRelativeTo(null);
     }
 
     private void inicializarComponentes(UsuarioDTO usuarioAutenticado,
                                         ManejadorEventoSistema manejadorEventoSistema,
                                         GestionUsuario gestionUsuario,
-                                        GestionContable gestionContable) {
+                                        GestionContable gestionContable,
+                                        ServicioAuditoria servicioAuditoria,
+                                        ProveedorUsuarioSesion proveedorUsuarioSesion) {
         JPanel menuLateral = new JPanel(new GridLayout(10, 1, 0, 2));
         menuLateral.setBackground(ConstructorComponentes.COLOR_MENU_OSCURO);
         menuLateral.setPreferredSize(new Dimension(220, 0));
@@ -65,9 +74,19 @@ public class VentanaPrincipal extends JFrame {
 
         PersistenciaComercial persistenciaComercial = new PersistenciaComercial();
         GestionVenta gestionVenta = new GestionVenta(
-                persistenciaComercial, gestionProducto, gestionContable, gestionCliente);
+                persistenciaComercial,
+                gestionProducto,
+                gestionContable,
+                gestionCliente,
+                servicioAuditoria,
+                proveedorUsuarioSesion);
         GestionCompra gestionCompra = new GestionCompra(
-                persistenciaComercial, gestionProducto, gestionContable, gestionProveedor);
+                persistenciaComercial,
+                gestionProducto,
+                gestionContable,
+                gestionProveedor,
+                servicioAuditoria,
+                proveedorUsuarioSesion);
 
         ManejadorEventoComercial eventoComercial = new EventoComercial(gestionVenta, gestionCompra);
 
@@ -108,10 +127,6 @@ public class VentanaPrincipal extends JFrame {
         cardLayout.show(panelContenedor, "Home");
     }
 
-    /**
-     * Punto de entrada principal del sistema.
-     * Lanza la ventana de Login para autenticación inicial.
-     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {

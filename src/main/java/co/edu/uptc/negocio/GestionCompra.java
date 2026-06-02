@@ -1,34 +1,38 @@
 package co.edu.uptc.negocio;
 
 import co.edu.uptc.dto.CompraDTO;
+import co.edu.uptc.interfaces.ProveedorUsuarioSesion;
 import co.edu.uptc.interfaces.RepositorioComercial;
 import co.edu.uptc.modelo.Compra;
 import co.edu.uptc.modelo.DetalleCompra;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.modelo.Proveedor;
-import co.edu.uptc.utilidades.ExportadorDatos;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class GestionCompra {
 
     private static final double PORCENTAJE_IVA = 0.19;
-    private static final String RUTA_LOG_AUDITORIA = "logs/auditoria_compra.txt";
 
     private final RepositorioComercial persistenciaComercial;
     private final GestionProducto gestionProducto;
     private final GestionContable gestionContable;
     private final GestionProveedor gestionProveedor;
+    private final ServicioAuditoria servicioAuditoria;
+    private final ProveedorUsuarioSesion proveedorUsuarioSesion;
 
     public GestionCompra(RepositorioComercial persistenciaComercial,
                          GestionProducto gestionProducto,
                          GestionContable gestionContable,
-                         GestionProveedor gestionProveedor) {
+                         GestionProveedor gestionProveedor,
+                         ServicioAuditoria servicioAuditoria,
+                         ProveedorUsuarioSesion proveedorUsuarioSesion) {
         this.persistenciaComercial = persistenciaComercial;
         this.gestionProducto = gestionProducto;
         this.gestionContable = gestionContable;
         this.gestionProveedor = gestionProveedor;
+        this.servicioAuditoria = servicioAuditoria;
+        this.proveedorUsuarioSesion = proveedorUsuarioSesion;
     }
 
     public String registrarCompra(Compra compra) {
@@ -37,7 +41,7 @@ public class GestionCompra {
         double subtotal = calcularSubtotal(compra);
         double iva = calcularIVA(subtotal);
         persistenciaComercial.guardarCompra(compra, c -> gestionContable.construirAsientoCompra(c, subtotal, iva));
-        registrarLogCompra(compra, subtotal, iva);
+        servicioAuditoria.registrarCompra(compra, proveedorUsuarioSesion.obtenerLoginOperador());
         return "Compra registrada correctamente. Factura proveedor " + compra.getNumeroFacturaProveedor();
     }
 
@@ -109,18 +113,6 @@ public class GestionCompra {
 
     private double calcularIVA(double subtotal) {
         return redondear(subtotal * PORCENTAJE_IVA);
-    }
-
-    private void registrarLogCompra(Compra compra, double subtotal, double iva) {
-        String linea = String.format(
-                "COMPRA|Factura=%s|Proveedor=%s|Subtotal=%.2f|Iva=%.2f|Total=%.2f|Fecha=%s",
-                compra.getNumeroFacturaProveedor(),
-                compra.getProveedor().getNit(),
-                subtotal,
-                iva,
-                compra.getTotal(),
-                LocalDateTime.now());
-        ExportadorDatos.exportarPlano(List.of(linea), RUTA_LOG_AUDITORIA);
     }
 
     private double redondear(double valor) {

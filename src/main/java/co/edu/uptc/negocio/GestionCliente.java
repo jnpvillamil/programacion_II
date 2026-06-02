@@ -85,7 +85,6 @@ public class GestionCliente {
         return persistenciaAdministracion.buscarClientePorIdentificacion(identificacion.trim());
     }
 
-    /** Compatibilidad con módulos que consultan cliente por identificación. */
     public Cliente buscarCliente(String identificacion) {
         return buscarPorIdentificacion(identificacion);
     }

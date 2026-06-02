@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Compra {
-    private String numeroFacturaProveedor; 
-    private LocalDateTime fecha; 
-    private Proveedor proveedor; 
-    private List<DetalleCompra> listaDetalles; 
+    private String numeroFacturaProveedor;
+    private LocalDateTime fecha;
+    private Proveedor proveedor;
+    private List<DetalleCompra> listaDetalles;
     private double total;
 
     public Compra(String numeroFacturaProveedor, LocalDateTime fecha, Proveedor proveedor) {

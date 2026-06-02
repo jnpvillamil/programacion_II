@@ -7,14 +7,14 @@ public class Proveedor extends Persona {
     private String correoElectronico;
     private boolean activo;
 
-    public Proveedor(String nombre, String apellido, String identificacion, String direccion, String telefono, 
+    public Proveedor(String nombre, String apellido, String identificacion, String direccion, String telefono,
                      String codigoProveedor, String razonSocial, String nit, String correoElectronico) {
         super(nombre, apellido, identificacion, direccion, telefono);
         this.codigoProveedor = codigoProveedor;
         this.razonSocial = razonSocial;
         this.nit = nit;
         this.correoElectronico = correoElectronico;
-        this.activo = true; // Activo por defecto
+        this.activo = true;
     }
 
     public String getCodigoProveedor() { return codigoProveedor; }

@@ -3,7 +3,6 @@ package co.edu.uptc.persistencia;
 import co.edu.uptc.dto.ClienteResumenDTO;
 import co.edu.uptc.enums.TipoCliente;
 import co.edu.uptc.enums.TipoIdentificacion;
-import co.edu.uptc.interfaces.RepositorioCliente;
 import co.edu.uptc.modelo.Cliente;
 
 import java.sql.Connection;
@@ -13,51 +12,51 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersistenciaCliente implements RepositorioCliente {
+public class PersistenciaCliente {
 
     private static final String SQL_INSERT = """
-            INSERT INTO clientes (
+            INSERT INTO cliente (
                 codigo_cliente, tipo_id, identificacion, nombres, apellidos,
                 telefono, direccion, tipo_cliente, estado
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
     private static final String SQL_UPDATE = """
-            UPDATE clientes
+            UPDATE cliente
             SET tipo_id = ?, identificacion = ?, nombres = ?, apellidos = ?,
                 telefono = ?, direccion = ?, tipo_cliente = ?, estado = ?
             WHERE codigo_cliente = ?
             """;
 
     private static final String SQL_DELETE = """
-            DELETE FROM clientes
+            DELETE FROM cliente
             WHERE codigo_cliente = ?
             """;
 
     private static final String SQL_SELECT_ALL = """
             SELECT codigo_cliente, tipo_id, identificacion, nombres, apellidos,
                    telefono, direccion, tipo_cliente, estado
-            FROM clientes
+            FROM cliente
             ORDER BY nombres, apellidos
             """;
 
     private static final String SQL_SELECT_BY_CODIGO = """
             SELECT codigo_cliente, tipo_id, identificacion, nombres, apellidos,
                    telefono, direccion, tipo_cliente, estado
-            FROM clientes
+            FROM cliente
             WHERE codigo_cliente = ?
             """;
 
     private static final String SQL_SELECT_BY_IDENTIFICACION = """
             SELECT codigo_cliente, tipo_id, identificacion, nombres, apellidos,
                    telefono, direccion, tipo_cliente, estado
-            FROM clientes
+            FROM cliente
             WHERE identificacion = ?
             """;
 
     private static final String SQL_EXISTE_IDENTIFICACION = """
             SELECT COUNT(1) AS total
-            FROM clientes
+            FROM cliente
             WHERE identificacion = ?
             """;
 
@@ -66,11 +65,18 @@ public class PersistenciaCliente implements RepositorioCliente {
                    CONCAT(nombres, ' ', apellidos) AS nombre_completo,
                    telefono,
                    estado
-            FROM clientes
+            FROM cliente
             ORDER BY nombres, apellidos
             """;
 
-    @Override
+    private static final String SQL_ACTIVAR_POR_IDENTIFICACION = """
+            UPDATE cliente SET estado = 'Activo' WHERE identificacion = ?
+            """;
+
+    private static final String SQL_INACTIVAR_POR_IDENTIFICACION = """
+            UPDATE cliente SET estado = 'Inactivo' WHERE identificacion = ?
+            """;
+
     public void guardar(Cliente cliente) {
         try (Connection conexion = ConexionSql.getConexion();
              PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERT)) {
@@ -82,7 +88,6 @@ public class PersistenciaCliente implements RepositorioCliente {
         }
     }
 
-    @Override
     public void actualizar(Cliente cliente) {
         try (Connection conexion = ConexionSql.getConexion();
              PreparedStatement sentencia = conexion.prepareStatement(SQL_UPDATE)) {
@@ -102,7 +107,6 @@ public class PersistenciaCliente implements RepositorioCliente {
         }
     }
 
-    @Override
     public void eliminar(String codigoCliente) {
         try (Connection conexion = ConexionSql.getConexion();
              PreparedStatement sentencia = conexion.prepareStatement(SQL_DELETE)) {
@@ -114,7 +118,6 @@ public class PersistenciaCliente implements RepositorioCliente {
         }
     }
 
-    @Override
     public List<Cliente> listar() {
         List<Cliente> listaCliente = new ArrayList<>();
 
@@ -131,7 +134,6 @@ public class PersistenciaCliente implements RepositorioCliente {
         return listaCliente;
     }
 
-    @Override
     public Cliente buscarPorId(String codigoCliente) {
         try (Connection conexion = ConexionSql.getConexion();
              PreparedStatement sentencia = conexion.prepareStatement(SQL_SELECT_BY_CODIGO)) {
@@ -148,7 +150,6 @@ public class PersistenciaCliente implements RepositorioCliente {
         return null;
     }
 
-    @Override
     public Cliente buscarPorIdentificacion(String identificacion) {
         try (Connection conexion = ConexionSql.getConexion();
              PreparedStatement sentencia = conexion.prepareStatement(SQL_SELECT_BY_IDENTIFICACION)) {
@@ -165,7 +166,6 @@ public class PersistenciaCliente implements RepositorioCliente {
         return null;
     }
 
-    @Override
     public boolean existeIdentificacion(String identificacion) {
         try (Connection conexion = ConexionSql.getConexion();
              PreparedStatement sentencia = conexion.prepareStatement(SQL_EXISTE_IDENTIFICACION)) {
@@ -182,7 +182,6 @@ public class PersistenciaCliente implements RepositorioCliente {
         return false;
     }
 
-    @Override
     public List<ClienteResumenDTO> listarResumen() {
         List<ClienteResumenDTO> listaResumen = new ArrayList<>();
 
@@ -202,6 +201,24 @@ public class PersistenciaCliente implements RepositorioCliente {
             throw ExcepcionAccesoDatos.desde(excepcion);
         }
         return listaResumen;
+    }
+
+    public void activarPorIdentificacion(String identificacion) {
+        ejecutarActualizacionEstado(SQL_ACTIVAR_POR_IDENTIFICACION, identificacion);
+    }
+
+    public void inactivarPorIdentificacion(String identificacion) {
+        ejecutarActualizacionEstado(SQL_INACTIVAR_POR_IDENTIFICACION, identificacion);
+    }
+
+    private void ejecutarActualizacionEstado(String sql, String identificacion) {
+        try (Connection conexion = ConexionSql.getConexion();
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+            sentencia.setString(1, identificacion);
+            sentencia.executeUpdate();
+        } catch (SQLException excepcion) {
+            throw ExcepcionAccesoDatos.desde(excepcion);
+        }
     }
 
     private void asignarParametroInsercion(PreparedStatement sentencia, Cliente cliente) throws SQLException {

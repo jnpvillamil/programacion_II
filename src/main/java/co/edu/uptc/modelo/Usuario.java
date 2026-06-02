@@ -1,8 +1,5 @@
 package co.edu.uptc.modelo;
 
-/**
- * Clase abstracta que define los atributos de seguridad para los usuarios del sistema
- */
 public abstract class Usuario extends Persona {
     private String usuario;
     private String clave;
@@ -16,9 +13,6 @@ public abstract class Usuario extends Persona {
         this.activo = true;
     }
 
-    /**
-     * Método polimórfico para obtener el rol del usuario.
-     */
     public abstract String obtenerRol();
 
     public String getUsuario() { return usuario; }

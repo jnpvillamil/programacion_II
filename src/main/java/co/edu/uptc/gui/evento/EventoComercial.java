@@ -17,9 +17,6 @@ import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
 
 import java.util.List;
 
-/**
- * Intermediario unificado para operaciones comerciales de venta y compra.
- */
 public class EventoComercial implements ManejadorEventoComercial {
 
     private final GestionVenta gestionVenta;

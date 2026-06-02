@@ -4,12 +4,12 @@ import co.edu.uptc.enums.TipoMovimiento;
 import java.time.LocalDateTime;
 
 public class MovimientoContable {
-    private String codigoTransaccion; 
-    private LocalDateTime fechaMovimiento; 
-    private TipoMovimiento tipoMovimiento; 
-    private String cuentaContable; 
-    private double valorMovimiento; 
-    private String descripcion; 
+    private String codigoTransaccion;
+    private LocalDateTime fechaMovimiento;
+    private TipoMovimiento tipoMovimiento;
+    private String cuentaContable;
+    private double valorMovimiento;
+    private String descripcion;
 
     public MovimientoContable(String codigoTransaccion, LocalDateTime fechaMovimiento, TipoMovimiento tipoMovimiento, String cuentaContable, double valorMovimiento, String descripcion) {
         this.codigoTransaccion = codigoTransaccion;

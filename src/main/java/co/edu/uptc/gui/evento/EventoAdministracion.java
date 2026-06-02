@@ -20,9 +20,6 @@ import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Intermediario unificado para maestros: cliente, proveedor, producto y usuario.
- */
 public class EventoAdministracion implements ManejadorEventoAdministracion {
 
     private final GestionCliente gestionCliente;

@@ -1,7 +1,7 @@
 package co.edu.uptc.utilidades;
 
 public class ValidadorEntradas {
-    
+
     public static boolean esNuloOVacio(String texto) {
         return texto == null || texto.trim().isEmpty();
     }

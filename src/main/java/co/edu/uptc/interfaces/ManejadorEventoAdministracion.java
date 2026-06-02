@@ -12,9 +12,6 @@ import co.edu.uptc.modelo.Usuario;
 
 import java.util.List;
 
-/**
- * Contrato unificado para operaciones CRUD y listado de maestros del sistema.
- */
 public interface ManejadorEventoAdministracion {
 
     String registrarCliente(Cliente cliente);

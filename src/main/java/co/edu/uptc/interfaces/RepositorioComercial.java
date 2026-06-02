@@ -9,9 +9,6 @@ import co.edu.uptc.modelo.Venta;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- * Contrato unificado de persistencia para transacciones comerciales.
- */
 public interface RepositorioComercial {
 
     void guardarVenta(Venta venta, Function<Venta, List<MovimientoContable>> constructorAsiento);

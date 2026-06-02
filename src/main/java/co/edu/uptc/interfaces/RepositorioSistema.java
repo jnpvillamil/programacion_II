@@ -7,9 +7,6 @@ import co.edu.uptc.modelo.MovimientoContable;
 
 import java.util.List;
 
-/**
- * Contrato unificado de persistencia para contabilidad y reportes del sistema.
- */
 public interface RepositorioSistema {
 
     void guardarMovimientoContable(MovimientoContable movimiento);

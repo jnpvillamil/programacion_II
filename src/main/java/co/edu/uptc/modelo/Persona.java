@@ -1,11 +1,10 @@
 package co.edu.uptc.modelo;
 
-
 public class Persona {
-    private String nombre; 
-    private String apellido; 
-    private String identificacion; 
-    private String direccion; 
+    private String nombre;
+    private String apellido;
+    private String identificacion;
+    private String direccion;
     private String telefono;
 
     public Persona(String nombre, String apellido, String identificacion, String direccion, String telefono) {

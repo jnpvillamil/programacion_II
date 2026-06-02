@@ -13,7 +13,7 @@ public class Producto {
     private int stockMaximo;
     private boolean activo;
 
-    public Producto(String codigoInterno, String nombreProducto, CategoriaProducto categoria, 
+    public Producto(String codigoInterno, String nombreProducto, CategoriaProducto categoria,
                     double precioCompra, double precioVenta, int stockActual, int stockMinimo, int stockMaximo) {
         this.codigoInterno = codigoInterno;
         this.nombreProducto = nombreProducto;
@@ -23,7 +23,7 @@ public class Producto {
         this.stockActual = stockActual;
         this.stockMinimo = stockMinimo;
         this.stockMaximo = stockMaximo;
-        this.activo = true; // Activo por defecto al registrarse
+        this.activo = true;
     }
 
     public String getCodigoInterno() { return codigoInterno; }

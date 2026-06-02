@@ -7,9 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-/**
- * Carga credenciales y URL JDBC desde archivo externo o variables de entorno.
- */
 public final class CargadorConfiguracionBd {
 
     private static final String ARCHIVO_PREDETERMINADO = "configuracion/bd.properties";

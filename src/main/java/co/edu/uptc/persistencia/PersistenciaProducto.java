@@ -1,52 +1,95 @@
 package co.edu.uptc.persistencia;
 
-import co.edu.uptc.enums.Categoria;
-import co.edu.uptc.interfaces.Repositorio;
-import co.edu.uptc.dto.ProductoResumenDTO;
+import co.edu.uptc.enums.CategoriaProducto;
 import co.edu.uptc.modelo.Producto;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersistenciaProducto implements Repositorio<Producto> {
+public class PersistenciaProducto {
 
     private static final String SQL_INSERT = """
-            INSERT INTO productos (codigo_producto, nombre_producto, categoria, precio_compra, precio_venta, 
-                                   stock_actual, stock_minimo, stock_maximo, activo)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                nombre_producto=VALUES(nombre_producto), categoria=VALUES(categoria), 
-                precio_compra=VALUES(precio_compra), precio_venta=VALUES(precio_venta), 
-                stock_actual=VALUES(stock_actual), stock_minimo=VALUES(stock_minimo), 
-                stock_maximo=VALUES(stock_maximo), activo=VALUES(activo)
+            INSERT INTO producto (
+                codigo_interno, nombre_producto, categoria, precio_compra, precio_venta,
+                stock_actual, stock_minimo, stock_maximo, activo
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
-    private static final String SQL_DELETE = "UPDATE productos SET activo = false WHERE codigo_producto = ?";
+    private static final String SQL_DELETE = """
+            DELETE FROM producto WHERE codigo_interno = ?
+            """;
 
-    private static final String SQL_SELECT_ALL = "SELECT * FROM productos";
+    private static final String SQL_SELECT_ALL = """
+            SELECT codigo_interno, nombre_producto, categoria, precio_compra, precio_venta,
+                   stock_actual, stock_minimo, stock_maximo, activo
+            FROM producto
+            """;
 
-    private static final String SQL_SELECT_BY_ID = "SELECT * FROM productos WHERE codigo_producto = ?";
+    private static final String SQL_SELECT_BY_ID = """
+            SELECT codigo_interno, nombre_producto, categoria, precio_compra, precio_venta,
+                   stock_actual, stock_minimo, stock_maximo, activo
+            FROM producto
+            WHERE codigo_interno = ?
+            """;
 
-    @Override
-    public void guardar(Producto p) {
+    static final String SQL_DESCONTAR_STOCK = """
+            UPDATE producto
+            SET stock_actual = stock_actual - ?
+            WHERE codigo_interno = ? AND stock_actual >= ? AND activo = 1
+            """;
+
+    static final String SQL_DEVOLVER_STOCK = """
+            UPDATE producto
+            SET stock_actual = stock_actual + ?
+            WHERE codigo_interno = ?
+            """;
+
+    private static final String SQL_ACTIVAR_POR_CODIGO = """
+            UPDATE producto SET activo = 1 WHERE codigo_interno = ?
+            """;
+
+    private static final String SQL_INACTIVAR_POR_CODIGO = """
+            UPDATE producto SET activo = 0 WHERE codigo_interno = ?
+            """;
+
+    static final String SQL_INCREMENTAR_STOCK = """
+            UPDATE producto
+            SET stock_actual = stock_actual + ?
+            WHERE codigo_interno = ?
+              AND (stock_actual + ?) <= stock_maximo
+              AND activo = 1
+            """;
+
+    private static final String SQL_SELECT_BY_ID_CONEXION = """
+            SELECT codigo_interno, nombre_producto, categoria, precio_compra, precio_venta,
+                   stock_actual, stock_minimo, stock_maximo, activo
+            FROM producto
+            WHERE codigo_interno = ?
+            """;
+
+    public void guardar(Producto producto) {
         try (Connection conn = ConexionSql.getConexion();
              PreparedStatement pstmt = conn.prepareStatement(SQL_INSERT)) {
-            pstmt.setString(1, p.getCodigoInterno());
-            pstmt.setString(2, p.getNombre());
-            pstmt.setString(3, p.getCategoria() != null ? p.getCategoria().name() : Categoria.OTROS.name());
-            pstmt.setDouble(4, p.getPrecioCompra());
-            pstmt.setDouble(5, p.getPrecioVenta());
-            pstmt.setInt(6, p.getStockActual());
-            pstmt.setInt(7, p.getStockMinimo());
-            pstmt.setInt(8, p.getStockMaximo());
-            pstmt.setBoolean(9, p.isActivo());
+
+            pstmt.setString(1, producto.getCodigoInterno());
+            pstmt.setString(2, producto.getNombreProducto());
+            pstmt.setString(3, producto.getCategoria() != null ? producto.getCategoria().name() : CategoriaProducto.VIVERES.name());
+            pstmt.setDouble(4, producto.getPrecioCompra());
+            pstmt.setDouble(5, producto.getPrecioVenta());
+            pstmt.setInt(6, producto.getStockActual());
+            pstmt.setInt(7, producto.getStockMinimo());
+            pstmt.setInt(8, producto.getStockMaximo());
+            pstmt.setBoolean(9, producto.isActivo());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw ExcepcionAccesoDatos.desde(e);
         }
     }
 
-    @Override
     public void eliminar(String id) {
         try (Connection conn = ConexionSql.getConexion();
              PreparedStatement pstmt = conn.prepareStatement(SQL_DELETE)) {
@@ -57,12 +100,11 @@ public class PersistenciaProducto implements Repositorio<Producto> {
         }
     }
 
-    @Override
     public List<Producto> listar() {
         List<Producto> lista = new ArrayList<>();
         try (Connection conn = ConexionSql.getConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(SQL_SELECT_ALL)) {
+             PreparedStatement pstmt = conn.prepareStatement(SQL_SELECT_ALL);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 lista.add(mapearProducto(rs));
             }
@@ -72,7 +114,6 @@ public class PersistenciaProducto implements Repositorio<Producto> {
         return lista;
     }
 
-    @Override
     public Producto buscarPorId(String id) {
         try (Connection conn = ConexionSql.getConexion();
              PreparedStatement pstmt = conn.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -88,49 +129,74 @@ public class PersistenciaProducto implements Repositorio<Producto> {
         return null;
     }
 
-    private Producto mapearProducto(ResultSet rs) throws SQLException {
-        Producto p = new Producto(
+    static int descontarStock(Connection conn, String codigoProducto, int cantidad) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL_DESCONTAR_STOCK)) {
+            pstmt.setInt(1, cantidad);
+            pstmt.setString(2, codigoProducto);
+            pstmt.setInt(3, cantidad);
+            return pstmt.executeUpdate();
+        }
+    }
+
+    static void devolverStock(Connection conn, String codigoProducto, int cantidad) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL_DEVOLVER_STOCK)) {
+            pstmt.setInt(1, cantidad);
+            pstmt.setString(2, codigoProducto);
+            pstmt.executeUpdate();
+        }
+    }
+
+    static int incrementarStock(Connection conn, String codigoProducto, int cantidad) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL_INCREMENTAR_STOCK)) {
+            pstmt.setInt(1, cantidad);
+            pstmt.setString(2, codigoProducto);
+            pstmt.setInt(3, cantidad);
+            return pstmt.executeUpdate();
+        }
+    }
+
+    static Producto buscarPorCodigo(Connection conn, String codigoInterno) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL_SELECT_BY_ID_CONEXION)) {
+            pstmt.setString(1, codigoInterno);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapearProducto(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Producto mapearProducto(ResultSet rs) throws SQLException {
+        Producto producto = new Producto(
+                rs.getString("codigo_interno"),
                 rs.getString("nombre_producto"),
-                rs.getString("codigo_producto"),
+                CategoriaProducto.valueOf(rs.getString("categoria")),
                 rs.getDouble("precio_compra"),
                 rs.getDouble("precio_venta"),
                 rs.getInt("stock_actual"),
                 rs.getInt("stock_minimo"),
-                rs.getInt("stock_maximo"),
-                Categoria.valueOf(rs.getString("categoria"))
+                rs.getInt("stock_maximo")
         );
-        p.setActivo(rs.getBoolean("activo"));
-        return p;
+        producto.setActivo(rs.getBoolean("activo"));
+        return producto;
     }
 
-    /**
-     * Obtiene una lista simplificada de productos para mostrar en la tabla de la interfaz.
-     */
-    public List<ProductoResumenDTO> listarResumen() {
-        List<ProductoResumenDTO> lista = new ArrayList<>();
-        String sql = "SELECT codigo_producto, nombre_producto, categoria, precio_venta, stock_actual, stock_minimo FROM productos";
-        
-        try (Connection conn = ConexionSql.getConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
-            while (rs.next()) {
-                int stock = rs.getInt("stock_actual");
-                int min = rs.getInt("stock_minimo");
-                String alerta = (stock <= min) ? "STOCK BAJO" : "OK";
+    public void activarPorCodigoInterno(String codigoInterno) {
+        ejecutarActualizacionActivo(SQL_ACTIVAR_POR_CODIGO, codigoInterno);
+    }
 
-                lista.add(new ProductoResumenDTO(
-                        rs.getString("codigo_producto"),
-                        rs.getString("nombre_producto"),
-                        rs.getString("categoria"),
-                        rs.getDouble("precio_venta"),
-                        stock,
-                        alerta
-                ));
-            }
-        } catch (SQLException e) {
-            throw ExcepcionAccesoDatos.desde(e);
+    public void inactivarPorCodigoInterno(String codigoInterno) {
+        ejecutarActualizacionActivo(SQL_INACTIVAR_POR_CODIGO, codigoInterno);
+    }
+
+    private void ejecutarActualizacionActivo(String sql, String codigoInterno) {
+        try (Connection conexion = ConexionSql.getConexion();
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+            sentencia.setString(1, codigoInterno);
+            sentencia.executeUpdate();
+        } catch (SQLException excepcion) {
+            throw ExcepcionAccesoDatos.desde(excepcion);
         }
-        return lista;
     }
 }

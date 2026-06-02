@@ -1,6 +1,6 @@
 package co.edu.uptc.enums;
 
-public enum TipoMovimiento { 
-    INGRESO, 
-    EGRESO 
+public enum TipoMovimiento {
+    INGRESO,
+    EGRESO
 }
