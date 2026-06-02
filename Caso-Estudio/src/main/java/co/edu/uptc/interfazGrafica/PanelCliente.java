@@ -20,6 +20,7 @@ public class PanelCliente extends PanelCentral {
         modelo.addColumn("Direccion");
         modelo.addColumn("Teléfono");
         modelo.addColumn("Tipo Cliente");
+        modelo.addColumn("Estado");
     }
     
     @Override

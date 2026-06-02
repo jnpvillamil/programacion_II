@@ -159,7 +159,9 @@ public class VentanaPrincipal extends JFrame {
     
     public void mostrarPanelContabilidad() {
         cardLayout.show(panelContenedor, "contabilidad");
-        panelContable.poblarTabla();
+        if (panelContable != null) {
+            panelContable.poblarTabla();
+        }
     }
     
     public void mostrarPanelReportes() {

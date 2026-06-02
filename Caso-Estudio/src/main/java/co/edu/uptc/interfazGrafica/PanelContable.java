@@ -18,7 +18,7 @@ public class PanelContable extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // ========== PANEL SUPERIOR (Título) ==========
+        // ========== PANEL SUPERIOR  ==========
         JPanel panelNorte = new JPanel(new BorderLayout());
         JLabel lblTitulo = new JLabel("Gestión Contable");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
