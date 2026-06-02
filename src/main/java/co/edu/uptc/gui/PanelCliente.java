@@ -1,12 +1,13 @@
 package co.edu.uptc.gui;
 
-import co.edu.uptc.controlador.ControladorCliente;
 import co.edu.uptc.dto.ClienteResumenDTO;
+import co.edu.uptc.interfaces.ManejadorEventoAdministracion;
 import co.edu.uptc.enums.TipoCliente;
 import co.edu.uptc.enums.TipoIdentificacion;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
 import co.edu.uptc.utilidades.ConstructorComponentes;
+import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
 import co.edu.uptc.utilidades.ValidadorEntradas;
 
 import javax.swing.*;
@@ -16,10 +17,7 @@ import java.util.List;
 
 public class PanelCliente extends JPanel {
 
-    private static final Color COLOR_FONDO_PANEL = new Color(0xECF0F1);
-    private static final Color COLOR_BOTON_AZUL = new Color(0x1A5274);
-
-    private final ControladorCliente controlador;
+    private final ManejadorEventoAdministracion manejadorEvento;
 
     private JTextField txtCodigo;
     private JTextField txtIdentificacion;
@@ -31,11 +29,12 @@ public class PanelCliente extends JPanel {
     private JComboBox<TipoCliente> comboTipoCliente;
     private DefaultTableModel modeloTabla;
     private JTable tablaCliente;
+    private JButton botonCambiarEstado;
 
-    public PanelCliente(ControladorCliente controlador) {
-        this.controlador = controlador;
+    public PanelCliente(ManejadorEventoAdministracion manejadorEvento) {
+        this.manejadorEvento = manejadorEvento;
         setLayout(new BorderLayout(20, 20));
-        setBackground(COLOR_FONDO_PANEL);
+        ConstructorComponentes.aplicarFondoPanel(this);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JLabel titulo = ConstructorComponentes.crearEtiquetaNegrita("GESTIÓN DE CLIENTES");
@@ -49,10 +48,10 @@ public class PanelCliente extends JPanel {
 
     private void inicializarFormulario() {
         JPanel panelContenedorFormulario = new JPanel(new BorderLayout());
-        panelContenedorFormulario.setBackground(COLOR_FONDO_PANEL);
+        panelContenedorFormulario.setBackground(ConstructorComponentes.COLOR_FONDO_PANEL);
 
         JPanel panelFormulario = new JPanel(new GridBagLayout());
-        panelFormulario.setBackground(COLOR_FONDO_PANEL);
+        panelFormulario.setBackground(ConstructorComponentes.COLOR_FONDO_PANEL);
         GridBagConstraints restriccion = new GridBagConstraints();
         restriccion.fill = GridBagConstraints.HORIZONTAL;
         restriccion.insets = new Insets(8, 10, 8, 10);
@@ -111,26 +110,23 @@ public class PanelCliente extends JPanel {
         panelFormulario.add(comboTipoCliente, restriccion);
 
         JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        panelBoton.setBackground(COLOR_FONDO_PANEL);
+        panelBoton.setBackground(ConstructorComponentes.COLOR_FONDO_PANEL);
 
-        JButton botonBuscar = ConstructorComponentes.crearBotonAccion("Buscar", COLOR_BOTON_AZUL);
-        JButton botonEditar = ConstructorComponentes.crearBotonAccion("Editar", COLOR_BOTON_AZUL);
-        JButton botonInactivar = ConstructorComponentes.crearBotonAccion("Inactivar", COLOR_BOTON_AZUL);
-        JButton botonActivar = ConstructorComponentes.crearBotonAccion("Activar", COLOR_BOTON_AZUL);
-        JButton botonLimpiar = ConstructorComponentes.crearBotonAccion("Limpiar", COLOR_BOTON_AZUL);
-        JButton botonGuardar = ConstructorComponentes.crearBotonAccion("Guardar", COLOR_BOTON_AZUL);
+        JButton botonBuscar = ConstructorComponentes.crearBotonInformativo("Buscar");
+        JButton botonEditar = ConstructorComponentes.crearBotonEditar("Editar");
+        botonCambiarEstado = ConstructorComponentes.crearBotonCambiarEstado();
+        JButton botonLimpiar = ConstructorComponentes.crearBotonInformativo("Limpiar");
+        JButton botonGuardar = ConstructorComponentes.crearBotonGuardar("Guardar");
 
         botonBuscar.addActionListener(evento -> buscarCliente());
         botonEditar.addActionListener(evento -> editarCliente());
-        botonInactivar.addActionListener(evento -> inactivarCliente());
-        botonActivar.addActionListener(evento -> activarCliente());
+        botonCambiarEstado.addActionListener(evento -> cambiarEstadoCliente());
         botonLimpiar.addActionListener(evento -> limpiarFormulario());
         botonGuardar.addActionListener(evento -> guardarCliente());
 
         panelBoton.add(botonBuscar);
         panelBoton.add(botonEditar);
-        panelBoton.add(botonInactivar);
-        panelBoton.add(botonActivar);
+        panelBoton.add(botonCambiarEstado);
         panelBoton.add(botonLimpiar);
         panelBoton.add(botonGuardar);
 
@@ -151,8 +147,20 @@ public class PanelCliente extends JPanel {
         ConstructorComponentes.darEstiloTabla(tablaCliente);
         tablaCliente.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablaCliente.getSelectionModel().addListSelectionListener(evento -> {
-            if (!evento.getValueIsAdjusting() && tablaCliente.getSelectedRow() >= 0) {
-                cargarFilaSeleccionada(tablaCliente.getSelectedRow());
+            if (evento.getValueIsAdjusting()) {
+                return;
+            }
+            int fila = tablaCliente.getSelectedRow();
+            if (fila >= 0) {
+                cargarFilaSeleccionada(fila);
+                String estado = String.valueOf(modeloTabla.getValueAt(fila, 3));
+                if (ConstructorComponentes.esEstadoActivo(estado)) {
+                    ConstructorComponentes.configurarBotonInactivar(botonCambiarEstado);
+                } else {
+                    ConstructorComponentes.configurarBotonActivar(botonCambiarEstado);
+                }
+            } else {
+                ConstructorComponentes.configurarBotonEstadoNeutral(botonCambiarEstado);
             }
         });
 
@@ -186,7 +194,7 @@ public class PanelCliente extends JPanel {
         if (!validarFormularioBasico()) {
             return;
         }
-        String mensaje = controlador.registrarCliente(extraerClienteFormulario());
+        String mensaje = manejadorEvento.registrarCliente(extraerClienteFormulario());
         JOptionPane.showMessageDialog(this, mensaje);
         if (mensaje.startsWith("Cliente registrado")) {
             actualizarTabla();
@@ -204,7 +212,7 @@ public class PanelCliente extends JPanel {
         }
 
         try {
-            Cliente cliente = controlador.buscarPorIdentificacion(identificacion.trim());
+            Cliente cliente = manejadorEvento.buscarPorIdentificacion(identificacion.trim());
             if (cliente != null) {
                 cargarClienteEnFormulario(cliente);
             } else {
@@ -219,54 +227,40 @@ public class PanelCliente extends JPanel {
         if (!validarFormularioBasico()) {
             return;
         }
-        String mensaje = controlador.modificarCliente(extraerClienteFormulario());
+        String mensaje = manejadorEvento.modificarCliente(extraerClienteFormulario());
         JOptionPane.showMessageDialog(this, mensaje);
         if (mensaje.startsWith("Cliente actualizado")) {
             actualizarTabla();
         }
     }
 
-    private void inactivarCliente() {
+    private void cambiarEstadoCliente() {
+        if (!botonCambiarEstado.isEnabled()) {
+            return;
+        }
         String identificacion = txtIdentificacion.getText().trim();
         if (ValidadorEntradas.esNuloOVacio(identificacion)) {
-            JOptionPane.showMessageDialog(this, "Busque un cliente primero o ingrese la identificación.");
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla o ingrese la identificación.");
             return;
         }
-        int confirmacion = JOptionPane.showConfirmDialog(
-                this,
-                "¿Desea inactivar al cliente con identificación " + identificacion + "?",
-                "Confirmar inactivación",
-                JOptionPane.YES_NO_OPTION
-        );
-        if (confirmacion != JOptionPane.YES_OPTION) {
-            return;
-        }
-        String mensaje = controlador.inactivarCliente(identificacion);
-        JOptionPane.showMessageDialog(this, mensaje);
-        if (mensaje.startsWith("Cliente inactivado")) {
-            actualizarTabla();
-            limpiarFormulario();
-        }
-    }
 
-    private void activarCliente() {
-        String identificacion = txtIdentificacion.getText().trim();
-        if (ValidadorEntradas.esNuloOVacio(identificacion)) {
-            JOptionPane.showMessageDialog(this, "Busque un cliente inactivo primero o ingrese la identificación.");
-            return;
-        }
+        boolean inactivar = "Inactivar".equals(botonCambiarEstado.getText());
+        String accion = inactivar ? "inactivar" : "activar";
         int confirmacion = JOptionPane.showConfirmDialog(
                 this,
-                "¿Desea activar al cliente con identificación " + identificacion + "?",
-                "Confirmar activación",
+                "¿Desea " + accion + " al cliente con identificación " + identificacion + "?",
+                "Confirmar cambio de estado",
                 JOptionPane.YES_NO_OPTION
         );
         if (confirmacion != JOptionPane.YES_OPTION) {
             return;
         }
-        String mensaje = controlador.activarCliente(identificacion);
+
+        String mensaje = inactivar
+                ? manejadorEvento.inactivarCliente(identificacion)
+                : manejadorEvento.activarCliente(identificacion);
         JOptionPane.showMessageDialog(this, mensaje);
-        if (mensaje.startsWith("Cliente activado")) {
+        if (mensaje.startsWith("Cliente inactivado") || mensaje.startsWith("Cliente activado")) {
             actualizarTabla();
             limpiarFormulario();
         }
@@ -275,24 +269,26 @@ public class PanelCliente extends JPanel {
     private void actualizarTabla() {
         modeloTabla.setRowCount(0);
         try {
-            List<ClienteResumenDTO> lista = controlador.obtenerListadoResumen();
+            List<ClienteResumenDTO> lista = manejadorEvento.obtenerListadoResumenCliente();
             for (ClienteResumenDTO resumen : lista) {
                 modeloTabla.addRow(new Object[]{
-                        resumen.getCodigo(),
-                        resumen.getNombreCompleto(),
-                        resumen.getTelefono(),
-                        resumen.getEstado()
+                        resumen.codigo(),
+                        resumen.nombreCompleto(),
+                        resumen.telefono(),
+                        resumen.estado()
                 });
             }
         } catch (ExcepcionAccesoDatos excepcion) {
             mostrarErrorBaseDatos(excepcion);
         }
+        tablaCliente.clearSelection();
+        ConstructorComponentes.configurarBotonEstadoNeutral(botonCambiarEstado);
     }
 
     private void cargarFilaSeleccionada(int fila) {
         String codigo = String.valueOf(modeloTabla.getValueAt(fila, 0));
         try {
-            Cliente cliente = controlador.buscarPorCodigo(codigo);
+            Cliente cliente = manejadorEvento.buscarPorCodigoCliente(codigo);
             if (cliente != null) {
                 cargarClienteEnFormulario(cliente);
             }
@@ -339,7 +335,7 @@ public class PanelCliente extends JPanel {
     private void mostrarErrorBaseDatos(ExcepcionAccesoDatos excepcion) {
         JOptionPane.showMessageDialog(
                 this,
-                ControladorCliente.mensajeParaUsuario(excepcion),
+                UtilidadMensajeAccesoDatos.mensajeCliente(excepcion),
                 "Error de conexión",
                 JOptionPane.ERROR_MESSAGE
         );
@@ -355,5 +351,6 @@ public class PanelCliente extends JPanel {
         comboTipoIdentificacion.setSelectedIndex(0);
         comboTipoCliente.setSelectedIndex(0);
         tablaCliente.clearSelection();
+        ConstructorComponentes.configurarBotonEstadoNeutral(botonCambiarEstado);
     }
 }

@@ -1,6 +1,20 @@
 package co.edu.uptc.gui;
 
-import co.edu.uptc.controlador.ControladorPrincipal;
+import co.edu.uptc.dto.UsuarioDTO;
+import co.edu.uptc.gui.evento.EventoAdministracion;
+import co.edu.uptc.gui.evento.EventoComercial;
+import co.edu.uptc.interfaces.ManejadorEventoAdministracion;
+import co.edu.uptc.interfaces.ManejadorEventoComercial;
+import co.edu.uptc.interfaces.ManejadorEventoSistema;
+import co.edu.uptc.negocio.GestionCliente;
+import co.edu.uptc.negocio.GestionCompra;
+import co.edu.uptc.negocio.GestionContable;
+import co.edu.uptc.negocio.GestionProducto;
+import co.edu.uptc.negocio.GestionProveedor;
+import co.edu.uptc.negocio.GestionUsuario;
+import co.edu.uptc.negocio.GestionVenta;
+import co.edu.uptc.persistencia.PersistenciaAdministracion;
+import co.edu.uptc.persistencia.PersistenciaComercial;
 import co.edu.uptc.utilidades.ConstructorComponentes;
 import javax.swing.*;
 import java.awt.*;
@@ -11,96 +25,87 @@ import java.awt.*;
 public class VentanaPrincipal extends JFrame {
     private JPanel panelContenedor;
     private CardLayout cardLayout;
-    private ControladorPrincipal controladorPrincipal;
 
-    public VentanaPrincipal() {
-        // Configuración básica de la ventana principal 
+    public VentanaPrincipal(UsuarioDTO usuarioAutenticado,
+                            ManejadorEventoSistema manejadorEventoSistema,
+                            GestionUsuario gestionUsuario,
+                            GestionContable gestionContable) {
         setTitle("Sistema de Gestión - Tienda Minorista");
         setSize(1100, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Inicialización de la navegación y el control
-        inicializarComponentes();
-        
-        // Ubicación en el centro de la pantalla
+        inicializarComponentes(usuarioAutenticado, manejadorEventoSistema, gestionUsuario, gestionContable);
         setLocationRelativeTo(null);
     }
 
-    private void inicializarComponentes() {
-        // 1. Menú Lateral 
+    private void inicializarComponentes(UsuarioDTO usuarioAutenticado,
+                                        ManejadorEventoSistema manejadorEventoSistema,
+                                        GestionUsuario gestionUsuario,
+                                        GestionContable gestionContable) {
         JPanel menuLateral = new JPanel(new GridLayout(10, 1, 0, 2));
         menuLateral.setBackground(ConstructorComponentes.COLOR_MENU_OSCURO);
         menuLateral.setPreferredSize(new Dimension(220, 0));
 
-        // 2. Contenedor Central con CardLayout 
         cardLayout = new CardLayout();
         panelContenedor = new JPanel(cardLayout);
-        controladorPrincipal = new ControladorPrincipal(panelContenedor, cardLayout);
+        ConstructorComponentes.aplicarFondoPanel(panelContenedor);
+        manejadorEventoSistema.configurarNavegacion(panelContenedor, cardLayout);
 
-        // Definición de módulos
         String[] opciones = {"Inicio", "Productos", "Clientes", "Proveedores", "Ventas", "Compras", "Contabilidad"};
         String[] nombresCard = {"Home", "Prod", "Cli", "Prov", "Vent", "Comp", "Cont"};
 
-        // Creación dinámica de botones del menú
+        PersistenciaAdministracion persistenciaAdministracion = new PersistenciaAdministracion();
+        GestionCliente gestionCliente = new GestionCliente(persistenciaAdministracion);
+        GestionProveedor gestionProveedor = new GestionProveedor(persistenciaAdministracion);
+        GestionProducto gestionProducto = new GestionProducto(persistenciaAdministracion);
+
+        ManejadorEventoAdministracion eventoAdministracion = new EventoAdministracion(
+                gestionCliente, gestionProveedor, gestionProducto, gestionUsuario);
+
+        PersistenciaComercial persistenciaComercial = new PersistenciaComercial();
+        GestionVenta gestionVenta = new GestionVenta(
+                persistenciaComercial, gestionProducto, gestionContable, gestionCliente);
+        GestionCompra gestionCompra = new GestionCompra(
+                persistenciaComercial, gestionProducto, gestionContable, gestionProveedor);
+
+        ManejadorEventoComercial eventoComercial = new EventoComercial(gestionVenta, gestionCompra);
+
+        PanelVenta panelVenta = new PanelVenta(eventoComercial);
+        PanelCompra panelCompra = new PanelCompra(eventoComercial);
+
         for (int i = 0; i < opciones.length; i++) {
             JButton btn = ConstructorComponentes.crearBotonMenu(opciones[i]);
             final String card = nombresCard[i];
-            btn.addActionListener(e -> controladorPrincipal.mostrarPanel(card));
+            btn.addActionListener(evento -> {
+                manejadorEventoSistema.mostrarPanel(card);
+                if ("Vent".equals(card)) {
+                    panelVenta.inicializarPanel();
+                } else if ("Comp".equals(card)) {
+                    panelCompra.inicializarPanel();
+                }
+            });
             menuLateral.add(btn);
         }
 
-        // 3. Inicialización e integración de Paneles 
-       // Instanciar dependencias para el módulo Cliente
-        co.edu.uptc.persistencia.PersistenciaCliente persistenciaCliente = new co.edu.uptc.persistencia.PersistenciaCliente();
-        co.edu.uptc.negocio.GestionCliente gestionCliente = new co.edu.uptc.negocio.GestionCliente(persistenciaCliente);
-        co.edu.uptc.controlador.ControladorCliente controladorCliente = new co.edu.uptc.controlador.ControladorCliente(gestionCliente);
-        
-        
-        co.edu.uptc.persistencia.PersistenciaProveedor persistenciaProveedor = new co.edu.uptc.persistencia.PersistenciaProveedor();
-        co.edu.uptc.negocio.GestionProveedor gestionProveedor = new co.edu.uptc.negocio.GestionProveedor(persistenciaProveedor);
-        co.edu.uptc.controlador.ControladorProveedor controladorProveedor = new co.edu.uptc.controlador.ControladorProveedor(gestionProveedor); 
+        panelContenedor.add(new PanelHome(
+                usuarioAutenticado,
+                eventoAdministracion,
+                () -> {
+                    manejadorEventoSistema.cerrarSesion();
+                    dispose();
+                    SwingUtilities.invokeLater(() -> new VentanaLogin().setVisible(true));
+                }), "Home");
+        panelContenedor.add(new PanelCliente(eventoAdministracion), "Cli");
+        panelContenedor.add(new PanelProveedor(eventoAdministracion), "Prov");
+        panelContenedor.add(new PanelProducto(eventoAdministracion), "Prod");
+        panelContenedor.add(panelVenta, "Vent");
+        panelContenedor.add(panelCompra, "Comp");
+        panelContenedor.add(new PanelContabilidad(manejadorEventoSistema), "Cont");
 
-        co.edu.uptc.persistencia.PersistenciaProducto persistenciaProducto = new co.edu.uptc.persistencia.PersistenciaProducto();
-        co.edu.uptc.negocio.GestionProducto gestionProducto = new co.edu.uptc.negocio.GestionProducto(persistenciaProducto);
-        co.edu.uptc.controlador.ControladorProducto controladorProducto = new co.edu.uptc.controlador.ControladorProducto(gestionProducto);
-<<<<<<< HEAD
-     // Instanciar dependencias para el módulo Compras
-        co.edu.uptc.persistencia.PersistenciaContable persistenciaContable = new co.edu.uptc.persistencia.PersistenciaContable();
-        co.edu.uptc.negocio.GestionContable gestionContable = new co.edu.uptc.negocio.GestionContable(persistenciaContable);
-        co.edu.uptc.persistencia.PersistenciaCompra persistenciaCompra = new co.edu.uptc.persistencia.PersistenciaCompra();
-        co.edu.uptc.negocio.GestionCompra gestionCompra = new co.edu.uptc.negocio.GestionCompra(persistenciaCompra, gestionProducto, gestionContable);
-        co.edu.uptc.controlador.ControladorCompra controladorCompra = new co.edu.uptc.controlador.ControladorCompra(gestionCompra);
-        
-=======
-        
-        co.edu.uptc.persistencia.PersistenciaContable persistenciaContable = new co.edu.uptc.persistencia.PersistenciaContable();
-        co.edu.uptc.negocio.GestionContable gestionContable = new co.edu.uptc.negocio.GestionContable(persistenciaContable);
-        co.edu.uptc.persistencia.PersistenciaVenta persistenciaVenta = new co.edu.uptc.persistencia.PersistenciaVenta();
-        co.edu.uptc.negocio.GestionVenta gestionVenta = new co.edu.uptc.negocio.GestionVenta(
-                persistenciaVenta, gestionProducto, gestionContable, gestionCliente);
-        co.edu.uptc.controlador.ControladorVenta controladorVenta = new co.edu.uptc.controlador.ControladorVenta(gestionVenta);
->>>>>>> 1b22656311a9c634f243c258cd1c14e071eaf18c
-        
-        //Agregar los paneles al contenedor
-        panelContenedor.add(new PanelHome(), "Home");
-        panelContenedor.add(new PanelCliente(controladorCliente), "Cli"); 
-        panelContenedor.add(new PanelProveedor(controladorProveedor), "Prov");
-        panelContenedor.add(new PanelProducto(controladorProducto), "Prod"); 
-        
-        
-<<<<<<< HEAD
-        panelContenedor.add(new PanelVenta(), "Vent");
-        panelContenedor.add(new PanelCompra(controladorCompra, controladorProducto, controladorProveedor), "Comp");
-=======
-        panelContenedor.add(new PanelVenta(controladorVenta, controladorProducto, controladorCliente), "Vent");
-        panelContenedor.add(new PanelCompra(), "Comp");
->>>>>>> 1b22656311a9c634f243c258cd1c14e071eaf18c
-        panelContenedor.add(new PanelContabilidad(), "Cont");
-
-        // Agregar a la ventana
         add(menuLateral, BorderLayout.WEST);
         add(panelContenedor, BorderLayout.CENTER);
+        cardLayout.show(panelContenedor, "Home");
     }
 
     /**
@@ -108,16 +113,13 @@ public class VentanaPrincipal extends JFrame {
      * Lanza la ventana de Login para autenticación inicial.
      */
     public static void main(String[] args) {
-        // Ejecución en el hilo de despacho de eventos de Swing para estabilidad visual
         SwingUtilities.invokeLater(() -> {
             try {
-                // Aplicar Look and Feel del sistema para mejor integración visual 
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
-            // Iniciar con la Ventana de Login 
+
             VentanaLogin login = new VentanaLogin();
             login.setVisible(true);
         });

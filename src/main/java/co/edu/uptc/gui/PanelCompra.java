@@ -1,15 +1,16 @@
 package co.edu.uptc.gui;
 
-import co.edu.uptc.controlador.ControladorCompra;
-import co.edu.uptc.controlador.ControladorProducto;
-import co.edu.uptc.controlador.ControladorProveedor;
 import co.edu.uptc.dto.CompraDTO;
-import co.edu.uptc.dto.ProveedorResumenDTO;
+import co.edu.uptc.interfaces.ManejadorEventoComercial;
 import co.edu.uptc.modelo.Compra;
 import co.edu.uptc.modelo.DetalleCompra;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.modelo.Proveedor;
+import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
 import co.edu.uptc.utilidades.ConstructorComponentes;
+import co.edu.uptc.utilidades.FormateadorMoneda;
+import co.edu.uptc.utilidades.ManejadorFechas;
+import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,345 +21,262 @@ import java.util.List;
 
 public class PanelCompra extends JPanel {
 
-    private ControladorCompra controladorCompra;
-    private ControladorProducto controladorProducto;
-    private ControladorProveedor controladorProveedor;
+    private final ManejadorEventoComercial manejadorEventoComercial;
 
-    // Cabecera de la compra
-    private JTextField txtNumeroFactura;
-    private JComboBox<String> cbProveedor;
+    private final List<DetalleCompra> detalleCompra = new ArrayList<>();
+    private DefaultTableModel modeloTablaDetalle;
+    private DefaultTableModel modeloTablaHistorial;
 
-    // Añadir producto al detalle
+    private JTextField txtFactura;
+    private JTextField txtNitProveedor;
     private JTextField txtCodigoProducto;
     private JTextField txtCantidad;
     private JTextField txtCostoUnitario;
-
-    // Tabla de detalles
-    private DefaultTableModel modeloTablaDetalle;
-    private JTable tablaDetalle;
-
-    // Tabla de compras registradas
-    private DefaultTableModel modeloTablaCompras;
-    private JTable tablaCompras;
-
-    // Totales
-    private JLabel lblSubtotal;
-    private JLabel lblIva;
     private JLabel lblTotal;
 
-    // Lista en memoria del detalle actual
-    private List<DetalleCompra> detallesActuales;
-
-    public PanelCompra(ControladorCompra controladorCompra,
-                       ControladorProducto controladorProducto,
-                       ControladorProveedor controladorProveedor) {
-        this.controladorCompra = controladorCompra;
-        this.controladorProducto = controladorProducto;
-        this.controladorProveedor = controladorProveedor;
-        this.detallesActuales = new ArrayList<>();
+    public PanelCompra(ManejadorEventoComercial manejadorEventoComercial) {
+        this.manejadorEventoComercial = manejadorEventoComercial;
 
         setLayout(new BorderLayout(20, 20));
         setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titulo = ConstructorComponentes.crearEtiquetaNegrita("GESTIÓN DE COMPRAS");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        add(titulo, BorderLayout.NORTH);
+        add(ConstructorComponentes.crearEtiquetaNegrita("MÓDULO DE COMPRAS"), BorderLayout.NORTH);
+        add(construirPanelCentral(), BorderLayout.CENTER);
+        add(construirPanelInferior(), BorderLayout.SOUTH);
 
+        inicializarPanel();
+    }
+
+    public void inicializarPanel() {
+        actualizarTablaHistorial();
+    }
+
+    private JPanel construirPanelCentral() {
         JPanel panelCentro = new JPanel(new BorderLayout(10, 10));
         panelCentro.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
 
-        panelCentro.add(construirFormularioCabecera(), BorderLayout.NORTH);
-        panelCentro.add(construirSeccionDetalle(), BorderLayout.CENTER);
-        panelCentro.add(construirPanelTotalesYBotones(), BorderLayout.SOUTH);
+        panelCentro.add(construirPanelCabecera(), BorderLayout.NORTH);
 
-        add(panelCentro, BorderLayout.CENTER);
-        add(construirTablaComprasRegistradas(), BorderLayout.SOUTH);
-
-        cargarProveedores();
-        actualizarTablaCompras();
+        JSplitPane divisor = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                construirTablaDetalle(),
+                construirTablaHistorial());
+        divisor.setResizeWeight(0.45);
+        divisor.setDividerLocation(220);
+        panelCentro.add(divisor, BorderLayout.CENTER);
+        return panelCentro;
     }
 
-    // ── FORMULARIO DE CABECERA ──────────────────────────────────────────────
-    private JPanel construirFormularioCabecera() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(8, 10, 8, 10);
-        gbc.weightx = 0.5;
+    private JPanel construirPanelCabecera() {
+        JPanel panelCabecera = new JPanel(new GridLayout(3, 4, 10, 10));
+        panelCabecera.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
 
-        txtNumeroFactura = ConstructorComponentes.crearCampoTexto();
-        cbProveedor = new JComboBox<>();
-
-        gbc.gridy = 0; gbc.gridx = 0;
-        panel.add(ConstructorComponentes.crearEtiquetaNegrita("Factura Proveedor:"), gbc);
-        gbc.gridx = 1; panel.add(txtNumeroFactura, gbc);
-        gbc.gridx = 2; panel.add(ConstructorComponentes.crearEtiquetaNegrita("Proveedor:"), gbc);
-        gbc.gridx = 3; panel.add(cbProveedor, gbc);
-
-        return panel;
-    }
-
-    // ── SECCIÓN AÑADIR PRODUCTO ─────────────────────────────────────────────
-    private JPanel construirSeccionDetalle() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-
-        // Fila de inputs para agregar producto
-        JPanel panelInputProducto = new JPanel(new GridBagLayout());
-        panelInputProducto.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(6, 10, 6, 10);
-        gbc.weightx = 0.3;
-
+        txtFactura = ConstructorComponentes.crearCampoTexto();
+        txtNitProveedor = ConstructorComponentes.crearCampoTexto();
         txtCodigoProducto = ConstructorComponentes.crearCampoTexto();
         txtCantidad = ConstructorComponentes.crearCampoTexto();
+        txtCantidad.setText("1");
         txtCostoUnitario = ConstructorComponentes.crearCampoTexto();
-        JButton btnAgregar = ConstructorComponentes.crearBotonAccion("Añadir Producto", ConstructorComponentes.COLOR_AZUL_ACCION);
-        btnAgregar.addActionListener(e -> agregarProductoDetalle());
 
-        gbc.gridy = 0; gbc.gridx = 0;
-        panelInputProducto.add(ConstructorComponentes.crearEtiquetaNegrita("Código Producto:"), gbc);
-        gbc.gridx = 1; panelInputProducto.add(txtCodigoProducto, gbc);
-        gbc.gridx = 2; panelInputProducto.add(ConstructorComponentes.crearEtiquetaNegrita("Cantidad:"), gbc);
-        gbc.gridx = 3; panelInputProducto.add(txtCantidad, gbc);
-        gbc.gridx = 4; panelInputProducto.add(ConstructorComponentes.crearEtiquetaNegrita("Costo Unitario ($):"), gbc);
-        gbc.gridx = 5; panelInputProducto.add(txtCostoUnitario, gbc);
-        gbc.gridx = 6; gbc.weightx = 0; panelInputProducto.add(btnAgregar, gbc);
+        panelCabecera.add(ConstructorComponentes.crearEtiquetaNegrita("Factura Proveedor:"));
+        panelCabecera.add(txtFactura);
+        panelCabecera.add(ConstructorComponentes.crearEtiquetaNegrita("NIT Proveedor:"));
+        panelCabecera.add(txtNitProveedor);
 
-        // Tabla de detalle de la compra actual
-        String[] cols = {"Código", "Descripción", "Cantidad", "Costo Unitario", "Subtotal"};
-        modeloTablaDetalle = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int row, int col) { return false; }
-        };
-        tablaDetalle = new JTable(modeloTablaDetalle);
-        ConstructorComponentes.darEstiloTabla(tablaDetalle);
-        tablaDetalle.setFillsViewportHeight(true);
-        tablaDetalle.setBackground(Color.WHITE);
-        tablaDetalle.getTableHeader().setOpaque(false);
-        JScrollPane scroll = new JScrollPane(tablaDetalle);
-        scroll.setPreferredSize(new Dimension(0, 160));
+        panelCabecera.add(ConstructorComponentes.crearEtiquetaNegrita("Producto (Código):"));
+        panelCabecera.add(txtCodigoProducto);
+        panelCabecera.add(ConstructorComponentes.crearEtiquetaNegrita("Cantidad:"));
+        panelCabecera.add(txtCantidad);
 
-        panel.add(panelInputProducto, BorderLayout.NORTH);
-        panel.add(scroll, BorderLayout.CENTER);
-        return panel;
+        panelCabecera.add(ConstructorComponentes.crearEtiquetaNegrita("Costo Unitario:"));
+        panelCabecera.add(txtCostoUnitario);
+        panelCabecera.add(new JLabel(""));
+        JButton btnAgregar = ConstructorComponentes.crearBotonGuardar("Añadir Ingreso");
+        btnAgregar.addActionListener(evento -> agregarDetalle());
+        panelCabecera.add(btnAgregar);
+
+        return panelCabecera;
     }
 
-    // ── TOTALES Y BOTONES ───────────────────────────────────────────────────
-    private JPanel construirPanelTotalesYBotones() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-
-        // Totales alineados a la derecha
-        JPanel panelTotales = new JPanel(new GridLayout(3, 2, 5, 2));
-        panelTotales.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-        lblSubtotal = ConstructorComponentes.crearEtiquetaNegrita("Subtotal: $ 0.00");
-        lblIva      = ConstructorComponentes.crearEtiquetaNegrita("IVA (19%): $ 0.00");
-        lblTotal    = ConstructorComponentes.crearEtiquetaNegrita("Total: $ 0.00");
-        lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        panelTotales.add(new JLabel()); panelTotales.add(lblSubtotal);
-        panelTotales.add(new JLabel()); panelTotales.add(lblIva);
-        panelTotales.add(new JLabel()); panelTotales.add(lblTotal);
-
-        // Botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelBotones.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
-
-        JButton btnBuscar   = ConstructorComponentes.crearBotonAccion("Buscar",           ConstructorComponentes.COLOR_AZUL_ACCION);
-        JButton btnEliminar = ConstructorComponentes.crearBotonAccion("Quitar Producto",   ConstructorComponentes.COLOR_AZUL_ACCION);
-        JButton btnLimpiar  = ConstructorComponentes.crearBotonAccion("Limpiar",           ConstructorComponentes.COLOR_AZUL_ACCION);
-        JButton btnRegistrar= ConstructorComponentes.crearBotonAccion("Registrar Compra",  ConstructorComponentes.COLOR_VERDE_GUARDAR);
-
-        btnBuscar.addActionListener(e -> buscarCompra());
-        btnEliminar.addActionListener(e -> quitarProductoSeleccionado());
-        btnLimpiar.addActionListener(e -> limpiarFormulario());
-        btnRegistrar.addActionListener(e -> registrarCompra());
-
-        panelBotones.add(btnBuscar);
-        panelBotones.add(btnEliminar);
-        panelBotones.add(btnLimpiar);
-        panelBotones.add(btnRegistrar);
-
-        panel.add(panelTotales, BorderLayout.CENTER);
-        panel.add(panelBotones, BorderLayout.EAST);
-        return panel;
-    }
-
-    // ── TABLA DE COMPRAS REGISTRADAS ────────────────────────────────────────
-    private JScrollPane construirTablaComprasRegistradas() {
-        JLabel lblTitulo = ConstructorComponentes.crearEtiquetaNegrita("Compras Registradas");
-
-        String[] cols = {"N° Factura", "Proveedor", "Fecha", "Subtotal", "IVA", "Total"};
-        modeloTablaCompras = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int row, int col) { return false; }
+    private JScrollPane construirTablaDetalle() {
+        String[] columna = {"Cant.", "Código", "Descripción", "Costo Unit.", "Subtotal"};
+        modeloTablaDetalle = new DefaultTableModel(columna, 0) {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {
+                return false;
+            }
         };
-        tablaCompras = new JTable(modeloTablaCompras);
-        ConstructorComponentes.darEstiloTabla(tablaCompras);
-        tablaCompras.setFillsViewportHeight(true);
-        tablaCompras.setBackground(Color.WHITE);
-        tablaCompras.getTableHeader().setOpaque(false);
-
-        JScrollPane scroll = new JScrollPane(tablaCompras);
-        scroll.getViewport().setBackground(Color.WHITE);  // ← ahora sí existe
-        scroll.setPreferredSize(new Dimension(0, 180));
-        scroll.setBorder(BorderFactory.createTitledBorder("Historial de Compras"));
+        JTable tabla = new JTable(modeloTablaDetalle);
+        ConstructorComponentes.darEstiloTabla(tabla);
+        JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setBorder(BorderFactory.createTitledBorder("Detalle de la compra actual"));
         return scroll;
     }
 
-    // ── LÓGICA DE NEGOCIO ───────────────────────────────────────────────────
-    private void cargarProveedores() {
-        cbProveedor.removeAllItems();
-        try {
-        	List<ProveedorResumenDTO> proveedores = controladorProveedor.obtenerListadoResumen();
-        	for (ProveedorResumenDTO p : proveedores) {
-        	    cbProveedor.addItem(p.getNit() + " - " + p.getRazonSocial());
+    private JScrollPane construirTablaHistorial() {
+        String[] columna = {"Factura", "NIT Proveedor", "Fecha", "Total"};
+        modeloTablaHistorial = new DefaultTableModel(columna, 0) {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {
+                return false;
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "No se pudieron cargar los proveedores.");
-        }
+        };
+        JTable tabla = new JTable(modeloTablaHistorial);
+        ConstructorComponentes.darEstiloTabla(tabla);
+        JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setBorder(BorderFactory.createTitledBorder("Historial de compras registradas"));
+        return scroll;
     }
 
-    private void agregarProductoDetalle() {
-        try {
-            String codigo = txtCodigoProducto.getText().trim();
-            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-            double costoUnitario = Double.parseDouble(txtCostoUnitario.getText().trim());
+    private JPanel construirPanelInferior() {
+        JPanel panelSur = new JPanel(new BorderLayout());
+        panelSur.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
 
-            if (codigo.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ingrese el código del producto.");
-                return;
-            }
+        lblTotal = ConstructorComponentes.crearEtiquetaNegrita("Costo Total: $ 0.00");
+        JPanel panelTotal = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        panelTotal.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
+        panelTotal.add(lblTotal);
+
+        JPanel panelAccion = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        panelAccion.setBackground(ConstructorComponentes.COLOR_FONDO_GRIS);
+        JButton btnRegistrar = ConstructorComponentes.crearBotonGuardar("Registrar Compra");
+        btnRegistrar.addActionListener(evento -> registrarCompra());
+        panelAccion.add(btnRegistrar);
+
+        panelSur.add(panelTotal, BorderLayout.CENTER);
+        panelSur.add(panelAccion, BorderLayout.SOUTH);
+        return panelSur;
+    }
+
+    private void agregarDetalle() {
+        String codigo = txtCodigoProducto.getText().trim();
+        if (codigo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese el código del producto.", "Validación",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int cantidad;
+        double costoUnitario;
+        try {
+            cantidad = Integer.parseInt(txtCantidad.getText().trim());
+            costoUnitario = Double.parseDouble(txtCostoUnitario.getText().trim());
             if (cantidad <= 0 || costoUnitario <= 0) {
-                JOptionPane.showMessageDialog(this, "La cantidad y el costo unitario deben ser mayores a cero.");
-                return;
+                throw new NumberFormatException();
             }
-
-            Producto producto = controladorProducto.buscarProducto(codigo);
-            if (producto == null) {
-                JOptionPane.showMessageDialog(this, "Producto no encontrado con el código: " + codigo);
-                return;
-            }
-
-            DetalleCompra detalle = new DetalleCompra(producto, cantidad, costoUnitario);
-            detallesActuales.add(detalle);
-
-            modeloTablaDetalle.addRow(new Object[]{
-                producto.getCodigoInterno(),
-                producto.getNombreProducto(),
-                cantidad,
-                String.format("$ %.2f", costoUnitario),
-                String.format("$ %.2f", detalle.getSubtotal())
-            });
-
-            actualizarTotales();
-            txtCodigoProducto.setText("");
-            txtCantidad.setText("");
-            txtCostoUnitario.setText("");
-
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Error: Verifique que la cantidad y el costo sean números válidos.");
+        } catch (NumberFormatException excepcion) {
+            JOptionPane.showMessageDialog(this,
+                    "Cantidad y costo unitario deben ser números válidos mayores a cero.",
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    }
 
-    private void quitarProductoSeleccionado() {
-        int fila = tablaDetalle.getSelectedRow();
-        if (fila >= 0) {
-            detallesActuales.remove(fila);
-            modeloTablaDetalle.removeRow(fila);
-            actualizarTotales();
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un producto de la tabla para quitarlo.");
+        Producto producto = manejadorEventoComercial.buscarProducto(codigo);
+        if (producto == null) {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado con código: " + codigo,
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
         }
+        if (!producto.isActivo()) {
+            JOptionPane.showMessageDialog(this, "El producto está inactivo.", "Validación",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (producto.getStockActual() + cantidad > producto.getStockMaximo()) {
+            JOptionPane.showMessageDialog(this,
+                    "El stock final superaría el máximo permitido para: " + producto.getNombreProducto(),
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        DetalleCompra detalle = new DetalleCompra(producto, cantidad, costoUnitario);
+        detalleCompra.add(detalle);
+        refrescarTablaDetalleYTotal();
+        txtCodigoProducto.setText("");
+        txtCantidad.setText("1");
+        txtCostoUnitario.setText("");
     }
 
     private void registrarCompra() {
-        try {
-            String numeroFactura = txtNumeroFactura.getText().trim();
-            if (cbProveedor.getSelectedItem() == null) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar un proveedor.");
-                return;
-            }
+        if (detalleCompra.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe agregar al menos un producto a la compra.",
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (txtFactura.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el número de factura del proveedor.",
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (txtNitProveedor.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el NIT del proveedor.",
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            // Obtener NIT del proveedor desde el combo (formato "NIT - Nombre")
-            String seleccion = cbProveedor.getSelectedItem().toString();
-            String nit = seleccion.split(" - ")[0].trim();
-            Proveedor proveedor = controladorProveedor.buscarProveedor(nit);
+        Proveedor proveedor = new Proveedor("", "", txtNitProveedor.getText().trim(),
+                "", "", "", "", txtNitProveedor.getText().trim(), "");
+        Compra compra = new Compra(txtFactura.getText().trim(), LocalDateTime.now(), proveedor);
+        compra.getListaDetalles().addAll(detalleCompra);
 
-            Compra compra = new Compra(numeroFactura, LocalDateTime.now(), proveedor);
-            compra.setListaDetalles(new ArrayList<>(detallesActuales));
+        String mensaje = manejadorEventoComercial.registrarCompra(compra);
+        boolean exito = !mensaje.startsWith("Error:");
+        JOptionPane.showMessageDialog(this, mensaje, exito ? "Compra exitosa" : "Error en compra",
+                exito ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
 
-            controladorCompra.registrarCompra(compra);
-            JOptionPane.showMessageDialog(this,
-                "Compra registrada exitosamente.\n" +
-                "Subtotal: $ " + String.format("%.2f", compra.getSubtotal()) + "\n" +
-                "IVA (19%): $ " + String.format("%.2f", compra.getIva()) + "\n" +
-                "Total: $ " + String.format("%.2f", compra.getTotal()));
-
-            actualizarTablaCompras();
-            limpiarFormulario();
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al registrar la compra: " + ex.getMessage());
+        if (exito) {
+            limpiarPantalla();
+            actualizarTablaHistorial();
         }
     }
 
-    private void buscarCompra() {
-        String numero = JOptionPane.showInputDialog(this, "Ingrese el número de factura a buscar:");
-        if (numero != null && !numero.trim().isEmpty()) {
-            Compra compra = controladorCompra.buscarCompra(numero.trim());
-            if (compra != null) {
-                JOptionPane.showMessageDialog(this,
-                    "Factura: " + compra.getNumeroFacturaProveedor() + "\n" +
-                    		"Proveedor: " + compra.getProveedor().getRazonSocial() + "\n" +
-                    "Fecha: " + compra.getFecha() + "\n" +
-                    "Subtotal: $ " + String.format("%.2f", compra.getSubtotal()) + "\n" +
-                    "IVA: $ " + String.format("%.2f", compra.getIva()) + "\n" +
-                    "Total: $ " + String.format("%.2f", compra.getTotal()) + "\n" +
-                    "Productos: " + compra.getListaDetalles().size());
-            } else {
-                JOptionPane.showMessageDialog(this, "No se encontró una compra con esa factura.");
-            }
-        }
-    }
-
-    private void actualizarTotales() {
-        double subtotal = 0;
-        for (DetalleCompra d : detallesActuales) {
-            subtotal += d.getSubtotal();
-        }
-        double iva   = subtotal * 0.19;
-        double total = subtotal + iva;
-
-        lblSubtotal.setText(String.format("Subtotal: $ %.2f", subtotal));
-        lblIva.setText(String.format("IVA (19%%): $ %.2f", iva));
-        lblTotal.setText(String.format("Total: $ %.2f", total));
-    }
-
-    private void actualizarTablaCompras() {
-        modeloTablaCompras.setRowCount(0);
-        List<CompraDTO> lista = controladorCompra.obtenerListadoResumen();
-        for (CompraDTO dto : lista) {
-            modeloTablaCompras.addRow(new Object[]{
-                dto.getNumeroFacturaProveedor(),
-                dto.getNombreProveedor(),
-                dto.getFecha() != null ? dto.getFecha().toLocalDate() : "",
-                String.format("$ %.2f", dto.getSubtotal()),
-                String.format("$ %.2f", dto.getIva()),
-                String.format("$ %.2f", dto.getTotal())
-            });
-        }
-    }
-
-    private void limpiarFormulario() {
-        txtNumeroFactura.setText("");
-        txtCodigoProducto.setText("");
-        txtCantidad.setText("");
-        txtCostoUnitario.setText("");
-        detallesActuales.clear();
+    private void refrescarTablaDetalleYTotal() {
         modeloTablaDetalle.setRowCount(0);
-        actualizarTotales();
-        if (cbProveedor.getItemCount() > 0) cbProveedor.setSelectedIndex(0);
+        double subtotal = 0;
+        for (DetalleCompra detalle : detalleCompra) {
+            modeloTablaDetalle.addRow(new Object[]{
+                    detalle.getCantidad(),
+                    detalle.getProducto().getCodigoInterno(),
+                    detalle.getProducto().getNombreProducto(),
+                    detalle.getCostoUnitario(),
+                    detalle.getSubtotal()
+            });
+            subtotal += detalle.getSubtotal();
+        }
+        double iva = Math.round(subtotal * 0.19 * 100.0) / 100.0;
+        lblTotal.setText("Costo Total: " + FormateadorMoneda.formatear(subtotal + iva));
+    }
+
+    private void actualizarTablaHistorial() {
+        modeloTablaHistorial.setRowCount(0);
+        try {
+            List<CompraDTO> lista = manejadorEventoComercial.obtenerListadoCompra();
+            for (CompraDTO compra : lista) {
+                modeloTablaHistorial.addRow(new Object[]{
+                        compra.getNumeroFacturaProveedor(),
+                        compra.getNitProveedor(),
+                        ManejadorFechas.formatearFecha(compra.getFecha()),
+                        FormateadorMoneda.formatear(compra.getTotal())
+                });
+            }
+        } catch (ExcepcionAccesoDatos excepcion) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    UtilidadMensajeAccesoDatos.mensajeCliente(excepcion),
+                    "Error de conexión",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void limpiarPantalla() {
+        detalleCompra.clear();
+        modeloTablaDetalle.setRowCount(0);
+        txtFactura.setText("");
+        txtNitProveedor.setText("");
+        txtCodigoProducto.setText("");
+        txtCantidad.setText("1");
+        txtCostoUnitario.setText("");
+        lblTotal.setText("Costo Total: $ 0.00");
     }
 }

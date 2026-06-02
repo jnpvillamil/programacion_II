@@ -1,31 +1,47 @@
-# ARCHIVOS DE SISTEMA (macOS) 
-.DS_Store
-.AppleDouble
-.LSOverride
+# =============================================================================
+# Tienda Minorista G4 | Regla de exclusión para Git / SourceTree
+# =============================================================================
 
-# COMPILACIÓN MAVEN
+# -----------------------------------------------------------------------------
+# Compilación automática (Maven)
+# Binario .class y .jar generado en tiempo de ejecución; se reconstruye con mvn.
+# -----------------------------------------------------------------------------
 target/
-*.jar
-*.war
-*.ear
 
-# ARCHIVOS DE ECLIPSE 
+# -----------------------------------------------------------------------------
+# Configuración local del IDE (Eclipse)
+# Proyecto Maven puro: estos archivo varía por máquina y genera conflicto en merge.
+# -----------------------------------------------------------------------------
+.classpath
+.project
+.settings/
+.factorypath
+
+# Metadato de espacio de trabajo Eclipse (fuera del árbol del proyecto, por precaución)
 .metadata/
 bin/
 tmp/
 *.tmp
 *.bak
-.factorypath
 
-# CONFIGURACIÓN LOCAL DE ECLIPSE
-# .classpath se genera con Maven > Update Project (no versionar)
-.classpath
-.factorypath
-.vscode/
-
-# .project y .settings (JDT 17 + m2e) sí se versionan para importar sin errores
-
-DOCUMENTACION_PROYECTO.md
-
-# CREDENCIALES DE BASE DE DATOS (Aiven)
+# -----------------------------------------------------------------------------
+# Seguridad: credencial de base de datos (Aiven Cloud)
+# Nunca versionar contraseña real; usar configuracion/bd.ejemplo.properties como plantilla.
+# -----------------------------------------------------------------------------
 configuracion/bd.properties
+
+# -----------------------------------------------------------------------------
+# Artefacto temporal del sistema operativo
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# -----------------------------------------------------------------------------
+# Salida en caliente de la aplicación (bitácora y reporte financiero local)
+# -----------------------------------------------------------------------------
+logs/
+reportes_financieros.json
