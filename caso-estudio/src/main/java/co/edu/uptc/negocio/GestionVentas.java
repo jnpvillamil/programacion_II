@@ -1,5 +1,7 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.dto.CarritoItemDTO;
+import co.edu.uptc.dto.ResultadoOperacion;
 import co.edu.uptc.dto.VentaDTO;
 import co.edu.uptc.enums.FormaPago;
 import co.edu.uptc.interfaces.Calculable;
@@ -14,12 +16,14 @@ import co.edu.uptc.persistencia.PersistenciaVentas;
 import co.edu.uptc.utilidades.LogSistema;
 import co.edu.uptc.utilidades.ManejadorFechas;
 import co.edu.uptc.utilidades.MapeadorDTO;
+import co.edu.uptc.utilidades.ValidadorEntradas;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import co.edu.uptc.modelo.Producto;
 
 public class GestionVentas implements IContabilizable {
 
@@ -190,5 +194,94 @@ public class GestionVentas implements IContabilizable {
         Calculable calculable = venta;
         venta.setIvaAplicado(calculable.calcularIVA());
         venta.setTotalVenta(calculable.calcularTotal());
+    }
+
+    public ResultadoOperacion validarAgregarAlCarrito(String codigo, String cantidadStr,
+                                                      List<CarritoItemDTO> carritoActual) {
+        if (ValidadorEntradas.esVacio(codigo) || !ValidadorEntradas.esNumero(cantidadStr)) {
+            return ResultadoOperacion.error("Código vacío o cantidad no numérica.");
+        }
+        int cantidad = (int) Double.parseDouble(cantidadStr.trim());
+        if (cantidad <= 0) {
+            return ResultadoOperacion.error("La cantidad debe ser mayor a 0.");
+        }
+        Producto producto = gestionInventario.buscarProducto(codigo.trim());
+        if (producto == null || !producto.isActivo()) {
+            return ResultadoOperacion.error("Producto no encontrado o inactivo.");
+        }
+        int cantidadEnCarrito = carritoActual.stream()
+                .filter(item -> item.getProducto().getCodigoProducto().equals(codigo.trim()))
+                .mapToInt(CarritoItemDTO::getCantidad)
+                .sum();
+        if ((cantidadEnCarrito + cantidad) > producto.getStockActual()) {
+            return ResultadoOperacion.error("Stock insuficiente. Stock actual: " + producto.getStockActual());
+        }
+        double subtotal = producto.getPrecioVenta() * cantidad;
+        CarritoItemDTO item = new CarritoItemDTO(producto, cantidad, producto.getPrecioVenta(), subtotal);
+        return ResultadoOperacion.exito("Producto agregado al carrito.", item);
+    }
+
+    public ResultadoOperacion validarFinalizarVenta(Cliente cliente, List<CarritoItemDTO> carrito) {
+        if (cliente == null) {
+            return ResultadoOperacion.error("Debe seleccionar un cliente antes de finalizar.");
+        }
+        if (carrito == null || carrito.isEmpty()) {
+            return ResultadoOperacion.error("El carrito está vacío.");
+        }
+        return ResultadoOperacion.exito("Validación correcta.");
+    }
+
+    public ResultadoOperacion procesarVentaConResultado(VentaDTO dto, Cliente cliente) {
+        ResultadoOperacion validacion = validarFinalizarVenta(cliente, dto.getItems());
+        if (!validacion.isExito()) {
+            return validacion;
+        }
+        Venta venta = procesarVentaDesdeDto(dto, cliente);
+        if (venta != null) {
+            return ResultadoOperacion.exito(
+                    "Venta registrada exitosamente.\n" + generarFactura(venta), venta);
+        }
+        return ResultadoOperacion.error(
+                "No se pudo registrar la venta. Revise conexion a BD, tablas ventas/detalles_ventas y cliente registrado.");
+    }
+
+    public ResultadoOperacion validarIdentificacionConsulta(String identificacion) {
+        if (ValidadorEntradas.esVacio(identificacion)) {
+            return ResultadoOperacion.error("Ingrese la identificación del cliente.");
+        }
+        return ResultadoOperacion.exito("Validación correcta.");
+    }
+
+    public ResultadoOperacion validarFechaConsulta(String fecha) {
+        if (ValidadorEntradas.esVacio(fecha)) {
+            return ResultadoOperacion.error("Ingrese la fecha en formato dd/MM/yyyy.");
+        }
+        return ResultadoOperacion.exito("Validación correcta.");
+    }
+
+    public ResultadoOperacion validarNumeroFactura(String numeroFactura) {
+        if (ValidadorEntradas.esVacio(numeroFactura)) {
+            return ResultadoOperacion.error("Ingrese o seleccione un número de factura.");
+        }
+        return ResultadoOperacion.exito("Validación correcta.");
+    }
+
+    public ResultadoOperacion anularVentaConResultado(String numeroFactura) {
+        ResultadoOperacion validacion = validarNumeroFactura(numeroFactura);
+        if (!validacion.isExito()) {
+            return validacion;
+        }
+        if (anularVenta(numeroFactura.trim())) {
+            return ResultadoOperacion.exito("Venta anulada correctamente.");
+        }
+        return ResultadoOperacion.error("No se encontró la factura o ya estaba anulada.");
+    }
+
+    public ResultadoOperacion reimprimirComprobanteConValidacion(String numeroFactura) {
+        ResultadoOperacion validacion = validarNumeroFactura(numeroFactura);
+        if (!validacion.isExito()) {
+            return validacion;
+        }
+        return ResultadoOperacion.exito(reimprimirComprobante(numeroFactura.trim()));
     }
 }

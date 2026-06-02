@@ -1,5 +1,7 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.dto.CarritoItemDTO;
+import co.edu.uptc.dto.ResultadoOperacion;
 import co.edu.uptc.interfaces.Calculable;
 import co.edu.uptc.interfaces.IContabilizable;
 import co.edu.uptc.interfaces.IRepositorioCompra;
@@ -114,5 +116,41 @@ public class GestionCompras implements IContabilizable {
         Calculable calculable = compra;
         compra.setIva(calculable.calcularIVA());
         compra.setTotalCompra(calculable.calcularTotal());
+    }
+
+    public ResultadoOperacion validarAgregarLineaCompra(String codigo, String cantidadStr, String costoStr) {
+        if (ValidadorEntradas.esVacio(codigo) || !ValidadorEntradas.esNumero(cantidadStr)
+                || !ValidadorEntradas.esNumero(costoStr)) {
+            return ResultadoOperacion.error("Complete código, cantidad y costo unitario con valores válidos.");
+        }
+        int cantidad = (int) Double.parseDouble(cantidadStr.trim());
+        double costoUnitario = Double.parseDouble(costoStr.trim());
+        if (cantidad <= 0 || costoUnitario <= 0) {
+            return ResultadoOperacion.error("Cantidad y costo deben ser mayores a cero.");
+        }
+        Producto producto = inventario.buscarProducto(codigo.trim());
+        if (producto == null || !producto.isActivo()) {
+            return ResultadoOperacion.error("Producto no encontrado o inactivo.");
+        }
+        double subtotal = costoUnitario * cantidad;
+        CarritoItemDTO item = new CarritoItemDTO(producto, cantidad, costoUnitario, subtotal);
+        return ResultadoOperacion.exito("Línea validada.", item);
+    }
+
+    public ResultadoOperacion procesarCompraConResultado(Compra compra) {
+        if (compra == null || compra.getProveedor() == null) {
+            return ResultadoOperacion.error("Debe seleccionar un proveedor antes de registrar la compra.");
+        }
+        if (ValidadorEntradas.esVacio(compra.getFacturaProveedor())) {
+            return ResultadoOperacion.error("Ingrese el número de factura del proveedor.");
+        }
+        if (compra.getProductosComprados() == null || compra.getProductosComprados().isEmpty()) {
+            return ResultadoOperacion.error("Agregue al menos un producto a la compra.");
+        }
+        if (procesarCompra(compra)) {
+            return ResultadoOperacion.exito("Compra registrada exitosamente.", compra);
+        }
+        return ResultadoOperacion.error(
+                "No se pudo registrar la compra. Revise conexion a BD, proveedor y tablas compras/detalles_compras.");
     }
 }

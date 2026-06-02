@@ -1,0 +1,28 @@
+{
+  "fecha": "2026-05-30",
+  "total_ventas": 14280.0,
+  "total_compras": 14875.0,
+  "utilidad_bruta": -595.0,
+  "ventas_por_forma_pago": [
+    {
+      "forma_pago": "EFECTIVO",
+      "total": 14280.0
+    }
+  ],
+  "productos_mas_vendidos": [
+    {
+      "codigo": "0003",
+      "nombre": "Lapiz Negro",
+      "cantidad": 6
+    }
+  ],
+  "resumen_contable": {
+    "Bancos": 0.0,
+    "Ingresos por ventas": -12000.0,
+    "IVA descontable": 2375.0,
+    "Caja": 14280.0,
+    "Proveedores": -14875.0,
+    "IVA generado": -2280.0,
+    "Inventario": 12500.0
+  }
+}
