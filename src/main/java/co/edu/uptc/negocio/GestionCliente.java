@@ -1,7 +1,7 @@
 package co.edu.uptc.negocio;
 
 import co.edu.uptc.dto.ClienteResumenDTO;
-import co.edu.uptc.interfaces.RepositorioCliente;
+import co.edu.uptc.interfaces.RepositorioAdministracion;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.utilidades.ValidadorEntradas;
 
@@ -9,40 +9,40 @@ import java.util.List;
 
 public class GestionCliente {
 
-    private final RepositorioCliente persistenciaCliente;
+    private final RepositorioAdministracion persistenciaAdministracion;
 
-    public GestionCliente(RepositorioCliente persistenciaCliente) {
-        this.persistenciaCliente = persistenciaCliente;
+    public GestionCliente(RepositorioAdministracion persistenciaAdministracion) {
+        this.persistenciaAdministracion = persistenciaAdministracion;
     }
 
     public void registrarCliente(Cliente cliente) {
         validarDatosObligatorio(cliente);
 
-        if (persistenciaCliente.existeIdentificacion(cliente.getIdentificacion())) {
+        if (persistenciaAdministracion.existeIdentificacionCliente(cliente.getIdentificacion())) {
             throw new IllegalStateException("El número de identificación ya se encuentra registrado.");
         }
-        if (persistenciaCliente.buscarPorId(cliente.getCodigoCliente()) != null) {
+        if (persistenciaAdministracion.buscarClientePorCodigo(cliente.getCodigoCliente()) != null) {
             throw new IllegalStateException("El código de cliente ya se encuentra registrado.");
         }
 
-        persistenciaCliente.guardar(cliente);
+        persistenciaAdministracion.guardarCliente(cliente);
     }
 
     public void actualizarCliente(Cliente clienteActualizado) {
         validarDatosObligatorio(clienteActualizado);
 
-        Cliente existente = persistenciaCliente.buscarPorId(clienteActualizado.getCodigoCliente());
+        Cliente existente = persistenciaAdministracion.buscarClientePorCodigo(clienteActualizado.getCodigoCliente());
         if (existente == null) {
             throw new IllegalStateException("Cliente no encontrado.");
         }
 
         if (!existente.getIdentificacion().equals(clienteActualizado.getIdentificacion())
-                && persistenciaCliente.existeIdentificacion(clienteActualizado.getIdentificacion())) {
+                && persistenciaAdministracion.existeIdentificacionCliente(clienteActualizado.getIdentificacion())) {
             throw new IllegalStateException("El número de identificación ya pertenece a otro cliente.");
         }
 
         clienteActualizado.setActivo(existente.isActivo());
-        persistenciaCliente.actualizar(clienteActualizado);
+        persistenciaAdministracion.actualizarCliente(clienteActualizado);
     }
 
     public void inactivarCliente(String identificacion) {
@@ -50,7 +50,7 @@ public class GestionCliente {
             throw new IllegalArgumentException("Debe indicar la identificación del cliente.");
         }
 
-        Cliente cliente = persistenciaCliente.buscarPorIdentificacion(identificacion.trim());
+        Cliente cliente = persistenciaAdministracion.buscarClientePorIdentificacion(identificacion.trim());
         if (cliente == null) {
             throw new IllegalStateException("Cliente no encontrado.");
         }
@@ -59,8 +59,7 @@ public class GestionCliente {
             throw new IllegalStateException("El cliente ya se encuentra inactivo.");
         }
 
-        cliente.setActivo(false);
-        persistenciaCliente.actualizar(cliente);
+        persistenciaAdministracion.inactivarClientePorIdentificacion(identificacion.trim());
     }
 
     public void activarCliente(String identificacion) {
@@ -68,7 +67,7 @@ public class GestionCliente {
             throw new IllegalArgumentException("Debe indicar la identificación del cliente.");
         }
 
-        Cliente cliente = persistenciaCliente.buscarPorIdentificacion(identificacion.trim());
+        Cliente cliente = persistenciaAdministracion.buscarClientePorIdentificacion(identificacion.trim());
         if (cliente == null) {
             throw new IllegalStateException("Cliente no encontrado.");
         }
@@ -76,15 +75,14 @@ public class GestionCliente {
             throw new IllegalStateException("El cliente ya se encuentra activo.");
         }
 
-        cliente.setActivo(true);
-        persistenciaCliente.actualizar(cliente);
+        persistenciaAdministracion.activarClientePorIdentificacion(identificacion.trim());
     }
 
     public Cliente buscarPorIdentificacion(String identificacion) {
         if (ValidadorEntradas.esNuloOVacio(identificacion)) {
             return null;
         }
-        return persistenciaCliente.buscarPorIdentificacion(identificacion.trim());
+        return persistenciaAdministracion.buscarClientePorIdentificacion(identificacion.trim());
     }
 
     /** Compatibilidad con módulos que consultan cliente por identificación. */
@@ -96,11 +94,11 @@ public class GestionCliente {
         if (ValidadorEntradas.esNuloOVacio(codigoCliente)) {
             return null;
         }
-        return persistenciaCliente.buscarPorId(codigoCliente.trim());
+        return persistenciaAdministracion.buscarClientePorCodigo(codigoCliente.trim());
     }
 
     public List<ClienteResumenDTO> listarResumen() {
-        return persistenciaCliente.listarResumen();
+        return persistenciaAdministracion.listarResumenCliente();
     }
 
     private void validarDatosObligatorio(Cliente cliente) {

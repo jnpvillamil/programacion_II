@@ -1,25 +1,31 @@
 package co.edu.uptc.negocio;
 
+import co.edu.uptc.dto.VentaDTO;
 import co.edu.uptc.enums.TipoMovimiento;
-import co.edu.uptc.interfaces.RepositorioVenta;
+import co.edu.uptc.interfaces.RepositorioComercial;
 import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.modelo.DetalleVenta;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.modelo.Venta;
 import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
+import co.edu.uptc.utilidades.ExportadorDatos;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class GestionVenta {
 
     private static final double PORCENTAJE_IVA = 0.19;
+    private static final String RUTA_LOG_AUDITORIA = "logs/auditoria_venta.txt";
 
-    private final RepositorioVenta persistenciaVenta;
+    private final RepositorioComercial persistenciaComercial;
     private final GestionProducto gestionProducto;
     private final GestionContable gestionContable;
     private final GestionCliente gestionCliente;
 
-    public GestionVenta(RepositorioVenta persistenciaVenta, GestionProducto gestionProducto,
-                          GestionContable gestionContable, GestionCliente gestionCliente) {
-        this.persistenciaVenta = persistenciaVenta;
+    public GestionVenta(RepositorioComercial persistenciaComercial, GestionProducto gestionProducto,
+                        GestionContable gestionContable, GestionCliente gestionCliente) {
+        this.persistenciaComercial = persistenciaComercial;
         this.gestionProducto = gestionProducto;
         this.gestionContable = gestionContable;
         this.gestionCliente = gestionCliente;
@@ -28,8 +34,8 @@ public class GestionVenta {
     public String realizarVenta(Venta venta) {
         validarVenta(venta);
         calcularTotales(venta);
-        persistenciaVenta.guardar(venta);
-        registrarContabilidad(venta);
+        persistenciaComercial.guardarVenta(venta, gestionContable::construirAsientoVenta);
+        registrarLogVenta(venta, "REGISTRADA");
         return "Venta registrada correctamente. Factura N° " + venta.getNumeroFactura();
     }
 
@@ -37,7 +43,15 @@ public class GestionVenta {
         if (numeroFactura == null || numeroFactura.isBlank()) {
             throw new IllegalStateException("Debe indicar un número de factura válido.");
         }
-        persistenciaVenta.anularVenta(numeroFactura);
+
+        Venta ventaAnulada = consultarVenta(numeroFactura);
+        if (ventaAnulada == null) {
+            throw new IllegalStateException("Factura no encontrada: " + numeroFactura);
+        }
+
+        persistenciaComercial.anularVenta(numeroFactura, gestionContable::construirAsientoAnulacionVenta);
+        ventaAnulada.setEstado(co.edu.uptc.enums.EstadoVenta.ANULADA);
+        registrarLogVenta(ventaAnulada, "ANULADA");
         return "Factura " + numeroFactura + " anulada. Inventario restaurado.";
     }
 
@@ -55,6 +69,18 @@ public class GestionVenta {
 
     public double calcularIVA(double subtotal) {
         return redondear(subtotal * PORCENTAJE_IVA);
+    }
+
+    public Producto buscarProducto(String codigoInterno) {
+        return gestionProducto.buscarProducto(codigoInterno);
+    }
+
+    public Cliente buscarClientePorIdentificacion(String identificacion) {
+        return gestionCliente.buscarPorIdentificacion(identificacion);
+    }
+
+    public List<VentaDTO> listarVenta() {
+        return persistenciaComercial.listarVenta();
     }
 
     private void validarVenta(Venta venta) {
@@ -94,22 +120,29 @@ public class GestionVenta {
                 throw new IllegalStateException("Producto inactivo: " + codigo);
             }
             if (producto.getStockActual() < detalle.getCantidad()) {
-                throw new IllegalStateException("Stock insuficiente para " + producto.getNombreProducto()
-                        + ". Disponible: " + producto.getStockActual());
+                throw new IllegalStateException(
+                        "Stock insuficiente para el producto: " + producto.getNombreProducto());
             }
             detalle.setProducto(producto);
             detalle.setPrecioUnitario(producto.getPrecioVenta());
         }
     }
 
-    private void registrarContabilidad(Venta venta) {
-        String referencia = "Factura " + venta.getNumeroFactura();
-        gestionContable.registrarPartidaDoble(
-                venta.getTotal(), TipoMovimiento.INGRESO, "Caja/Bancos", "Cobro " + referencia);
-        gestionContable.registrarPartidaDoble(
-                venta.getSubtotal(), TipoMovimiento.INGRESO, "Ingresos por ventas", "Venta " + referencia);
-        gestionContable.registrarPartidaDoble(
-                venta.getIva(), TipoMovimiento.INGRESO, "IVA Generado", "IVA " + referencia);
+    private Venta consultarVenta(String numeroFactura) {
+        return persistenciaComercial.buscarVentaPorNumeroFactura(numeroFactura);
+    }
+
+    private void registrarLogVenta(Venta venta, String accion) {
+        String linea = String.format(
+                "VENTA|%s|Factura=%s|Cliente=%s|Subtotal=%.2f|Iva=%.2f|Total=%.2f|Fecha=%s",
+                accion,
+                venta.getNumeroFactura(),
+                venta.getCliente().getIdentificacion(),
+                venta.getSubtotal(),
+                venta.getIva(),
+                venta.getTotal(),
+                LocalDateTime.now());
+        ExportadorDatos.exportarPlano(List.of(linea), RUTA_LOG_AUDITORIA);
     }
 
     private double redondear(double valor) {

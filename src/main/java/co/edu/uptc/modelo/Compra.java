@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Compra {
-    private String numeroFacturaProveedor;
-    private LocalDateTime fecha;
-    private Proveedor proveedor;
-    private List<DetalleCompra> listaDetalles;
-    private double subtotal;
-    private double iva;
+    private String numeroFacturaProveedor; 
+    private LocalDateTime fecha; 
+    private Proveedor proveedor; 
+    private List<DetalleCompra> listaDetalles; 
     private double total;
 
     public Compra(String numeroFacturaProveedor, LocalDateTime fecha, Proveedor proveedor) {
@@ -18,8 +16,6 @@ public class Compra {
         this.fecha = fecha;
         this.proveedor = proveedor;
         this.listaDetalles = new ArrayList<>();
-        this.subtotal = 0;
-        this.iva = 0;
         this.total = 0;
     }
 
@@ -34,12 +30,6 @@ public class Compra {
 
     public List<DetalleCompra> getListaDetalles() { return listaDetalles; }
     public void setListaDetalles(List<DetalleCompra> listaDetalles) { this.listaDetalles = listaDetalles; }
-
-    public double getSubtotal() { return subtotal; }
-    public void setSubtotal(double subtotal) { this.subtotal = subtotal; }
-
-    public double getIva() { return iva; }
-    public void setIva(double iva) { this.iva = iva; }
 
     public double getTotal() { return total; }
     public void setTotal(double total) { this.total = total; }

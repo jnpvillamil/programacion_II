@@ -1,10 +1,11 @@
 package co.edu.uptc.negocio;
 
-import co.edu.uptc.interfaces.Autenticable;
+import co.edu.uptc.interfaces.ServicioSistema;
 import co.edu.uptc.modelo.Usuario;
 
-public class ServicioAutenticacion implements Autenticable {
-    private GestionUsuario gestionUsuario;
+public class ServicioAutenticacion implements ServicioSistema {
+
+    private final GestionUsuario gestionUsuario;
     private Usuario usuarioSesion;
 
     public ServicioAutenticacion(GestionUsuario gestionUsuario) {
@@ -12,13 +13,29 @@ public class ServicioAutenticacion implements Autenticable {
     }
 
     @Override
-    public boolean iniciarSesion(String usuario, String clave) {
-        Usuario usuarioEncontrado = this.gestionUsuario.buscarUsuario(usuario);
-        if (usuarioEncontrado != null && usuarioEncontrado.getClave().equals(clave)) {
-            this.usuarioSesion = usuarioEncontrado;
-            return true;
+    public void iniciarSesion(String usuario, String clave) {
+        String loginNormalizado = usuario != null ? usuario.trim() : "";
+        String claveNormalizada = clave != null ? clave.trim() : "";
+
+        if (loginNormalizado.isBlank() || claveNormalizada.isBlank()) {
+            throw new ExcepcionAutenticacion("Debe ingresar usuario y contraseña.");
         }
-        return false;
+
+        Usuario usuarioEncontrado = gestionUsuario.buscarUsuario(loginNormalizado);
+        if (usuarioEncontrado == null) {
+            throw new ExcepcionAutenticacion("Usuario o contraseña incorrectos.");
+        }
+
+        String claveAlmacenada = usuarioEncontrado.getClave() != null
+                ? usuarioEncontrado.getClave().trim()
+                : "";
+        if (!claveAlmacenada.equals(claveNormalizada)) {
+            throw new ExcepcionAutenticacion("Usuario o contraseña incorrectos.");
+        }
+        if (!usuarioEncontrado.isActivo()) {
+            throw new ExcepcionAutenticacion("El usuario se encuentra inactivo.");
+        }
+        this.usuarioSesion = usuarioEncontrado;
     }
 
     @Override
@@ -27,6 +44,10 @@ public class ServicioAutenticacion implements Autenticable {
     }
 
     public Usuario getUsuarioSesion() {
-        return this.usuarioSesion;
+        return usuarioSesion;
+    }
+
+    public boolean haySesionActiva() {
+        return usuarioSesion != null;
     }
 }
