@@ -289,35 +289,35 @@ public class VentanaPrincipal extends JFrame {
         panelCliente.poblarTabla();
     }
     
-    // ========== MÉTODOS DE PROVEEDOR ==========
+ // ========== MÉTODOS DE PROVEEDOR ==========
     public void nuevoProveedor() {
         DialogoProveedor d = new DialogoProveedor(this, true, null);
         d.setVisible(true);
         if(d.isOk()) {
-            TiendaConfig.getInstancia().getGestionProveedor().crear(d.getProveedor());
+            TiendaConfig.getInstancia().getNegocioProveedor().crear(d.getProveedor());
             panelProveedor.poblarTabla();
             JOptionPane.showMessageDialog(this, "Proveedor creado exitosamente");
         }
     }
-    
+
     public void actualizarProveedor() {
         String codigo = panelProveedor.getCodigoSeleccionado();
         if(codigo == null) {
             JOptionPane.showMessageDialog(this, "Seleccione un proveedor de la tabla");
             return;
         }
-        Proveedor p = TiendaConfig.getInstancia().getGestionProveedor().buscar(codigo);
+        Proveedor p = TiendaConfig.getInstancia().getNegocioProveedor().buscar(codigo);
         if(p != null) {
             DialogoProveedor d = new DialogoProveedor(this, false, p);
             d.setVisible(true);
             if(d.isOk()) {
-                TiendaConfig.getInstancia().getGestionProveedor().actualizar(d.getProveedor());
+                TiendaConfig.getInstancia().getNegocioProveedor().actualizar(d.getProveedor());
                 panelProveedor.poblarTabla();
                 JOptionPane.showMessageDialog(this, "Proveedor actualizado");
             }
         }
     }
-    
+
     public void eliminarProveedor() {
         String codigo = panelProveedor.getCodigoSeleccionado();
         if(codigo == null) {
@@ -326,29 +326,31 @@ public class VentanaPrincipal extends JFrame {
         }
         int confirm = JOptionPane.showConfirmDialog(this, "¿Inactivar proveedor?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if(confirm == JOptionPane.YES_OPTION) {
-            TiendaConfig.getInstancia().getGestionProveedor().eliminar(codigo);
+            TiendaConfig.getInstancia().getNegocioProveedor().inactivar(codigo);
             panelProveedor.poblarTabla();
             JOptionPane.showMessageDialog(this, "Proveedor inactivado");
         }
     }
-    
+
     public void buscarProveedor() {
         panelProveedor.realizarBusqueda();
     }
-    
+
     public void limpiarProveedores() {
         panelProveedor.limpiarBusqueda();
         panelProveedor.poblarTabla();
     }
+
     
  // ========== MÉTODOS DE VENTA ==========
+    
     public void nuevaVenta() {
         DialogoVenta d = new DialogoVenta(this);
         d.setVisible(true);
         if(d.isOk()) {
             Venta venta = d.getVenta();
-            TiendaConfig.getInstancia().getGestionVenta().crearVenta(venta);
-            TiendaConfig.getInstancia().getGestionContable().registrarAsientoVenta(venta);
+            TiendaConfig.getInstancia().getNegocioVenta().registrarVenta(venta);
+            TiendaConfig.getInstancia().getNegocioContable().registrarAsientoVenta(venta);
             panelVenta.poblarTabla();
             panelProducto.poblarTabla();
             
@@ -359,7 +361,7 @@ public class VentanaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "Venta registrada exitosamente");
         }
     }
-    
+
     public void anularVenta() {
         String factura = panelVenta.getCodigoSeleccionado();
         if(factura == null) {
@@ -370,7 +372,7 @@ public class VentanaPrincipal extends JFrame {
         int confirm = JOptionPane.showConfirmDialog(this, "¿Anular esta venta? Se devolverá el stock", 
             "Confirmar", JOptionPane.YES_NO_OPTION);
         if(confirm == JOptionPane.YES_OPTION) {
-            TiendaConfig.getInstancia().getGestionVenta().anularVenta(factura);
+            TiendaConfig.getInstancia().getNegocioVenta().anularVenta(factura);
             panelVenta.poblarTabla();
             JOptionPane.showMessageDialog(this, "Venta anulada");
         }
@@ -383,8 +385,7 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         
-        Venta v = TiendaConfig.getInstancia().getGestionVenta().buscarVenta(factura);
-        if(v != null) {
+        Venta v = TiendaConfig.getInstancia().getNegocioVenta().buscarVenta(factura);
             StringBuilder sb = new StringBuilder();
             sb.append("=== DETALLE DE VENTA ===\n");
             sb.append("Factura: ").append(v.getNumeroFactura()).append("\n");
@@ -407,12 +408,12 @@ public class VentanaPrincipal extends JFrame {
             scroll.setPreferredSize(new Dimension(400, 300));
             JOptionPane.showMessageDialog(this, scroll, "Detalle de Venta", JOptionPane.INFORMATION_MESSAGE);
         }
-    }
+    
+
     public void limpiarVentas() {
         panelVenta.limpiarBusqueda();
         panelVenta.poblarTabla();
     }
-    
    
  // ========== MÉTODOS DE COMPRA ==========
     
