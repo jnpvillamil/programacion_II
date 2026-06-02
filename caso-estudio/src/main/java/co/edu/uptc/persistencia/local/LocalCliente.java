@@ -1,4 +1,4 @@
-package co.edu.uptc.persistencia;
+package co.edu.uptc.persistencia.local;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ public class LocalCliente implements IGestionCliente {
     private ClienteDAOImpl dao = new ClienteDAOImpl();
     private String ruta = "clientes.json";
 
-    @Override 
-    public void guardar(clienteDto cliente) { 
+    @Override
+    public void guardar(clienteDto cliente) {
         listaClientes.add(cliente);
         dao.guardarClientes(listaClientes, ruta);
     }
@@ -41,8 +41,8 @@ public class LocalCliente implements IGestionCliente {
         return null;
     }
 
-    @Override 
-    public List<clienteDto> listar() { 
-        return listaClientes; 
+    @Override
+    public List<clienteDto> listar() {
+        return listaClientes;
     }
 }

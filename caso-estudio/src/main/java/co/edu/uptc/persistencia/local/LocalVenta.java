@@ -1,4 +1,4 @@
-package co.edu.uptc.persistencia;
+package co.edu.uptc.persistencia.local;
 
 import java.util.ArrayList;
 import java.util.List;
