@@ -350,7 +350,7 @@ public class PanelConsultas extends PanelCentral {
             return;
         }
         for (Producto p : productos) {
-            if (p != null && p.estaActivo() && p.stockBajoMinimo()) {
+            if (p != null) {
                 Object[] fila = {
                     p.getCodigoProducto(),
                     p.getNombreProducto(),

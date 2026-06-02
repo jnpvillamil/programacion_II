@@ -41,6 +41,7 @@ public interface IGestionReporte {
 	List<ResumenClienteDTO> obtenerClientesMayorVolumenCompra(LocalDate fechaInicio, LocalDate fechaFin)
 			throws Exception;
 
+	
 	List<ResumenInventarioValorizadoDTO> obtenerInventarioValorizado() throws Exception;
 
 	ResumenContableDTO obtenerResumenContable(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;

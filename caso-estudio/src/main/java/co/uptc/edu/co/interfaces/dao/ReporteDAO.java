@@ -30,6 +30,7 @@ public interface ReporteDAO {
 	String guardarReporteVentasFormaPago(List<ResumenFormaPagoDTO> resumenes, LocalDate fechaInicio,
 			LocalDate fechaFin) throws Exception;
 
+	
 	String guardarReporteClientesMayorCompra(List<ResumenClienteDTO> resumenes, LocalDate fechaInicio,
 			LocalDate fechaFin) throws Exception;
 

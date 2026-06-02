@@ -36,6 +36,7 @@ public class PanelReportes extends PanelCentral {
 	private static final String TEXTO_BOTON_BUSCAR = "Buscar";
 	private static final String TEXTO_BOTON_GENERAR_REPORTE = "Generar Reportes";
 
+	
 	private static final String REPORTE_VENTAS_DIARIAS = "Ventas diarias";
 	private static final String REPORTE_VENTAS_MENSUALES = "Ventas mensuales";
 	private static final String REPORTE_VENTAS_ANUALES = "Ventas anuales";

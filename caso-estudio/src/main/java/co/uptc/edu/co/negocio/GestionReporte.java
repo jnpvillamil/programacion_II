@@ -460,6 +460,7 @@ public class GestionReporte implements IGestionReporte {
 			}
 		}
 
+		
 		return cantidadVendida;
 	}
 

@@ -83,7 +83,7 @@ public class TiendaConfig {
 		CompraDAO compraDAO = new ComprasBDDAO();
 		ReporteDAO reporteDAO = new ReporteJSONDAO();
 		gestionReporte = new GestionReporte(ventaDAO, reporteDAO, productoDAO, compraDAO);
-		gestionConsultas = new GestionConsultas(ventaDAO);
+		gestionConsultas = new GestionConsultas(ventaDAO, compraDAO, productoDAO, movimientoContableDAO);
 		gestionDevolucionVenta = new GestionDevolucionVenta(ventaDAO, devolucionVentaDAO, gestionInventario,
 				gestionContabilidad);
 

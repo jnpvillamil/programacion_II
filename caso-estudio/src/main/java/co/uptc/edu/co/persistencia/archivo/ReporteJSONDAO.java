@@ -59,6 +59,7 @@ public class ReporteJSONDAO implements ReporteDAO {
 		}
 		raiz.add("productos", productos);
 
+		
 		escribirJson(archivo, raiz);
 		return archivo.getPath();
 	}

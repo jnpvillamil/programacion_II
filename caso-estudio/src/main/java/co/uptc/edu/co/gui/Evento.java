@@ -1316,43 +1316,19 @@ public class Evento implements ActionListener {
 				LocalDate fechaInicio = panelConsultas.obtenerFechaInicio();
 				LocalDate fechaFin = panelConsultas.obtenerFechaFin();
 
-				if (codigoProveedor == null || codigoProveedor.isEmpty()) {
-					throw new Exception("Debe seleccionar un proveedor.");
-				}
-
-				List<Compra> compras = gestionCompra.obtenerCompras();
-				List<Compra> comprasFiltradas = new java.util.ArrayList<>();
-				for (Compra c : compras) {
-					if (c.getCodigoProveedor() != null && c.getCodigoProveedor().equalsIgnoreCase(codigoProveedor)) {
-						if (c.getFecha() != null) {
-							if (!c.getFecha().isBefore(fechaInicio) && !c.getFecha().isAfter(fechaFin)) {
-								comprasFiltradas.add(c);
-							}
-						}
-					}
-				}
-				panelConsultas.cargarComprasPorProveedor(comprasFiltradas);
+				panelConsultas.cargarComprasPorProveedor(
+					gestionConsultas.obtenerComprasPorProveedor(codigoProveedor, fechaInicio, fechaFin));
 				return;
 			}
 
 			if (panelConsultas.esConsultaStockBajo()) {
-				panelConsultas.cargarProductosStockBajo(gestionProducto.obtenerProductos());
+				panelConsultas.cargarProductosStockBajo(gestionConsultas.obtenerProductosStockBajo());
 				return;
 			}
 
 			if (panelConsultas.esConsultaHistorialCliente()) {
 				String codigoCliente = panelConsultas.obtenerClienteSeleccionado();
-
-				if (codigoCliente == null || codigoCliente.isEmpty()) {
-					throw new Exception("Debe seleccionar un cliente.");
-				}
-
-				Cliente cliente = gestionCliente.buscarClientePorCodigo(codigoCliente);
-				if (cliente != null) {
-					panelConsultas.cargarHistorialCliente(gestionVenta.obtenerVentasPorCliente(cliente));
-				} else {
-					throw new Exception("No se encontro el cliente seleccionado.");
-				}
+				panelConsultas.cargarHistorialCliente(gestionConsultas.obtenerHistorialCliente(codigoCliente));
 				return;
 			}
 
@@ -1362,31 +1338,8 @@ public class Evento implements ActionListener {
 				LocalDate fechaInicio = panelConsultas.obtenerFechaInicio();
 				LocalDate fechaFin = panelConsultas.obtenerFechaFin();
 
-				if (cuenta == null || cuenta.isEmpty()) {
-					throw new Exception("Debe seleccionar una cuenta.");
-				}
-
-				List<MovimientoContable> movimientos = gestionContabilidad.obtenerMovimientos();
-				List<MovimientoContable> movimientosFiltrados = new java.util.ArrayList<>();
-				for (MovimientoContable m : movimientos) {
-					if (m.getCuentaContable() != null && m.getCuentaContable().equalsIgnoreCase(cuenta)) {
-						if (m.getFecha() != null) {
-							boolean enPeriodo = !m.getFecha().isBefore(fechaInicio) && !m.getFecha().isAfter(fechaFin);
-							boolean coincideTipo = true;
-							if (tipoMovimiento != null && !tipoMovimiento.isBlank() && !"Todos".equalsIgnoreCase(tipoMovimiento)) {
-								if (m.getTipoMovimientoContable() == null) {
-									coincideTipo = false;
-								} else {
-								coincideTipo = m.getTipoMovimientoContable().name().equalsIgnoreCase(tipoMovimiento);
-								}
-							}
-							if (enPeriodo && coincideTipo) {
-								movimientosFiltrados.add(m);
-							}
-						}
-					}
-				}
-				panelConsultas.cargarMovimientosContables(movimientosFiltrados);
+				panelConsultas.cargarMovimientosContables(
+					gestionConsultas.obtenerMovimientosContables(cuenta, tipoMovimiento, fechaInicio, fechaFin));
 				return;
 			}
 
