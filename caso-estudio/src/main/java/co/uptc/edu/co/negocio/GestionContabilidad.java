@@ -25,10 +25,11 @@ public class GestionContabilidad implements IGestionContabilidad {
 	private static final String CUENTA_CAJA = "Caja";
 	private static final String CUENTA_BANCOS = "Bancos";
 	private static final String CUENTA_CUENTAS_POR_COBRAR = "Cuentas por Cobrar";
+	private static final String CUENTA_PROVEEDORES = "Proveedores";
 	private static final String CUENTA_INGRESOS = "Ingresos por Ventas";
-	private static final String CUENTA_COMPRAS = "Compras";
+	private static final String CUENTA_INVENTARIO = "Inventario";
 	private static final String CUENTA_IVA_GENERADO = "IVA Generado";
-	private static final String CUENTA_IVA_COMPRAS = "IVA en Compras";
+	private static final String CUENTA_IVA_DESCONTABLE = "IVA Descontable";
 
 	private final MovimientoContableDAO movimientoContableDAO;
 	private List<MovimientoContable> movimientos;
@@ -94,12 +95,12 @@ public class GestionContabilidad implements IGestionContabilidad {
 				compra.getNumeroFacturaProveedor()));
 
 		movimientosAGuardar.add(crearMovimiento(movimientosAGuardar, fecha, TipoMovimientoContable.EGRESO,
-				CUENTA_COMPRAS, compra.getSubtotal(), "Compra " + compra.getNumeroFacturaProveedor(), ORIGEN_COMPRA,
+				CUENTA_INVENTARIO, compra.getSubtotal(), "Compra " + compra.getNumeroFacturaProveedor(), ORIGEN_COMPRA,
 				compra.getNumeroFacturaProveedor()));
 
 		if (compra.getImpuestos() > 0) {
 			movimientosAGuardar.add(crearMovimiento(movimientosAGuardar, fecha, TipoMovimientoContable.EGRESO,
-					CUENTA_IVA_COMPRAS, compra.getImpuestos(), "IVA compra " + compra.getNumeroFacturaProveedor(),
+					CUENTA_IVA_DESCONTABLE, compra.getImpuestos(), "IVA compra " + compra.getNumeroFacturaProveedor(),
 					ORIGEN_COMPRA, compra.getNumeroFacturaProveedor()));
 		}
 
@@ -130,12 +131,12 @@ public class GestionContabilidad implements IGestionContabilidad {
 				ORIGEN_ANULACION_COMPRA, referencia));
 
 		movimientosAGuardar.add(crearMovimiento(movimientosAGuardar, fecha, TipoMovimientoContable.INGRESO,
-				CUENTA_COMPRAS, compra.getSubtotal(), "Reverso compra " + referencia + ". Motivo: " + motivo,
+				CUENTA_INVENTARIO, compra.getSubtotal(), "Reverso compra " + referencia + ". Motivo: " + motivo,
 				ORIGEN_ANULACION_COMPRA, referencia));
 
 		if (compra.getImpuestos() > 0) {
 			movimientosAGuardar.add(crearMovimiento(movimientosAGuardar, fecha, TipoMovimientoContable.INGRESO,
-					CUENTA_IVA_COMPRAS, compra.getImpuestos(),
+					CUENTA_IVA_DESCONTABLE, compra.getImpuestos(),
 					"Reverso IVA compra " + referencia + ". Motivo: " + motivo, ORIGEN_ANULACION_COMPRA, referencia));
 		}
 
@@ -277,6 +278,10 @@ public class GestionContabilidad implements IGestionContabilidad {
 	}
 
 	private String obtenerCuentaPago(FormaPago formaPago) {
+		if (formaPago == FormaPago.CREDITO) {
+			return CUENTA_PROVEEDORES;
+		}
+
 		if (formaPago == FormaPago.TRANSFERENCIA) {
 			return CUENTA_BANCOS;
 		}

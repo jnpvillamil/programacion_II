@@ -19,6 +19,7 @@ import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.dto.DetalleUtilidadBrutaDTO;
 import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
 import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFinancieroDiarioDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
@@ -137,6 +138,11 @@ public class GestionReporte implements IGestionReporte {
 	}
 
 	@Override
+	public String generarReporteResumenFinancieroDiario(LocalDate fecha) throws Exception {
+		return reporteDAO.guardarReporteResumenFinancieroDiario(obtenerResumenFinancieroDiario(fecha));
+	}
+
+	@Override
 	public List<ResumenFormaPagoDTO> obtenerVentasPorFormaPago(LocalDate fechaInicio, LocalDate fechaFin)
 			throws Exception {
 		List<Venta> ventasActuales = ventaDAO.listarVentas();
@@ -210,6 +216,41 @@ public class GestionReporte implements IGestionReporte {
 		double utilidad = ingresos - egresos;
 
 		return new ResumenContableDTO(ingresos, egresos, utilidad);
+	}
+
+	@Override
+	public ResumenFinancieroDiarioDTO obtenerResumenFinancieroDiario(LocalDate fecha) throws Exception {
+		if (fecha == null) {
+			throw new Exception("La fecha es obligatoria.");
+		}
+
+		ResumenVentasDTO ventas = obtenerTotalVentasDiarias(fecha);
+		ResumenUtilidadBrutaDTO utilidad = obtenerUtilidadBruta(fecha, fecha);
+		ResumenContableDTO contable = obtenerResumenContable(fecha, fecha);
+		List<ResumenFormaPagoDTO> ventasPorFormaPago = obtenerVentasPorFormaPago(fecha, fecha);
+		List<ResumenProductoDTO> productosMasVendidos = obtenerResumenProductosMasVendidos(fecha, fecha);
+
+		double totalCompras = 0;
+		double ivaDescontable = 0;
+		for (Compra compra : compraDAO.listarCompra()) {
+			if (!debeIncluirCompraEnReporte(compra, fecha, fecha)) {
+				continue;
+			}
+			totalCompras += compra.getTotalCompra();
+			ivaDescontable += compra.getImpuestos();
+		}
+
+		double ivaGenerado = 0;
+		for (Venta venta : ventaDAO.listarVentas()) {
+			if (!debeIncluirVentaEnReporte(venta, fecha, fecha)) {
+				continue;
+			}
+			ivaGenerado += venta.getImpuestos();
+		}
+
+		return new ResumenFinancieroDiarioDTO(fecha, ventas.getTotalVentas(), totalCompras,
+				utilidad.getUtilidadBruta(), ventasPorFormaPago, productosMasVendidos, contable, ivaGenerado,
+				ivaDescontable);
 	}
 
 	@Override

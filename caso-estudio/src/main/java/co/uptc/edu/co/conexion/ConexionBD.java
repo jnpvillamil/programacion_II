@@ -8,7 +8,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class ConexionBD {
 
-	private static final String SERVIDOR = "localhost";
+	private static final String SERVIDOR = "127.0.0.1";
 	private static final String PUERTO = "3306";
 	private static final String NOMBRE_BASE_DATOS = "proyecto_sistema_gestion_contable";
 
@@ -19,7 +19,7 @@ public class ConexionBD {
 			+ "&useLocalSessionState=true"
 			+ "&elideSetAutoCommits=true";
 
-	private static final String USUARIO = "root";
+	private static final String USUARIO = "";
 	private static final String PASSWORD = "";
 
 	private static final HikariDataSource DATA_SOURCE = crearDataSource();

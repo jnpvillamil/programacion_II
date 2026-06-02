@@ -48,6 +48,7 @@ import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
 import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFinancieroDiarioDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
@@ -1184,6 +1185,10 @@ public class Evento implements ActionListener {
 					panelReportes.obtenerFechaFinReporte());
 		}
 
+		if (panelReportes.esReporteResumenFinancieroDiario()) {
+			return gestionReporte.generarReporteResumenFinancieroDiario(panelReportes.obtenerFechaReporte());
+		}
+
 		throw new Exception("El reporte seleccionado aun no tiene generacion JSON implementada.");
 	}
 
@@ -1246,6 +1251,13 @@ public class Evento implements ActionListener {
 				LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
 				ResumenContableDTO resumenContable = gestionReporte.obtenerResumenContable(fechaInicio, fechaFin);
 				panelReportes.mostrarResumenContable(resumenContable);
+				return;
+			}
+
+			if (panelReportes.esReporteResumenFinancieroDiario()) {
+				LocalDate fecha = panelReportes.obtenerFechaReporte();
+				ResumenFinancieroDiarioDTO resumenFinanciero = gestionReporte.obtenerResumenFinancieroDiario(fecha);
+				panelReportes.mostrarResumenFinancieroDiario(resumenFinanciero);
 				return;
 			}
 

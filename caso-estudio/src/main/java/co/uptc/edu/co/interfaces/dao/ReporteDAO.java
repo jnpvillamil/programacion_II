@@ -5,6 +5,7 @@ import java.util.List;
 
 import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
 import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFinancieroDiarioDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenVentasDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
@@ -38,6 +39,8 @@ public interface ReporteDAO {
 
 	String guardarReporteResumenContable(ResumenContableDTO resumen, LocalDate fechaInicio, LocalDate fechaFin)
 			throws Exception;
+
+	String guardarReporteResumenFinancieroDiario(ResumenFinancieroDiarioDTO resumen) throws Exception;
 
 	
 }

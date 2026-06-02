@@ -20,6 +20,7 @@ import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.dto.DetalleUtilidadBrutaDTO;
 import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
 import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFinancieroDiarioDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
@@ -300,6 +301,57 @@ public class ReporteJSONDAO implements ReporteDAO {
 		raiz.addProperty("ingresos", resumen.getIngresos());
 		raiz.addProperty("egresos", resumen.getEgresos());
 		raiz.addProperty("utilidad", resumen.getUtilidad());
+
+		escribirJson(archivo, raiz);
+		return archivo.getPath();
+	}
+
+	@Override
+	public String guardarReporteResumenFinancieroDiario(ResumenFinancieroDiarioDTO resumen) throws Exception {
+		if (resumen == null) {
+			throw new Exception("No hay datos del resumen financiero diario para guardar el reporte.");
+		}
+
+		File archivo = crearArchivo(
+				"resumen_financiero_diario_" + LocalDateTime.now().format(FORMATO_ARCHIVO) + ".json");
+
+		JsonObject raiz = new JsonObject();
+		raiz.addProperty("fecha", resumen.getFecha() != null ? resumen.getFecha().toString() : null);
+		raiz.addProperty("total_ventas", resumen.getTotalVentas());
+		raiz.addProperty("total_compras", resumen.getTotalCompras());
+		raiz.addProperty("utilidad_bruta", resumen.getUtilidadBruta());
+
+		JsonArray ventasPorFormaPago = new JsonArray();
+		if (resumen.getVentasPorFormaPago() != null) {
+			for (ResumenFormaPagoDTO formaPago : resumen.getVentasPorFormaPago()) {
+				JsonObject item = new JsonObject();
+				item.addProperty("tipo", formaPago.getFormaPago() != null ? formaPago.getFormaPago().toString() : "");
+				item.addProperty("valor", formaPago.getValorTotal());
+				ventasPorFormaPago.add(item);
+			}
+		}
+		raiz.add("ventas_por_forma_pago", ventasPorFormaPago);
+
+		JsonArray productosMasVendidos = new JsonArray();
+		if (resumen.getProductosMasVendidos() != null) {
+			for (ResumenProductoDTO producto : resumen.getProductosMasVendidos()) {
+				JsonObject item = new JsonObject();
+				item.addProperty("codigo", producto.getCodigoProducto());
+				item.addProperty("nombre", producto.getNombreProducto());
+				item.addProperty("cantidad_vendida", producto.getCantidadVendida());
+				productosMasVendidos.add(item);
+			}
+		}
+		raiz.add("productos_mas_vendidos", productosMasVendidos);
+
+		JsonObject resumenContable = new JsonObject();
+		resumenContable.addProperty("ingresos",
+				resumen.getResumenContable() != null ? resumen.getResumenContable().getIngresos() : 0);
+		resumenContable.addProperty("egresos",
+				resumen.getResumenContable() != null ? resumen.getResumenContable().getEgresos() : 0);
+		resumenContable.addProperty("iva_generado", resumen.getIvaGenerado());
+		resumenContable.addProperty("iva_descontable", resumen.getIvaDescontable());
+		raiz.add("resumen_contable", resumenContable);
 
 		escribirJson(archivo, raiz);
 		return archivo.getPath();

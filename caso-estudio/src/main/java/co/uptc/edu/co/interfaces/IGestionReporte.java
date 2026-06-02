@@ -5,6 +5,7 @@ import java.util.List;
 
 import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
 import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFinancieroDiarioDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
@@ -36,6 +37,8 @@ public interface IGestionReporte {
 
 	String generarReporteResumenContable(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
 
+	String generarReporteResumenFinancieroDiario(LocalDate fecha) throws Exception;
+
 	List<ResumenFormaPagoDTO> obtenerVentasPorFormaPago(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
 
 	List<ResumenClienteDTO> obtenerClientesMayorVolumenCompra(LocalDate fechaInicio, LocalDate fechaFin)
@@ -45,6 +48,8 @@ public interface IGestionReporte {
 	List<ResumenInventarioValorizadoDTO> obtenerInventarioValorizado() throws Exception;
 
 	ResumenContableDTO obtenerResumenContable(LocalDate fechaInicio, LocalDate fechaFin) throws Exception;
+
+	ResumenFinancieroDiarioDTO obtenerResumenFinancieroDiario(LocalDate fecha) throws Exception;
 
 	ResumenVentasDTO obtenerTotalVentasDiarias(LocalDate fecha) throws Exception;
 

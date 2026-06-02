@@ -91,11 +91,12 @@ public class PanelContabilidad extends PanelCentral {
         comboCuenta.addItem(OPCION_TODAS);
         comboCuenta.addItem("Caja");
         comboCuenta.addItem("Bancos");
+        comboCuenta.addItem("Cuentas por Cobrar");
+        comboCuenta.addItem("Proveedores");
         comboCuenta.addItem("Inventario");
         comboCuenta.addItem("Ingresos por Ventas");
         comboCuenta.addItem("IVA Generado");
         comboCuenta.addItem("IVA Descontable");
-        comboCuenta.addItem("Proveedores");
     }
 
     private void configurarPanelContabilidad() {

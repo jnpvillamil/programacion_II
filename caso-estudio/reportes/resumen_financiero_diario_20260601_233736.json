@@ -1,0 +1,48 @@
+{
+  "fecha": "2026-06-01",
+  "total_ventas": 369650.0,
+  "total_compras": 86625.0,
+  "utilidad_bruta": 137500.0,
+  "ventas_por_forma_pago": [
+    {
+      "tipo": "Efectivo",
+      "valor": 315850.0
+    },
+    {
+      "tipo": "Tarjeta",
+      "valor": 30000.0
+    },
+    {
+      "tipo": "Transferencia",
+      "valor": 23800.0
+    }
+  ],
+  "productos_mas_vendidos": [
+    {
+      "codigo": "P00001",
+      "nombre": "Arroz diana 1K",
+      "cantidad_vendida": 30
+    },
+    {
+      "codigo": "P00004",
+      "nombre": "Harina",
+      "cantidad_vendida": 20
+    },
+    {
+      "codigo": "P00002",
+      "nombre": "Panela",
+      "cantidad_vendida": 20
+    },
+    {
+      "codigo": "P00003",
+      "nombre": "Cuadernos",
+      "cantidad_vendida": 15
+    }
+  ],
+  "resumen_contable": {
+    "ingresos": 369650.0,
+    "egresos": 86625.0,
+    "iva_generado": 44650.0,
+    "iva_descontable": 9125.0
+  }
+}

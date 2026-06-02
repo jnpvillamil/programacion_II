@@ -336,9 +336,9 @@ public class PanelConsultas extends PanelCentral {
         comboCuenta.addItem("Caja");
         comboCuenta.addItem("Bancos");
         comboCuenta.addItem("Cuentas por Cobrar");
+        comboCuenta.addItem("Proveedores");
         comboCuenta.addItem("Inventario");
         comboCuenta.addItem("Ingresos por Ventas");
-        comboCuenta.addItem("Compras");
         comboCuenta.addItem("IVA Generado");
         comboCuenta.addItem("IVA Descontable");
     }

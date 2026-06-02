@@ -17,12 +17,13 @@ import javax.swing.text.MaskFormatter;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.dto.DetalleUtilidadBrutaDTO;
 import co.uptc.edu.co.modelo.dto.ResumenClienteDTO;
+import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
+import co.uptc.edu.co.modelo.dto.ResumenFinancieroDiarioDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenUtilidadBrutaDTO;
 import co.uptc.edu.co.modelo.dto.ResumenVentasDTO;
-import co.uptc.edu.co.modelo.dto.ResumenContableDTO;
 
 public class PanelReportes extends PanelCentral {
 
@@ -46,6 +47,7 @@ public class PanelReportes extends PanelCentral {
 	private static final String REPORTE_VENTAS_FORMA_PAGO = "Comparación de ventas por forma de pago";
 	private static final String REPORTE_INVENTARIO_VALORIZADO = "Estado de inventario valorizado";
 	private static final String REPORTE_RESUMEN_CONTABLE = "Resumen contable por periodo";
+	private static final String REPORTE_RESUMEN_FINANCIERO_DIARIO = "Resumen financiero diario";
 
 	private static final String[] COLUMNAS_INICIALES = { "Resultado" };
 	private static final String[] COLUMNAS_VENTAS_DIARIAS = { "Factura", "Fecha", "Cliente", "Forma Pago", "Subtotal",
@@ -64,6 +66,7 @@ public class PanelReportes extends PanelCentral {
 	private static final String[] COLUMNAS_INVENTARIO_VALORIZADO = { "Código", "Producto", "Categoría", "Stock Actual",
 			"Precio Compra", "Valor Inventario" };
 	private static final String[] COLUMNAS_RESUMEN_CONTABLE = { "Ingresos", "Egresos", "Utilidad" };
+	private static final String[] COLUMNAS_RESUMEN_FINANCIERO_DIARIO = { "Concepto", "Valor" };
 
 	private JLabel etiquetaTipoReporte;
 	private JLabel etiquetaFecha;
@@ -137,6 +140,7 @@ public class PanelReportes extends PanelCentral {
 		comboTipoReporte.addItem(REPORTE_VENTAS_FORMA_PAGO);
 		comboTipoReporte.addItem(REPORTE_INVENTARIO_VALORIZADO);
 		comboTipoReporte.addItem(REPORTE_RESUMEN_CONTABLE);
+		comboTipoReporte.addItem(REPORTE_RESUMEN_FINANCIERO_DIARIO);
 
 		campoFecha = crearCampoFecha();
 		campoFecha.setColumns(8);
@@ -206,6 +210,8 @@ public class PanelReportes extends PanelCentral {
 			configurarInventarioValorizado();
 		} else if (tipoReporte.equals(REPORTE_RESUMEN_CONTABLE)) {
 			configurarResumenContable();
+		} else if (tipoReporte.equals(REPORTE_RESUMEN_FINANCIERO_DIARIO)) {
+			configurarResumenFinancieroDiario();
 		}
 
 		actualizarEstadoBotonGenerarReporte();
@@ -273,6 +279,11 @@ public class PanelReportes extends PanelCentral {
 	private void configurarResumenContable() {
 		mostrarComponentes(etiquetaFechaInicio, campoFechaInicio, etiquetaFechaFin, campoFechaFin);
 		actualizarColumnas(COLUMNAS_RESUMEN_CONTABLE);
+	}
+
+	private void configurarResumenFinancieroDiario() {
+		mostrarComponentes(etiquetaFecha, campoFecha);
+		actualizarColumnas(COLUMNAS_RESUMEN_FINANCIERO_DIARIO);
 	}
 
 	private void ocultarFiltros() {
@@ -343,6 +354,11 @@ public class PanelReportes extends PanelCentral {
 	public boolean esReporteResumenContable() {
 		Object seleccionado = comboTipoReporte.getSelectedItem();
 		return seleccionado != null && REPORTE_RESUMEN_CONTABLE.equals(seleccionado.toString());
+	}
+
+	public boolean esReporteResumenFinancieroDiario() {
+		Object seleccionado = comboTipoReporte.getSelectedItem();
+		return seleccionado != null && REPORTE_RESUMEN_FINANCIERO_DIARIO.equals(seleccionado.toString());
 	}
 
 	public String obtenerTipoReporteSeleccionado() {
@@ -483,7 +499,7 @@ public class PanelReportes extends PanelCentral {
 		actualizarEstadoBotonGenerarReporte();
 	}
 
-	public void mostrarVentasDiarias(ResumenVentasDTO resumen) {
+	public void mostrarResumenFinancieroDiario(ResumenFinancieroDiarioDTO resumen) {
 		limpiarTabla();
 		if (resumen == null) {
 			actualizarTextoTotal(TEXTO_TOTAL, 0);
@@ -491,21 +507,23 @@ public class PanelReportes extends PanelCentral {
 			return;
 		}
 
-		for (Venta venta : resumen.getVentas()) {
-			modeloTabla
-					.addRow(new Object[] { venta.getNumeroFactura(),
-							venta.getFechaHora() != null ? venta.getFechaHora().toLocalDate().format(FORMATO_FECHA) : "",
-							venta.getCliente() != null && !venta.getCliente().isBlank() ? venta.getCliente()
-									: "ANÓNIMO",
-							venta.getFormaPago(), FORMATO_MONEDA.format(venta.getSubTotal()),
-							FORMATO_MONEDA.format(venta.getImpuestos()), FORMATO_MONEDA.format(venta.getTotal()) });
-		}
+		modeloTabla.addRow(new Object[] { "Fecha",
+				resumen.getFecha() != null ? resumen.getFecha().format(FORMATO_FECHA) : "" });
+		modeloTabla.addRow(new Object[] { "Total ventas", FORMATO_MONEDA.format(resumen.getTotalVentas()) });
+		modeloTabla.addRow(new Object[] { "Total compras", FORMATO_MONEDA.format(resumen.getTotalCompras()) });
+		modeloTabla.addRow(new Object[] { "Utilidad bruta", FORMATO_MONEDA.format(resumen.getUtilidadBruta()) });
+		modeloTabla.addRow(new Object[] { "Ingresos",
+				FORMATO_MONEDA.format(resumen.getResumenContable() != null ? resumen.getResumenContable().getIngresos() : 0) });
+		modeloTabla.addRow(new Object[] { "Egresos",
+				FORMATO_MONEDA.format(resumen.getResumenContable() != null ? resumen.getResumenContable().getEgresos() : 0) });
+		modeloTabla.addRow(new Object[] { "IVA generado", FORMATO_MONEDA.format(resumen.getIvaGenerado()) });
+		modeloTabla.addRow(new Object[] { "IVA descontable", FORMATO_MONEDA.format(resumen.getIvaDescontable()) });
+		modeloTabla.addRow(new Object[] { "Formas de pago resumidas",
+				resumen.getVentasPorFormaPago() != null ? resumen.getVentasPorFormaPago().size() : 0 });
+		modeloTabla.addRow(new Object[] { "Productos mas vendidos resumidos",
+				resumen.getProductosMasVendidos() != null ? resumen.getProductosMasVendidos().size() : 0 });
 
-		modeloTabla.addRow(new Object[] { "TOTAL", formatearPeriodo(resumen.getPeriodo()), resumen.getCantidadVentas() + " ventas", "",
-				FORMATO_MONEDA.format(resumen.getSubtotalVentas()), FORMATO_MONEDA.format(resumen.getImpuestos()),
-				FORMATO_MONEDA.format(resumen.getTotalVentas()) });
-
-		actualizarTextoTotal(TEXTO_TOTAL, resumen.getCantidadVentas());
+		actualizarTextoTotal(TEXTO_TOTAL, modeloTabla.getRowCount());
 		actualizarEstadoBotonGenerarReporte();
 	}
 
