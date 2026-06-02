@@ -9,7 +9,7 @@ public class ConexionBD {
     private Connection conexion;
     private static final String URL = "jdbc:mysql://localhost:3306/tienda_gestion";
     private static final String USUARIO = "root";
-    private static final String CONTRASENA = ""; // Colocar tu contraseña de my SQL Workbench 
+    private static final String CONTRASENA = "Brian1056772752**"; // Colocar tu contraseña de my SQL Workbench 
     
     public Connection getConexion() {
         try {

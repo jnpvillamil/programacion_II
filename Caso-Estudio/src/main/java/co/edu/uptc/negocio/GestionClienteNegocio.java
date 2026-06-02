@@ -13,36 +13,32 @@ public class GestionClienteNegocio {
         this.persistencia = persistencia;
     }
 
-    // MÉTODOS PÚBLICOS 
-
+    //  MÉTODOS PÚBLICOS 
     public void agregarCliente(Cliente cliente) {
         validarClienteNulo(cliente);
         validarCodigoUnico(cliente.getCodigo());
         validarCamposObligatorios(cliente);
         validarFormatoTelefono(cliente.getTelefono());
         validarTipoCliente(cliente.getTipoCliente());
-        // para mayoristas
         if ("Mayorista".equals(cliente.getTipoCliente())) {
             validarNumeroIdentificacionMayorista(cliente.getNumeroIdentificacion());
         }
-        
-
+  
         persistencia.crear(cliente);
     }
 
     public void actualizarCliente(Cliente cliente) {
         validarClienteNulo(cliente);
-        // Verificar que el cliente exista (por código)
+        // Verificar que el cliente exista
         Cliente existente = persistencia.buscar(cliente.getCodigo());
         if (existente == null) {
             throw new IllegalArgumentException("No existe un cliente con código: " + cliente.getCodigo());
         }
-        // No permitir cambiar el código (usamos el código original existente)
+        // No permitir cambiar el código
         if (!existente.getCodigo().equals(cliente.getCodigo())) {
             throw new IllegalArgumentException("No se puede modificar el código del cliente.");
         }
 
-        // Validar campos (excepto código, que ya está fijo)
         validarCamposObligatorios(cliente);
         validarFormatoTelefono(cliente.getTelefono());
         validarTipoCliente(cliente.getTipoCliente());
@@ -63,7 +59,7 @@ public class GestionClienteNegocio {
         if (!cliente.isActivo()) {
             throw new IllegalStateException("El cliente ya está inactivo.");
         }
-        persistencia.eliminar(codigo); // Método eliminar de LocalCliente hace setActivo(false)
+        persistencia.eliminar(codigo);
     }
 
     public Cliente buscarCliente(String codigo) {
@@ -81,7 +77,7 @@ public class GestionClienteNegocio {
         return persistencia.listar();
     }
 
-    //MÉTODOS PRIVADOS DE VALIDACIÓN 
+    // MÉTODOS PRIVADOS DE VALIDACIÓN 
 
     private void validarClienteNulo(Cliente cliente) {
         if (cliente == null) {
@@ -106,23 +102,14 @@ public class GestionClienteNegocio {
         if (cliente.getNombre().trim().length() < 3) {
             throw new IllegalArgumentException("El nombre debe tener al menos 3 caracteres.");
         }
-
         // Tipo identificación
         if (cliente.getTipoIdentificacion() == null) {
             throw new IllegalArgumentException("El tipo de identificación es obligatorio.");
         }
-        // Verificar que sea un valor permitido (ya lo garantiza el enum, pero por si acaso)
-        try {
-            TipoDocumentoEnum.valueOf(cliente.getTipoIdentificacion().name());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Tipo de identificación no válido. Debe ser CC, NIT, CE o PA.");
-        }
-
         // Número identificación
         if (cliente.getNumeroIdentificacion() == null || cliente.getNumeroIdentificacion().trim().isEmpty()) {
             throw new IllegalArgumentException("El número de identificación es obligatorio.");
         }
-
         // Dirección
         if (cliente.getDireccion() == null || cliente.getDireccion().trim().isEmpty()) {
             throw new IllegalArgumentException("La dirección es obligatoria.");
@@ -130,7 +117,6 @@ public class GestionClienteNegocio {
         if (cliente.getDireccion().trim().length() < 5) {
             throw new IllegalArgumentException("La dirección debe tener al menos 5 caracteres.");
         }
-
         // Teléfono (formato se valida aparte)
         if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono es obligatorio.");
@@ -138,7 +124,6 @@ public class GestionClienteNegocio {
     }
 
     private void validarFormatoTelefono(String telefono) {
-        // Eliminar espacios y guiones si el usuario los ingresal
         String telefonoLimpio = telefono.replaceAll("[\\s\\-]", "");
         if (!telefonoLimpio.matches("\\d+")) {
             throw new IllegalArgumentException("El teléfono debe contener solo dígitos.");
@@ -161,15 +146,9 @@ public class GestionClienteNegocio {
         if (numeroIdentificacion == null || numeroIdentificacion.trim().isEmpty()) {
             throw new IllegalArgumentException("El número de identificación es obligatorio para mayoristas.");
         }
-        // Eliminar posibles espacios o guiones
         String numLimpio = numeroIdentificacion.replaceAll("[\\s\\-]", "");
         if (numLimpio.length() < 10) {
             throw new IllegalArgumentException("Para clientes mayoristas, el número de identificación debe tener al menos 10 dígitos.");
         }
-    }
-
-    // TODO implementar función opcional
-    private void validarIdentificacionUnica(TipoDocumentoEnum tipo, String numero) {
-        
     }
 }

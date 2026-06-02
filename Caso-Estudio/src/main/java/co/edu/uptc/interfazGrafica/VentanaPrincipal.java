@@ -235,57 +235,66 @@ public class VentanaPrincipal extends JFrame {
         panelProducto.poblarTabla();
     }
     
-    // ========== MÉTODOS DE CLIENTE ==========
-    
-    // TODO Actulizar las clases de acuerdo al nuevo modelo de negocios y de validación
-    
+ // ========== MÉTODOS DE CLIENTE ==========
+
     public void nuevoCliente() {
         DialogoCliente d = new DialogoCliente(this, true, null);
         d.setVisible(true);
-        if(d.isOk()) {
-        	
-            TiendaConfig.getInstancia().getGestionCliente().crear(d.getCliente());
-            panelCliente.poblarTabla();
-            JOptionPane.showMessageDialog(this, "Cliente creado exitosamente");
-        }
-    }
-    
-    public void actualizarCliente() {
-        String codigo = panelCliente.getCodigoSeleccionado();
-        if(codigo == null) {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla");
-            return;
-        }
-        Cliente c = TiendaConfig.getInstancia().getGestionCliente().buscar(codigo);
-        if(c != null) {
-            DialogoCliente d = new DialogoCliente(this, false, c);
-            d.setVisible(true);
-            if(d.isOk()) {
-                TiendaConfig.getInstancia().getGestionCliente().actualizar(d.getCliente());
+        if (d.isOk()) {
+            try {
+                TiendaConfig.getInstancia().getNegocioCliente().agregarCliente(d.getCliente());
                 panelCliente.poblarTabla();
-                JOptionPane.showMessageDialog(this, "Cliente actualizado");
+                JOptionPane.showMessageDialog(this, "Cliente creado exitosamente");
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Validación", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
-    
+
+    public void actualizarCliente() {
+        String codigo = panelCliente.getCodigoSeleccionado();
+        if (codigo == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla");
+            return;
+        }
+        Cliente c = TiendaConfig.getInstancia().getNegocioCliente().buscarCliente(codigo);
+        if (c != null) {
+            DialogoCliente d = new DialogoCliente(this, false, c);
+            d.setVisible(true);
+            if (d.isOk()) {
+                try {
+                    TiendaConfig.getInstancia().getNegocioCliente().actualizarCliente(d.getCliente());
+                    panelCliente.poblarTabla();
+                    JOptionPane.showMessageDialog(this, "Cliente actualizado");
+                } catch (IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Validación", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }
+
     public void eliminarCliente() {
         String codigo = panelCliente.getCodigoSeleccionado();
-        if(codigo == null) {
+        if (codigo == null) {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla");
             return;
         }
         int confirm = JOptionPane.showConfirmDialog(this, "¿Inactivar cliente?", "Confirmar", JOptionPane.YES_NO_OPTION);
-        if(confirm == JOptionPane.YES_OPTION) {
-            TiendaConfig.getInstancia().getGestionCliente().eliminar(codigo);
-            panelCliente.poblarTabla();
-            JOptionPane.showMessageDialog(this, "Cliente inactivado");
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                TiendaConfig.getInstancia().getNegocioCliente().inactivarCliente(codigo);
+                panelCliente.poblarTabla();
+                JOptionPane.showMessageDialog(this, "Cliente inactivado");
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Validación", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-    
+
     public void buscarCliente() {
         panelCliente.realizarBusqueda();
     }
-    
+
     public void limpiarClientes() {
         panelCliente.limpiarBusqueda();
         panelCliente.poblarTabla();
@@ -418,78 +427,84 @@ public class VentanaPrincipal extends JFrame {
     }
    
  // ========== MÉTODOS DE COMPRA ==========
-    
+
     public void nuevaCompra() {
         DialogoCompra d = new DialogoCompra(this);
         d.setVisible(true);
-        if(d.isOk()) {
+        if (d.isOk()) {
             Compra compra = d.getCompra();
-            TiendaConfig.getInstancia().getGestionCompra().crearCompra(compra);
-            
-            
-            TiendaConfig.getInstancia().getGestionContable().registrarAsientoCompra(compra);
-            
-            panelCompra.poblarTabla();
-            panelProducto.poblarTabla();
-            JOptionPane.showMessageDialog(this, "Compra registrada exitosamente");
+            try {
+                TiendaConfig.getInstancia().getNegocioCompra().registrarCompra(compra);
+                TiendaConfig.getInstancia().getGestionContable().registrarAsientoCompra(compra);
+                panelCompra.poblarTabla();
+                panelProducto.poblarTabla();
+                JOptionPane.showMessageDialog(this, "Compra registrada exitosamente");
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Validación", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
-public void anularCompra() {
-    String factura = panelCompra.getCodigoSeleccionado();
-    if(factura == null) {
-        JOptionPane.showMessageDialog(this, "Seleccione una compra");
-        return;
+    public void anularCompra() {
+        String factura = panelCompra.getCodigoSeleccionado();
+        if (factura == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione una compra");
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "¿Anular esta compra? Se devolverá el stock y se ajustarán los precios",
+            "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                TiendaConfig.getInstancia().getNegocioCompra().anularCompra(factura);
+                panelCompra.poblarTabla();
+                panelProducto.poblarTabla();
+                JOptionPane.showMessageDialog(this, "Compra anulada");
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Validación", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
-    
-    int confirm = JOptionPane.showConfirmDialog(this, 
-        "¿Anular esta compra? Se devolverá el stock y se ajustarán los precios", 
-        "Confirmar", JOptionPane.YES_NO_OPTION);
-    
-    if(confirm == JOptionPane.YES_OPTION) {
-        TiendaConfig.getInstancia().getGestionCompra().anularCompra(factura);
+
+    public void consultarCompra() {
+        String factura = panelCompra.getCodigoSeleccionado();
+        if (factura == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione una compra");
+            return;
+        }
+        try {
+            Compra c = TiendaConfig.getInstancia().getNegocioCompra().buscarCompra(factura);
+            if (c != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("=== DETALLE DE COMPRA ===\n");
+                sb.append("Factura Proveedor: ").append(c.getNumeroFacturaProveedor()).append("\n");
+                sb.append("Fecha: ").append(c.getFechaHora()).append("\n");
+                sb.append("Proveedor: ").append(c.getProveedor().getRazonSocial()).append("\n");
+                sb.append("\n--- Productos ---\n");
+                for (DetalleCompra d : c.getDetalles()) {
+                    sb.append(d.getProducto().getNombre())
+                      .append(" x").append(d.getCantidad())
+                      .append(" = $").append(d.getSubtotal()).append("\n");
+                }
+                sb.append("\nSubtotal: $").append(c.getSubtotal());
+                sb.append("\nIVA: $").append(c.getIva());
+                sb.append("\nTOTAL: $").append(c.getTotal());
+
+                JTextArea textArea = new JTextArea(sb.toString());
+                textArea.setEditable(false);
+                JScrollPane scroll = new JScrollPane(textArea);
+                scroll.setPreferredSize(new Dimension(400, 300));
+                JOptionPane.showMessageDialog(this, scroll, "Detalle de Compra", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void limpiarCompras() {
+        panelCompra.limpiarBusqueda();
         panelCompra.poblarTabla();
-        panelProducto.poblarTabla();  
-        JOptionPane.showMessageDialog(this, "Compra anulada");
     }
-}
-
-public void consultarCompra() {
-    String factura = panelCompra.getCodigoSeleccionado();
-    if(factura == null) {
-        JOptionPane.showMessageDialog(this, "Seleccione una compra");
-        return;
-    }
-    
-    Compra c = TiendaConfig.getInstancia().getGestionCompra().buscarCompra(factura);
-    if(c != null) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("=== DETALLE DE COMPRA ===\n");
-        sb.append("Factura Proveedor: ").append(c.getNumeroFacturaProveedor()).append("\n");
-        sb.append("Fecha: ").append(c.getFechaHora()).append("\n");
-        sb.append("Proveedor: ").append(c.getProveedor().getRazonSocial()).append("\n");
-        sb.append("\n--- Productos ---\n");
-        for(DetalleCompra d : c.getDetalles()) {
-            sb.append(d.getProducto().getNombre())
-              .append(" x").append(d.getCantidad())
-              .append(" = $").append(d.getSubtotal()).append("\n");
-        }
-        sb.append("\nSubtotal: $").append(c.getSubtotal());
-        sb.append("\nIVA: $").append(c.getIva());
-        sb.append("\nTOTAL: $").append(c.getTotal());
-        
-        JTextArea textArea = new JTextArea(sb.toString());
-        textArea.setEditable(false);
-        JScrollPane scroll = new JScrollPane(textArea);
-        scroll.setPreferredSize(new Dimension(400, 300));
-        JOptionPane.showMessageDialog(this, scroll, "Detalle de Compra", JOptionPane.INFORMATION_MESSAGE);
-    }
-}
-
-public void limpiarCompras() {
-    panelCompra.limpiarBusqueda();
-    panelCompra.poblarTabla();
-}
 
 // ========== REPORTES ==========
 public void generarReporteVentas() {
