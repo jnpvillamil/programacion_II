@@ -1,16 +1,16 @@
 package co.edu.uptc.gui.negocio;
 
 import co.edu.uptc.dto.CredencialDto;
-import co.edu.uptc.gui.interfaces.RF31_AutenticarCredenciales;
-import co.edu.uptc.gui.interfaces.RF32_VerificarRolUsuario;
-import co.edu.uptc.gui.interfaces.RF33_CerrarSesionSegura;
+import co.edu.uptc.gui.interfaces.IAutenticarCredenciales;
+import co.edu.uptc.gui.interfaces.IVerificarRolUsuario;
+import co.edu.uptc.gui.interfaces.ICerrarSesionSegura;
 import co.edu.uptc.gui.modelo.Usuario;
 import co.edu.uptc.persistencia.LocalUsuario;
 
 public class GestionSeguridad implements 
-    RF31_AutenticarCredenciales, 
-    RF32_VerificarRolUsuario, 
-    RF33_CerrarSesionSegura {
+    IAutenticarCredenciales, 
+    IVerificarRolUsuario, 
+    ICerrarSesionSegura {
 
     private LocalUsuario localUsuario;
     private String usuarioLogueadoRol;

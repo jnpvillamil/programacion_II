@@ -5,13 +5,13 @@ import co.edu.uptc.gui.modelo.Producto;
 import java.util.List;
 
 public class GestionProducto implements 
-    RF01_RegistrarArticulo, 
-    RF02_AsignarCodigoBarras, 
-    RF03_ModificarPrecioVenta, 
-    RF04_ModificarPrecioCompra, 
-    RF05_ControlarStockMinimo, 
-    RF06_ConsultarDisponibles, 
-    RF07_EliminarDelCatalogo {
+    IRegistrarArticulo, 
+    IAsignarCodigoBarras, 
+    IModificarPrecioVenta, 
+    IModificarPrecioC, 
+    IControlarStockMin, 
+    IConsultarDisponibles, 
+    IEliminarDelCatalogo {
   
     @Override
     public void ejecutarOperacionProducto(Producto producto) {

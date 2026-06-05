@@ -1,20 +1,20 @@
 package co.edu.uptc.gui.negocio;
 
-import co.edu.uptc.gui.interfaces.RF08_RegistrarCliente;
-import co.edu.uptc.gui.interfaces.RF09_AsignarTipoCliente;
-import co.edu.uptc.gui.interfaces.RF10_ActualizarDatosContacto;
-import co.edu.uptc.gui.interfaces.RF11_ValidarDuplicidadCedula;
-import co.edu.uptc.gui.interfaces.RF12_EliminarHistorialCliente;
+import co.edu.uptc.gui.interfaces.IRegistrarCliente;
+import co.edu.uptc.gui.interfaces.IAsignarTipoCliente;
+import co.edu.uptc.gui.interfaces.IActualizarDatosContacto;
+import co.edu.uptc.gui.interfaces.IValidarDuplicidadCedula;
+import co.edu.uptc.gui.interfaces.IEliminarHistorialCliente;
 import co.edu.uptc.gui.modelo.Cliente;
 import co.edu.uptc.persistencia.LocalCliente; // O tu ClienteDao según uses local/remoto
 import java.util.List;
 
 public class GestionCliente implements 
-    RF08_RegistrarCliente, 
-    RF09_AsignarTipoCliente, 
-    RF10_ActualizarDatosContacto, 
-    RF11_ValidarDuplicidadCedula, 
-    RF12_EliminarHistorialCliente {
+    IRegistrarCliente, 
+    IAsignarTipoCliente, 
+    IActualizarDatosContacto, 
+    IValidarDuplicidadCedula, 
+    IEliminarHistorialCliente {
 
     private LocalCliente localCliente; 
 
