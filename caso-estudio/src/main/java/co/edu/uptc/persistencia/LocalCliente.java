@@ -104,5 +104,11 @@ public class LocalCliente {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public Cliente buscarPorCodigo(String codigo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
     
 }

@@ -1,16 +1,13 @@
 package co.edu.uptc.gui.negocio;
 
 import co.edu.uptc.dto.CredencialDto;
-import co.edu.uptc.gui.interfaces.IAutenticarCredenciales;
-import co.edu.uptc.gui.interfaces.IVerificarRolUsuario;
-import co.edu.uptc.gui.interfaces.ICerrarSesionSegura;
+import co.edu.uptc.gui.interfaces.IGestionDeSeguridad;
 import co.edu.uptc.gui.modelo.Usuario;
 import co.edu.uptc.persistencia.LocalUsuario;
 
 public class GestionSeguridad implements 
-    IAutenticarCredenciales, 
-    IVerificarRolUsuario, 
-    ICerrarSesionSegura {
+  IGestionDeSeguridad 
+{
 
     private LocalUsuario localUsuario;
     private String usuarioLogueadoRol;

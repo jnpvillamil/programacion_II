@@ -1,33 +1,33 @@
 package co.edu.uptc.gui.negocio;
 
-import co.edu.uptc.gui.interfaces.*;
+import co.edu.uptc.gui.interfaces.IGestionDeProducto;
 import co.edu.uptc.gui.modelo.Producto;
+import co.edu.uptc.persistencia.LocalProducto;
+
 import java.util.List;
 
-public class GestionProducto implements 
-    IRegistrarArticulo, 
-    IAsignarCodigoBarras, 
-    IModificarPrecioVenta, 
-    IModificarPrecioC, 
-    IControlarStockMin, 
-    IConsultarDisponibles, 
-    IEliminarDelCatalogo {
-  
-    @Override
+public class GestionProducto 
+ {
+	private IGestionDeProducto IProducto;
+	
+	private LocalProducto localProducto; 
+	
+    public GestionProducto(IGestionDeProducto IProducto) {
+        this.IProducto =  IProducto;
+    }
     public void ejecutarOperacionProducto(Producto producto) {
     }
 
-    @Override
     public List<Producto> listarProductos() {
         return null;
     }
 
-    @Override
+    
     public List<Producto> consultarAlertasStockBajo() {
         return null; 
     }
 
-    @Override
+    
     public List<Producto> consultarDisponibles() {
         return null; 
     }
@@ -37,3 +37,4 @@ public class GestionProducto implements
 		return false;
 	}
 }
+ 	

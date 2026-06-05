@@ -54,7 +54,7 @@ public class App {
 
     public static void main(String[] args) {
 
-        Evento evento = new Evento();
+        Evento evento = new Evento(null);
         evento.iniciar();
 
     }

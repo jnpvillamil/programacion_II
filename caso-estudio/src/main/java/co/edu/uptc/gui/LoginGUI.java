@@ -4,10 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
+import java.awt.event.ActionEvent;     
+import java.awt.event.ActionListener; 
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,18 +20,24 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import co.edu.uptc.config.Config;
 import co.edu.uptc.ventanas.MenuPrincipal;
 import co.edu.uptc.ventanas.MenuVendedor;
 
 @SuppressWarnings("serial")
-public class LoginGUI extends JFrame implements ActionListener {
+
+public class LoginGUI extends JFrame implements ActionListener { 
 
     private JTextField txtUsuario;
     private JPasswordField txtContrasena;
     private JButton btnIngresar;
     private JButton btnSalir;
+    
+    private Config config;
 
     public LoginGUI() {
+        this.config = config; 
+        
         setTitle("Sistema de Gestión");
         setSize(450, 420);
         setLocationRelativeTo(null);
@@ -88,10 +95,12 @@ public class LoginGUI extends JFrame implements ActionListener {
 
         btnIngresar = new JButton("Ingresar");
         btnIngresar.setActionCommand("INGRESAR");
-        btnIngresar.addActionListener(this);
+        // CORRECCIÓN CRÍTICA: Le decimos al botón que esta clase va a escuchar su clic
+        btnIngresar.addActionListener(this); 
 
         btnSalir = new JButton("Salir");
         btnSalir.setActionCommand("SALIR");
+        // CORRECCIÓN CRÍTICA: También escuchamos al botón de salir
         btnSalir.addActionListener(this); 
 
         panelInferior.add(btnIngresar);
@@ -102,30 +111,33 @@ public class LoginGUI extends JFrame implements ActionListener {
         add(panelInferior, BorderLayout.SOUTH);
     }
 
+    // AGREGADO: El método que captura el clic físico del botón e invoca tu lógica
     @Override
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
-        
         if (comando.equals("INGRESAR")) {
-       
-            String usuario = txtUsuario.getText();
-            String contrasena = new String(txtContrasena.getPassword());
-
-            if (usuario.equals("admin") && contrasena.equals("1234")) {
-                this.dispose(); 
-                MenuPrincipal menuAdmin = new MenuPrincipal();
-                menuAdmin.setVisible(true);
-
-            } else if (usuario.equals("vendedor") && contrasena.equals("1234")) {
-                this.dispose(); 
-                MenuVendedor menuEmpleado = new MenuVendedor();
-                menuEmpleado.setVisible(true);
-
-            } else {
-                JOptionPane.showMessageDialog(this, "Credenciales incorrectas de prueba.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            procesarLoginLocal(); // Invoca tu método con los ifs de administrador/vendedor
         } else if (comando.equals("SALIR")) {
-            System.exit(0); 
+            System.exit(0);
+        }
+    }
+
+    public void procesarLoginLocal() {
+        String usuario = txtUsuario.getText().trim();
+        String contrasena = new String(txtContrasena.getPassword());
+
+        if (usuario.equals("admin") && contrasena.equals("1234")) {
+            this.dispose(); 
+            MenuPrincipal menuAdmin = new MenuPrincipal();
+            menuAdmin.setVisible(true);
+
+        } else if (usuario.equals("vendedor") && contrasena.equals("1234")) {
+            this.dispose(); 
+            MenuVendedor menuEmpleado = new MenuVendedor();
+            menuEmpleado.setVisible(true);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Credenciales incorrectas de prueba.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -137,15 +149,13 @@ public class LoginGUI extends JFrame implements ActionListener {
         return txtContrasena;
     }
 
-    public JButton getBtnIngresar() {
-        return btnIngresar;
-    }
+	public AbstractButton getBtnIngresar() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public JButton getBtnSalir() {
-        return btnSalir;
-    }
-
-    public void mostrarMensaje(String mensaje) {
-        JOptionPane.showMessageDialog(this, mensaje);
-    }
+	public void mostrarMensaje(String string) {
+		// TODO Auto-generated method stub
+		
+	}
 }

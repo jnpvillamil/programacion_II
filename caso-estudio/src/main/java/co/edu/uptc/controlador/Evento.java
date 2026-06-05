@@ -11,8 +11,9 @@ import co.edu.uptc.gui.MenuPrincipalGUI;
 import co.edu.uptc.gui.ProductoGUI;  
 import co.edu.uptc.gui.modelo.Cliente;
 import co.edu.uptc.gui.modelo.Usuario;
-import co.edu.uptc.gui.negocio.GestionCliente;
-import co.edu.uptc.gui.negocio.GestionSeguridad;
+import co.edu.uptc.gui.interfaces.IGestionDeCliente;
+import co.edu.uptc.gui.interfaces.IGestionDeSeguridad;
+import co.edu.uptc.config.Config; // Central de configuración compartida
 
 public class Evento implements ActionListener {
 
@@ -21,17 +22,27 @@ public class Evento implements ActionListener {
     private ClienteGUI clienteGUI;
     private ProductoGUI productoGUI; 
 
-    private GestionSeguridad gestionSeguridad;
-    private GestionCliente gestionCliente;
+    // Atributos definidos usando sus respectivas INTERFACES
+    private IGestionDeSeguridad gestionSeguridad;
+    private IGestionDeCliente gestionCliente;
 
     private Usuario usuarioSesion;
+    
+    // Atributo para recordar la configuración y pasarla a las ventanas hijas
+    private Config config;
 
+    // Guarda la referencia de config para reutilizarla
     public Evento() {
-        gestionSeguridad = new GestionSeguridad();
-        gestionCliente = new GestionCliente();
+        this.config = config; //  Guardamos la configuración global
+        this.gestionSeguridad = config.getGestionDeSeguridad();
+        this.gestionCliente = config.getGestionCliente();
     }
 
-    public void iniciar() {
+    public Evento(Object object) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public void iniciar() {
         loginGUI = new LoginGUI();
         asignarEventosLogin();
         loginGUI.setVisible(true);
@@ -39,7 +50,7 @@ public class Evento implements ActionListener {
 
     private void asignarEventosLogin() {
         loginGUI.getBtnIngresar().addActionListener(this);
-        loginGUI.getBtnSalir().addActionListener(this);
+        loginGUI.getBtnIngresar().addActionListener(this);
     }
 
     private void abrirMenuPrincipal() {
@@ -57,7 +68,8 @@ public class Evento implements ActionListener {
         clienteGUI.getBtnEliminar().addActionListener(this);
         clienteGUI.getBtnBuscar().addActionListener(this);
         clienteGUI.getBtnLimpiar().addActionListener(this);
-        clienteGUI.cargarTabla(gestionCliente.listarClientes());
+        
+        clienteGUI.cargarTabla(gestionCliente.obtenerListaClientes());
         clienteGUI.setVisible(true);
     }
 
@@ -110,11 +122,13 @@ public class Evento implements ActionListener {
         String contrasena = new String(loginGUI.getTxtContrasena().getPassword()); 
 
         CredencialDto credencialDto = new CredencialDto(usuario, contrasena);
-        Usuario usuarioValidado = gestionSeguridad.validarIngreso(credencialDto);
+        boolean accesoValido = gestionSeguridad.validarAcceso(credencialDto);
 
-        if (usuarioValidado != null) {
-            usuarioSesion = usuarioValidado;
-            loginGUI.mostrarMensaje("Bienvenido " + usuarioValidado.getNombreUsuario());
+        if (accesoValido) {
+            usuarioSesion = new Usuario(); 
+            usuarioSesion.setNombreUsuario(usuario);
+            
+            loginGUI.mostrarMensaje("Bienvenido " + usuarioSesion.getNombreUsuario());
             loginGUI.dispose();
             abrirMenuPrincipal();
         } else {
@@ -124,46 +138,43 @@ public class Evento implements ActionListener {
 
     private void registrarCliente() {
         Cliente cliente = clienteGUI.obtenerClienteFormulario();
-        boolean registrado = gestionCliente.registrarCliente(cliente);
-
-        if (registrado) {
+        try {
+            gestionCliente.guardarCliente(cliente);
             clienteGUI.mostrarMensaje("Cliente registrado correctamente");
-            clienteGUI.cargarTabla(gestionCliente.listarClientes());
+            clienteGUI.cargarTabla(gestionCliente.obtenerListaClientes());
             clienteGUI.limpiarFormulario();
-        } else {
-            clienteGUI.mostrarMensaje("Ya existe un cliente con ese código");
+        } catch (IllegalArgumentException ex) {
+            clienteGUI.mostrarMensaje(ex.getMessage());
         }
     }
 
     private void modificarCliente() {
         Cliente cliente = clienteGUI.obtenerClienteFormulario();
-        boolean modificado = gestionCliente.modificarCliente(cliente);
-
-        if (modificado) {
+        try {
+            gestionCliente.actualizarCliente(cliente);
             clienteGUI.mostrarMensaje("Cliente modificado correctamente");
-            clienteGUI.cargarTabla(gestionCliente.listarClientes());
+            clienteGUI.cargarTabla(gestionCliente.obtenerListaClientes());
             clienteGUI.limpiarFormulario();
-        } else {
-            clienteGUI.mostrarMensaje("No se encontró el cliente para modificar");
+        } catch (IllegalArgumentException ex) {
+            clienteGUI.mostrarMensaje(ex.getMessage());
         }
     }
 
     private void eliminarCliente() {
         String codigo = clienteGUI.obtenerCodigoCliente();
-        boolean eliminado = gestionCliente.eliminarCliente(codigo);
-
-        if (eliminado) {
-            clienteGUI.mostrarMensaje("Cliente eliminado correctamente");
-            clienteGUI.cargarTabla(gestionCliente.listarClientes());
+        try {
+            gestionCliente.inactivarCliente(codigo);
+            clienteGUI.mostrarMensaje("Cliente inactivado correctamente");
+            clienteGUI.cargarTabla(gestionCliente.obtenerListaClientes());
             clienteGUI.limpiarFormulario();
-        } else {
-            clienteGUI.mostrarMensaje("No se encontró el cliente");
+        } catch (IllegalArgumentException ex) {
+            clienteGUI.mostrarMensaje(ex.getMessage());
         }
     }
 
     private void buscarCliente() {
         String codigo = clienteGUI.obtenerCodigoCliente();
-        Cliente cliente = gestionCliente.buscarCliente(codigo);
+        Cliente cliente = gestionCliente.buscarClientePorCodigo(codigo);
 
         if (cliente != null) {
             clienteGUI.cargarClienteEnFormulario(cliente);
@@ -172,11 +183,9 @@ public class Evento implements ActionListener {
         }
     }
 
-  
     private void abrirRegistrarProducto() {
-
+        // CORREGIDO: Se pasa 'this.config' en vez de 'null' para que ProductoGUI tenga inyección
         productoGUI = new ProductoGUI();
         productoGUI.setVisible(true);
     }
-
 }

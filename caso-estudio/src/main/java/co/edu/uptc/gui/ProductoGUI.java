@@ -28,7 +28,7 @@ public class ProductoGUI extends JFrame {
 
     public ProductoGUI() {
 
-        gestionProducto = new GestionProducto();
+        gestionProducto = new GestionProducto(null);
 
         setTitle("Registrar Producto");
         setSize(400, 400);
