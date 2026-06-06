@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Evento implements ActionListener {
-    // Constantes de eventos base
+    
     public final static String SALIR = "Salir";
     public final static String ENTRAR = "Entrar";
     public final static String REGISTRARCLIENTE = "Registrar cliente";
@@ -30,8 +30,7 @@ public class Evento implements ActionListener {
     public final static String VOLVER = "Volver de Compra"; 
     public final static String HISTORIALCLIENTE = "Historial de compra cliente";
     public final static String BUSCAR_HISTORIAL_CLI = "Buscar Historial Cliente";
-    
-    // Constantes de Consultas (Mapeadas a los Botones Laterales del Boceto)
+    public final static String ENVIA = "Buscar Historial Cliente";
     public final static String EJECUTAR_CONS_COMPRA_PROV = "Ejecutar Consulta Compra Proveedor";
     public final static String MOSTRAR_VENTAS_FECHA = "Mostrar Ventas Por Fecha";
     public final static String MOSTRAR_COMPRA_PROV = "Mostrar Compra Por Proveedor";
@@ -43,6 +42,10 @@ public class Evento implements ActionListener {
     public final static String EJECUTAR_CONS_STOCK_MIN = "Ejecutar Consulta Stock Minimo";
     public final static String EJECUTAR_CONS_HISTORIAL_CLI = "Ejecutar Consulta Historial Cliente";
     public final static String EJECUTAR_CONS_MOV_CONTABLE = "Ejecutar Consulta Movimientos Contables";
+    public final static String ENVIAR = "Enviar datos de practica";
+    public final static String ACTUALIZARDTO = "Actualizardto";
+    public final static String ELIMINARDTO = "Eliminar practica";
+    
 
     private PanelPrincipal ventana;
 
@@ -50,7 +53,7 @@ public class Evento implements ActionListener {
         this.ventana = V;
     }
 
-    // CORRECCIÓN FUNDAMENTAL PARA EL FILTRADO EN CALIENTE (Borra error de image_e01451.png)
+    
     public PanelPrincipal getVentana() {
         return this.ventana;
     }
@@ -108,7 +111,6 @@ public class Evento implements ActionListener {
         } else if (comando.equals(REALIZARCOM)) {
             ventana.ejecutarCompraCliente(); 
         } 
-        // ENRUTADORES DINÁMICOS DE LAS CONSULTAS LATERALES
         else if (comando.equals(EJECUTAR_CONS_COMPRA_PROV)) {
             ventana.ejecutarConsultaCompraProveedor(); 
         } else if (comando.equals(EJECUTAR_CONS_VENTAS_FECHA)) {
@@ -129,6 +131,13 @@ public class Evento implements ActionListener {
             ventana.mostrarHistorialClienteConsulta();
         } else if (comando.equals(MOSTRAR_MOV_CONTABLE)) {
             ventana.getPanelInicial().getPanelConsultas().conmutarVista("MOV_CONTABLE");
+        } else if (comando.equals(MOSTRAR_MOV_CONTABLE)) {
+            ventana.getPanelInicial().getPanelConsultas().conmutarVista("MOV_CONTABLE");
+        } 
+        else if (comando.equals(ENVIAR)) {
+            ventana.ejecutarGuardarPractica();
+        }else if (comando.equals(ELIMINARDTO)) {
+            ventana.ejecutarEliminarPractica();
         }
     }
 }

@@ -19,7 +19,7 @@ public class GestionCompasCliente {
     }
 
     public void registrarCompra(Cliente cliente, Producto producto, int cantidad) throws Exception {
-        // 1. Validaciones básicas de nulidad y valores coherentes
+        
         if (cliente == null) {
             throw new Exception("Debe seleccionar un cliente válido.");
         }
@@ -30,7 +30,6 @@ public class GestionCompasCliente {
             throw new Exception("La cantidad debe ser mayor a cero.");
         }
 
-        // 2. Validaciones de Reglas de Negocio (Clientes y Inventario)
         if (!cliente.isActivo()) {
             throw new Exception("No se puede registrar la compra porque el cliente está INACTIVO.");
         }
@@ -42,7 +41,6 @@ public class GestionCompasCliente {
                                 "\". Disponible: " + producto.getStockActual() + " unidades.");
         }
 
-        // 3. Construcción y asignación del objeto de compra
         CompasCliente nuevaCompra = new CompasCliente();
         nuevaCompra.setCliente(cliente);
         nuevaCompra.setProducto(producto);
@@ -50,7 +48,6 @@ public class GestionCompasCliente {
         nuevaCompra.setTotalCompra(producto.getPrecioVenta() * cantidad);
         nuevaCompra.setFecha(new java.util.Date());
 
-        // 4. Persistencia en Base de Datos
         localCompraCliente.guardarCompra(nuevaCompra);
     }
 

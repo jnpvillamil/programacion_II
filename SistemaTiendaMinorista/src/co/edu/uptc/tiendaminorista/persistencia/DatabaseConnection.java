@@ -123,6 +123,13 @@ public class DatabaseConnection {
                 "  documento_relacionado VARCHAR(100) DEFAULT NULL," +
                 "  PRIMARY KEY (codigo)" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            
+            stmt.execute(
+            	    "CREATE TABLE IF NOT EXISTS practica (" +
+            	    "  texto1 VARCHAR(100) NOT NULL," +
+            	    "  texto2 VARCHAR(150) DEFAULT NULL," +
+            	    "  PRIMARY KEY (texto1)" +
+            	    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
             System.out.println("Base de datos lista.");
 
