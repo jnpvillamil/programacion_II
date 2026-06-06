@@ -2,6 +2,7 @@ package co.uptc.edu.tienda.gui;
 
 import javax.swing.*;
 
+import co.uptc.edu.co.tienda.configs.MascotaConfig;
 import co.uptc.edu.co.tienda.configs.TiendaConfig;
 import co.uptc.edu.tienda.enums.EstadoEnum;
 import co.uptc.edu.tienda.enums.EstadoVentaEnum;
@@ -48,11 +49,12 @@ public class VentanaPrincipal extends JFrame {
     private DialogoProducto nuevoProducto;
     private DialogoCliente nuevoCliente;
     private DialogoAnularVenta dialogoAnular;
+    private DialogoMascota nuevoMascota;
 
     private Evento evento;
 
     private TiendaConfig tiendaConfig;
-    
+    private MascotaConfig mascotaConfig;
     private Usuario usuarioActual;
 
     public VentanaPrincipal() {
@@ -81,6 +83,7 @@ public class VentanaPrincipal extends JFrame {
 
 
         tiendaConfig = new TiendaConfig();
+        mascotaConfig = new MascotaConfig();
 
         
         add(pLogin, BorderLayout.CENTER);
@@ -1133,6 +1136,30 @@ public class VentanaPrincipal extends JFrame {
             revalidate();
         }
     }
+        public void lanzarDialogoMascota() {
+            nuevoMascota = new DialogoMascota(evento, "Crear Mascota", true);
+            nuevoMascota.setSize(400, 300);
+            nuevoMascota.setLocationRelativeTo(null);
+            nuevoMascota.setVisible(true);
+        }
+
+        public void cerrarDialogoMascota() {
+            if (nuevoMascota != null) {
+                nuevoMascota.setVisible(false);
+                nuevoMascota = null;
+            }
+        }
+
+        public void crearMascota() {
+            try {
+                mascotaConfig.getGestMascota().agregarMascota(nuevoMascota.capturarDatos());
+                cerrarDialogoMascota();
+                JOptionPane.showMessageDialog(this, "Mascota agregada exitosamente.");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+     
+    }
 
     // ===================== CONTADOR =====================
 
@@ -1148,4 +1175,5 @@ public class VentanaPrincipal extends JFrame {
         pReportes.mostrarResumen(resumen);
         JOptionPane.showMessageDialog(this, "Reporte generado y guardado en JSON.");
     }
+    
 }
