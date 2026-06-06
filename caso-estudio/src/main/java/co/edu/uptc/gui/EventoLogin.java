@@ -47,10 +47,18 @@ public class EventoLogin implements ActionListener {
         JOptionPane.showMessageDialog(ventanaLogin, resultado.getMensaje(), "Bienvenido",
                 JOptionPane.INFORMATION_MESSAGE);
 
-        aplicarPermisos(RolUsuario.valueOf(sesion.getRol()));
+        RolUsuario rol = RolUsuario.valueOf(sesion.getRol());
+        aplicarPermisos(rol);
         ventanaLogin.setVisible(false);
         ventanaPrincipal.setVisible(true);
-        ventanaPrincipal.mostrarPanel(ModuloSistema.INVENTARIO.name());
+
+        if (rol == RolUsuario.SUPERVISOR) {
+            ventanaPrincipal.mostrarPanel(ModuloSistema.ROLES.name());
+        } else if (rol == RolUsuario.CAJERO) {
+            ventanaPrincipal.mostrarPanel(ModuloSistema.VENTAS.name());
+        } else {
+            ventanaPrincipal.mostrarPanel(ModuloSistema.INVENTARIO.name());
+        }
     }
 
     private void aplicarPermisos(RolUsuario rol) {
@@ -68,6 +76,8 @@ public class EventoLogin implements ActionListener {
                 servicioAutorizacion.verificarPermiso(rol, ModuloSistema.REPORTES.name()));
         ventanaPrincipal.getBtnConsultas().setEnabled(
                 servicioAutorizacion.verificarPermiso(rol, ModuloSistema.CONSULTAS.name()));
+        ventanaPrincipal.getBtnRoles().setEnabled(
+                servicioAutorizacion.verificarPermiso(rol, ModuloSistema.ROLES.name()));
         ventanaPrincipal.getBtnCerrarSesion().setEnabled(
                 servicioAutorizacion.verificarPermiso(rol, ModuloSistema.CERRAR_SESION.name()));
     }

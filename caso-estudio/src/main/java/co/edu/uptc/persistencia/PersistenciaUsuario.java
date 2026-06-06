@@ -3,6 +3,7 @@ package co.edu.uptc.persistencia;
 import co.edu.uptc.interfaces.IPersistenciaUsuario;
 import co.edu.uptc.modelo.Administrador;
 import co.edu.uptc.modelo.Cajero;
+import co.edu.uptc.modelo.Supervisor;
 import co.edu.uptc.modelo.Usuario;
 import co.edu.uptc.utilidades.ConexionBD;
 
@@ -17,7 +18,7 @@ public class PersistenciaUsuario implements IPersistenciaUsuario {
 
     @Override
     public Usuario validarUsuario(String nombreUsuario, String claveIngresada) {
-        String sql = "SELECT usuario, contrasena FROM usuarios WHERE usuario = ? AND contrasena = ?";
+        String sql = "SELECT usuario, contrasena, rol, nombre FROM usuarios WHERE usuario = ? AND contrasena = ?";
 
         try (Connection con = ConexionBD.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -39,7 +40,7 @@ public class PersistenciaUsuario implements IPersistenciaUsuario {
     @Override
     public List<Usuario> listarUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
-        String sql = "SELECT usuario, contrasena FROM usuarios";
+        String sql = "SELECT usuario, contrasena, rol, nombre FROM usuarios";
 
         try (Connection con = ConexionBD.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -55,11 +56,19 @@ public class PersistenciaUsuario implements IPersistenciaUsuario {
     }
 
     private Usuario crearUsuarioDesdeResultSet(ResultSet rs) throws SQLException {
+        String nombre = rs.getString("nombre");
         String usuario = rs.getString("usuario");
         String contrasena = rs.getString("contrasena");
-        if ("cajero".equalsIgnoreCase(usuario)) {
-            return new Cajero(usuario, "", "", "", usuario, contrasena);
+        String rol = rs.getString("rol");
+
+        if (nombre == null) {
+            nombre = "";
         }
-        return new Administrador(usuario, "", "", "", usuario, contrasena);
+
+        return switch (rol.toUpperCase()) {
+            case "CAJERO" -> new Cajero(nombre, "", "", "", usuario, contrasena);
+            case "SUPERVISOR" -> new Supervisor(nombre, "", "", "", usuario, contrasena);
+            default -> new Administrador(nombre, "", "", "", usuario, contrasena);
+        };
     }
 }

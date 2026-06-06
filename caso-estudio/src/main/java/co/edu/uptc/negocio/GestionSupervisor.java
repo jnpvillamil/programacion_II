@@ -19,7 +19,7 @@ public class GestionSupervisor {
             return ResultadoOperacion.error("Datos del usuario incompletos.");
         }
         if (ValidadorEntradas.esVacio(usuario.getNombre())) {
-            return ResultadoOperacion.error("Ingrese el nombre completo.");
+            return ResultadoOperacion.error("Ingrese el nombre.");
         }
         if (ValidadorEntradas.esVacio(usuario.getUsuario())) {
             return ResultadoOperacion.error("Ingrese el nombre de usuario.");
