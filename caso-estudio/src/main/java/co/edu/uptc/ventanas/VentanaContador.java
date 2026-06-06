@@ -8,9 +8,7 @@ import co.edu.uptc.conexion.Conexion;
 
 public class VentanaContador extends JFrame {
 	
-    /**
-	 * 
-	 */
+   
 	private static final long serialVersionUID = 1835237524801377535L;
 	private JTable tablaReporte;
     private DefaultTableModel modeloTabla;

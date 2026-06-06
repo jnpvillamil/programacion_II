@@ -20,7 +20,7 @@ public class VendedorDao {
                     + v.getCodigoProducto() + "', "
                     + v.getCantidad() + ", "
                     + v.getTotal() + ")";
-
+ 
             estatuto.executeUpdate(consulta);
             JOptionPane.showMessageDialog(null, "¡Venta guardada y auditada en la Base de Datos!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             

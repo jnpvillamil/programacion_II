@@ -5,8 +5,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.net.URL;
-import java.awt.event.ActionEvent;     
-import java.awt.event.ActionListener; 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -23,137 +23,136 @@ import javax.swing.SwingConstants;
 import co.edu.uptc.config.Config;
 import co.edu.uptc.ventanas.MenuPrincipal;
 import co.edu.uptc.ventanas.MenuVendedor;
-import co.edu.uptc.ventanas.MenuContador;
+import co.edu.uptc.ventanas.VentanaContador;
 
 @SuppressWarnings("serial")
 
-public class LoginGUI extends JFrame implements ActionListener { 
+public class LoginGUI extends JFrame implements ActionListener {
 
-    private JTextField txtUsuario;
-    private JPasswordField txtContrasena;
-    private JButton btnIngresar;
-    private JButton btnSalir;
-    
-    private Config config;
+	private JTextField txtUsuario;
+	private JPasswordField txtContrasena;
+	private JButton btnIngresar;
+	private JButton btnSalir;
 
-    public LoginGUI() {
-        this.config = config; 
-        
-        setTitle("Sistema de Gestión");
-        setSize(450, 420);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
-        iniciarComponentes();
-    }
+	private Config config;
 
-    private void iniciarComponentes() {
-        setLayout(new BorderLayout(10, 10));
+	public LoginGUI() {
+		this.config = config;
 
-        JPanel panelSuperior = new JPanel(new BorderLayout());
-        panelSuperior.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+		setTitle("Sistema de Gestión");
+		setSize(450, 420);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
+		iniciarComponentes();
+	}
 
-        JLabel lblLogo = new JLabel();
-        lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
+	private void iniciarComponentes() {
+		setLayout(new BorderLayout(10, 10));
 
-        URL rutaLogo = getClass().getResource("/recursos/LogoTM.png");
+		JPanel panelSuperior = new JPanel(new BorderLayout());
+		panelSuperior.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
-        if (rutaLogo != null) {
-            ImageIcon iconoOriginal = new ImageIcon(rutaLogo);
-            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH);
-            lblLogo.setIcon(new ImageIcon(imagenEscalada));
-        } else {
-            System.out.println("No se encontró el logo en la ruta: /recursos/LogoTM.png");
-            lblLogo.setText("LOGO");
-        }
+		JLabel lblLogo = new JLabel();
+		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JLabel lblTitulo = new JLabel("Sistema de Gestión", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
+		URL rutaLogo = getClass().getResource("/recursos/LogoTM.png");
 
-        JLabel lblSubtitulo = new JLabel("Inicio de sesión", SwingConstants.CENTER);
-        lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
+		if (rutaLogo != null) {
+			ImageIcon iconoOriginal = new ImageIcon(rutaLogo);
+			Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH);
+			lblLogo.setIcon(new ImageIcon(imagenEscalada));
+		} else {
+			System.out.println("No se encontró el logo en la ruta: /recursos/LogoTM.png");
+			lblLogo.setText("LOGO");
+		}
 
-        JPanel panelTitulos = new JPanel(new GridLayout(2, 1));
-        panelTitulos.add(lblTitulo);
-        panelTitulos.add(lblSubtitulo);
+		JLabel lblTitulo = new JLabel("Sistema de Gestión", SwingConstants.CENTER);
+		lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
 
-        panelSuperior.add(lblLogo, BorderLayout.CENTER);
-        panelSuperior.add(panelTitulos, BorderLayout.SOUTH);
+		JLabel lblSubtitulo = new JLabel("Inicio de sesión", SwingConstants.CENTER);
+		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JPanel panelCentral = new JPanel(new GridLayout(2, 2, 10, 15));
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 40));
+		JPanel panelTitulos = new JPanel(new GridLayout(2, 1));
+		panelTitulos.add(lblTitulo);
+		panelTitulos.add(lblSubtitulo);
 
-        panelCentral.add(new JLabel("Usuario:"));
-        txtUsuario = new JTextField();
-        panelCentral.add(txtUsuario);
+		panelSuperior.add(lblLogo, BorderLayout.CENTER);
+		panelSuperior.add(panelTitulos, BorderLayout.SOUTH);
 
-        panelCentral.add(new JLabel("Contraseña:"));
-        txtContrasena = new JPasswordField();
-        panelCentral.add(txtContrasena);
+		JPanel panelCentral = new JPanel(new GridLayout(2, 2, 10, 15));
+		panelCentral.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 40));
 
-        JPanel panelInferior = new JPanel();
-        panelInferior.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+		panelCentral.add(new JLabel("Usuario:"));
+		txtUsuario = new JTextField();
+		panelCentral.add(txtUsuario);
 
-        btnIngresar = new JButton("Ingresar");
-        btnIngresar.setActionCommand("INGRESAR");
-        // CORRECCIÓN CRÍTICA: Le decimos al botón que esta clase va a escuchar su clic
-        btnIngresar.addActionListener(this); 
+		panelCentral.add(new JLabel("Contraseña:"));
+		txtContrasena = new JPasswordField();
+		panelCentral.add(txtContrasena);
 
-        btnSalir = new JButton("Salir");
-        btnSalir.setActionCommand("SALIR");
-        // CORRECCIÓN CRÍTICA: También escuchamos al botón de salir
-        btnSalir.addActionListener(this); 
+		JPanel panelInferior = new JPanel();
+		panelInferior.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 
-        panelInferior.add(btnIngresar);
-        panelInferior.add(btnSalir);
+		btnIngresar = new JButton("Ingresar");
+		btnIngresar.setActionCommand("INGRESAR");
 
-        add(panelSuperior, BorderLayout.NORTH);
-        add(panelCentral, BorderLayout.CENTER);
-        add(panelInferior, BorderLayout.SOUTH);
-    }
+		btnIngresar.addActionListener(this);
 
-    // AGREGADO: El método que captura el clic físico del botón e invoca tu lógica
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String comando = e.getActionCommand();
-        if (comando.equals("INGRESAR")) {
-            procesarLoginLocal(); // Invoca tu método con los ifs de administrador/vendedor
-        } else if (comando.equals("SALIR")) {
-            System.exit(0);
-        }
-    }
+		btnSalir = new JButton("Salir");
+		btnSalir.setActionCommand("SALIR");
 
-    public void procesarLoginLocal() {
-        String usuario = txtUsuario.getText().trim();
-        String contrasena = new String(txtContrasena.getPassword());
+		btnSalir.addActionListener(this);
 
-        if (usuario.equals("admin") && contrasena.equals("1234")) {
-            this.dispose(); 
-            MenuPrincipal menuAdmin = new MenuPrincipal();
-            menuAdmin.setVisible(true);
+		panelInferior.add(btnIngresar);
+		panelInferior.add(btnSalir);
 
-        } else if (usuario.equals("vendedor") && contrasena.equals("1234")) {
-            this.dispose(); 
-            MenuVendedor menuEmpleado = new MenuVendedor();
-            menuEmpleado.setVisible(true);
-        }    
-            else if (usuario.equals("contador") && contrasena.equals("1234")) {
-                this.dispose(); 
-                MenuContador MenContador = new MenuContador();
-                MenContador.setVisible(true);
+		add(panelSuperior, BorderLayout.NORTH);
+		add(panelCentral, BorderLayout.CENTER);
+		add(panelInferior, BorderLayout.SOUTH);
+	}
 
-        } else {
-            JOptionPane.showMessageDialog(this, "Credenciales incorrectas de prueba.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String comando = e.getActionCommand();
+		if (comando.equals("INGRESAR")) {
+			procesarLoginLocal();
+		} else if (comando.equals("SALIR")) {
+			System.exit(0);
+		}
+	}
 
-    public JTextField getTxtUsuario() {
-        return txtUsuario;
-    }
+	public void procesarLoginLocal() {
+		String usuario = txtUsuario.getText().trim();
+		String contrasena = new String(txtContrasena.getPassword());
 
-    public JPasswordField getTxtContrasena() {
-        return txtContrasena;
-    }
+		if (usuario.equals("admin") && contrasena.equals("1234")) {
+			this.dispose();
+			MenuPrincipal menuAdmin = new MenuPrincipal();
+			menuAdmin.setVisible(true);
+
+		} else if (usuario.equals("vendedor") && contrasena.equals("1234")) {
+			this.dispose();
+			MenuVendedor menuEmpleado = new MenuVendedor();
+			menuEmpleado.setVisible(true);
+		} else if (usuario.equals("contador") && contrasena.equals("1234")) {
+			this.dispose();
+			VentanaContador VenContador = new VentanaContador();
+			VenContador.setVisible(true);
+
+		} else {
+			JOptionPane.showMessageDialog(this, "Credenciales incorrectas de prueba.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public JTextField getTxtUsuario() {
+		return txtUsuario;
+	}
+
+	public JPasswordField getTxtContrasena() {
+		return txtContrasena;
+	}
 
 	public AbstractButton getBtnIngresar() {
 		// TODO Auto-generated method stub
@@ -162,6 +161,6 @@ public class LoginGUI extends JFrame implements ActionListener {
 
 	public void mostrarMensaje(String string) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

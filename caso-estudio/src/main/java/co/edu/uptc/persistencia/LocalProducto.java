@@ -20,7 +20,7 @@ public class LocalProducto {
  
         if (producto.getCodigoProducto() == null || producto.getCodigoProducto().trim().isEmpty()) {
             return false;
-        }
+        } 
 
         if (producto.getNombreProducto() == null || producto.getNombreProducto().trim().isEmpty()) {
             return false;

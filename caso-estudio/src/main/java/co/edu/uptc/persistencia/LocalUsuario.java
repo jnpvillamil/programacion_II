@@ -24,7 +24,7 @@ public class LocalUsuario {
         for (Usuario usuario : usuarios) {
             if (usuario.getNombreUsuario().equalsIgnoreCase(nombreUsuario)) {
                 return usuario;
-            }
+            } 
         }
         return null;
     }
