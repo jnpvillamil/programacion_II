@@ -14,9 +14,17 @@ import java.util.function.Function;
 
 public class PersistenciaComercial implements RepositorioComercial {
 
-    private final PersistenciaVenta persistenciaVenta = new PersistenciaVenta();
-    private final PersistenciaCompra persistenciaCompra = new PersistenciaCompra();
-    private final PersistenciaContable persistenciaContable = new PersistenciaContable();
+    private final PersistenciaVenta persistenciaVenta;
+    private final PersistenciaCompra persistenciaCompra;
+    private final PersistenciaContable persistenciaContable;
+
+    public PersistenciaComercial(PersistenciaVenta persistenciaVenta,
+                                 PersistenciaCompra persistenciaCompra,
+                                 PersistenciaContable persistenciaContable) {
+        this.persistenciaVenta = persistenciaVenta;
+        this.persistenciaCompra = persistenciaCompra;
+        this.persistenciaContable = persistenciaContable;
+    }
 
     @Override
     public void guardarVenta(Venta venta, Function<Venta, List<MovimientoContable>> constructorAsiento) {

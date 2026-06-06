@@ -13,10 +13,20 @@ import java.util.List;
 
 public class PersistenciaAdministracion implements RepositorioAdministracion {
 
-    private final PersistenciaCliente persistenciaCliente = new PersistenciaCliente();
-    private final PersistenciaProveedor persistenciaProveedor = new PersistenciaProveedor();
-    private final PersistenciaProducto persistenciaProducto = new PersistenciaProducto();
-    private final PersistenciaUsuario persistenciaUsuario = new PersistenciaUsuario();
+    private final PersistenciaCliente persistenciaCliente;
+    private final PersistenciaProveedor persistenciaProveedor;
+    private final PersistenciaProducto persistenciaProducto;
+    private final PersistenciaUsuario persistenciaUsuario;
+
+    public PersistenciaAdministracion(PersistenciaCliente persistenciaCliente,
+                                        PersistenciaProveedor persistenciaProveedor,
+                                        PersistenciaProducto persistenciaProducto,
+                                        PersistenciaUsuario persistenciaUsuario) {
+        this.persistenciaCliente = persistenciaCliente;
+        this.persistenciaProveedor = persistenciaProveedor;
+        this.persistenciaProducto = persistenciaProducto;
+        this.persistenciaUsuario = persistenciaUsuario;
+    }
 
     @Override
     public void guardarCliente(Cliente cliente) {

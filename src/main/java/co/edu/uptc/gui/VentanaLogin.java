@@ -4,19 +4,11 @@ import co.edu.uptc.dto.LoginDTO;
 import co.edu.uptc.dto.UsuarioDTO;
 import co.edu.uptc.gui.evento.EventoSistema;
 import co.edu.uptc.interfaces.ManejadorEventoSistema;
+import co.edu.uptc.negocio.AppConfig;
 import co.edu.uptc.negocio.ExcepcionAutenticacion;
-import co.edu.uptc.interfaces.ProveedorUsuarioSesion;
-import co.edu.uptc.interfaces.RegistradorAuditoria;
-import co.edu.uptc.negocio.GestionContable;
-import co.edu.uptc.negocio.GestionUsuario;
-import co.edu.uptc.negocio.ServicioAuditoria;
-import co.edu.uptc.negocio.ServicioAutenticacion;
 import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
-import co.edu.uptc.persistencia.PersistenciaAdministracion;
-import co.edu.uptc.persistencia.PersistenciaContable;
 import co.edu.uptc.utilidades.CentradorVentanas;
 import co.edu.uptc.utilidades.ConstructorComponentes;
-import co.edu.uptc.utilidades.RegistradorAuditoriaArchivo;
 import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
 
 import javax.swing.*;
@@ -26,22 +18,12 @@ public class VentanaLogin extends JFrame {
 
     private final JTextField campoUsuario;
     private final JPasswordField campoClave;
+    private final AppConfig appConfig;
     private final ManejadorEventoSistema manejadorEventoSistema;
-    private final GestionUsuario gestionUsuario;
-    private final GestionContable gestionContable;
-    private final ServicioAutenticacion servicioAutenticacion;
-    private final ProveedorUsuarioSesion proveedorUsuarioSesion;
-    private final ServicioAuditoria servicioAuditoria;
 
-    public VentanaLogin() {
-        PersistenciaAdministracion persistenciaAdministracion = new PersistenciaAdministracion();
-        gestionUsuario = new GestionUsuario(persistenciaAdministracion);
-        RegistradorAuditoria registradorAuditoria = new RegistradorAuditoriaArchivo();
-        servicioAuditoria = new ServicioAuditoria(registradorAuditoria);
-        servicioAutenticacion = new ServicioAutenticacion(gestionUsuario, servicioAuditoria);
-        proveedorUsuarioSesion = servicioAutenticacion;
-        gestionContable = new GestionContable(new PersistenciaContable());
-        manejadorEventoSistema = new EventoSistema(servicioAutenticacion, gestionContable);
+    public VentanaLogin(AppConfig appConfig) {
+        this.appConfig = appConfig;
+        manejadorEventoSistema = new EventoSistema(appConfig);
 
         setTitle("Acceso al Sistema - Tienda Minorista");
         setSize(420, 320);
@@ -101,11 +83,8 @@ public class VentanaLogin extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 VentanaPrincipal ventanaPrincipal = new VentanaPrincipal(
                         usuarioAutenticado,
-                        manejadorEventoSistema,
-                        gestionUsuario,
-                        gestionContable,
-                        servicioAuditoria,
-                        proveedorUsuarioSesion);
+                        appConfig,
+                        manejadorEventoSistema);
                 ventanaPrincipal.setVisible(true);
             });
         } catch (ExcepcionAutenticacion excepcion) {

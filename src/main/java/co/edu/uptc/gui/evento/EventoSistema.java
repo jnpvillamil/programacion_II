@@ -7,6 +7,7 @@ import co.edu.uptc.dto.ReporteUtilidadDTO;
 import co.edu.uptc.dto.UsuarioDTO;
 import co.edu.uptc.interfaces.ManejadorEventoSistema;
 import co.edu.uptc.modelo.Usuario;
+import co.edu.uptc.negocio.AppConfig;
 import co.edu.uptc.negocio.ExcepcionAutenticacion;
 import co.edu.uptc.negocio.GestionContable;
 import co.edu.uptc.negocio.ServicioAutenticacion;
@@ -25,9 +26,9 @@ public class EventoSistema implements ManejadorEventoSistema {
     private JPanel panelContenedor;
     private CardLayout cardLayout;
 
-    public EventoSistema(ServicioAutenticacion servicioAutenticacion, GestionContable gestionContable) {
-        this.servicioAutenticacion = servicioAutenticacion;
-        this.gestionContable = gestionContable;
+    public EventoSistema(AppConfig appConfig) {
+        this.servicioAutenticacion = appConfig.getServicioAutenticacion();
+        this.gestionContable = appConfig.getGestionContable();
     }
 
     @Override

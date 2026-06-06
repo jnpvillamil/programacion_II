@@ -10,6 +10,7 @@ import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.modelo.Proveedor;
 import co.edu.uptc.modelo.Usuario;
+import co.edu.uptc.negocio.AppConfig;
 import co.edu.uptc.negocio.GestionCliente;
 import co.edu.uptc.negocio.GestionProducto;
 import co.edu.uptc.negocio.GestionProveedor;
@@ -27,14 +28,11 @@ public class EventoAdministracion implements ManejadorEventoAdministracion {
     private final GestionProducto gestionProducto;
     private final GestionUsuario gestionUsuario;
 
-    public EventoAdministracion(GestionCliente gestionCliente,
-                                GestionProveedor gestionProveedor,
-                                GestionProducto gestionProducto,
-                                GestionUsuario gestionUsuario) {
-        this.gestionCliente = gestionCliente;
-        this.gestionProveedor = gestionProveedor;
-        this.gestionProducto = gestionProducto;
-        this.gestionUsuario = gestionUsuario;
+    public EventoAdministracion(AppConfig appConfig) {
+        this.gestionCliente = appConfig.getGestionCliente();
+        this.gestionProveedor = appConfig.getGestionProveedor();
+        this.gestionProducto = appConfig.getGestionProducto();
+        this.gestionUsuario = appConfig.getGestionUsuario();
     }
 
     @Override

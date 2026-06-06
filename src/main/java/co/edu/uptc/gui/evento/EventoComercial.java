@@ -7,11 +7,9 @@ import co.edu.uptc.modelo.Cliente;
 import co.edu.uptc.modelo.Compra;
 import co.edu.uptc.modelo.Producto;
 import co.edu.uptc.modelo.Venta;
+import co.edu.uptc.negocio.AppConfig;
 import co.edu.uptc.negocio.GestionCompra;
 import co.edu.uptc.negocio.GestionVenta;
-import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
-import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
-
 import co.edu.uptc.persistencia.ExcepcionAccesoDatos;
 import co.edu.uptc.utilidades.UtilidadMensajeAccesoDatos;
 
@@ -22,9 +20,9 @@ public class EventoComercial implements ManejadorEventoComercial {
     private final GestionVenta gestionVenta;
     private final GestionCompra gestionCompra;
 
-    public EventoComercial(GestionVenta gestionVenta, GestionCompra gestionCompra) {
-        this.gestionVenta = gestionVenta;
-        this.gestionCompra = gestionCompra;
+    public EventoComercial(AppConfig appConfig) {
+        this.gestionVenta = appConfig.getGestionVenta();
+        this.gestionCompra = appConfig.getGestionCompra();
     }
 
     @Override
