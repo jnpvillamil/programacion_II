@@ -8,20 +8,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import co.edu.uptc.tiendaminorista.interfaces.ITelefono;
 import co.edu.uptc.tiendaminorista.modelo.Telefono;
 
 public class TelefonoDAO implements ITelefono {
 
-   
     public TelefonoDAO() {
     }
 
     public void guardar(Telefono telefono) {
-        String sql = "INSERT INTO telefonos (marca, modelo, precio) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO telefono (marca, modelo, precio) VALUES (?, ?, ?)";
 
-        
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -30,7 +27,9 @@ public class TelefonoDAO implements ITelefono {
             stmt.setDouble(3, telefono.getPrecio());
 
             int filas = stmt.executeUpdate();
-            if (filas == 0) {
+            if (filas > 0) {
+                System.out.println("✅ Teléfono guardado correctamente");
+            } else {
                 System.err.println("No se pudo insertar el registro del teléfono: " + telefono.getMarca());
             }
 
@@ -41,9 +40,8 @@ public class TelefonoDAO implements ITelefono {
 
     public List<Telefono> obtenerTelefonos() {
         List<Telefono> lista = new ArrayList<>();
-        String sql = "SELECT marca, modelo, precio FROM telefonos";
+        String sql = "SELECT marca, modelo, precio FROM telefono";
 
-       
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -55,6 +53,7 @@ public class TelefonoDAO implements ITelefono {
                 t.setPrecio(rs.getDouble("precio"));
                 lista.add(t);
             }
+            System.out.println("✅ Teléfonos encontrados: " + lista.size());
 
         } catch (SQLException e) {
             System.err.println("Error listando teléfonos desde la BD: " + e.getMessage());
