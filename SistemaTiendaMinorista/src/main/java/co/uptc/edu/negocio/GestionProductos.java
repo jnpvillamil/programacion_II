@@ -4,12 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.modelo.Producto;
+import co.uptc.edu.interfaces.IProductoDAO;
+import co.uptc.edu.persistencia.ProductoDAO;
+
 
 public class GestionProductos {
+	private IProductoDAO productoDAO;
 
     private static List<Producto> listaProductos;
-
     public GestionProductos() {
+
+        this(new ProductoDAO());
+    }
+
+    public GestionProductos(IProductoDAO productoDAO) {
+    	
+    	this.productoDAO = productoDAO;
 
         if(listaProductos == null){
             listaProductos = new ArrayList<>();
@@ -24,6 +34,8 @@ public class GestionProductos {
         }
 
         listaProductos.add(p);
+        
+        productoDAO.guardarProducto(p);
 
         return true;
     }

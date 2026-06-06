@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import co.uptc.edu.persistencia.ProductoDAO;
 import co.uptc.edu.modelo.Producto;
+import co.uptc.edu.interfaces.IProductoDAO;
 
 public class GestionProductos extends JFrame {
 
@@ -18,7 +19,7 @@ public class GestionProductos extends JFrame {
 
     // BACKEND
     private co.uptc.edu.negocio.GestionProductos gestion;
-    private ProductoDAO productoDAO;
+    private IProductoDAO productoDAO;
 
     public GestionProductos(
     		co.uptc.edu.negocio.GestionProductos gestion) {
@@ -109,7 +110,7 @@ public class GestionProductos extends JFrame {
                 );
                 if(gestion.registrarProducto(p)){
 
-                    productoDAO.guardarProducto(p);
+                    
 
                     modelo.addRow(new Object[]{
                         p.getCodigo(),
@@ -152,7 +153,7 @@ public class GestionProductos extends JFrame {
                 p.setEstado(cbEstado.getSelectedItem().toString());
 
                 if(productoDAO.modificarProducto(p)){
-                	productoDAO.modificarProducto(p);
+                	
 
                     int fila = tabla.getSelectedRow();
 
@@ -162,7 +163,7 @@ public class GestionProductos extends JFrame {
                     modelo.setValueAt(txtPrecioVenta.getText(), fila, 4);
                     modelo.setValueAt(txtStock.getText(), fila, 5);
                     modelo.setValueAt(txtStockMin.getText(), fila, 6);
-                    modelo.setValueAt(cbEstado.getSelectedItem(), fila, 7); // 🔥 AQUÍ
+                    modelo.setValueAt(cbEstado.getSelectedItem(), fila, 7);
 
                     JOptionPane.showMessageDialog(this, "Producto actualizado");
                     cargarProductosTabla();
@@ -255,9 +256,10 @@ public class GestionProductos extends JFrame {
     }
 
     public static void main(String[] args) {
+    	IProductoDAO dao = new ProductoDAO();
 
         co.uptc.edu.negocio.GestionProductos gestion =
-                new co.uptc.edu.negocio.GestionProductos();
+                new co.uptc.edu.negocio.GestionProductos(dao);
 
         new GestionProductos(
                 gestion

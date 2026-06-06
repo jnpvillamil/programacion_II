@@ -10,13 +10,15 @@ import javax.swing.table.DefaultTableModel;
 
 import java.sql.ResultSet;
 
+import co.uptc.edu.interfaces.IProductoDAO;
 import co.uptc.edu.modelo.Producto;
 
-public class ProductoDAO {
+public class ProductoDAO implements IProductoDAO{
 	private JTable tablaStock;
 
 	private DefaultTableModel modeloStock;
-
+	
+	@Override
     public boolean guardarProducto(Producto producto) {
 
     	String sql =
@@ -55,6 +57,7 @@ public class ProductoDAO {
             return false;
         }
     }
+	@Override
     public List<Producto> obtenerProductos() {
 
         List<Producto> productos = new ArrayList<>();
@@ -93,6 +96,7 @@ public class ProductoDAO {
 
         return productos;
     }
+	@Override
     public boolean modificarProducto(Producto producto){
 
         String sql =
@@ -129,6 +133,7 @@ public class ProductoDAO {
             return false;
         }
     }
+	@Override
     public boolean aumentarStock(String codigo, int cantidad){
 
         String sql =
@@ -154,6 +159,7 @@ public class ProductoDAO {
             return false;
         }
     }
+	@Override
     public boolean descontarStock(String codigo, int cantidad){
 
         String sql =
@@ -179,6 +185,7 @@ public class ProductoDAO {
             return false;
         }
     }
+	@Override
     public ResultSet obtenerStockBajoMinimo(){
 
         String sql =
