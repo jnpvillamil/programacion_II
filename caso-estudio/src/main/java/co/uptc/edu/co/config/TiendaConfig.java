@@ -4,6 +4,7 @@ import co.uptc.edu.co.interfaces.IGestionArchivoFactura;
 import co.uptc.edu.co.interfaces.IGestionCliente;
 import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
+import co.uptc.edu.co.interfaces.IGestionEmpleado;
 import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.interfaces.IGestionMovimientoContable;
 import co.uptc.edu.co.interfaces.IGestionProducto;
@@ -15,6 +16,7 @@ import co.uptc.edu.co.negocio.GestionCompra;
 import co.uptc.edu.co.negocio.GestionConsultas;
 import co.uptc.edu.co.negocio.GestionContabilidad;
 import co.uptc.edu.co.negocio.GestionDevolucionVenta;
+import co.uptc.edu.co.negocio.GestionEmpleado;
 import co.uptc.edu.co.negocio.GestionFactura;
 import co.uptc.edu.co.negocio.GestionInventario;
 import co.uptc.edu.co.negocio.GestionProducto;
@@ -26,6 +28,7 @@ import co.uptc.edu.co.persistencia.archivo.ReporteJSONDAO;
 import co.uptc.edu.co.persistencia.bd.ClienteBDDAO;
 import co.uptc.edu.co.persistencia.bd.ComprasBDDAO;
 import co.uptc.edu.co.persistencia.bd.DevolucionVentaBDDAO;
+import co.uptc.edu.co.persistencia.bd.EmpleadoBDDAO;
 import co.uptc.edu.co.persistencia.bd.MovimientoContableBDDAO;
 import co.uptc.edu.co.persistencia.bd.MovimientoInventarioBDDAO;
 import co.uptc.edu.co.persistencia.bd.ProductoBDDAO;
@@ -42,6 +45,9 @@ public class TiendaConfig {
 
 	private IGestionProveedor iProveedor;
 	private GestionProveedor gestionProveedor;
+
+	private IGestionEmpleado iEmpleado;
+	private GestionEmpleado gestionEmpleado;
 
 	private IGestionInventario iMovimientoInventario;
 	private GestionInventario gestionInventario;
@@ -81,6 +87,9 @@ public class TiendaConfig {
 		iProveedor = new ProveedorBDDAO();
 		gestionProveedor = new GestionProveedor(iProveedor);
 
+		iEmpleado = new EmpleadoBDDAO();
+		gestionEmpleado = new GestionEmpleado(iEmpleado);
+
 		iMovimientoInventario = new MovimientoInventarioBDDAO();
 		gestionInventario = new GestionInventario(iProducto, iMovimientoInventario);
 
@@ -116,6 +125,10 @@ public class TiendaConfig {
 
 	public GestionProveedor getGestionProveedor() {
 		return gestionProveedor;
+	}
+
+	public GestionEmpleado getGestionEmpleado() {
+		return gestionEmpleado;
 	}
 
 	public GestionInventario getGestionInventario() {

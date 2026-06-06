@@ -45,6 +45,7 @@ import co.uptc.edu.co.negocio.GestionCompra;
 import co.uptc.edu.co.negocio.GestionConsultas;
 import co.uptc.edu.co.negocio.GestionContabilidad;
 import co.uptc.edu.co.negocio.GestionDevolucionVenta;
+import co.uptc.edu.co.negocio.GestionEmpleado;
 import co.uptc.edu.co.negocio.GestionFactura;
 import co.uptc.edu.co.negocio.GestionInventario;
 import co.uptc.edu.co.negocio.GestionProducto;
@@ -141,6 +142,7 @@ public class Evento implements ActionListener {
 	private GestionConsultas gestionConsultas;
 	private GestionContabilidad gestionContabilidad;
 	private GestionInventario gestionInventario;
+	private GestionEmpleado gestionEmpleado;
 
 	// CONSTRUCTOR
 	public Evento(VentanaPrincipal ventana, TiendaConfig config) {
@@ -156,6 +158,7 @@ public class Evento implements ActionListener {
 		this.gestionConsultas = config.getGestionConsultas();
 		this.gestionContabilidad = config.getGestionContabilidad();
 		this.gestionInventario = config.getGestionInventario();
+		this.gestionEmpleado = config.getGestionEmpleado();
 	}
 
 	// GETTERS NECESARIOS
@@ -248,6 +251,7 @@ public class Evento implements ActionListener {
 			return true;
 		case EMPLEADOS:
 			ventana.irEmpleados();
+			refrescarTablaEmpleados();
 			return true;
 
 		default:
@@ -742,6 +746,11 @@ public class Evento implements ActionListener {
 	private void refrescarTablaProveedores() {
 		PanelProveedor panelProveedor = ventana.getPanelProveedor();
 		panelProveedor.cargarProveedores(gestionProveedor.obtenerProveedores());
+	}
+
+	private void refrescarTablaEmpleados() {
+		PanelEmpleado panelEmpleado = ventana.getPanelEmpleado();
+		panelEmpleado.cargarSalarios(gestionEmpleado.obtenerSalarios());
 	}
 
 	// EVENTOS DE VENTA

@@ -1,23 +1,23 @@
 package co.uptc.edu.co.modelo;
 
 public class Empleado {
-	private String cargonEmpleado;
+	private String cargoEmpleado;
 	private double salarioEmpleado;
 
 	public Empleado() {
 	}
 
-	public Empleado(String cargonEmpleado, double salarioEmplead) {
-		this.cargonEmpleado = cargonEmpleado;
+	public Empleado(String cargoEmpleado, double salarioEmpleado) {
+		this.cargoEmpleado = cargoEmpleado;
 		this.salarioEmpleado = salarioEmpleado;
 	}
 
 	public String getCargoEmpleado() {
-		return cargonEmpleado;
+		return cargoEmpleado;
 	}
 
-	public void setCargoEmpleado(String cargonEmpleado) {
-		this.cargonEmpleado = cargonEmpleado;
+	public void setCargoEmpleado(String cargoEmpleado) {
+		this.cargoEmpleado = cargoEmpleado;
 	}
 
 	public double getSalarioEmpleado() {

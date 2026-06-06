@@ -47,6 +47,10 @@ CREATE TABLE IF NOT EXISTS proveedores (
   INDEX idx_proveedores_estado (estado)
 );
 
+CREATE TABLE IF NOT EXISTS empleados (
+  salarioEmpleado DECIMAL(12,2) NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS ventas (
   numeroFactura VARCHAR(30) NOT NULL,
   fechaHora DATETIME NOT NULL,
