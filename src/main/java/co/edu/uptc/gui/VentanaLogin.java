@@ -2,6 +2,7 @@ package co.edu.uptc.gui;
 
 import co.edu.uptc.dto.LoginDTO;
 import co.edu.uptc.dto.UsuarioDTO;
+import co.edu.uptc.enums.RolUsuario;
 import co.edu.uptc.gui.evento.EventoSistema;
 import co.edu.uptc.interfaces.ManejadorEventoSistema;
 import co.edu.uptc.negocio.AppConfig;
@@ -85,6 +86,16 @@ public class VentanaLogin extends JFrame {
                         usuarioAutenticado,
                         appConfig,
                         manejadorEventoSistema);
+
+                if (RolUsuario.BODEGUERO.name().equals(usuarioAutenticado.rol())) {
+                    JOptionPane.showMessageDialog(
+                            ventanaPrincipal,
+                            "Acceso restringido al módulo de Bodega.\n"
+                                    + "Los módulo de Venta, Compra y Contabilidad no están disponibles.",
+                            "Perfil Bodeguero",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
                 ventanaPrincipal.setVisible(true);
             });
         } catch (ExcepcionAutenticacion excepcion) {

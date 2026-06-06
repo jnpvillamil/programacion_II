@@ -3,6 +3,7 @@ package co.edu.uptc.persistencia;
 import co.edu.uptc.dto.UsuarioResumenDTO;
 import co.edu.uptc.enums.RolUsuario;
 import co.edu.uptc.modelo.Administrador;
+import co.edu.uptc.modelo.Bodeguero;
 import co.edu.uptc.modelo.Cajero;
 import co.edu.uptc.modelo.Usuario;
 
@@ -181,10 +182,14 @@ public class PersistenciaUsuario {
         String login = resultado.getString("usuario_login");
         String clave = resultado.getString("clave");
         boolean activo = resultado.getBoolean("activo");
-
-        Usuario usuario = RolUsuario.ADMINISTRADOR.name().equals(rol)
-                ? new Administrador(nombre, apellido, identificacion, "", telefono, login, clave)
-                : new Cajero(nombre, apellido, identificacion, "", telefono, login, clave);
+        Usuario usuario;
+        if (RolUsuario.ADMINISTRADOR.name().equals(rol)) {
+            usuario = new Administrador(nombre, apellido, identificacion, "", telefono, login, clave);
+        } else if (RolUsuario.BODEGUERO.name().equals(rol)) {
+            usuario = new Bodeguero(nombre, apellido, identificacion, "", telefono, login, clave);
+        } else {
+            usuario = new Cajero(nombre, apellido, identificacion, "", telefono, login, clave);
+        }
         usuario.setActivo(activo);
         return usuario;
     }

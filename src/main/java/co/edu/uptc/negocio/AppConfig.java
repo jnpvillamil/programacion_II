@@ -84,6 +84,7 @@ public class AppConfig {
                 servicioAuditoria,
                 servicioAutenticacion);
         gestionBodeguero = new GestionBodeguero(persistenciaBodeguero);
+        
     }
 
     public static synchronized AppConfig getInstancia() {
@@ -127,5 +128,8 @@ public class AppConfig {
 
     public GestionCompra getGestionCompra() {
         return gestionCompra;
+    }
+    public GestionBodeguero getGestionBodeguero() {
+        return gestionBodeguero;
     }
 }
