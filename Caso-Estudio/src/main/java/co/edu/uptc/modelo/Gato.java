@@ -13,27 +13,22 @@ public class Gato {
 		this.Color = Color;
 		this.Ojos = Ojos;
 		this.Raza = Raza;
-		this.activo = true;
-		
-	
-	}
-	
-	
-	public String getColor(){
-		return Color;
-	}
-	
-	public void setColor(String Color) {
-		this.Color = Color;
-	}
-	
-	
+		this.activo = true; 
 
+	}
+	
+	
+	//getter y setter de Color
+	public String getColor(){return Color;}
+	public void setColor(String Color) {this.Color = Color;}
+	
+	
+	//getter y setter de Raza
 	public String getRaza() {return Raza;}
 	public void setRaza(String Raza) {this.Raza = Raza;}
 	
 
-	//Getters and Setters
+	//getters and Setters Ojos y Activo
 	
 	public String getOjos() { return Ojos; }         
     public void setOjos(String ojos) { this.Ojos = ojos; } 
@@ -41,6 +36,7 @@ public class Gato {
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
     
+    	
 }
 
 
