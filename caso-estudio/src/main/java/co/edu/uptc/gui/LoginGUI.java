@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 import co.edu.uptc.config.Config;
 import co.edu.uptc.ventanas.MenuPrincipal;
 import co.edu.uptc.ventanas.MenuVendedor;
+import co.edu.uptc.ventanas.MenuContador;
 
 @SuppressWarnings("serial")
 
@@ -135,6 +136,11 @@ public class LoginGUI extends JFrame implements ActionListener {
             this.dispose(); 
             MenuVendedor menuEmpleado = new MenuVendedor();
             menuEmpleado.setVisible(true);
+        }    
+            else if (usuario.equals("contador") && contrasena.equals("1234")) {
+                this.dispose(); 
+                MenuContador MenContador = new MenuContador();
+                MenContador.setVisible(true);
 
         } else {
             JOptionPane.showMessageDialog(this, "Credenciales incorrectas de prueba.", "Error", JOptionPane.ERROR_MESSAGE);
