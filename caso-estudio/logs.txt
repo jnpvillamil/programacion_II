@@ -262,3 +262,33 @@ Correo:  cajero@correo.com
 Rol:     CAJERO
 Acción:  Inicio de sesión exitoso
 ========================================
+========================================
+Fecha:   2026-06-03T20:07:42.876972800
+Correo:  admin@correo.com
+Rol:     ADMIN
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-06-03T20:07:52.294331800
+Correo:  admin@correo.com
+Rol:     ADMIN
+Acción:  Cierre de sesión
+========================================
+========================================
+Fecha:   2026-06-03T20:08:03.438306400
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================
+========================================
+Fecha:   2026-06-03T20:08:23.124005800
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Cierre de sesión
+========================================
+========================================
+Fecha:   2026-06-03T20:08:31.822451
+Correo:  cajero@correo.com
+Rol:     CAJERO
+Acción:  Inicio de sesión exitoso
+========================================

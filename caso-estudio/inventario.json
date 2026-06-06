@@ -986,5 +986,24 @@
     "cantidad": 10,
     "fechaHora": "2026-05-31T11:16:09.828562600",
     "motivo": "Compra: COMP-2"
+  },
+  {
+    "idMovimiento": 53,
+    "producto": {
+      "codigoProducto": 1,
+      "nombreProducto": "Frijol",
+      "categoria": "viveres",
+      "precioCompra": 6000.0,
+      "precioVenta": 8000.0,
+      "stockActual": 95,
+      "stockMinimo": 20,
+      "stockMaximo": 150,
+      "activo": true,
+      "porcentajeIva": 0.0
+    },
+    "tipoMovimiento": "SALIDA",
+    "cantidad": 5,
+    "fechaHora": "2026-06-03T20:08:57.173021500",
+    "motivo": "Venta: FACT-3"
   }
 ]
