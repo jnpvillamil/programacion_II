@@ -9,6 +9,7 @@ public enum ModuloSistema {
     PROVEEDORES,
     REPORTES,
     CONSULTAS,
+    ROLES,
     CERRAR_SESION;
 
     public static ModuloSistema desdeTexto(String valor) {
