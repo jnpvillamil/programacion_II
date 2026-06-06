@@ -25,5 +25,16 @@ public class GestionGatoNegocio implements IGestionGato {
         persistencia.crear(gato);
         System.out.println(" Gato guardado: " + gato.getColor());
     }
+
+	@Override
+	public List<Gato> listarTodos() {
+		
+		return persistencia.listarTodos();
+	}
+	
+	   private void validarGato(Gato gato) {
+		   if (gato.getOjos() == null || gato.getOjos().trim().isEmpty())
+	            throw new IllegalArgumentException("El color de ojos es obligatorio");
+	   }
     
 }
