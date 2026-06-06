@@ -37,7 +37,7 @@ public class Evento implements ActionListener {
     public final static String MOSTRAR_STOCK_MIN = "Mostrar Productos Stock Minimo";
     public final static String MOSTRAR_HISTORIAL_CLI_CONS = "Mostrar Historial Cliente Consulta";
     public final static String MOSTRAR_MOV_CONTABLE = "Mostrar Movimiento Contable";
-
+    public final static String ENVIARTELEFONO = "ENVIAR TELEFONO";
     public final static String EJECUTAR_CONS_VENTAS_FECHA = "Ejecutar Consulta Ventas Fecha";
     public final static String EJECUTAR_CONS_STOCK_MIN = "Ejecutar Consulta Stock Minimo";
     public final static String EJECUTAR_CONS_HISTORIAL_CLI = "Ejecutar Consulta Historial Cliente";

@@ -130,7 +130,15 @@ public class DatabaseConnection {
             	    "  texto2 VARCHAR(150) DEFAULT NULL," +
             	    "  PRIMARY KEY (texto1)" +
             	    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-
+            stmt.execute(
+            	    "CREATE TABLE IF NOT EXISTS Telefono (" +
+            	    "  Modelo VARCHAR(100) NOT NULL," +
+            	    "  Marca VARCHAR(100) NOT NULL," +
+            	    "  Precio DECIMAL(10,2) DEFAULT NULL," +
+            	    "  PRIMARY KEY (Modelo)" +
+            	    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+            	);
+            
             System.out.println("Base de datos lista.");
 
         } catch (SQLException e) {
