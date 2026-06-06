@@ -7,33 +7,39 @@ public class Telefono {
 	private String modelo;
 	private double precio;
 
-	public String getNumero() {
-		return numero;
-	}
-
 	public String getMarca() { 
 		return marca; 
 	}
-    
-	public void setNumero(String numero) {
-		this.numero = numero;
+	
+	public String getNumero() {
+		return numero;
 	}
 	
 	public String getModelo() { 
 		return modelo; 
 	}
 	
-	public void setModelo(String modelo) { 
-		this.modelo = modelo;
-	}
-
 	public double getPrecio() {
 		return precio;
 	}
-
+	
+	// Setters
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+	
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
+	
+	public void setModelo(String modelo) { 
+		this.modelo = modelo;
+	}
+	
 	public void setPrecio(double precio) {
 		this.precio = precio;
 	}
+<<<<<<< HEAD
 
 	public void setMarca(String string) {
 		// TODO Auto-generated method stub
@@ -42,3 +48,6 @@ public class Telefono {
 
 
 }
+=======
+}
+>>>>>>> 649fcfcd8e48f315c0286147eda4788fec31a280
