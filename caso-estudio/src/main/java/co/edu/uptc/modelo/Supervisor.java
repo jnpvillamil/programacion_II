@@ -1,5 +1,8 @@
 package co.edu.uptc.modelo;
 
+
+
+
 public class Supervisor extends Usuario {
 
 	   public Supervisor(String nombre, String identificacion, String direccion,
