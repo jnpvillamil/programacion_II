@@ -1,5 +1,9 @@
 package co.edu.uptc.tiendaminorista.interfaces;
 
-public class ITelefono {
+import java.util.List;
+import co.edu.uptc.tiendaminorista.modelo.Telefono;
 
+public interface ITelefono {
+    void guardar(Telefono telefono);
+    List<Telefono> obtenerTelefonos();
 }
