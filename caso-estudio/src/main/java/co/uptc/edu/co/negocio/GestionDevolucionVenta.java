@@ -9,33 +9,32 @@ import java.util.Map;
 import co.uptc.edu.co.conexion.TransaccionBD;
 import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
-import co.uptc.edu.co.interfaces.IGestionInventario;
-import co.uptc.edu.co.interfaces.dao.DevolucionVentaDAO;
-import co.uptc.edu.co.interfaces.dao.VentaDAO;
+import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.DevolucionVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
-import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 import co.uptc.edu.co.modelo.dto.DetalleVentaDevolucionDTO;
+import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
-public class GestionDevolucionVenta implements IGestionDevolucionVenta {
+public class GestionDevolucionVenta {
+
 	private static final double IVA = 0.19;
 
-	private final VentaDAO ventaDAO;
-	private final DevolucionVentaDAO devolucionVentaDAO;
-	private final IGestionInventario gestionInventario;
+	private final IGestionVenta gestionVenta;
+	private final IGestionDevolucionVenta gestionDevolucionVenta;
+	private final GestionInventario gestionInventario;
 	private final IGestionContabilidad gestionContabilidad;
 
-	public GestionDevolucionVenta(VentaDAO ventaDAO, DevolucionVentaDAO devolucionVentaDAO,
-			IGestionInventario gestionInventario, IGestionContabilidad gestionContabilidad) {
+	public GestionDevolucionVenta(IGestionVenta gestionVenta, IGestionDevolucionVenta gestionDevolucionVenta,
+			GestionInventario gestionInventario, IGestionContabilidad gestionContabilidad) {
 
-		if (ventaDAO == null) {
-			throw new IllegalArgumentException("La ventaDAO no puede ser nula.");
+		if (gestionVenta == null) {
+			throw new IllegalArgumentException("La gestionVenta no puede ser nula.");
 		}
 
-		if (devolucionVentaDAO == null) {
-			throw new IllegalArgumentException("La devolucionVentaDAO no puede ser nula.");
+		if (gestionDevolucionVenta == null) {
+			throw new IllegalArgumentException("La gestionDevolucionVenta no puede ser nula.");
 		}
 
 		if (gestionInventario == null) {
@@ -46,20 +45,18 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 			throw new IllegalArgumentException("La gestionContabilidad no puede ser nula.");
 		}
 
-		this.ventaDAO = ventaDAO;
-		this.devolucionVentaDAO = devolucionVentaDAO;
+		this.gestionVenta = gestionVenta;
+		this.gestionDevolucionVenta = gestionDevolucionVenta;
 		this.gestionInventario = gestionInventario;
 		this.gestionContabilidad = gestionContabilidad;
 	}
 
-	@Override
 	public void devolverVenta(String numeroFactura, String codigoProducto, int cantidad, String motivo)
 			throws Exception {
-		Venta venta = ventaDAO.buscarVentaPorNumero(numeroFactura);
+		Venta venta = gestionVenta.buscar(numeroFactura);
 		devolverVenta(venta, codigoProducto, cantidad, motivo);
 	}
 
-	@Override
 	public void devolverVenta(Venta venta, String codigoProducto, int cantidad, String motivo) throws Exception {
 		if (venta == null) {
 			throw new Exception("No se encontro la venta a devolver.");
@@ -81,8 +78,8 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		int cantidadDisponible = detalleDevuelto.getCantidad() - cantidadYaDevuelta;
 
 		if (cantidad > cantidadDisponible) {
-			throw new Exception("La cantidad a devolver supera el saldo pendiente. Ya devuelto: "
-					+ cantidadYaDevuelta + ", disponible: " + cantidadDisponible + ".");
+			throw new Exception("La cantidad a devolver supera el saldo pendiente. Ya devuelto: " + cantidadYaDevuelta
+					+ ", disponible: " + cantidadDisponible + ".");
 		}
 
 		DevolucionVenta devolucion = crearDevolucion(venta, detalleDevuelto, cantidad, motivo.trim());
@@ -100,15 +97,14 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 			TransaccionBD.ejecutar(conexion -> {
 
 				gestionInventario.registrarEntrada(conexion, codigoProducto, cantidad,
-						"Entrada por devolucion de venta " + venta.getNumeroFactura()
-								+ ". Motivo: " + motivo.trim());
+						"Entrada por devolucion de venta " + venta.getNumeroFactura() + ". Motivo: " + motivo.trim());
 
-				devolucionVentaDAO.guardarDevolucion(conexion, devolucion);
+				gestionDevolucionVenta.guardar(conexion, devolucion);
 
-				ventaDAO.actualizarEstadoVenta(conexion, venta.getNumeroFactura(), nuevoEstado);
+				gestionVenta.actualizar(conexion, venta);
 
-				gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta,
-						subtotalDevuelto, ivaDevuelto, motivo.trim());
+				gestionContabilidad.registrarReversoPorDevolucionVenta(conexion, venta, subtotalDevuelto, ivaDevuelto,
+						motivo.trim());
 			});
 		} catch (Exception e) {
 			venta.setEstado(estadoAnterior);
@@ -116,7 +112,6 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		}
 	}
 
-	@Override
 	public double calcularValorDevolucion(Venta venta, String codigoProducto, int cantidad) throws Exception {
 		if (venta == null) {
 			throw new Exception("No se encontro la venta.");
@@ -139,16 +134,14 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		return calcularSubtotal(cantidad, detalle.getPrecioUnitario());
 	}
 
-	@Override
 	public DevolucionVenta buscarDevolucionPorCodigo(String codigoDevolucion) throws Exception {
 		if (codigoDevolucion == null || codigoDevolucion.trim().isEmpty()) {
 			throw new Exception("El codigo de devolucion es obligatorio.");
 		}
 
-		return devolucionVentaDAO.buscarPorCodigo(codigoDevolucion.trim());
+		return gestionDevolucionVenta.buscar(codigoDevolucion.trim());
 	}
 
-	@Override
 	public List<DetalleVentaDevolucionDTO> obtenerResumenDetalleVenta(Venta venta) throws Exception {
 		if (venta == null) {
 			throw new Exception("La venta es obligatoria para construir el resumen.");
@@ -158,7 +151,7 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 			throw new Exception("El numero de factura es obligatorio para construir el resumen.");
 		}
 
-		List<DevolucionVenta> devoluciones = devolucionVentaDAO.buscarPorFactura(venta.getNumeroFactura());
+		List<DevolucionVenta> devoluciones = gestionDevolucionVenta.buscarPorFactura(venta.getNumeroFactura());
 		Map<String, Integer> cantidadesDevueltas = agruparCantidadesDevueltas(devoluciones);
 		List<DetalleVentaDevolucionDTO> resumen = new ArrayList<>();
 
@@ -173,18 +166,16 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 		return resumen;
 	}
 
-	@Override
 	public List<DevolucionVenta> obtenerDevolucionesPorFactura(String numeroFactura) throws Exception {
 		if (numeroFactura == null || numeroFactura.trim().isEmpty()) {
 			throw new Exception("El numero de factura es obligatorio.");
 		}
 
-		return devolucionVentaDAO.buscarPorFactura(numeroFactura.trim());
+		return gestionDevolucionVenta.buscarPorFactura(numeroFactura.trim());
 	}
 
-	@Override
 	public List<DevolucionVenta> obtenerDevoluciones() throws Exception {
-		return devolucionVentaDAO.listarDevoluciones();
+		return gestionDevolucionVenta.listar();
 	}
 
 	private void validarDevolucion(Venta venta, String codigoProducto, int cantidad, String motivo) throws Exception {
@@ -220,7 +211,7 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	}
 
 	private int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
-		return devolucionVentaDAO.obtenerCantidadDevuelta(numeroFactura, codigoProducto);
+		return gestionDevolucionVenta.obtenerCantidadDevuelta(numeroFactura, codigoProducto);
 	}
 
 	private Map<String, Integer> agruparCantidadesDevueltas(List<DevolucionVenta> devoluciones) {
@@ -318,7 +309,7 @@ public class GestionDevolucionVenta implements IGestionDevolucionVenta {
 	}
 
 	private String generarCodigoDevolucion() throws Exception {
-		String ultimoCodigo = devolucionVentaDAO.obtenerUltimoCodigoDevolucion();
+		String ultimoCodigo = gestionDevolucionVenta.obtenerUltimoCodigo();
 
 		int mayor = 0;
 

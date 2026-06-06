@@ -22,7 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import co.uptc.edu.co.gui.Evento;
-import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
+import co.uptc.edu.co.negocio.GestionDevolucionVenta;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
@@ -45,7 +45,7 @@ public class DialogDevolucionVenta extends JDialog {
 	private JButton botonConfirmarDevolucion;
 	private JButton botonCancelar;
 	private Venta venta;
-	private IGestionDevolucionVenta gestionDevolucionVenta;
+	private GestionDevolucionVenta gestionDevolucionVenta;
 
 	public DialogDevolucionVenta(Frame propietario) {
 		this(propietario, null);
@@ -59,7 +59,7 @@ public class DialogDevolucionVenta extends JDialog {
 		inicializarEventos(evento);
 	}
 
-	public void setGestionDevolucionVenta(IGestionDevolucionVenta gestionDevolucionVenta) {
+	public void setGestionDevolucionVenta(GestionDevolucionVenta gestionDevolucionVenta) {
 		this.gestionDevolucionVenta = gestionDevolucionVenta;
 	}
 

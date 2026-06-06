@@ -4,31 +4,31 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import co.uptc.edu.co.interfaces.dao.FacturaDAO;
+import co.uptc.edu.co.interfaces.IGestionArchivoFactura;
 import co.uptc.edu.co.util.LogUtil;
 
-public class FacturaTxtDAO implements FacturaDAO {
+public class FacturaTxtDAO implements IGestionArchivoFactura {
 
-	private static final String CARPETA_FACTURAS = "facturas";
+    private static final String CARPETA_FACTURAS = "facturas";
 
-	@Override
-	public String guardarFactura(String numeroFactura, String contenido) throws Exception {
+    @Override
+    public String guardarFactura(String numeroFactura, String contenido) throws Exception {
         LogUtil.info("Entrando a guardarFactura. numeroFactura=" + numeroFactura);
-		File carpeta = new File(CARPETA_FACTURAS);
 
-		if (!carpeta.exists() && !carpeta.mkdirs()) {
-			throw new Exception("No se pudo crear la carpeta de facturas.");
-		}
+        File carpeta = new File(CARPETA_FACTURAS);
 
-		File archivo = new File(carpeta, numeroFactura + ".txt");
+        if (!carpeta.exists() && !carpeta.mkdirs()) {
+            throw new Exception("No se pudo crear la carpeta de facturas.");
+        }
 
-		try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
-			writer.print(contenido);
-		}
+        File archivo = new File(carpeta, numeroFactura + ".txt");
 
-		LogUtil.info("Factura guardada en: " + archivo.getPath());
+        try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
+            writer.print(contenido);
+        }
 
-		return archivo.getPath();
-	}
+        LogUtil.info("Factura guardada en: " + archivo.getPath());
 
+        return archivo.getPath();
+    }
 }

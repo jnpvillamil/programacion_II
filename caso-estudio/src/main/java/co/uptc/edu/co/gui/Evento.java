@@ -27,19 +27,7 @@ import co.uptc.edu.co.gui.dialog.DialogMovimientoInventario;
 import co.uptc.edu.co.gui.dialog.DialogProducto;
 import co.uptc.edu.co.gui.dialog.DialogProveedor;
 import co.uptc.edu.co.gui.dialog.DialogVenta;
-import co.uptc.edu.co.interfaces.IGestionCliente;
-import co.uptc.edu.co.interfaces.IGestionCompra;
-import co.uptc.edu.co.interfaces.IGestionConsultas;
-import co.uptc.edu.co.interfaces.IGestionContabilidad;
-import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
-import co.uptc.edu.co.interfaces.IGestionFactura;
-import co.uptc.edu.co.interfaces.IGestionInventario;
-import co.uptc.edu.co.interfaces.IGestionProducto;
-import co.uptc.edu.co.interfaces.IGestionProveedor;
-import co.uptc.edu.co.interfaces.IGestionReporte;
-import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.Cliente;
-import co.uptc.edu.co.util.LogUtil;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
 import co.uptc.edu.co.modelo.MovimientoContable;
@@ -52,6 +40,18 @@ import co.uptc.edu.co.modelo.dto.ResumenFinancieroDiarioDTO;
 import co.uptc.edu.co.modelo.dto.ResumenFormaPagoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenInventarioValorizadoDTO;
 import co.uptc.edu.co.modelo.dto.ResumenProductoDTO;
+import co.uptc.edu.co.negocio.GestionCliente;
+import co.uptc.edu.co.negocio.GestionCompra;
+import co.uptc.edu.co.negocio.GestionConsultas;
+import co.uptc.edu.co.negocio.GestionContabilidad;
+import co.uptc.edu.co.negocio.GestionDevolucionVenta;
+import co.uptc.edu.co.negocio.GestionFactura;
+import co.uptc.edu.co.negocio.GestionInventario;
+import co.uptc.edu.co.negocio.GestionProducto;
+import co.uptc.edu.co.negocio.GestionProveedor;
+import co.uptc.edu.co.negocio.GestionReporte;
+import co.uptc.edu.co.negocio.GestionVenta;
+import co.uptc.edu.co.util.LogUtil;
 
 public class Evento implements ActionListener {
 	// CONSTANTES GENERALES
@@ -126,17 +126,17 @@ public class Evento implements ActionListener {
 
 	// ATRIBUTOS
 	private VentanaPrincipal ventana;
-	private IGestionProducto gestionProducto;
-	private IGestionCliente gestionCliente;
-	private IGestionProveedor gestionProveedor;
-	private IGestionVenta gestionVenta;
-	private IGestionCompra gestionCompra;
-	private IGestionDevolucionVenta gestionDevolucionVenta;
-	private IGestionFactura gestionFactura;
-	private IGestionReporte gestionReporte;
-	private IGestionConsultas gestionConsultas;
-	private IGestionContabilidad gestionContabilidad;
-	private IGestionInventario gestionInventario;
+	private GestionProducto gestionProducto;
+	private GestionCliente gestionCliente;
+	private GestionProveedor gestionProveedor;
+	private GestionVenta gestionVenta;
+	private GestionCompra gestionCompra;
+	private GestionDevolucionVenta gestionDevolucionVenta;
+	private GestionFactura gestionFactura;
+	private GestionReporte gestionReporte;
+	private GestionConsultas gestionConsultas;
+	private GestionContabilidad gestionContabilidad;
+	private GestionInventario gestionInventario;
 
 	// CONSTRUCTOR
 	public Evento(VentanaPrincipal ventana, TiendaConfig config) {
@@ -155,7 +155,7 @@ public class Evento implements ActionListener {
 	}
 
 	// GETTERS NECESARIOS
-	public IGestionCompra getGestionCompra() {
+	public GestionCompra getGestionCompra() {
 		return gestionCompra;
 	}
 
@@ -784,25 +784,37 @@ public class Evento implements ActionListener {
 		dialog.cargarProductos(gestionProducto.obtenerProductos());
 		dialog.setVisible(true);
 	}
-
+	
 	private void registrarVenta(ActionEvent e) {
 		try {
+			System.out.println("1. Entrando a registrarVenta evento");
+
 			DialogVenta dialog = obtenerDialogVenta(e);
+			System.out.println("2. Dialog obtenido");
+
 			Venta venta = dialog.obtenerVenta();
+			System.out.println("3. Venta obtenida: " + venta.getNumeroFactura());
 
 			gestionVenta.registrarVenta(venta);
-			gestionProducto.recargar();
+			System.out.println("4. Venta registrada en negocio");
 
-			mostrarInformacion("Venta registrada exitosamente.");
-			refrescarTablaVentas();
-			refrescarTablaProductos();
+			gestionProducto.recargar();
+			System.out.println("5. Productos recargados");
+
 			dialog.dispose();
 
+			refrescarTablaVentas();
+			refrescarTablaProductos();
+
+			mostrarInformacion("Venta registrada exitosamente.");
+
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			mostrarError(ex.getMessage());
 		}
 	}
 
+	
 	private void abrirDialogoAnularVenta() {
 		try {
 			Venta venta = obtenerVentaSeleccionada();
@@ -988,8 +1000,8 @@ public class Evento implements ActionListener {
 			DialogDetalleCompra dialog = new DialogDetalleCompra(ventana);
 
 			dialog.cargarCompra(compra.getNumeroFacturaProveedor(),
-					compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "", compra.getCodigoProveedor(),
-					compra.getFormaPago() != null ? compra.getFormaPago().toString() : "",
+					compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "",
+					compra.getCodigoProveedor(), compra.getFormaPago() != null ? compra.getFormaPago().toString() : "",
 					FORMATO_MONEDA.format(compra.getSubtotal()), FORMATO_MONEDA.format(compra.getImpuestos()),
 					FORMATO_MONEDA.format(compra.getTotalCompra()));
 
@@ -1015,8 +1027,8 @@ public class Evento implements ActionListener {
 			Compra compra = obtenerCompraSeleccionada();
 			DialogAnularCompra dialog = new DialogAnularCompra(ventana);
 			dialog.cargarCompra(compra.getNumeroFacturaProveedor(),
-					compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "", compra.getCodigoProveedor(),
-					String.valueOf(compra.getTotalCompra()));
+					compra.getFecha() != null ? compra.getFecha().format(FORMATO_FECHA) : "",
+					compra.getCodigoProveedor(), String.valueOf(compra.getTotalCompra()));
 
 			dialog.setVisible(true);
 
@@ -1269,7 +1281,6 @@ public class Evento implements ActionListener {
 			LocalDate fechaInicio = panelReportes.obtenerFechaInicioReporte();
 			LocalDate fechaFin = panelReportes.obtenerFechaFinReporte();
 
-			
 			if (panelReportes.haySeleccion()) {
 				String codigoSeleccionado = panelReportes.obtenerTextoSeleccionado(0);
 				if (codigoSeleccionado == null || codigoSeleccionado.isBlank()) {
@@ -1329,7 +1340,7 @@ public class Evento implements ActionListener {
 				LocalDate fechaFin = panelConsultas.obtenerFechaFin();
 
 				panelConsultas.cargarComprasPorProveedor(
-					gestionConsultas.obtenerComprasPorProveedor(codigoProveedor, fechaInicio, fechaFin));
+						gestionConsultas.obtenerComprasPorProveedor(codigoProveedor, fechaInicio, fechaFin));
 				return;
 			}
 
@@ -1351,7 +1362,7 @@ public class Evento implements ActionListener {
 				LocalDate fechaFin = panelConsultas.obtenerFechaFin();
 
 				panelConsultas.cargarMovimientosContables(
-					gestionConsultas.obtenerMovimientosContables(cuenta, tipoMovimiento, fechaInicio, fechaFin));
+						gestionConsultas.obtenerMovimientosContables(cuenta, tipoMovimiento, fechaInicio, fechaFin));
 				return;
 			}
 

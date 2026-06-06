@@ -1,23 +1,25 @@
 package co.uptc.edu.co.interfaces;
 
+import java.sql.Connection;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.Producto;
 
 public interface IGestionProducto {
 
-	Producto buscarProductoPorCodigo(String codigo);
+    void guardar(Producto producto) throws Exception;
 
-	List<Producto> obtenerProductos();
+    void guardar(Connection conexion, Producto producto) throws Exception;
 
-	void registrarProducto(Producto producto) throws Exception;
+    void actualizar(Producto producto) throws Exception;
 
-	void actualizarProducto(Producto productoActualizado) throws Exception;
+    void actualizar(Connection conexion, Producto producto) throws Exception;
 
-	void cambiarEstadoProducto(String codigo) throws Exception;
+    Producto buscar(String codigo) throws Exception;
 
-	String generarCodigoProducto();
+    Producto buscar(Connection conexion, String codigo) throws Exception;
 
-	void recargar() throws Exception;
+    List<Producto> listar() throws Exception;
 
+    void cambiarEstado(String codigo) throws Exception;
 }

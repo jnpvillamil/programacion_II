@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import co.uptc.edu.co.conexion.TransaccionBD;
-import co.uptc.edu.co.interfaces.IGestionContabilidad;
-import co.uptc.edu.co.interfaces.IGestionInventario;
-import co.uptc.edu.co.interfaces.dao.CompraDAO;
 import co.uptc.edu.co.interfaces.IGestionCompra;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
@@ -18,19 +15,19 @@ import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.enums.EstadoCompraEnum;
 import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
-public class GestionCompra implements IGestionCompra {
+public class GestionCompra {
 	private static final String PREFIJO_FACTURA_COMPRA = "FC-";
 	private static final int DIGITOS_FACTURA_COMPRA = 5;
 	private static final int CONSECUTIVO_FACTURA_INICIAL = 513;
-	private final CompraDAO compraDAO;
-	private final IGestionInventario gestionInventario;
-	private final IGestionContabilidad gestionContabilidad;
+	private final IGestionCompra gestionCompra;
+	private final GestionInventario gestionInventario;
+	private final GestionContabilidad gestionContabilidad;
 	private List<Compra> compras;
 
-	public GestionCompra(CompraDAO compraDAO, IGestionInventario gestionInventario,
-			IGestionContabilidad gestionContabilidad) {
-		if (compraDAO == null) {
-			throw new IllegalArgumentException("El compraDAO no puede ser nulo.");
+	public GestionCompra(IGestionCompra gestionCompra, GestionInventario gestionInventario,
+			GestionContabilidad gestionContabilidad) {
+		if (gestionCompra == null) {
+			throw new IllegalArgumentException("La gestionCompra no puede ser nula.");
 		}
 
 		if (gestionInventario == null) {
@@ -40,18 +37,17 @@ public class GestionCompra implements IGestionCompra {
 			throw new IllegalArgumentException("El gestionContabilidad no puede ser nulo.");
 		}
 
-		this.compraDAO = compraDAO;
+		this.gestionCompra = gestionCompra;
 		this.gestionInventario = gestionInventario;
 		this.gestionContabilidad = gestionContabilidad;
 		try {
-			compras = compraDAO.listarCompra();
+			compras = gestionCompra.listar();
 		} catch (Exception e) {
 			compras = new ArrayList<>();
 			throw new IllegalStateException("Error al cargar compras.", e);
 		}
 	}
 
-	@Override
 	public double calcularImpuesto(CategoriaProductoEnum categoria, double subtotal) {
 		double tasa;
 		if (categoria == null) {
@@ -71,7 +67,6 @@ public class GestionCompra implements IGestionCompra {
 		return subtotal * tasa;
 	}
 
-	@Override
 	public void registrarCompra(Compra compra) throws Exception {
 		validarCompra(compra);
 		String numeroFactura = compra.getNumeroFacturaProveedor();
@@ -90,7 +85,7 @@ public class GestionCompra implements IGestionCompra {
 		compra.setEstado(EstadoCompraEnum.ACTIVA);
 
 		if (compra.getFormaPago() == null) {
-		    throw new Exception("La forma de pago es obligatoria.");
+			throw new Exception("La forma de pago es obligatoria.");
 		}
 
 		compra.setSubtotal(calcularSubtotal(compra.getDetalles()));
@@ -98,7 +93,7 @@ public class GestionCompra implements IGestionCompra {
 		compra.setTotalCompra(compra.getSubtotal() + compra.getImpuestos());
 
 		TransaccionBD.ejecutar(conexion -> {
-			compraDAO.guardarCompra(conexion, compra);
+			gestionCompra.guardar(conexion, compra);
 			registrarEntradaInventario(conexion, compra);
 			gestionContabilidad.registrarEgresoPorCompra(conexion, compra);
 		});
@@ -106,12 +101,10 @@ public class GestionCompra implements IGestionCompra {
 		compras.add(compra);
 	}
 
-	@Override
 	public List<Compra> obtenerCompras() {
 		return new ArrayList<>(compras);
 	}
 
-	@Override
 	public Compra buscarCompraPorNumero(String numeroFactura) throws Exception {
 		if (numeroFactura == null || numeroFactura.trim().isEmpty()) {
 			return null;
@@ -125,13 +118,12 @@ public class GestionCompra implements IGestionCompra {
 		}
 
 		try {
-			return compraDAO.buscarComprarpornumero(numeroFactura);
+			return gestionCompra.buscar(numeroFactura);
 		} catch (Exception e) {
 			throw new Exception("Error al buscar la compra por numero de factura: " + numeroFactura, e);
 		}
 	}
 
-	@Override
 	public String generarNumeroFactura() {
 		int siguienteNumero = CONSECUTIVO_FACTURA_INICIAL;
 
@@ -181,7 +173,6 @@ public class GestionCompra implements IGestionCompra {
 		return subtotal;
 	}
 
-	@Override
 	public void anularCompra(String numeroFactura, String motivoAnulacion) throws Exception {
 		Compra compra = buscarCompraPorNumero(numeroFactura);
 
@@ -207,7 +198,7 @@ public class GestionCompra implements IGestionCompra {
 				revertirEntradaInventario(conexion, compra);
 				compra.setEstado(EstadoCompraEnum.ANULADA);
 				compra.setMotivoAnulacion(motivo);
-				compraDAO.actualizarCompra(conexion, compra);
+				gestionCompra.actualizar(conexion, compra);
 				gestionContabilidad.registrarReversoPorAnulacionCompra(conexion, compra, motivo);
 			});
 		} catch (Exception e) {
@@ -228,15 +219,15 @@ public class GestionCompra implements IGestionCompra {
 
 	private void registrarEntradaInventario(Connection conexion, Compra compra) throws Exception {
 		for (DetalleCompra detalle : compra.getDetalles()) {
-			gestionInventario.registrarEntrada(conexion, detalle.getProducto().getCodigoProducto(), detalle.getCantidad(),
-					"Entrada por compra " + compra.getNumeroFacturaProveedor());
+			gestionInventario.registrarEntrada(conexion, detalle.getProducto().getCodigoProducto(),
+					detalle.getCantidad(), "Entrada por compra " + compra.getNumeroFacturaProveedor());
 		}
 	}
 
 	private void revertirEntradaInventario(Connection conexion, Compra compra) throws Exception {
 		for (DetalleCompra detalle : compra.getDetalles()) {
-			gestionInventario.registrarSalida(conexion, detalle.getProducto().getCodigoProducto(), detalle.getCantidad(),
-					"Reversion de compra " + compra.getNumeroFacturaProveedor());
+			gestionInventario.registrarSalida(conexion, detalle.getProducto().getCodigoProducto(),
+					detalle.getCantidad(), "Reversion de compra " + compra.getNumeroFacturaProveedor());
 		}
 	}
 

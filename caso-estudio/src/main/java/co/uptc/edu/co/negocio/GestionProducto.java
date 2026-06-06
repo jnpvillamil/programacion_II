@@ -4,24 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.interfaces.IGestionProducto;
-import co.uptc.edu.co.interfaces.dao.ProductoDAO;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 
-public class GestionProducto implements IGestionProducto {
+public class GestionProducto {
 
 	private List<Producto> productos;
-	private final ProductoDAO productoDAO;
+	private final IGestionProducto gestionProducto;
 
-	public GestionProducto(ProductoDAO productoDAO) {
-		if (productoDAO == null) {
-			throw new IllegalArgumentException("El ProductoDAO no puede ser nulo.");
+	public GestionProducto(IGestionProducto gestionProducto) {
+		if (gestionProducto == null) {
+			throw new IllegalArgumentException("La gestion de producto no puede ser nula.");
 		}
 
-		this.productoDAO = productoDAO;
+		this.gestionProducto = gestionProducto;
 
 		try {
-			productos = productoDAO.listarProducto();
+			productos = gestionProducto.listar();
 		} catch (Exception e) {
 			productos = new ArrayList<>();
 			throw new IllegalStateException("Error al cargar productos.", e);
@@ -29,24 +28,21 @@ public class GestionProducto implements IGestionProducto {
 	}
 
 	private void recargarProductos() throws Exception {
-		productos = productoDAO.listarProducto();
+		productos = gestionProducto.listar();
 	}
 
-	@Override
 	public Producto buscarProductoPorCodigo(String codigo) {
 		try {
-			return productoDAO.buscarPorCodigo(codigo);
+			return gestionProducto.buscar(codigo);
 		} catch (Exception e) {
 			throw new IllegalStateException("Error al buscar el producto por codigo: " + codigo, e);
 		}
 	}
 
-	@Override
 	public List<Producto> obtenerProductos() {
 		return new ArrayList<>(productos);
 	}
 
-	@Override
 	public void registrarProducto(Producto producto) throws Exception {
 		validarProducto(producto);
 
@@ -55,18 +51,16 @@ public class GestionProducto implements IGestionProducto {
 		}
 
 		producto.setEstado(EstadoEnum.ACTIVO);
-		productoDAO.guardarProducto(producto);
+		gestionProducto.guardar(producto);
 		recargarProductos();
 	}
 
-	@Override
 	public void actualizarProducto(Producto productoActualizado) throws Exception {
 		validarProducto(productoActualizado);
-		productoDAO.actualizarProducto(productoActualizado);
+		gestionProducto.actualizar(productoActualizado);
 		recargarProductos();
 	}
 
-	@Override
 	public void cambiarEstadoProducto(String codigo) throws Exception {
 		Producto producto = buscarProductoPorCodigo(codigo);
 
@@ -74,13 +68,7 @@ public class GestionProducto implements IGestionProducto {
 			throw new Exception("No se encontro el producto.");
 		}
 
-		if (producto.estaActivo()) {
-			producto.setEstado(EstadoEnum.INACTIVO);
-		} else {
-			producto.setEstado(EstadoEnum.ACTIVO);
-		}
-
-		productoDAO.actualizarProducto(producto);
+		gestionProducto.cambiarEstado(codigo);
 		recargarProductos();
 	}
 
@@ -142,7 +130,6 @@ public class GestionProducto implements IGestionProducto {
 		}
 	}
 
-	@Override
 	public String generarCodigoProducto() {
 		int mayor = 0;
 
@@ -161,7 +148,6 @@ public class GestionProducto implements IGestionProducto {
 		return String.format("P%05d", mayor + 1);
 	}
 
-	@Override
 	public void recargar() throws Exception {
 		recargarProductos();
 	}

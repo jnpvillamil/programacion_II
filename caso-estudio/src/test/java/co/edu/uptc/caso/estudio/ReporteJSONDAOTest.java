@@ -26,10 +26,13 @@ public class ReporteJSONDAOTest extends TestCase {
 						new ResumenProductoDTO("P015", "Aceite 1L", 85, 425000)),
 				new ResumenContableDTO(12500000, 7200000, 5300000), 2375000, 1368000);
 
-		String ruta = dao.guardarReporteResumenFinancieroDiario(resumen);
-		File archivo = new File(ruta);
+		String nombreReporte = "resumen_financiero_diario_2025-02-25";
+		dao.guardar(nombreReporte, resumen);
+
+		File archivo = new File("reportes", nombreReporte + ".json");
 
 		assertTrue(archivo.exists());
+	
 
 		String contenido = Files.readString(archivo.toPath(), StandardCharsets.UTF_8);
 		assertTrue(contenido.contains("\"fecha\": \"2025-02-25\""));

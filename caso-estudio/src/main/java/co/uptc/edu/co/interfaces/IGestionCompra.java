@@ -1,20 +1,25 @@
 package co.uptc.edu.co.interfaces;
 
+import java.sql.Connection;
 import java.util.List;
+
 import co.uptc.edu.co.modelo.Compra;
-import co.uptc.edu.co.modelo.enums.CategoriaProductoEnum;
 
 public interface IGestionCompra {
 
-	void registrarCompra(Compra compra) throws Exception;
+    void guardar(Compra compra) throws Exception;
 
-	List<Compra> obtenerCompras();
+    void guardar(Connection conexion, Compra compra) throws Exception;
 
-	Compra buscarCompraPorNumero(String numeroFactura) throws Exception;
+    void actualizar(Compra compra) throws Exception;
 
-	String generarNumeroFactura();
+    void actualizar(Connection conexion, Compra compra) throws Exception;
 
-	void anularCompra(String numeroFactura, String motivoAnulacion) throws Exception;
+    Compra buscar(String numeroFactura) throws Exception;
 
-	double calcularImpuesto(CategoriaProductoEnum categoria, double subtotal);
+    Compra buscar(Connection conexion, String numeroFactura) throws Exception;
+
+    List<Compra> listar() throws Exception;
+
+	
 }

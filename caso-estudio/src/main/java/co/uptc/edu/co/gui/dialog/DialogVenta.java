@@ -27,7 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import co.uptc.edu.co.gui.Evento;
-import co.uptc.edu.co.interfaces.IGestionVenta;
+import co.uptc.edu.co.negocio.GestionVenta;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
@@ -61,7 +61,7 @@ public class DialogVenta extends JDialog {
 	private JButton botonQuitarProducto;
 	private JButton botonGuardar;
 	private JButton botonCancelar;
-	private IGestionVenta gestionVenta;
+	private GestionVenta gestionVenta;
 
 	public DialogVenta(Frame propietario) {
 		this(propietario, null, null);
@@ -71,7 +71,7 @@ public class DialogVenta extends JDialog {
 		this(propietario, evento, null);
 	}
 
-	public DialogVenta(Frame propietario, Evento evento, IGestionVenta gestionVenta) {
+	public DialogVenta(Frame propietario, Evento evento, GestionVenta gestionVenta) {
 		super(propietario, "Registrar Venta", true);
 		this.gestionVenta = gestionVenta;
 		inicializarComponentes();
@@ -446,7 +446,7 @@ public class DialogVenta extends JDialog {
 		}
 	}
 
-	private IGestionVenta obtenerGestionVenta() throws Exception {
+	private GestionVenta obtenerGestionVenta() throws Exception {
 		if (gestionVenta == null) {
 			throw new Exception("La gestion de ventas no esta configurada.");
 		}

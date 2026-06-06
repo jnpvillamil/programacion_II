@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
-import co.uptc.edu.co.interfaces.dao.ProveedorDAO;
+import co.uptc.edu.co.interfaces.IGestionProveedor;
 import co.uptc.edu.co.modelo.Proveedor;
 import co.uptc.edu.co.modelo.enums.EstadoEnum;
 import co.uptc.edu.co.util.LogUtil;
 
-public class ProveedorBDDAO implements ProveedorDAO {
+public class ProveedorBDDAO implements IGestionProveedor {
 
 	private static final String TABLA_PROVEEDORES = "proveedores";
 
@@ -21,7 +21,7 @@ public class ProveedorBDDAO implements ProveedorDAO {
 			+ " (codigoProveedor, razonSocial, nit, direccion, telefono, correoElectronico, estado)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoProveedor, razonSocial, nit, direccion, telefono, correoElectronico, estado "
+	private static final String SQL_BUSCAR = "SELECT codigoProveedor, razonSocial, nit, direccion, telefono, correoElectronico, estado "
 			+ "FROM " + TABLA_PROVEEDORES + " WHERE codigoProveedor = ?";
 
 	private static final String SQL_LISTAR = "SELECT codigoProveedor, razonSocial, nit, direccion, telefono, correoElectronico, estado "
@@ -32,13 +32,14 @@ public class ProveedorBDDAO implements ProveedorDAO {
 			+ " WHERE codigoProveedor = ?";
 
 	@Override
-	public void guardarProveedor(Proveedor proveedor) throws Exception {
+	public void guardar(Proveedor proveedor) throws Exception {
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERTAR)) {
 
 			prepararInsert(preparedStatement, proveedor);
 			preparedStatement.executeUpdate();
 			LogUtil.info("Proveedor registrado con éxito. Código: " + proveedor.getCodigoProveedor());
+
 		} catch (SQLException e) {
 			LogUtil.error("Falla al guardar proveedor. Código: " + proveedor.getCodigoProveedor(), e);
 			throw new Exception("Error al guardar el proveedor en el servidor remoto: " + e.getMessage(), e);
@@ -46,13 +47,14 @@ public class ProveedorBDDAO implements ProveedorDAO {
 	}
 
 	@Override
-	public void actualizarProveedor(Proveedor proveedor) throws Exception {
+	public void actualizar(Proveedor proveedor) throws Exception {
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_ACTUALIZAR)) {
 
 			prepararActualizar(preparedStatement, proveedor);
 			preparedStatement.executeUpdate();
 			LogUtil.info("Proveedor actualizado con éxito. Código: " + proveedor.getCodigoProveedor());
+
 		} catch (SQLException e) {
 			LogUtil.error("Falla al actualizar proveedor. Código: " + proveedor.getCodigoProveedor(), e);
 			throw new Exception("Error al actualizar el proveedor en el servidor remoto: " + e.getMessage(), e);
@@ -60,27 +62,32 @@ public class ProveedorBDDAO implements ProveedorDAO {
 	}
 
 	@Override
-	public Proveedor buscarProveedorPorCodigo(String codigo) throws Exception {
+	public Proveedor buscar(String codigo) throws Exception {
 		try (Connection connection = ConexionBD.getConexion();
-				PreparedStatement preparedStatement = connection.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_BUSCAR)) {
 
 			preparedStatement.setString(1, codigo);
+
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
 				if (resultSet.next()) {
 					return construirProveedor(resultSet);
 				}
 			}
+
 			LogUtil.info("Búsqueda de proveedor exitosa. Código: " + codigo);
+
 		} catch (SQLException e) {
 			LogUtil.error("Falla al buscar proveedor. Código: " + codigo, e);
 			throw new Exception("Error al buscar el proveedor solicitado: " + e.getMessage(), e);
 		}
+
 		return null;
 	}
 
 	@Override
-	public List<Proveedor> listarProveedor() throws Exception {
+	public List<Proveedor> listar() throws Exception {
 		List<Proveedor> lista = new ArrayList<>();
+
 		try (Connection connection = ConexionBD.getConexion();
 				PreparedStatement preparedStatement = connection.prepareStatement(SQL_LISTAR);
 				ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -88,12 +95,32 @@ public class ProveedorBDDAO implements ProveedorDAO {
 			while (resultSet.next()) {
 				lista.add(construirProveedor(resultSet));
 			}
+
 			LogUtil.info("Listado de proveedores exitoso.");
+
 		} catch (SQLException e) {
 			LogUtil.error("Falla al listar proveedores.", e);
 			throw new Exception("Error al listar los proveedores: " + e.getMessage(), e);
 		}
+
 		return lista;
+	}
+
+	@Override
+	public void cambiarEstado(String codigo) throws Exception {
+		Proveedor proveedor = buscar(codigo);
+
+		if (proveedor == null) {
+			throw new Exception("No se encontró el proveedor.");
+		}
+
+		if (proveedor.getEstado() == EstadoEnum.ACTIVO) {
+			proveedor.setEstado(EstadoEnum.INACTIVO);
+		} else {
+			proveedor.setEstado(EstadoEnum.ACTIVO);
+		}
+
+		actualizar(proveedor);
 	}
 
 	private void prepararInsert(PreparedStatement preparedStatement, Proveedor proveedor) throws SQLException {

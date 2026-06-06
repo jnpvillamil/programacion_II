@@ -1,25 +1,23 @@
 package co.uptc.edu.co.interfaces;
 
+import java.sql.Connection;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.DevolucionVenta;
-import co.uptc.edu.co.modelo.Venta;
-import co.uptc.edu.co.modelo.dto.DetalleVentaDevolucionDTO;
 
 public interface IGestionDevolucionVenta {
 
-	void devolverVenta(String numeroFactura, String codigoProducto, int cantidad, String motivo) throws Exception;
+	void guardar(DevolucionVenta devolucion) throws Exception;
 
-	void devolverVenta(Venta venta, String codigoProducto, int cantidad, String motivo) throws Exception;
+	void guardar(Connection conexion, DevolucionVenta devolucion) throws Exception;
 
-	double calcularValorDevolucion(Venta venta, String codigoProducto, int cantidad) throws Exception;
+	DevolucionVenta buscar(String codigoDevolucion) throws Exception;
 
-	DevolucionVenta buscarDevolucionPorCodigo(String codigoDevolucion) throws Exception;
+	List<DevolucionVenta> buscarPorFactura(String numeroFactura) throws Exception;
 
-	List<DetalleVentaDevolucionDTO> obtenerResumenDetalleVenta(Venta venta) throws Exception;
+	List<DevolucionVenta> listar() throws Exception;
 
-	List<DevolucionVenta> obtenerDevolucionesPorFactura(String numeroFactura) throws Exception;
+	int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception;
 
-	List<DevolucionVenta> obtenerDevoluciones() throws Exception;
-
+	String obtenerUltimoCodigo() throws Exception;
 }

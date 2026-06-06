@@ -1,36 +1,26 @@
 package co.uptc.edu.co.interfaces;
 
+import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.List;
 
 import co.uptc.edu.co.modelo.Venta;
-import co.uptc.edu.co.modelo.Cliente;
-import co.uptc.edu.co.modelo.DetalleVenta;
-import co.uptc.edu.co.modelo.Producto;
 
 public interface IGestionVenta {
 
-    void registrarVenta(Venta venta) throws Exception;
-    
-    Venta buscarVentaPorNumero(String numeroFactura) throws Exception;
+	void guardar(Venta venta) throws Exception;
 
-    List<Venta> obtenerVentas();
+	void guardar(Connection conexion, Venta venta) throws Exception;
 
-    List<Venta> obtenerVentasPorCliente(Cliente cliente) throws Exception;
-    
-    void anularVenta(String numeroFactura, String motivo) throws Exception;
+	void actualizar(Venta venta) throws Exception;
 
-    String generarNumeroFactura();
+	void actualizar(Connection conexion, Venta venta) throws Exception;
 
-    void recargar() throws Exception;
+	Venta buscar(String numeroFactura) throws Exception;
 
-    double calcularSubtotalDetalleVenta(Producto producto, int cantidad) throws Exception;
+	Venta buscar(Connection conexion, String numeroFactura) throws Exception;
 
-    double calcularIvaDetalleVenta(Producto producto, int cantidad) throws Exception;
+	List<Venta> listar() throws Exception;
 
-    double calcularSubtotalVenta(List<DetalleVenta> detalles) throws Exception;
-
-    double calcularImpuestosVenta(List<DetalleVenta> detalles) throws Exception;
-
-    double calcularTotalVenta(List<DetalleVenta> detalles) throws Exception;
-
+	List<Venta> listarPorFecha(LocalDate fecha) throws Exception;
 }

@@ -5,17 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.TransaccionBD;
-import co.uptc.edu.co.interfaces.IGestionContabilidad;
 import co.uptc.edu.co.interfaces.IGestionVenta;
-import co.uptc.edu.co.interfaces.dao.VentaDAO;
-import co.uptc.edu.co.interfaces.IGestionInventario;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 
-public class GestionVenta implements IGestionVenta {
+public class GestionVenta  {
 
 	private static final String PREFIJO_FACTURA = "FV-";
 	private static final String PREFIJO_FACTURA_ANTERIOR = "factura_";
@@ -23,16 +20,15 @@ public class GestionVenta implements IGestionVenta {
 	private static final double IVA = 0.19;
 
 	private List<Venta> ventas;
-	private final VentaDAO ventaDAO;
-	private final IGestionInventario gestionInventario;
-	private final IGestionContabilidad gestionContabilidad;
+	private final IGestionVenta gestionVenta;
+	private final GestionInventario gestionInventario;
+	private final GestionContabilidad gestionContabilidad;
 
-	public GestionVenta(VentaDAO ventaDAO, IGestionInventario gestionInventario,
-			IGestionContabilidad gestionContabilidad) {
+	public GestionVenta(IGestionVenta gestionVenta, GestionInventario gestionInventario,
+			GestionContabilidad gestionContabilidad) {
 
-		if (ventaDAO == null) {
-
-			throw new IllegalArgumentException("La ventaDAO no puede ser nulo");
+		if (gestionVenta == null) {
+			throw new IllegalArgumentException("La gestionVenta no puede ser nula");
 		}
 		if (gestionInventario == null) {
 			throw new IllegalArgumentException("La gestionInventario no puede ser nula");
@@ -40,31 +36,32 @@ public class GestionVenta implements IGestionVenta {
 		if (gestionContabilidad == null) {
 			throw new IllegalArgumentException("La gestionContabilidad no puede ser nula");
 		}
-		this.ventaDAO = ventaDAO;
+
+		this.gestionVenta = gestionVenta;
 		this.gestionInventario = gestionInventario;
 		this.gestionContabilidad = gestionContabilidad;
 
 		try {
-			ventas = ventaDAO.listarVentas();
+			ventas = gestionVenta.listar();
 		} catch (Exception e) {
 			ventas = new ArrayList<>();
 			throw new IllegalStateException("Error al cargar ventas.", e);
 		}
-
 	}
-
 	private void recargarVentas() throws Exception {
-		ventas = ventaDAO.listarVentas();
+		ventas = gestionVenta.listar();
 	}
 
-	@Override
+
 	public void recargar() throws Exception {
 		recargarVentas();
 	}
 
-	@Override
 	public void registrarVenta(Venta venta) throws Exception {
+		System.out.println("GV 1. Antes validarVenta");
 		validarVenta(venta);
+
+		System.out.println("GV 2. Antes validarFacturaNoRegistrada");
 		validarFacturaNoRegistrada(venta.getNumeroFactura());
 
 		if (venta.getFechaHora() == null) {
@@ -75,23 +72,36 @@ public class GestionVenta implements IGestionVenta {
 			venta.setEstado(EstadoVentaEnum.ACTIVA);
 		}
 
+		System.out.println("GV 3. Antes calcularTotales");
 		calcularTotales(venta);
 
+		System.out.println("GV 4. Antes transaccion");
+
 		TransaccionBD.ejecutar(conexion -> {
-			ventaDAO.guardarVenta(conexion, venta);
+			System.out.println("GV 5. Antes guardar venta");
+			gestionVenta.guardar(conexion, venta);
+
+			System.out.println("GV 6. Antes salida inventario");
 			gestionInventario.registrarSalidaPorVenta(conexion, venta);
+
+			System.out.println("GV 7. Antes ingreso contabilidad");
 			gestionContabilidad.registrarIngresoPorVenta(conexion, venta);
+
+			System.out.println("GV 8. Fin transaccion");
 		});
 
+		System.out.println("GV 9. Despues transaccion");
+
 		ventas.add(0, venta);
+
+		System.out.println("GV 10. Venta agregada en memoria");
 	}
 
-	@Override
 	public List<Venta> obtenerVentas() {
 		return new ArrayList<>(ventas);
 	}
 
-	@Override
+
 	public List<Venta> obtenerVentasPorCliente(Cliente cliente) throws Exception {
 		if (cliente == null) {
 			throw new Exception("El cliente es obligatorio.");
@@ -129,13 +139,13 @@ public class GestionVenta implements IGestionVenta {
 		return ventasDelCliente;
 	}
 
-	@Override
+
 	public Venta buscarVentaPorNumero(String numeroFactura) throws Exception {
 		if (numeroFactura == null) {
 			return null;
 		}
 
-		return ventaDAO.buscarVentaPorNumero(numeroFactura);
+		return gestionVenta.buscar(numeroFactura);
 	}
 
 	private void validarFacturaNoRegistrada(String numeroFactura) throws Exception {
@@ -146,7 +156,7 @@ public class GestionVenta implements IGestionVenta {
 			}
 		}
 
-		if (ventaDAO.buscarVentaPorNumero(numeroFactura) != null) {
+		if (gestionVenta.buscar(numeroFactura) != null) {
 			throw new Exception("Ya existe una venta con ese numero de factura.");
 		}
 	}
@@ -224,14 +234,13 @@ public class GestionVenta implements IGestionVenta {
 
 	}
 
-	@Override
 	public double calcularSubtotalDetalleVenta(Producto producto, int cantidad) throws Exception {
 		validarProductoDetalle(producto);
 		validarCantidadDetalle(cantidad);
 		return producto.getPrecioVenta() * cantidad;
 	}
 
-	@Override
+
 	public double calcularIvaDetalleVenta(Producto producto, int cantidad) throws Exception {
 		validarProductoDetalle(producto);
 		validarCantidadDetalle(cantidad);
@@ -239,7 +248,6 @@ public class GestionVenta implements IGestionVenta {
 		return producto.isAplicaIva() ? subtotal * IVA : 0;
 	}
 
-	@Override
 	public double calcularSubtotalVenta(List<DetalleVenta> detalles) throws Exception {
 		validarDetallesParaCalculo(detalles);
 		double subtotal = 0;
@@ -249,7 +257,7 @@ public class GestionVenta implements IGestionVenta {
 		return subtotal;
 	}
 
-	@Override
+
 	public double calcularImpuestosVenta(List<DetalleVenta> detalles) throws Exception {
 		validarDetallesParaCalculo(detalles);
 		double impuestos = 0;
@@ -259,7 +267,7 @@ public class GestionVenta implements IGestionVenta {
 		return impuestos;
 	}
 
-	@Override
+
 	public double calcularTotalVenta(List<DetalleVenta> detalles) throws Exception {
 		return calcularSubtotalVenta(detalles) + calcularImpuestosVenta(detalles);
 	}
@@ -300,7 +308,7 @@ public class GestionVenta implements IGestionVenta {
 		}
 	}
 
-	@Override
+
 	public void anularVenta(String numeroFactura, String motivo) throws Exception {
 		Venta venta = buscarVentaPorNumero(numeroFactura);
 		if (venta == null) {
@@ -331,7 +339,7 @@ public class GestionVenta implements IGestionVenta {
 			venta.setFechaAnulacion(LocalDateTime.now());
 
 			TransaccionBD.ejecutar(conexion -> {
-				ventaDAO.actualizarVenta(conexion, venta);
+				gestionVenta.actualizar(conexion, venta);
 				gestionInventario.registrarEntradaPorAnulacion(conexion, venta, motivoAnulacion);
 				gestionContabilidad.registrarReversoPorAnulacionVenta(conexion, venta, motivoAnulacion);
 			});
@@ -357,7 +365,7 @@ public class GestionVenta implements IGestionVenta {
 		}
 	}
 
-	@Override
+
 	public String generarNumeroFactura() {
 		return PREFIJO_FACTURA + String.format("%0" + DIGITOS_FACTURA + "d", obtenerSiguienteConsecutivoFactura());
 	}

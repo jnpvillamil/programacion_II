@@ -1,19 +1,17 @@
 package co.uptc.edu.co.interfaces;
 
 import java.util.List;
-
 import co.uptc.edu.co.modelo.Cliente;
 
 public interface IGestionCliente {
 
-    Cliente buscarClientePorCodigo(String codigo);
+    void guardar(Cliente cliente) throws Exception;
 
-    List<Cliente> obtenerClientes();
+    void actualizar(Cliente cliente) throws Exception;
 
-    void registrarCliente(Cliente cliente) throws Exception;
+    Cliente buscar(String codigo) throws Exception;
 
-    void actualizarCliente(Cliente clienteActualizado) throws Exception;
+    List<Cliente> listar() throws Exception;
 
-    void cambiarEstadoCliente(String codigo) throws Exception;
-    String generarCodigoCliente();
+    void cambiarEstado(String codigo) throws Exception;
 }

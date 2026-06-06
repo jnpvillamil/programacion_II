@@ -19,8 +19,8 @@ public class ConexionBD {
 			+ "&useLocalSessionState=true"
 			+ "&elideSetAutoCommits=true";
 
-	private static final String USUARIO = "";
-	private static final String PASSWORD = "";
+	private static final String USUARIO = "root";
+	private static final String PASSWORD = "1007492701";
 
 	private static final HikariDataSource DATA_SOURCE = crearDataSource();
 

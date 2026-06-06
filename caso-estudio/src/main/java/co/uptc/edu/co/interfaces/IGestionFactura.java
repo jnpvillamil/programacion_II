@@ -1,12 +1,11 @@
 package co.uptc.edu.co.interfaces;
 
-import co.uptc.edu.co.modelo.Venta;
 import co.uptc.edu.co.modelo.Compra;
+import co.uptc.edu.co.modelo.Venta;
 
 public interface IGestionFactura {
 
-	String generarFactura(Venta venta) throws Exception;
+    String generarFactura(Venta venta) throws Exception;
 
-	String generarFactura(Compra compra) throws Exception;
-
+    String generarFactura(Compra compra) throws Exception;
 }

@@ -5,15 +5,13 @@ import co.uptc.edu.co.modelo.Proveedor;
 
 public interface IGestionProveedor {
 
-    Proveedor buscarProveedorPorCodigo(String codigo);
+    void guardar(Proveedor proveedor) throws Exception;
 
-    List<Proveedor> obtenerProveedores();
+    void actualizar(Proveedor proveedor) throws Exception;
 
-    void registrarProveedor(Proveedor proveedor) throws Exception;
+    Proveedor buscar(String codigo) throws Exception;
 
-    void actualizarProveedor(Proveedor proveedor) throws Exception;
+    List<Proveedor> listar() throws Exception;
 
-    void cambiarEstadoProveedor(String codigo) throws Exception;
-
-	String generarCodigoProveedor();
+    void cambiarEstado(String codigo) throws Exception;
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
 import co.uptc.edu.co.conexion.TransaccionBD;
-import co.uptc.edu.co.interfaces.dao.VentaDAO;
+import co.uptc.edu.co.interfaces.IGestionVenta;
 import co.uptc.edu.co.modelo.DetalleVenta;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Venta;
@@ -21,7 +21,7 @@ import co.uptc.edu.co.modelo.enums.EstadoVentaEnum;
 import co.uptc.edu.co.modelo.enums.FormaPago;
 import co.uptc.edu.co.util.LogUtil;
 
-public class VentaBDDAO implements VentaDAO {
+public class VentaBDDAO implements IGestionVenta {
 
 	private static final String TABLA_VENTAS = "ventas";
 	private static final String TABLA_DETALLE_VENTAS = "detalle_ventas";
@@ -57,33 +57,33 @@ public class VentaBDDAO implements VentaDAO {
 			+ " SET estado = ? WHERE numeroFactura = ?";
 
 	@Override
-	public void guardarVenta(Venta venta) throws Exception {
+	public void guardar(Venta venta) throws Exception {
  		LogUtil.info("Entrando a guardarVenta. numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
- 		TransaccionBD.ejecutar(conexion -> guardarVenta(conexion, venta));
+ 		TransaccionBD.ejecutar(conexion -> guardar(conexion, venta));
 	}
 
 	@Override
-	public void guardarVenta(Connection conexion, Venta venta) throws Exception {
+	public void guardar(Connection conexion, Venta venta) throws Exception {
  		LogUtil.info("Entrando a guardarVenta(conn). numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
  		guardarCabeceraVenta(conexion, venta);
  		guardarDetallesVenta(conexion, venta);
 	}
 
 	@Override
-	public void actualizarVenta(Venta venta) throws Exception {
+	public void actualizar(Venta venta) throws Exception {
  		LogUtil.info("Entrando a actualizarVenta. numeroFactura=" + (venta != null ? venta.getNumeroFactura() : "null"));
- 		TransaccionBD.ejecutar(conexion -> actualizarVenta(conexion, venta));
+ 		TransaccionBD.ejecutar(conexion -> actualizar(conexion, venta));
 	}
 
 	@Override
-	public void actualizarVenta(Connection conexion, Venta venta) throws Exception {
+	public void actualizar(Connection conexion, Venta venta) throws Exception {
 		actualizarCabeceraVenta(conexion, venta);
 		eliminarDetallesVenta(conexion, venta.getNumeroFactura());
 		guardarDetallesVenta(conexion, venta);
 	}
 
 	@Override
-	public Venta buscarVentaPorNumero(String numeroFactura) throws Exception {
+	public Venta buscar(String numeroFactura) throws Exception {
         LogUtil.info("Entrando a buscarVentaPorNumero. numeroFactura=" + numeroFactura);
 		try (Connection conexion = ConexionBD.getConexion();
 				PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_VENTA)) {
@@ -105,9 +105,29 @@ public class VentaBDDAO implements VentaDAO {
 			throw new Exception("Error al buscar la venta solicitada: " + e.getMessage(), e);
 		}
 	}
+	
+	@Override
+	public Venta buscar(Connection conexion, String numeroFactura) throws Exception {
+		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_VENTA)) {
+			sentencia.setString(1, numeroFactura);
+
+			try (ResultSet resultado = sentencia.executeQuery()) {
+				if (resultado.next()) {
+					Venta venta = construirVenta(resultado);
+					venta.setDetalles(listarDetallesVenta(conexion, venta.getNumeroFactura()));
+					return venta;
+				}
+			}
+
+			return null;
+
+		} catch (SQLException e) {
+			throw new Exception("Error al buscar la venta solicitada: " + e.getMessage(), e);
+		}
+	}
 
 	@Override
-	public List<Venta> listarVentas() throws Exception {
+	public List<Venta> listar() throws Exception {
         LogUtil.info("Entrando a listarVentas");
 		List<Venta> ventas = new ArrayList<>();
 
@@ -134,7 +154,7 @@ public class VentaBDDAO implements VentaDAO {
 	}
 
 	@Override
-	public List<Venta> listarVentasPorFecha(LocalDate fecha) throws Exception {
+	public List<Venta>  listarPorFecha(LocalDate fecha) throws Exception {
         LogUtil.info("Entrando a listarVentasPorFecha fecha=" + fecha);
 		List<Venta> ventas = new ArrayList<>();
 
@@ -319,8 +339,8 @@ public class VentaBDDAO implements VentaDAO {
 		sentencia.setBigDecimal(5, BigDecimal.valueOf(detalle.getSubtotal()));
 	}
 
-	@Override
-	public void actualizarEstadoVenta(Connection conexion, String numeroFactura, EstadoVentaEnum estado)
+	
+	public void actualizar(Connection conexion, String numeroFactura, EstadoVentaEnum estado)
 			throws Exception {
 		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_ACTUALIZAR_ESTADO_VENTA)) {
 			sentencia.setString(1, estado.name());

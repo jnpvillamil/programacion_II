@@ -10,190 +10,199 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.uptc.edu.co.conexion.ConexionBD;
-import co.uptc.edu.co.interfaces.dao.DevolucionVentaDAO;
+import co.uptc.edu.co.interfaces.IGestionDevolucionVenta;
 import co.uptc.edu.co.modelo.DevolucionVenta;
 import co.uptc.edu.co.util.LogUtil;
 
-public class DevolucionVentaBDDAO implements DevolucionVentaDAO {
+public class DevolucionVentaBDDAO implements IGestionDevolucionVenta {
 
-	private static final String TABLA_DEVOLUCIONES = "devoluciones_venta";
+    private static final String TABLA_DEVOLUCIONES = "devoluciones_venta";
 
-	private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_DEVOLUCIONES
-			+ " (codigoDevolucion, numeroFactura, codigoProducto, nombreProducto, cantidadDevuelta, valorDevuelto, fechaHora, motivo)"
-			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERTAR = "INSERT INTO " + TABLA_DEVOLUCIONES
+            + " (codigoDevolucion, numeroFactura, codigoProducto, nombreProducto, cantidadDevuelta, valorDevuelto, fechaHora, motivo)"
+            + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
-			+ " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
-			+ " WHERE codigoDevolucion = ?";
+    private static final String SQL_BUSCAR_POR_CODIGO = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
+            + " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
+            + " WHERE codigoDevolucion = ?";
 
-	private static final String SQL_BUSCAR_POR_FACTURA = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
-			+ " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
-			+ " WHERE numeroFactura = ? ORDER BY fechaHora DESC";
+    private static final String SQL_BUSCAR_POR_FACTURA = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
+            + " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
+            + " WHERE numeroFactura = ? ORDER BY fechaHora DESC";
 
-	private static final String SQL_LISTAR = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
-			+ " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
-			+ " ORDER BY fechaHora DESC";
-	private static final String SQL_ULTIMO_CODIGO = "SELECT MAX(codigoDevolucion) AS ultimoCodigo " + "FROM "
-			+ TABLA_DEVOLUCIONES + " WHERE codigoDevolucion LIKE 'DEV%'";
+    private static final String SQL_LISTAR = "SELECT codigoDevolucion, numeroFactura, codigoProducto, nombreProducto,"
+            + " cantidadDevuelta, valorDevuelto, fechaHora, motivo FROM " + TABLA_DEVOLUCIONES
+            + " ORDER BY fechaHora DESC";
 
-	private static final String SQL_CANTIDAD_DEVUELTA = "SELECT COALESCE(SUM(cantidadDevuelta), 0) AS cantidadDevuelta "
-			+ "FROM " + TABLA_DEVOLUCIONES + " WHERE numeroFactura = ? AND codigoProducto = ?";
+    private static final String SQL_ULTIMO_CODIGO = "SELECT MAX(codigoDevolucion) AS ultimoCodigo FROM "
+            + TABLA_DEVOLUCIONES + " WHERE codigoDevolucion LIKE 'DEV%'";
 
-	@Override
-	public void guardarDevolucion(DevolucionVenta devolucion) throws Exception {
-        LogUtil.info("Entrando a guardarDevolucion. codigoDevolucion=" + (devolucion != null ? devolucion.getCodigoDevolucion() : "null"));
-		try (Connection conexion = ConexionBD.getConexion();
-				PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
+    private static final String SQL_CANTIDAD_DEVUELTA = "SELECT COALESCE(SUM(cantidadDevuelta), 0) AS cantidadDevuelta "
+            + "FROM " + TABLA_DEVOLUCIONES + " WHERE numeroFactura = ? AND codigoProducto = ?";
 
-			prepararInsert(sentencia, devolucion);
-			sentencia.executeUpdate();
+    @Override
+    public void guardar(DevolucionVenta devolucion) throws Exception {
+        LogUtil.info("Entrando a guardar devolucion. codigoDevolucion="
+                + (devolucion != null ? devolucion.getCodigoDevolucion() : "null"));
 
-		} catch (SQLException e) {
-            LogUtil.error("Error en guardarDevolucion: " + e.getMessage(), e);
-			throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
-		}
-	}
+        try (Connection conexion = ConexionBD.getConexion();
+                PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
 
-	@Override
-	public void guardarDevolucion(Connection conexion, DevolucionVenta devolucion) throws Exception {
-		try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
-			prepararInsert(sentencia, devolucion);
-			sentencia.executeUpdate();
-		} catch (SQLException e) {
-			throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
-		}
-	}
+            prepararInsert(sentencia, devolucion);
+            sentencia.executeUpdate();
 
-	private void prepararInsert(PreparedStatement sentencia, DevolucionVenta devolucion) throws SQLException {
-		sentencia.setString(1, devolucion.getCodigoDevolucion());
-		sentencia.setString(2, devolucion.getNumeroFactura());
-		sentencia.setString(3, devolucion.getCodigoProducto());
-		sentencia.setString(4, devolucion.getNombreProducto());
-		sentencia.setInt(5, devolucion.getCantidadDevuelta());
-		sentencia.setBigDecimal(6, BigDecimal.valueOf(devolucion.getValorDevuelto()));
-		sentencia.setTimestamp(7, Timestamp.valueOf(devolucion.getFechaHora()));
-		sentencia.setString(8, devolucion.getMotivo());
-	}
+        } catch (SQLException e) {
+            LogUtil.error("Error en guardar devolucion: " + e.getMessage(), e);
+            throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public DevolucionVenta buscarPorCodigo(String codigoDevolucion) throws Exception {
-        LogUtil.info("Entrando a buscarPorCodigo devolucion. codigoDevolucion=" + codigoDevolucion);
-		try (Connection conexion = ConexionBD.getConexion();
-				PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
+    @Override
+    public void guardar(Connection conexion, DevolucionVenta devolucion) throws Exception {
+        try (PreparedStatement sentencia = conexion.prepareStatement(SQL_INSERTAR)) {
+            prepararInsert(sentencia, devolucion);
+            sentencia.executeUpdate();
+        } catch (SQLException e) {
+            throw new Exception("Error al guardar la devolucion de venta: " + e.getMessage(), e);
+        }
+    }
 
-			sentencia.setString(1, codigoDevolucion);
+    private void prepararInsert(PreparedStatement sentencia, DevolucionVenta devolucion) throws SQLException {
+        sentencia.setString(1, devolucion.getCodigoDevolucion());
+        sentencia.setString(2, devolucion.getNumeroFactura());
+        sentencia.setString(3, devolucion.getCodigoProducto());
+        sentencia.setString(4, devolucion.getNombreProducto());
+        sentencia.setInt(5, devolucion.getCantidadDevuelta());
+        sentencia.setBigDecimal(6, BigDecimal.valueOf(devolucion.getValorDevuelto()));
+        sentencia.setTimestamp(7, Timestamp.valueOf(devolucion.getFechaHora()));
+        sentencia.setString(8, devolucion.getMotivo());
+    }
 
-			try (ResultSet resultado = sentencia.executeQuery()) {
-				if (resultado.next()) {
-					return construirDevolucion(resultado);
-				}
-			}
+    @Override
+    public DevolucionVenta buscar(String codigoDevolucion) throws Exception {
+        LogUtil.info("Entrando a buscar devolucion. codigoDevolucion=" + codigoDevolucion);
 
-			return null;
+        try (Connection conexion = ConexionBD.getConexion();
+                PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_POR_CODIGO)) {
 
-		} catch (SQLException e) {
-            LogUtil.error("Error en buscarPorCodigo devolucion: " + e.getMessage(), e);
-			throw new Exception("Error al buscar la devolucion de venta: " + e.getMessage(), e);
-		}
-	}
+            sentencia.setString(1, codigoDevolucion);
 
-	@Override
-	public List<DevolucionVenta> buscarPorFactura(String numeroFactura) throws Exception {
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                if (resultado.next()) {
+                    return construirDevolucion(resultado);
+                }
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            LogUtil.error("Error en buscar devolucion: " + e.getMessage(), e);
+            throw new Exception("Error al buscar la devolucion de venta: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<DevolucionVenta> buscarPorFactura(String numeroFactura) throws Exception {
         LogUtil.info("Entrando a buscarPorFactura devoluciones. numeroFactura=" + numeroFactura);
-		List<DevolucionVenta> devoluciones = new ArrayList<>();
 
-		try (Connection conexion = ConexionBD.getConexion();
-				PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_POR_FACTURA)) {
+        List<DevolucionVenta> devoluciones = new ArrayList<>();
 
-			sentencia.setString(1, numeroFactura);
+        try (Connection conexion = ConexionBD.getConexion();
+                PreparedStatement sentencia = conexion.prepareStatement(SQL_BUSCAR_POR_FACTURA)) {
 
-			try (ResultSet resultado = sentencia.executeQuery()) {
-				while (resultado.next()) {
-					devoluciones.add(construirDevolucion(resultado));
-				}
-			}
+            sentencia.setString(1, numeroFactura);
 
-			return devoluciones;
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                while (resultado.next()) {
+                    devoluciones.add(construirDevolucion(resultado));
+                }
+            }
 
-		} catch (SQLException e) {
+            return devoluciones;
+
+        } catch (SQLException e) {
             LogUtil.error("Error en buscarPorFactura devoluciones: " + e.getMessage(), e);
-			throw new Exception("Error al listar devoluciones por factura: " + e.getMessage(), e);
-		}
-	}
+            throw new Exception("Error al listar devoluciones por factura: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public List<DevolucionVenta> listarDevoluciones() throws Exception {
-        LogUtil.info("Entrando a listarDevoluciones");
-		List<DevolucionVenta> devoluciones = new ArrayList<>();
+    @Override
+    public List<DevolucionVenta> listar() throws Exception {
+        LogUtil.info("Entrando a listar devoluciones");
 
-		try (Connection conexion = ConexionBD.getConexion();
-				PreparedStatement sentencia = conexion.prepareStatement(SQL_LISTAR);
-				ResultSet resultado = sentencia.executeQuery()) {
+        List<DevolucionVenta> devoluciones = new ArrayList<>();
 
-			while (resultado.next()) {
-				devoluciones.add(construirDevolucion(resultado));
-			}
+        try (Connection conexion = ConexionBD.getConexion();
+                PreparedStatement sentencia = conexion.prepareStatement(SQL_LISTAR);
+                ResultSet resultado = sentencia.executeQuery()) {
 
-			return devoluciones;
+            while (resultado.next()) {
+                devoluciones.add(construirDevolucion(resultado));
+            }
 
-		} catch (SQLException e) {
-            LogUtil.error("Error en listarDevoluciones: " + e.getMessage(), e);
-			throw new Exception("Error al listar devoluciones de venta: " + e.getMessage(), e);
-		}
-	}
+            return devoluciones;
 
-	private DevolucionVenta construirDevolucion(ResultSet resultado) throws SQLException {
-		DevolucionVenta devolucion = new DevolucionVenta();
-		devolucion.setCodigoDevolucion(resultado.getString("codigoDevolucion"));
-		devolucion.setNumeroFactura(resultado.getString("numeroFactura"));
-		devolucion.setCodigoProducto(resultado.getString("codigoProducto"));
-		devolucion.setNombreProducto(resultado.getString("nombreProducto"));
-		devolucion.setCantidadDevuelta(resultado.getInt("cantidadDevuelta"));
-		devolucion.setValorDevuelto(resultado.getDouble("valorDevuelto"));
-		devolucion.setFechaHora(resultado.getTimestamp("fechaHora").toLocalDateTime());
-		devolucion.setMotivo(resultado.getString("motivo"));
-		return devolucion;
-	}
+        } catch (SQLException e) {
+            LogUtil.error("Error en listar devoluciones: " + e.getMessage(), e);
+            throw new Exception("Error al listar devoluciones de venta: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String obtenerUltimoCodigoDevolucion() throws Exception {
-        LogUtil.info("Entrando a obtenerUltimoCodigoDevolucion");
-		try (Connection conexion = ConexionBD.getConexion();
-				PreparedStatement sentencia = conexion.prepareStatement(SQL_ULTIMO_CODIGO);
-				ResultSet resultado = sentencia.executeQuery()) {
+    @Override
+    public String obtenerUltimoCodigo() throws Exception {
+        LogUtil.info("Entrando a obtenerUltimoCodigo devolucion");
 
-			if (resultado.next()) {
-				return resultado.getString("ultimoCodigo");
-			}
+        try (Connection conexion = ConexionBD.getConexion();
+                PreparedStatement sentencia = conexion.prepareStatement(SQL_ULTIMO_CODIGO);
+                ResultSet resultado = sentencia.executeQuery()) {
 
-			return null;
+            if (resultado.next()) {
+                return resultado.getString("ultimoCodigo");
+            }
 
-		} catch (SQLException e) {
-            LogUtil.error("Error en obtenerUltimoCodigoDevolucion: " + e.getMessage(), e);
-			throw new Exception("Error al obtener el ultimo codigo de devolucion: " + e.getMessage(), e);
-		}
-	}
+            return null;
 
-	@Override
-	public int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
-        LogUtil.info("Entrando a obtenerCantidadDevuelta. factura=" + numeroFactura + " codigoProducto=" + codigoProducto);
-		try (Connection conexion = ConexionBD.getConexion();
-				PreparedStatement sentencia = conexion.prepareStatement(SQL_CANTIDAD_DEVUELTA)) {
+        } catch (SQLException e) {
+            LogUtil.error("Error en obtenerUltimoCodigo devolucion: " + e.getMessage(), e);
+            throw new Exception("Error al obtener el ultimo codigo de devolucion: " + e.getMessage(), e);
+        }
+    }
 
-			sentencia.setString(1, numeroFactura);
-			sentencia.setString(2, codigoProducto);
+    @Override
+    public int obtenerCantidadDevuelta(String numeroFactura, String codigoProducto) throws Exception {
+        LogUtil.info("Entrando a obtenerCantidadDevuelta. factura=" + numeroFactura
+                + " codigoProducto=" + codigoProducto);
 
-			try (ResultSet resultado = sentencia.executeQuery()) {
-				if (resultado.next()) {
-					return resultado.getInt("cantidadDevuelta");
-				}
-			}
+        try (Connection conexion = ConexionBD.getConexion();
+                PreparedStatement sentencia = conexion.prepareStatement(SQL_CANTIDAD_DEVUELTA)) {
 
-			return 0;
+            sentencia.setString(1, numeroFactura);
+            sentencia.setString(2, codigoProducto);
 
-		} catch (SQLException e) {
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                if (resultado.next()) {
+                    return resultado.getInt("cantidadDevuelta");
+                }
+            }
+
+            return 0;
+
+        } catch (SQLException e) {
             LogUtil.error("Error en obtenerCantidadDevuelta: " + e.getMessage(), e);
-			throw new Exception("Error al obtener la cantidad devuelta: " + e.getMessage(), e);
-		}
-	}
+            throw new Exception("Error al obtener la cantidad devuelta: " + e.getMessage(), e);
+        }
+    }
+
+    private DevolucionVenta construirDevolucion(ResultSet resultado) throws SQLException {
+        DevolucionVenta devolucion = new DevolucionVenta();
+        devolucion.setCodigoDevolucion(resultado.getString("codigoDevolucion"));
+        devolucion.setNumeroFactura(resultado.getString("numeroFactura"));
+        devolucion.setCodigoProducto(resultado.getString("codigoProducto"));
+        devolucion.setNombreProducto(resultado.getString("nombreProducto"));
+        devolucion.setCantidadDevuelta(resultado.getInt("cantidadDevuelta"));
+        devolucion.setValorDevuelto(resultado.getDouble("valorDevuelto"));
+        devolucion.setFechaHora(resultado.getTimestamp("fechaHora").toLocalDateTime());
+        devolucion.setMotivo(resultado.getString("motivo"));
+        return devolucion;
+    }
 }
