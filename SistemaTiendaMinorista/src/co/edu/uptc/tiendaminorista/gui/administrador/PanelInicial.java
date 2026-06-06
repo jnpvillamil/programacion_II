@@ -12,6 +12,8 @@ import co.edu.uptc.tiendaminorista.negocio.GestionCliente;
 import co.edu.uptc.tiendaminorista.negocio.GestionProducto;
 import co.edu.uptc.tiendaminorista.negocio.GestionProveedor;
 import co.edu.uptc.tiendaminorista.negocio.GestionPractica; 
+import co.edu.uptc.tiendaminorista.gui.administrador.TelefonoGUI;
+
 
 public class PanelInicial extends JPanel {
 
@@ -38,8 +40,7 @@ public class PanelInicial extends JPanel {
     private PanelReportes panelReportes;
     private InterfazPractica practica;
     private PanelConsultas panelConsultas;
-    private TelefonoGUI telefonogui;
-
+    private TelefonoGUI panelTelefono;
     
     public PanelInicial(Evento e, GestionProducto gestionProducto, GestionCliente gestionCliente, GestionProveedor gestionProveedor, PanelRegistrosEmpleados Empleados, GestionPractica gestionPractica) {
         setLayout(new BorderLayout());
@@ -60,7 +61,6 @@ public class PanelInicial extends JPanel {
         pestanas.addTab("Proveedores", proveedorCards);
         pestanas.addTab("Empleados", this.Empleados); 
         pestanas.addTab("practica", practica);
-        pestanas.addTab(telefonogui,this.telefonogui);
 
         panelGestionContable = new PanelGestionContable();
         pestanas.addTab("Contabilidad", panelGestionContable);
@@ -71,7 +71,9 @@ public class PanelInicial extends JPanel {
         this.panelConsultas = new PanelConsultas(e);
         pestanas.addTab("Consultas", this.panelConsultas);
 
-      
+        panelTelefono = new TelefonoGUI();
+        pestanas.addTab("Teléfonos", panelTelefono);
+        
         pestanas.addChangeListener(event -> {
           
             if (pestanas.getSelectedIndex() == 4) {
