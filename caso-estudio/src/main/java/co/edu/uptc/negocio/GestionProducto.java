@@ -9,14 +9,14 @@ import java.util.List;
 import co.edu.uptc.conexion.Conexion;
 import co.edu.uptc.interfaces.IGestionProducto;
 import co.edu.uptc.negocio.dto.productoDto;
-import co.edu.uptc.persistencia.LocalProducto;
+import co.edu.uptc.persistencia.database.DatabaseProducto;
 
 public class GestionProducto {
 
 	private IGestionProducto iProducto;
 
 	public GestionProducto() {
-		this.iProducto = new LocalProducto();
+		this.iProducto = new DatabaseProducto();
 	}
 
 	public void registrar(productoDto miProducto) {

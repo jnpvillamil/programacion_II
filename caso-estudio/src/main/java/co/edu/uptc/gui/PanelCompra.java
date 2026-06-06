@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableModel;
 
 import co.edu.uptc.negocio.dto.compraDto;
 import co.edu.uptc.negocio.dto.itemCompraDto;
-import co.edu.uptc.persistencia.LocalProveedor; // Importante: Verifica este import
+import co.edu.uptc.persistencia.database.DatabaseProveedor;
 
 public class PanelCompra extends JPanel {
 
@@ -87,7 +87,7 @@ public class PanelCompra extends JPanel {
 				if (!codTxt.isEmpty()) {
 					try {
 						int codigo = Integer.parseInt(codTxt);
-						LocalProveedor localProv = new LocalProveedor();
+						DatabaseProveedor localProv = new DatabaseProveedor();
 						var proveedor = localProv.buscar(codigo); // Asegúrate que buscar devuelve un DTO con
 																	// getNombre()
 						if (proveedor != null) {
@@ -114,7 +114,7 @@ public class PanelCompra extends JPanel {
 				String nombre = tRazonSocial.getText().trim();
 				if (!nombre.isEmpty() && tCodigoProveedor.getText().isEmpty()) {
 					// Buscamos el código basado en el nombre que acaban de escribir
-					int codigo = new co.edu.uptc.persistencia.LocalProveedor().buscarCodigoPorNombre(nombre);
+					int codigo = new co.edu.uptc.persistencia.database.DatabaseProveedor().buscarCodigoPorNombre(nombre);
 					if (codigo != -1) {
 						tCodigoProveedor.setText(String.valueOf(codigo));
 					} else {
@@ -332,7 +332,7 @@ public class PanelCompra extends JPanel {
 	private void cargarProveedoresEnCombo() {
 		comboProveedores = new javax.swing.JComboBox<>();
 		// Aquí buscas todos los proveedores de la BD
-		List<co.edu.uptc.negocio.dto.proveedorDto> lista = new co.edu.uptc.persistencia.LocalProveedor().listar();
+		List<co.edu.uptc.negocio.dto.proveedorDto> lista = new co.edu.uptc.persistencia.database.DatabaseProveedor().listar();
 		for (co.edu.uptc.negocio.dto.proveedorDto p : lista) {
 			comboProveedores.addItem(p.getRazonSocial());
 		}
@@ -341,7 +341,7 @@ public class PanelCompra extends JPanel {
 		comboProveedores.addActionListener(e -> {
 			String nombreSeleccionado = (String) comboProveedores.getSelectedItem();
 			// Aquí buscas el código basado en el nombre y lo pones en tCodigoProveedor
-			int codigo = new co.edu.uptc.persistencia.LocalProveedor().buscarCodigoPorNombre(nombreSeleccionado);
+			int codigo = new co.edu.uptc.persistencia.database.DatabaseProveedor().buscarCodigoPorNombre(nombreSeleccionado);
 			tCodigoProveedor.setText(String.valueOf(codigo));
 			tRazonSocial.setText(nombreSeleccionado);
 		});

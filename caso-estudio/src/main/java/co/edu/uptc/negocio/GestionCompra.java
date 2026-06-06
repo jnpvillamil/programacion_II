@@ -11,10 +11,9 @@ import co.edu.uptc.negocio.dto.compraDto;
 import co.edu.uptc.negocio.dto.itemCompraDto;
 import co.edu.uptc.negocio.dto.movimientoContableDto;
 import co.edu.uptc.negocio.dto.productoDto;
-import co.edu.uptc.persistencia.LocalCompra;
-import co.edu.uptc.persistencia.LocalMovimientoContable;
-import co.edu.uptc.persistencia.LocalProducto;
-
+import co.edu.uptc.persistencia.database.DatabaseCompra;
+import co.edu.uptc.persistencia.database.DatabaseMovimientoContable;
+import co.edu.uptc.persistencia.database.DatabaseProducto;
 public class GestionCompra {
 
 	private IGestionCompra iCompra;
@@ -22,9 +21,9 @@ public class GestionCompra {
 	private IGestionProducto iProducto;
 
 	public GestionCompra() {
-		this.iCompra = new LocalCompra();
-		this.iMovimiento = new LocalMovimientoContable();
-		this.iProducto = new LocalProducto();
+		this.iCompra = new DatabaseCompra();
+		this.iMovimiento = new DatabaseMovimientoContable();
+		this.iProducto = new DatabaseProducto();
 	}
 
 	public void registrar(compraDto compra) throws Exception {
@@ -46,7 +45,7 @@ public class GestionCompra {
 			conex.setAutoCommit(false); // Iniciamos transacción
 
 			// 3. Ejecución secuencial usando la misma conexión
-			((LocalCompra) iCompra).guardar(compra, conex);
+			((DatabaseCompra) iCompra).guardar(compra, conex);
 			actualizarInventario(compra, conex);
 			registrarEgresoContable(compra, conex);
 
@@ -103,7 +102,7 @@ public class GestionCompra {
 				producto.setStockActual(producto.getStockActual() + item.getCantidad());
 				producto.setPrecioCompra(item.getCostoUnitario());
 				// AQUÍ USAMOS LA CONEXIÓN DE LA TRANSACCIÓN
-				((LocalProducto) iProducto).actualizarConConexion(producto, conex);
+				((DatabaseProducto) iProducto).actualizarConConexion(producto, conex);
 			}
 		}
 	}
@@ -117,6 +116,6 @@ public class GestionCompra {
 		movimiento.setDescripcion("Compra factura N° " + compra.getNumeroFacturaProv());
 
 		// AQUÍ USAMOS LA CONEXIÓN DE LA TRANSACCIÓN
-		((LocalMovimientoContable) iMovimiento).guardar(movimiento, conex);
+		((DatabaseMovimientoContable) iMovimiento).guardar(movimiento, conex);
 	}
 }
