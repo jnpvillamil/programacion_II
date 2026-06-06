@@ -70,6 +70,10 @@ public class Evento implements ActionListener {
     // CONTADOR
     public final static String GENERAR_REPORTE = "Generar_Reporte";
 
+    // MASCOTA
+    public final static String CREAR_MA    = "Nuevo_MA";
+    public final static String GUARDAR_MA  = "Guardar_MA";
+    public final static String CANCELAR_MA = "Cancelar_MA";
 
     private VentanaPrincipal ventana;
 
@@ -246,7 +250,7 @@ public class Evento implements ActionListener {
 
         } else if (evento.equals(FINALIZAR_CMP)) {
 
-            ventana.finalizarCompra(); // ✅ corregido
+            ventana.finalizarCompra();
 
         // ALERTA STOCK
         } else if (evento.equals(ALERTA_STOCK)) {
@@ -257,6 +261,20 @@ public class Evento implements ActionListener {
         } else if (evento.equals(GENERAR_REPORTE)) {
 
             ventana.generarReporte();
+
+        // MASCOTA
+        } else if (evento.equals(CREAR_MA)) {
+
+            ventana.lanzarDialogoMascota();
+
+        } else if (evento.equals(CANCELAR_MA)) {
+
+            ventana.cerrarDialogoMascota();
+
+        } else if (evento.equals(GUARDAR_MA)) {
+
+            ventana.crearMascota();
+
         }
     }
 }
