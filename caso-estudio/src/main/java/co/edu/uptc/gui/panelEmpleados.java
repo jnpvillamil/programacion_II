@@ -20,132 +20,115 @@ import co.edu.uptc.negocio.dto.empleadoDto;
 
 public class panelEmpleados extends JPanel {
 
-	// ── VARIABLES GLOBALES ─────────────
-	public JTextField tCodigo;
-	public JTextField tNombre;
+    public JTextField tNombre;
+    public JTextField tNombreNuevo;
 
-	public JButton bRegistrar;
-	public JButton bModificar;
-	public JButton bInactivar;
-	public JButton bBuscar;
-	public JButton bVolver;
+    public JButton bRegistrar;
+    public JButton bModificar;
+    public JButton bInactivar;
+    public JButton bBuscar;
+    public JButton bVolver;
 
-	private DefaultTableModel modeloTabla;
-	private JTable tablaEmpleados;
+    private DefaultTableModel modeloTabla;
+    private JTable tablaEmpleados;
 
-	// ── CONSTRUCTOR ─────────────
-	public panelEmpleados() {
-		construirPanel();
-	}
+    public panelEmpleados() {
+        construirPanel();
+    }
 
-	// ── INTERFAZ GRÁFICA ─────────────
-	private void construirPanel() {
-		setLayout(new BorderLayout(10, 10));
-		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    private void construirPanel() {
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		JPanel campos = new JPanel(new GridLayout(2, 2, 8, 8));
-		campos.setBorder(BorderFactory.createTitledBorder("Datos del empleado"));
+        JPanel campos = new JPanel(new GridLayout(2, 2, 8, 8));
+        campos.setBorder(BorderFactory.createTitledBorder("Datos del empleado"));
 
-		tCodigo = new JTextField();
-		tCodigo.setEditable(false);
-		tNombre = new JTextField();
+        tNombre      = new JTextField();
+        tNombreNuevo = new JTextField();
 
-		campos.add(new JLabel("CODIGO:"));
-		campos.add(tCodigo);
-		campos.add(new JLabel("NOMBRE:"));
-		campos.add(tNombre);
+        campos.add(new JLabel("NOMBRE:"));
+        campos.add(tNombre);
+        campos.add(new JLabel("NOMBRE NUEVO (modificar):"));
+        campos.add(tNombreNuevo);
 
-		modeloTabla = new DefaultTableModel(new String[] { "Codigo", "Nombre" }, 0) {
-			@Override
-			public boolean isCellEditable(int r, int c) {
-				return false;
-			}
-		};
+        modeloTabla = new DefaultTableModel(new String[]{"Nombre"}, 0) {
+            @Override
+            public boolean isCellEditable(int r, int c) { return false; }
+        };
 
-		tablaEmpleados = new JTable(modeloTabla);
-		tablaEmpleados.setRowHeight(22);
+        tablaEmpleados = new JTable(modeloTabla);
+        tablaEmpleados.setRowHeight(22);
 
-		tablaEmpleados.getSelectionModel().addListSelectionListener(e -> {
-			int fila = tablaEmpleados.getSelectedRow();
-			if (fila >= 0) {
-				tCodigo.setText(modeloTabla.getValueAt(fila, 0).toString());
-				tNombre.setText(modeloTabla.getValueAt(fila, 1).toString());
-			}
-		});
+        tablaEmpleados.getSelectionModel().addListSelectionListener(e -> {
+            int fila = tablaEmpleados.getSelectedRow();
+            if (fila >= 0) {
+                tNombre.setText(modeloTabla.getValueAt(fila, 0).toString());
+            }
+        });
 
-		JScrollPane scroll = new JScrollPane(tablaEmpleados);
-		scroll.setBorder(BorderFactory.createTitledBorder("Lista de empleados"));
-		scroll.setPreferredSize(new Dimension(400, 200));
+        JScrollPane scroll = new JScrollPane(tablaEmpleados);
+        scroll.setBorder(BorderFactory.createTitledBorder("Lista de empleados"));
+        scroll.setPreferredSize(new Dimension(400, 200));
 
-		add(campos, BorderLayout.NORTH);
-		add(scroll, BorderLayout.CENTER);
+        add(campos, BorderLayout.NORTH);
+        add(scroll, BorderLayout.CENTER);
+        agregarBotones();
+    }
 
-		agregarBotones();
-	}
+    private void agregarBotones() {
+        bRegistrar = new JButton(Eventos.eREGISTRAR);
+        bModificar = new JButton(Eventos.eMODIFICAR);
+        bInactivar = new JButton(Eventos.eINACTIVAR);
+        bBuscar    = new JButton(Eventos.eBUSCAR);
+        bVolver    = new JButton(Eventos.VOLVER);
 
-	// ── COMPONENTE DEL SUR (BOTONES) ─────────────
-	private void agregarBotones() {
-		bRegistrar = new JButton(Eventos.eREGISTRAR);
-		bModificar = new JButton(Eventos.eMODIFICAR);
-		bInactivar = new JButton(Eventos.eINACTIVAR);
-		bBuscar = new JButton(Eventos.eBUSCAR);
-		bVolver = new JButton(Eventos.VOLVER);
+        JPanel botones = new JPanel(new GridLayout(1, 4, 10, 10));
+        botones.add(bRegistrar);
+        botones.add(bModificar);
+        botones.add(bInactivar);
+        botones.add(bBuscar);
 
-		JPanel botones = new JPanel(new GridLayout(1, 4, 10, 10));
-		botones.add(bRegistrar);
-		botones.add(bModificar);
-		botones.add(bInactivar);
-		botones.add(bBuscar);
+        JPanel panelVolver = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelVolver.add(bVolver);
 
-		JPanel panelVolver = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panelVolver.add(bVolver);
+        JPanel sur = new JPanel(new BorderLayout());
+        sur.add(botones, BorderLayout.NORTH);
+        sur.add(panelVolver, BorderLayout.SOUTH);
 
-		JPanel sur = new JPanel(new BorderLayout());
-		sur.add(botones, BorderLayout.NORTH);
-		sur.add(panelVolver, BorderLayout.SOUTH);
+        add(sur, BorderLayout.SOUTH);
+    }
 
-		add(sur, BorderLayout.SOUTH);
-	}
+    public void poblarTabla(List<empleadoDto> lista) {
+        modeloTabla.setRowCount(0);
+        for (empleadoDto e : lista) {
+            modeloTabla.addRow(new Object[]{e.getNombre()});
+        }
+    }
 
-	// ── MÉTODOS DE TABLA Y LIMPIEZA ─────────────
-	public void poblarTabla(List<empleadoDto> lista) {
-		modeloTabla.setRowCount(0);
-		for (empleadoDto e : lista) {
-			modeloTabla.addRow(new Object[] { e.getCodigoEmpleado(), e.getNombre() });
-		}
-	}
+    public void limpiarCampos() {
+        tNombre.setText("");
+        tNombreNuevo.setText("");
+    }
 
-	public void limpiarCampos() {
-		tCodigo.setText("");
-		tNombre.setText("");
-	}
+    public empleadoDto getDatosEmpleado() {
+        if (tNombre.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "El nombre es requerido");
+            return null;
+        }
+        empleadoDto e = new empleadoDto();
+        e.setNombre(tNombre.getText().trim());
+        return e;
+    }
 
-	// ── MÉTODOS DE DATOS ─────────────
-	public empleadoDto getDatosEmpleado() {
-		if (tNombre.getText().isBlank()) {
-			JOptionPane.showMessageDialog(this, "El nombre es requerido");
-			return null;
-		}
-		empleadoDto e = new empleadoDto();
-		e.setNombre(tNombre.getText());
-		return e;
-	}
+    public String getNombreSeleccionado() {
+        if (tNombre.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un empleado de la tabla");
+            return null;
+        }
+        return tNombre.getText().trim();
+    }
 
-	public empleadoDto getDatosEmpleadoModificar() {
-		if (tCodigo.getText().isBlank()) {
-			JOptionPane.showMessageDialog(this, "Seleccione un empleado de la tabla");
-			return null;
-		}
-		empleadoDto e = new empleadoDto(Integer.parseInt(tCodigo.getText()));
-		e.setNombre(tNombre.getText());
-		return e;
-	}
-
-	public int getCodigoEmpleado() {
-		if (tCodigo.getText().isBlank()) {
-			JOptionPane.showMessageDialog(this, "Seleccione un empleado de la tabla");
-			return -1;
-		}
-		return Integer.parseInt(tCodigo.getText());
-	}
+    public String getNombreNuevo() {
+        return tNombreNuevo.getText().trim();
+    }
 }
