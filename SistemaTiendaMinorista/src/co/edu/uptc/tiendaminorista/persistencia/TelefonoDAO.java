@@ -18,7 +18,6 @@ public class TelefonoDAO implements ITelefono {
     public TelefonoDAO() {
     }
 
-    @Override
     public void guardar(Telefono telefono) {
         String sql = "INSERT INTO telefonos (marca, modelo, precio) VALUES (?, ?, ?)";
 
@@ -40,7 +39,6 @@ public class TelefonoDAO implements ITelefono {
         }
     }
 
-    @Override
     public List<Telefono> obtenerTelefonos() {
         List<Telefono> lista = new ArrayList<>();
         String sql = "SELECT marca, modelo, precio FROM telefonos";
