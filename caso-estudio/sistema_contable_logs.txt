@@ -1028,3 +1028,15 @@
 [2026-06-05 22:36:51] [INFO] Entrando a buscarVentaPorNumero. numeroFactura=FV-000001
 [2026-06-05 22:36:51] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
 [2026-06-05 22:36:51] [INFO] Entrando a buscarPorFactura devoluciones. numeroFactura=FV-000001
+[2026-06-06 09:20:05] [INFO] Entrando a listar productos
+[2026-06-06 09:20:06] [INFO] Entrando a listarClientes
+[2026-06-06 09:20:06] [INFO] Listado de proveedores exitoso.
+[2026-06-06 09:20:06] [INFO] Entrando a listarMovimientos
+[2026-06-06 09:20:06] [INFO] Entrando a listarVentas
+[2026-06-06 09:20:06] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000003
+[2026-06-06 09:20:06] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000002
+[2026-06-06 09:20:06] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
+[2026-06-06 09:20:06] [INFO] Entrando a listar
+[2026-06-06 09:20:07] [INFO] Inicializando componentes de PanelConsultas
+[2026-06-06 09:20:07] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
+[2026-06-06 09:20:07] [INFO] Inicializando eventos en PanelConsultas

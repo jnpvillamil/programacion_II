@@ -1,0 +1,18 @@
+{
+  "periodo": "2026-06-05 a 2026-06-05",
+  "detalles": [
+    {
+      "codigoProducto": "P00001",
+      "nombreProducto": "Panela",
+      "cantidadVendida": 10,
+      "ventas": 30000.0,
+      "costoVenta": 20000.0,
+      "utilidad": 10000.0
+    }
+  ],
+  "totalVentas": 30000.0,
+  "costoVentas": 20000.0,
+  "utilidadBruta": 10000.0,
+  "cantidadVentas": 1,
+  "cantidadVendida": 10
+}
