@@ -1,5 +1,4 @@
 package co.uptc.edu.tienda.negocio;
 
-public class GestionMascota {
-
-}
+import co.uptc.edu.tienda.modelo.Mascota;
+import co.uptc.edu.tienda.persistencia.MascotaPersistencia;
