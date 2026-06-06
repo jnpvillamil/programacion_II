@@ -26,4 +26,5 @@ public class GestionGatoNegocio implements IGestionGato {
         System.out.println(" Gato guardado: " + gato.getColor());
     }
     
+    
 }
