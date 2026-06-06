@@ -1,34 +1,30 @@
 package co.edu.uptc.gui.modelo;
 
-import co.edu.uptc.enums.RolUsuarioEnum;
+public class Contador {
+    private long id;
+    private String nombre;
+    private String tarjetaProfesional;
+    private String telefono;
 
-public class Contador extends Usuario {
-
-    public Contador(long l, String string, String string2, String string3) {
-        setRol(RolUsuarioEnum.CONTADOR);
+    public Contador() {
     }
 
-    public Contador(int idUsuario, String nombreUsuario, String contrasena) {
-        super(idUsuario, nombreUsuario, contrasena, RolUsuarioEnum.CONTADOR);
+    public Contador(long id, String nombre, String tarjetaProfesional, String telefono) {
+        this.id = id;
+        this.nombre = nombre;
+        this.tarjetaProfesional = tarjetaProfesional;
+        this.telefono = telefono;
     }
 
-	public String getNombre() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
-	public String getTarjetaProfesional() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-	public String getTelefono() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getTarjetaProfesional() { return tarjetaProfesional; }
+    public void setTarjetaProfesional(String tarjetaProfesional) { this.tarjetaProfesional = tarjetaProfesional; }
 
-	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 }

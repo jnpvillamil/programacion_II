@@ -26,7 +26,6 @@ import co.edu.uptc.ventanas.MenuVendedor;
 import co.edu.uptc.ventanas.VentanaContador;
 
 @SuppressWarnings("serial")
-
 public class LoginGUI extends JFrame implements ActionListener {
 
 	private JTextField txtUsuario;
@@ -37,7 +36,8 @@ public class LoginGUI extends JFrame implements ActionListener {
 	private Config config;
 
 	public LoginGUI() {
-		this.config = config;
+
+		this.config = new Config();
 
 		setTitle("Sistema de Gestión");
 		setSize(450, 420);
@@ -96,12 +96,10 @@ public class LoginGUI extends JFrame implements ActionListener {
 
 		btnIngresar = new JButton("Ingresar");
 		btnIngresar.setActionCommand("INGRESAR");
-
 		btnIngresar.addActionListener(this);
 
 		btnSalir = new JButton("Salir");
 		btnSalir.setActionCommand("SALIR");
-
 		btnSalir.addActionListener(this);
 
 		panelInferior.add(btnIngresar);
@@ -135,11 +133,17 @@ public class LoginGUI extends JFrame implements ActionListener {
 			this.dispose();
 			MenuVendedor menuEmpleado = new MenuVendedor();
 			menuEmpleado.setVisible(true);
+			
 		} else if (usuario.equals("contador") && contrasena.equals("1234")) {
 			this.dispose();
-			VentanaContador VenContador = new VentanaContador();
-			VenContador.setVisible(true);
 
+			if (this.config == null) {
+				this.config = new Config();
+			}
+
+			VentanaContador VenContador = new VentanaContador(this.config); 
+			VenContador.setVisible(true);
+		
 		} else {
 			JOptionPane.showMessageDialog(this, "Credenciales incorrectas de prueba.", "Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -155,12 +159,10 @@ public class LoginGUI extends JFrame implements ActionListener {
 	}
 
 	public AbstractButton getBtnIngresar() {
-		// TODO Auto-generated method stub
-		return null;
+		return btnIngresar;
 	}
 
-	public void mostrarMensaje(String string) {
-		// TODO Auto-generated method stub
-
+	public void mostrarMensaje(String mensaje) {
+		JOptionPane.showMessageDialog(this, mensaje);
 	}
 }
