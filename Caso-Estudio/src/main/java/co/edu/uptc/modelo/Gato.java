@@ -15,8 +15,20 @@ public class Gato {
 		this.Raza = Raza;
 		this.activo = true;
 		
-		this.Raza = Raza;
+		
+	
 	}
+	
+	
+	public String getColor(){
+		return Color;
+	}
+	
+	public void setColor(String Color) {
+		this.Color = Color;
+	}
+	
+	
 
 	public String getRaza() {return Raza;}
 	public void setRaza(String Raza) {this.Raza = Raza;}
