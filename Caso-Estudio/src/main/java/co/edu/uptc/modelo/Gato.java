@@ -2,10 +2,12 @@ package co.edu.uptc.modelo;
 
 public class Gato {
 	
+
 	private String Color;
 	private String Raza;
 	private String Ojos;
 	private boolean activo;
+	
 	
 	public Gato(String Color, String Raza, String Ojos) {
 		this.Color = Color;
@@ -13,8 +15,13 @@ public class Gato {
 		this.Raza = Raza;
 		this.activo = true;
 		
+		this.Raza = Raza;
 	}
+
+	public String getRaza() {return Raza;}
+	public void setRaza(String Raza) {this.Raza = Raza;}
 	
+
 	//Getters and Setters
 	
 	public String getOjos() { return Ojos; }         
@@ -24,16 +31,8 @@ public class Gato {
     public void setActivo(boolean activo) { this.activo = activo; }
     
     
-    @Override
-    public String toString() {
-        return "Gato{" +
-                "color='" + Color + '\'' +
-                ", raza='" + Raza + '\'' +
-                ", ojos='" + Ojos + '\'' +
-                '}';
-    }
     
-    
+    	
 }
 
 
