@@ -22,9 +22,15 @@ public class GestionGatoNegocio implements IGestionGato {
 			return;
 		}
 		
-		persistencia.guardarGato(gato);
+		persistencia.crear(gato);
 		System.out.println("Gato creado exitosamente con color: " + gato.getColor());
 		
+	}
+
+	@Override
+	public List<Gato> listarTodos() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
