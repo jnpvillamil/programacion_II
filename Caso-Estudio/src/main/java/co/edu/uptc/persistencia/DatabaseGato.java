@@ -12,10 +12,19 @@ public class DatabaseGato implements IGestionGato {
     private ConexionBD conexionBD = new ConexionBD();
     
     @Override
-	public void crear(Gato gato) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void crear(Gato gato) {
+        String sql = "INSERT INTO gatos (codigo, color, raza, ojos, activo) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = conexionBD.getConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(2, gato.getColor());
+            ps.setString(3, gato.getRaza());
+            ps.setString(4, gato.getOjos());
+            ps.setBoolean(5, gato.isActivo());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al guardar gato: " + e.getMessage());
+        }
+    }
     
     
 
