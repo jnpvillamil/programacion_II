@@ -91,9 +91,9 @@ public class Evento implements ActionListener {
             JOptionPane.showMessageDialog(null, "Hasta Luego");
             System.exit(0);
 
-        } else if (evento.equals(LOGIN)) {
-
-            ventana.loguear();
+//        } else if (evento.equals(LOGIN)) {
+//
+//            ventana.loguear();
 
         // PROVEEDOR
         } else if (evento.equals(CREAR_PR)) {

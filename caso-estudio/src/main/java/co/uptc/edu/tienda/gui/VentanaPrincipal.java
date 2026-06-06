@@ -86,355 +86,362 @@ public class VentanaPrincipal extends JFrame {
         mascotaConfig = new MascotaConfig();
 
         
-        add(pLogin, BorderLayout.CENTER);
+//        add(pLogin, BorderLayout.CENTER);
+        
+        lanzarDialogoMascota();
     }
 
     public static void main(String[] args) {
         VentanaPrincipal login = new VentanaPrincipal();
         login.setVisible(true);
     }
+    
 
-    public void loguear() {
-        try {
-            CredencialDto validar = pLogin.getCredencialesUsuario();
 
-            if (validar != null) {
-                GestionSeguridad moduloSeguridad = tiendaConfig.getGestSeguridad();
-                usuarioActual = moduloSeguridad.validarLogueo(validar);
-                new LogsTxt().registrarLogin(usuarioActual);
-                switch (usuarioActual.getRol()) {
-
-                case ADMIN:
-                    remove(pLogin);
-
-                    // Panel norte con cerrar sesión
-                    JPanel panelNorteAdmin = new JPanel(new BorderLayout());
-                    JButton btnCerrarSesionAdmin = new JButton("Cerrar Sesión");
-                    btnCerrarSesionAdmin.setBackground(new Color(192, 57, 43));
-                    btnCerrarSesionAdmin.setForeground(Color.WHITE);
-                    btnCerrarSesionAdmin.setFocusPainted(false);
-                    JPanel panelCerrarAdmin = new JPanel();
-                    panelCerrarAdmin.add(btnCerrarSesionAdmin);
-                    panelNorteAdmin.add(panelCerrarAdmin, BorderLayout.EAST);
-                    add(panelNorteAdmin, BorderLayout.NORTH);
-                    btnCerrarSesionAdmin.addActionListener(e -> cerrarSesion());
-
-                    // Panel lateral izquierdo
-                    JPanel panelLateralAdmin = new JPanel(new GridLayout(3, 1, 5, 5));
-                    panelLateralAdmin.setPreferredSize(new Dimension(150, 0));
-                    panelLateralAdmin.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                    panelLateralAdmin.setBackground(new Color(52, 73, 94));
-
-                    JButton btnProveedorAdmin = new JButton("Proveedores");
-                    JButton btnClienteAdmin = new JButton("Clientes");
-                    JButton btnVentasAdmin = new JButton("Ventas");
-
-                    for (JButton btn : new JButton[]{btnProveedorAdmin, btnClienteAdmin, btnVentasAdmin}) {
-                        btn.setBackground(new Color(52, 73, 94));
-                        btn.setForeground(Color.WHITE);
-                        btn.setFocusPainted(false);
-                        btn.setBorderPainted(false);
-                        btn.setFont(new Font("Arial", Font.BOLD, 13));
-                    }
-
-                    panelLateralAdmin.add(btnProveedorAdmin);
-                    panelLateralAdmin.add(btnClienteAdmin);
-                    panelLateralAdmin.add(btnVentasAdmin);
-                    add(panelLateralAdmin, BorderLayout.WEST);
-
-                    contenedor = new JPanel(new BorderLayout());
-                    add(contenedor, BorderLayout.CENTER);
-
-                    // Poblar datos iniciales
-                    pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
-                    pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
-                    contenedor.add(pProveedor);
-
-                    this.setSize(1100, 650);
-                    this.setLocationRelativeTo(null);
-                    repaint();
-                    revalidate();
-
-                    btnProveedorAdmin.addActionListener(e -> {
-                        contenedor.removeAll();
-                        pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
-                        contenedor.add(pProveedor);
-                        contenedor.repaint();
-                        contenedor.revalidate();
-                    });
-
-                    btnClienteAdmin.addActionListener(e -> {
-                        contenedor.removeAll();
-                        pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
-                        contenedor.add(pCliente);
-                        contenedor.repaint();
-                        contenedor.revalidate();
-                    });
-
-                    btnVentasAdmin.addActionListener(e -> {
-                        contenedor.removeAll();
-                        pHistorial.refrescar(tiendaConfig.getGestVenta().listarVentas());
-                        contenedor.add(pHistorial);
-                        contenedor.repaint();
-                        contenedor.revalidate();
-                    });
-
-                    break;
-                    
-                case CAJERO:
-                    remove(pLogin);
-
-                    JPanel panelNorteCajero = new JPanel(new BorderLayout());
-                    JButton btnCerrarSesionCajero = new JButton("Cerrar Sesión");
-                    btnCerrarSesionCajero.setBackground(new Color(192, 57, 43));
-                    btnCerrarSesionCajero.setForeground(Color.WHITE);
-                    btnCerrarSesionCajero.setFocusPainted(false);
-                    JPanel panelCerrarCajero = new JPanel();
-                    panelCerrarCajero.add(btnCerrarSesionCajero);
-                    panelNorteCajero.add(panelCerrarCajero, BorderLayout.EAST);
-                    add(panelNorteCajero, BorderLayout.NORTH);
-                    btnCerrarSesionCajero.addActionListener(e -> cerrarSesion());
-
-                    JPanel panelLateral = new JPanel(new GridLayout(4, 1, 5, 5));
-                    panelLateral.setPreferredSize(new Dimension(165, 0));
-                    panelLateral.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                    panelLateral.setBackground(new Color(52, 73, 94));
-
-                    JButton btnNuevaVenta = new JButton("Nueva Venta");
-                    JButton btnHistorial = new JButton("Historial Ventas");
-                    JButton btnClientesCajero = new JButton("Clientes");
-                    JButton btnHistorialClientes = new JButton("Historial Clientes");
-
-                    for (JButton btn : new JButton[]{btnNuevaVenta, btnHistorial, btnClientesCajero, btnHistorialClientes}) {
-                        btn.setBackground(new Color(52, 73, 94));
-                        btn.setForeground(Color.WHITE);
-                        btn.setFocusPainted(false);
-                        btn.setBorderPainted(false);
-                        btn.setFont(new Font("Arial", Font.BOLD, 13));
-                    }
-
-                    panelLateral.add(btnNuevaVenta);
-                    panelLateral.add(btnHistorial);
-                    panelLateral.add(btnClientesCajero);
-                    panelLateral.add(btnHistorialClientes);
-
-                    add(panelLateral, BorderLayout.WEST);
-
-                    contenedor = new JPanel(new BorderLayout());
-                    add(contenedor, BorderLayout.CENTER);
-
-                    pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
-                    pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
-
-                    contenedor.add(pVenta);
-
-                    this.setSize(1100, 650);
-                    this.setLocationRelativeTo(null);
-                    repaint();
-                    revalidate();
-
-                    btnNuevaVenta.addActionListener(e -> {
-                        contenedor.removeAll();
-                        pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
-                        pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
-                        contenedor.add(pVenta);
-                        contenedor.repaint();
-                        contenedor.revalidate();
-                    });
-
-                    btnHistorial.addActionListener(e -> {
-                        contenedor.removeAll();
-                        pHistorial.refrescar(tiendaConfig.getGestVenta().listarVentas());
-                        contenedor.add(pHistorial);
-                        contenedor.repaint();
-                        contenedor.revalidate();
-                    });
-
-                    btnClientesCajero.addActionListener(e -> {
-                        contenedor.removeAll();
-                        pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
-                        contenedor.add(pCliente);
-                        contenedor.repaint();
-                        contenedor.revalidate();
-                    });
-
-                    btnHistorialClientes.addActionListener(e -> {
-                        contenedor.removeAll();
-                        pHistorialCliente.refrescar(tiendaConfig.getGestVenta().listarVentas());
-                        contenedor.add(pHistorialCliente);
-                        contenedor.repaint();
-                        contenedor.revalidate();
-                    });
-
-                    break;
-
-                    case ALMACENISTA:
-                        remove(pLogin);
-
-                        JPanel panelNorteAlmacenista = new JPanel(new BorderLayout());
-                        JButton btnCerrarSesionAlmacenista = new JButton("Cerrar Sesión");
-                        btnCerrarSesionAlmacenista.setBackground(new Color(192, 57, 43));
-                        btnCerrarSesionAlmacenista.setForeground(Color.WHITE);
-                        btnCerrarSesionAlmacenista.setFocusPainted(false);
-                        JPanel panelCerrarAlmacenista = new JPanel();
-                        panelCerrarAlmacenista.add(btnCerrarSesionAlmacenista);
-                        panelNorteAlmacenista.add(panelCerrarAlmacenista, BorderLayout.EAST);
-                        add(panelNorteAlmacenista, BorderLayout.NORTH);
-                        btnCerrarSesionAlmacenista.addActionListener(e -> cerrarSesion());
-
-                        JPanel panelLateralAlmacen = new JPanel(new GridLayout(5, 1, 5, 5));
-                        panelLateralAlmacen.setPreferredSize(new Dimension(150, 0));
-                        panelLateralAlmacen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                        panelLateralAlmacen.setBackground(new Color(52, 73, 94));
-
-                        JButton btnNuevaCompra = new JButton("Nueva Compra");
-                        JButton btnHistorialCompra = new JButton("Historial");
-                        JButton btnProveedores = new JButton("Proveedores");
-                        JButton btnProductos = new JButton("Productos");
-                        JButton btnInventario = new JButton("Inventario");
-
-                        for (JButton btn : new JButton[]{btnNuevaCompra, btnHistorialCompra, btnProveedores, btnProductos, btnInventario}) {
-                            btn.setBackground(new Color(52, 73, 94));
-                            btn.setForeground(Color.WHITE);
-                            btn.setFocusPainted(false);
-                            btn.setBorderPainted(false);
-                            btn.setFont(new Font("Arial", Font.BOLD, 13));
-                        }
-
-                        panelLateralAlmacen.add(btnNuevaCompra);
-                        panelLateralAlmacen.add(btnHistorialCompra);
-                        panelLateralAlmacen.add(btnProveedores);
-                        panelLateralAlmacen.add(btnProductos);
-                        panelLateralAlmacen.add(btnInventario);
-
-                        add(panelLateralAlmacen, BorderLayout.WEST);
-
-                        contenedor = new JPanel(new BorderLayout());
-                        add(contenedor, BorderLayout.CENTER);
-
-                        pCompra.poblarProveedores(tiendaConfig.getGestProveedor().leerProveedores());
-                        pCompra.poblarProductos(tiendaConfig.getGestProducto().listar());
-                        contenedor.add(pCompra);
-
-                        this.setSize(1100, 650);
-                        this.setLocationRelativeTo(null);
-                        repaint();
-                        revalidate();
-
-                        btnNuevaCompra.addActionListener(e -> {
-                            contenedor.removeAll();
-                            pCompra.poblarProveedores(tiendaConfig.getGestProveedor().leerProveedores());
-                            pCompra.poblarProductos(tiendaConfig.getGestProducto().listar());
-                            contenedor.add(pCompra);
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
-
-                        btnHistorialCompra.addActionListener(e -> {
-                            contenedor.removeAll();
-                            pHistorialCompra.refrescar(tiendaConfig.getGestCompra().listarCompras());
-                            contenedor.add(pHistorialCompra);
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
-
-                        btnProveedores.addActionListener(e -> {
-                            contenedor.removeAll();
-                            pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
-                            contenedor.add(pProveedor);
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
-
-                        btnProductos.addActionListener(e -> {
-                            contenedor.removeAll();
-                            contenedor.add(pProducto);
-                            pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
-
-                        btnInventario.addActionListener(e -> {
-                            contenedor.removeAll();
-                            contenedor.add(pInventario);
-                            pInventario.refrescar(tiendaConfig.getGestInventario().listarMovimientos());
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
-
-                        break;
-
-                    case CONTADOR:
-                        remove(pLogin);
-
-                        JPanel panelNorteContador = new JPanel(new BorderLayout());
-                        JButton btnCerrarSesionContador = new JButton("Cerrar Sesión");
-                        btnCerrarSesionContador.setBackground(new Color(192, 57, 43));
-                        btnCerrarSesionContador.setForeground(Color.WHITE);
-                        btnCerrarSesionContador.setFocusPainted(false);
-                        JPanel panelCerrarContador = new JPanel();
-                        panelCerrarContador.add(btnCerrarSesionContador);
-                        panelNorteContador.add(panelCerrarContador, BorderLayout.EAST);
-                        add(panelNorteContador, BorderLayout.NORTH);
-                        btnCerrarSesionContador.addActionListener(e -> cerrarSesion());
-
-                        JPanel panelLateralContador = new JPanel(new GridLayout(2, 1, 5, 5));
-                        panelLateralContador.setPreferredSize(new Dimension(165, 0));
-                        panelLateralContador.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                        panelLateralContador.setBackground(new Color(52, 73, 94));
-
-                        JButton btnMovimientosContables = new JButton("Movimientos Contables");
-                        JButton btnReportes = new JButton("Reportes");
-
-                        for (JButton btn : new JButton[]{btnMovimientosContables, btnReportes}) {
-                            btn.setBackground(new Color(52, 73, 94));
-                            btn.setForeground(Color.WHITE);
-                            btn.setFocusPainted(false);
-                            btn.setBorderPainted(false);
-                            btn.setFont(new Font("Arial", Font.BOLD, 13));
-                        }
-
-                        panelLateralContador.add(btnMovimientosContables);
-                        panelLateralContador.add(btnReportes);
-                        add(panelLateralContador, BorderLayout.WEST);
-
-                        contenedor = new JPanel(new BorderLayout());
-                        add(contenedor, BorderLayout.CENTER);
-                        contenedor.add(pMovimientosContables);
-
-                        this.setSize(1100, 650);
-                        this.setLocationRelativeTo(null);
-                        repaint();
-                        revalidate();
-
-                        btnMovimientosContables.addActionListener(e -> {
-                            contenedor.removeAll();
-                            pMovimientosContables.refrescar(tiendaConfig.getGestContable().listarMovimientos());
-                            contenedor.add(pMovimientosContables);
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
-
-                        btnReportes.addActionListener(e -> {
-                            contenedor.removeAll();
-                            contenedor.add(pReportes);
-                            contenedor.repaint();
-                            contenedor.revalidate();
-                        });
-
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error de Autenticación",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }
+//    public void loguear() {
+//        try {
+//            CredencialDto validar = pLogin.getCredencialesUsuario();
+//
+//            if (validar != null) {
+//                GestionSeguridad moduloSeguridad = tiendaConfig.getGestSeguridad();
+//                usuarioActual = moduloSeguridad.validarLogueo(validar);
+//                new LogsTxt().registrarLogin(usuarioActual);
+//                switch (usuarioActual.getRol()) {
+//                
+//
+//                case ADMIN:
+//                    remove(pLogin);
+//
+//                    // Panel norte con cerrar sesión
+//                    JPanel panelNorteAdmin = new JPanel(new BorderLayout());
+//                    JButton btnCerrarSesionAdmin = new JButton("Cerrar Sesión");
+//                    btnCerrarSesionAdmin.setBackground(new Color(192, 57, 43));
+//                    btnCerrarSesionAdmin.setForeground(Color.WHITE);
+//                    btnCerrarSesionAdmin.setFocusPainted(false);
+//                    JPanel panelCerrarAdmin = new JPanel();
+//                    panelCerrarAdmin.add(btnCerrarSesionAdmin);
+//                    panelNorteAdmin.add(panelCerrarAdmin, BorderLayout.EAST);
+//                    add(panelNorteAdmin, BorderLayout.NORTH);
+//                    btnCerrarSesionAdmin.addActionListener(e -> cerrarSesion());
+//
+//                    // Panel lateral izquierdo
+//                    JPanel panelLateralAdmin = new JPanel(new GridLayout(3, 1, 5, 5));
+//                    panelLateralAdmin.setPreferredSize(new Dimension(150, 0));
+//                    panelLateralAdmin.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+//                    panelLateralAdmin.setBackground(new Color(52, 73, 94));
+//
+//                    JButton btnProveedorAdmin = new JButton("Proveedores");
+//                    JButton btnClienteAdmin = new JButton("Clientes");
+//                    JButton btnVentasAdmin = new JButton("Ventas");
+//
+//                    for (JButton btn : new JButton[]{btnProveedorAdmin, btnClienteAdmin, btnVentasAdmin}) {
+//                        btn.setBackground(new Color(52, 73, 94));
+//                        btn.setForeground(Color.WHITE);
+//                        btn.setFocusPainted(false);
+//                        btn.setBorderPainted(false);
+//                        btn.setFont(new Font("Arial", Font.BOLD, 13));
+//                    }
+//
+//                    panelLateralAdmin.add(btnProveedorAdmin);
+//                    panelLateralAdmin.add(btnClienteAdmin);
+//                    panelLateralAdmin.add(btnVentasAdmin);
+//                    add(panelLateralAdmin, BorderLayout.WEST);
+//
+//                    contenedor = new JPanel(new BorderLayout());
+//                    add(contenedor, BorderLayout.CENTER);
+//
+//                    // Poblar datos iniciales
+//                    pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
+//                    pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
+//                    contenedor.add(pProveedor);
+//
+//                    this.setSize(1100, 650);
+//                    this.setLocationRelativeTo(null);
+//                    repaint();
+//                    revalidate();
+//
+//                    btnProveedorAdmin.addActionListener(e -> {
+//                        contenedor.removeAll();
+//                        pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
+//                        contenedor.add(pProveedor);
+//                        contenedor.repaint();
+//                        contenedor.revalidate();
+//                    });
+//
+//                    btnClienteAdmin.addActionListener(e -> {
+//                        contenedor.removeAll();
+//                        pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
+//                        contenedor.add(pCliente);
+//                        contenedor.repaint();
+//                        contenedor.revalidate();
+//                    });
+//
+//                    btnVentasAdmin.addActionListener(e -> {
+//                        contenedor.removeAll();
+//                        pHistorial.refrescar(tiendaConfig.getGestVenta().listarVentas());
+//                        contenedor.add(pHistorial);
+//                        contenedor.repaint();
+//                        contenedor.revalidate();
+//                    });
+//
+//                    break;
+//                    
+//                case CAJERO:
+//                    remove(pLogin);
+//
+//                    JPanel panelNorteCajero = new JPanel(new BorderLayout());
+//                    JButton btnCerrarSesionCajero = new JButton("Cerrar Sesión");
+//                    btnCerrarSesionCajero.setBackground(new Color(192, 57, 43));
+//                    btnCerrarSesionCajero.setForeground(Color.WHITE);
+//                    btnCerrarSesionCajero.setFocusPainted(false);
+//                    JPanel panelCerrarCajero = new JPanel();
+//                    panelCerrarCajero.add(btnCerrarSesionCajero);
+//                    panelNorteCajero.add(panelCerrarCajero, BorderLayout.EAST);
+//                    add(panelNorteCajero, BorderLayout.NORTH);
+//                    btnCerrarSesionCajero.addActionListener(e -> cerrarSesion());
+//
+//                    JPanel panelLateral = new JPanel(new GridLayout(4, 1, 5, 5));
+//                    panelLateral.setPreferredSize(new Dimension(165, 0));
+//                    panelLateral.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+//                    panelLateral.setBackground(new Color(52, 73, 94));
+//
+//                    JButton btnNuevaVenta = new JButton("Nueva Venta");
+//                    JButton btnHistorial = new JButton("Historial Ventas");
+//                    JButton btnClientesCajero = new JButton("Clientes");
+//                    JButton btnHistorialClientes = new JButton("Historial Clientes");
+//
+//                    for (JButton btn : new JButton[]{btnNuevaVenta, btnHistorial, btnClientesCajero, btnHistorialClientes}) {
+//                        btn.setBackground(new Color(52, 73, 94));
+//                        btn.setForeground(Color.WHITE);
+//                        btn.setFocusPainted(false);
+//                        btn.setBorderPainted(false);
+//                        btn.setFont(new Font("Arial", Font.BOLD, 13));
+//                    }
+//
+//                    panelLateral.add(btnNuevaVenta);
+//                    panelLateral.add(btnHistorial);
+//                    panelLateral.add(btnClientesCajero);
+//                    panelLateral.add(btnHistorialClientes);
+//
+//                    add(panelLateral, BorderLayout.WEST);
+//
+//                    contenedor = new JPanel(new BorderLayout());
+//                    add(contenedor, BorderLayout.CENTER);
+//
+//                    pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
+//                    pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
+//
+//                    contenedor.add(pVenta);
+//
+//                    this.setSize(1100, 650);
+//                    this.setLocationRelativeTo(null);
+//                    repaint();
+//                    revalidate();
+//
+//                    btnNuevaVenta.addActionListener(e -> {
+//                        contenedor.removeAll();
+//                        pVenta.poblarProductos(tiendaConfig.getGestProducto().listar());
+//                        pVenta.poblarClientes(tiendaConfig.getGestCliente().leerClientes());
+//                        contenedor.add(pVenta);
+//                        contenedor.repaint();
+//                        contenedor.revalidate();
+//                    });
+//
+//                    btnHistorial.addActionListener(e -> {
+//                        contenedor.removeAll();
+//                        pHistorial.refrescar(tiendaConfig.getGestVenta().listarVentas());
+//                        contenedor.add(pHistorial);
+//                        contenedor.repaint();
+//                        contenedor.revalidate();
+//                    });
+//
+//                    btnClientesCajero.addActionListener(e -> {
+//                        contenedor.removeAll();
+//                        pCliente.poblarTabla(tiendaConfig.getGestCliente().leerClientes());
+//                        contenedor.add(pCliente);
+//                        contenedor.repaint();
+//                        contenedor.revalidate();
+//                    });
+//
+//                    btnHistorialClientes.addActionListener(e -> {
+//                        contenedor.removeAll();
+//                        pHistorialCliente.refrescar(tiendaConfig.getGestVenta().listarVentas());
+//                        contenedor.add(pHistorialCliente);
+//                        contenedor.repaint();
+//                        contenedor.revalidate();
+//                    });
+//
+//                    break;
+//
+//                    case ALMACENISTA:
+//                        remove(pLogin);
+//
+//                        JPanel panelNorteAlmacenista = new JPanel(new BorderLayout());
+//                        JButton btnCerrarSesionAlmacenista = new JButton("Cerrar Sesión");
+//                        btnCerrarSesionAlmacenista.setBackground(new Color(192, 57, 43));
+//                        btnCerrarSesionAlmacenista.setForeground(Color.WHITE);
+//                        btnCerrarSesionAlmacenista.setFocusPainted(false);
+//                        JPanel panelCerrarAlmacenista = new JPanel();
+//                        panelCerrarAlmacenista.add(btnCerrarSesionAlmacenista);
+//                        panelNorteAlmacenista.add(panelCerrarAlmacenista, BorderLayout.EAST);
+//                        add(panelNorteAlmacenista, BorderLayout.NORTH);
+//                        btnCerrarSesionAlmacenista.addActionListener(e -> cerrarSesion());
+//
+//                        JPanel panelLateralAlmacen = new JPanel(new GridLayout(5, 1, 5, 5));
+//                        panelLateralAlmacen.setPreferredSize(new Dimension(150, 0));
+//                        panelLateralAlmacen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+//                        panelLateralAlmacen.setBackground(new Color(52, 73, 94));
+//
+//                        JButton btnNuevaCompra = new JButton("Nueva Compra");
+//                        JButton btnHistorialCompra = new JButton("Historial");
+//                        JButton btnProveedores = new JButton("Proveedores");
+//                        JButton btnProductos = new JButton("Productos");
+//                        JButton btnInventario = new JButton("Inventario");
+//
+//                        for (JButton btn : new JButton[]{btnNuevaCompra, btnHistorialCompra, btnProveedores, btnProductos, btnInventario}) {
+//                            btn.setBackground(new Color(52, 73, 94));
+//                            btn.setForeground(Color.WHITE);
+//                            btn.setFocusPainted(false);
+//                            btn.setBorderPainted(false);
+//                            btn.setFont(new Font("Arial", Font.BOLD, 13));
+//                        }
+//
+//                        panelLateralAlmacen.add(btnNuevaCompra);
+//                        panelLateralAlmacen.add(btnHistorialCompra);
+//                        panelLateralAlmacen.add(btnProveedores);
+//                        panelLateralAlmacen.add(btnProductos);
+//                        panelLateralAlmacen.add(btnInventario);
+//
+//                        add(panelLateralAlmacen, BorderLayout.WEST);
+//
+//                        contenedor = new JPanel(new BorderLayout());
+//                        add(contenedor, BorderLayout.CENTER);
+//
+//                        pCompra.poblarProveedores(tiendaConfig.getGestProveedor().leerProveedores());
+//                        pCompra.poblarProductos(tiendaConfig.getGestProducto().listar());
+//                        contenedor.add(pCompra);
+//
+//                        this.setSize(1100, 650);
+//                        this.setLocationRelativeTo(null);
+//                        repaint();
+//                        revalidate();
+//
+//                        btnNuevaCompra.addActionListener(e -> {
+//                            contenedor.removeAll();
+//                            pCompra.poblarProveedores(tiendaConfig.getGestProveedor().leerProveedores());
+//                            pCompra.poblarProductos(tiendaConfig.getGestProducto().listar());
+//                            contenedor.add(pCompra);
+//                            contenedor.repaint();
+//                            contenedor.revalidate();
+//                        });
+//
+//                        btnHistorialCompra.addActionListener(e -> {
+//                            contenedor.removeAll();
+//                            pHistorialCompra.refrescar(tiendaConfig.getGestCompra().listarCompras());
+//                            contenedor.add(pHistorialCompra);
+//                            contenedor.repaint();
+//                            contenedor.revalidate();
+//                        });
+//
+//                        btnProveedores.addActionListener(e -> {
+//                            contenedor.removeAll();
+//                            pProveedor.poblarTabla(tiendaConfig.getGestProveedor().leerProveedores());
+//                            contenedor.add(pProveedor);
+//                            contenedor.repaint();
+//                            contenedor.revalidate();
+//                        });
+//
+//                        btnProductos.addActionListener(e -> {
+//                            contenedor.removeAll();
+//                            contenedor.add(pProducto);
+//                            pProducto.poblarTabla(tiendaConfig.getGestProducto().listar());
+//                            contenedor.repaint();
+//                            contenedor.revalidate();
+//                        });
+//
+//                        btnInventario.addActionListener(e -> {
+//                            contenedor.removeAll();
+//                            contenedor.add(pInventario);
+//                            pInventario.refrescar(tiendaConfig.getGestInventario().listarMovimientos());
+//                            contenedor.repaint();
+//                            contenedor.revalidate();
+//                        });
+//
+//                        break;
+//
+//                    case CONTADOR:
+//                        remove(pLogin);
+//
+//                        JPanel panelNorteContador = new JPanel(new BorderLayout());
+//                        JButton btnCerrarSesionContador = new JButton("Cerrar Sesión");
+//                        btnCerrarSesionContador.setBackground(new Color(192, 57, 43));
+//                        btnCerrarSesionContador.setForeground(Color.WHITE);
+//                        btnCerrarSesionContador.setFocusPainted(false);
+//                        JPanel panelCerrarContador = new JPanel();
+//                        panelCerrarContador.add(btnCerrarSesionContador);
+//                        panelNorteContador.add(panelCerrarContador, BorderLayout.EAST);
+//                        add(panelNorteContador, BorderLayout.NORTH);
+//                        btnCerrarSesionContador.addActionListener(e -> cerrarSesion());
+//
+//                        JPanel panelLateralContador = new JPanel(new GridLayout(2, 1, 5, 5));
+//                        panelLateralContador.setPreferredSize(new Dimension(165, 0));
+//                        panelLateralContador.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+//                        panelLateralContador.setBackground(new Color(52, 73, 94));
+//
+//                        JButton btnMovimientosContables = new JButton("Movimientos Contables");
+//                        JButton btnReportes = new JButton("Reportes");
+//
+//                        for (JButton btn : new JButton[]{btnMovimientosContables, btnReportes}) {
+//                            btn.setBackground(new Color(52, 73, 94));
+//                            btn.setForeground(Color.WHITE);
+//                            btn.setFocusPainted(false);
+//                            btn.setBorderPainted(false);
+//                            btn.setFont(new Font("Arial", Font.BOLD, 13));
+//                        }
+//
+//                        panelLateralContador.add(btnMovimientosContables);
+//                        panelLateralContador.add(btnReportes);
+//                        add(panelLateralContador, BorderLayout.WEST);
+//
+//                        contenedor = new JPanel(new BorderLayout());
+//                        add(contenedor, BorderLayout.CENTER);
+//                        contenedor.add(pMovimientosContables);
+//
+//                        this.setSize(1100, 650);
+//                        this.setLocationRelativeTo(null);
+//                        repaint();
+//                        revalidate();
+//
+//                        btnMovimientosContables.addActionListener(e -> {
+//                            contenedor.removeAll();
+//                            pMovimientosContables.refrescar(tiendaConfig.getGestContable().listarMovimientos());
+//                            contenedor.add(pMovimientosContables);
+//                            contenedor.repaint();
+//                            contenedor.revalidate();
+//                        });
+//
+//                        btnReportes.addActionListener(e -> {
+//                            contenedor.removeAll();
+//                            contenedor.add(pReportes);
+//                            contenedor.repaint();
+//                            contenedor.revalidate();
+//                        });
+//
+//                        break;
+//                
+//                
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(
+//                    this,
+//                    e.getMessage(),
+//                    "Error de Autenticación",
+//                    JOptionPane.ERROR_MESSAGE
+//            );
+//        }
+//    }
 
     // ===================== PROVEEDOR =====================
 
