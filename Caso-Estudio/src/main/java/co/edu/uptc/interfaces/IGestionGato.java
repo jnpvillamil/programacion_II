@@ -1,5 +1,13 @@
 package co.edu.uptc.interfaces;
 
-public class IGestionGato {
+import co.edu.uptc.modelo.Gato;
 
-}
+public interface IGestionGato {
+		void crear(Gato gato);
+		void actualizar(Gato gato);
+		void eliminar(Gato Color);
+		void buscar(Gato Raza);
+	}
+	
+
+
