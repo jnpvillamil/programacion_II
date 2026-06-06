@@ -1,7 +1,6 @@
 package co.uptc.edu.co.tienda.configs;
 
 import co.uptc.edu.tienda.interfaces.IGestionMascota;
-import co.uptc.edu.tienda.negocio.GestionCliente;
 import co.uptc.edu.tienda.negocio.GestionMascota;
 import co.uptc.edu.tienda.persistencia.SqlMascota;
 
