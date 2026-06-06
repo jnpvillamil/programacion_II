@@ -42,6 +42,14 @@ public class Eventos {
 	public final static String cmANULAR = "cmpAnular";
 	public final static String cmBUSCAR = "cmpBuscar";
 	public final static String cmLIMPIAR = "cmpLimpiar";
+	
+	// Constantes Empleados
+	public final static String EMPLEADOS  = "EMPLEADOS";
+	public final static String eREGISTRAR = "eRegistrar";
+	public final static String eMODIFICAR = "eModificar";
+	public final static String eINACTIVAR = "eInactivar";
+	public final static String eBUSCAR    = "eBuscar";
+	public final static String eLIMPIAR   = "eLimpiar";
 
 	// Constantes Generales
 	public final static String SALIR = "SALIR";
