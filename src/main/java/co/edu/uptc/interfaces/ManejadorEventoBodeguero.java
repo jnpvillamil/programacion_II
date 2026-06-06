@@ -6,5 +6,10 @@ import java.util.List;
 
 public interface ManejadorEventoBodeguero {
 
+
+    boolean registrarBodeguero(BodegueroDTO dto, String password);
+    
     List<ProductoResumenDTO> obtenerInventarioCritico();
+    
 }
+

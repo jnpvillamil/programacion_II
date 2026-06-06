@@ -93,7 +93,11 @@ public class AppConfig {
         }
         return instancia;
     }
-
+    
+    public GestionBodeguero getGestionBodeguero() {
+    	return gestionBodeguero; 
+    }
+    
     public GestionCliente getGestionCliente() {
         return gestionCliente;
     }

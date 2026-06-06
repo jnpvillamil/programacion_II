@@ -113,15 +113,16 @@ CREATE TABLE producto (
 CREATE TABLE usuario (
     usuario_login  VARCHAR(50)  NOT NULL COMMENT 'PK; credencial de autenticación',
     clave          VARCHAR(255) NOT NULL,
-    rol            VARCHAR(20)  NOT NULL COMMENT 'Enum RolUsuario: ADMINISTRADOR, CAJERO',
+    rol            VARCHAR(20)  NOT NULL COMMENT 'Enum RolUsuario: ADMINISTRADOR, CAJERO, BODEGUERO',
     nombres        VARCHAR(100) NOT NULL,
     apellidos      VARCHAR(100) NOT NULL,
     identificacion VARCHAR(50)  NULL,
     telefono       VARCHAR(30)  NULL,
+    zona_bodega    VARCHAR(100) NULL AFTER rol;
     activo         TINYINT(1)   NOT NULL DEFAULT 1,
     PRIMARY KEY (usuario_login),
     INDEX idx_usuario_activo (activo),
-    CONSTRAINT chk_usuario_rol CHECK (rol IN ('ADMINISTRADOR', 'CAJERO'))
+    CONSTRAINT chk_usuario_rol CHECK (rol IN ('ADMINISTRADOR', 'CAJERO', 'BODEGUERO'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Usuarios del sistema y control de acceso RBAC';
 
