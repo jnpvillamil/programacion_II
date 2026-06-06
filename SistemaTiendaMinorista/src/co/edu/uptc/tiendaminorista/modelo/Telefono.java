@@ -16,4 +16,6 @@ public class Telefono {
 	public void setNumero(String marca,String numero) {
 		this.numero = numero;
 	}
+
+
 }

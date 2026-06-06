@@ -10,7 +10,7 @@ import java.util.List;
 import co.edu.uptc.tiendaminorista.modelo.Telefono;
 
 public class TelefonoDAO {
-	
+	private static final String URL = "jdbc:postgresql://localhost:5432/tienda_minorista";
 	public boolean insertar(Telefono t) {
 	
 		String sql = "INSERT INTO telefonos (marca, modelo, precio) VALUES (?,?,?)";
@@ -23,7 +23,7 @@ public class TelefonoDAO {
 			*/ 
 			    ps.setString(1, t.getMarca()); // Huertas
 			    ps.setString(2, t.getModelo()); // Mateo
-				ps.setDouble(3, t.getPrecio()); // Juan Pablo C:
+				ps.setDouble(3, t.getPrecio()); // Juan Pablo C.
 				
 				return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
@@ -35,7 +35,6 @@ public class TelefonoDAO {
 		List<Telefono> lista = new ArrayList<>();
 		String sql = "SELECT * FROM telefonos";
 		
-
 		try (Connection con = Conexion.getConexion();
 				PreparedStatement ps = con.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
@@ -43,7 +42,8 @@ public class TelefonoDAO {
 			    	while (rs.next()) {
 			    		Telefono t = new Telefono();
 			    		// aqui se añaden los t.setMarca o t.setModelo
-			    		
+			    		t.setMarca(rs.getString("marca"));
+			    		t.setModelo(rs.getString("modelo"));
 			    		t.setPrecio(rs.getDouble("Precio"));
 			    		
 			    		lista.add(t);
@@ -55,15 +55,3 @@ public class TelefonoDAO {
 			    return lista;
 		}
 }
-
-
-
-
-
-
-
-
-
-
-
-
