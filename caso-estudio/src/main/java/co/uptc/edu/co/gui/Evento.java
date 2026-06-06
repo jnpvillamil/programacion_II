@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ObjectInputFilter.Config;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
@@ -784,9 +785,9 @@ public class Evento implements ActionListener {
 	private void registrarEmpleado(ActionEvent e) {
 		try {
 			DialogEmpleado dialog = obtenerDialogEmpleado(e);
-			Empleado empleado = dialog.obtenerEmpleado();
+			Empleado nuevoEmpleado = dialog.obtenerEmpleado();
 
-			gestionEmpleado.registrarEmpleado(empleado);
+			Config.getGestionEmpleado().registrarEmpleado(nuevoEmpleado);
 			refrescarTablaEmpleados();
 			mostrarInformacion("Salario de empleado registrado exitosamente.");
 			dialog.dispose();

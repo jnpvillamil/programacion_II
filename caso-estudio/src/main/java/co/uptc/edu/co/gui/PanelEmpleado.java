@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.swing.JButton;
 
+import co.uptc.edu.co.modelo.Empleado;
+
 public class PanelEmpleado extends PanelCentral {
 
     private static final String TITULO_PANEL = "Gestión de Empleados";
@@ -16,18 +18,15 @@ public class PanelEmpleado extends PanelCentral {
     private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
     private static final Object[] COLUMNAS = {
-            "Salario"
+    		"Cargo",  "Salario"
     };
 
-    private List<Double> salariosCargados;
+    private List<Empleado> empleadosCargados;
     private JButton botonNuevo;
 
     public PanelEmpleado() {
-        super();
-        salariosCargados = new ArrayList<>();
-        inicializarComponentesEmpleado();
-        configurarPanelEmpleado();
-        agregarComponentesEmpleado();
+    	super();
+        empleadosCargados = new ArrayList<>();
     }
 
     @Override
@@ -62,25 +61,24 @@ public class PanelEmpleado extends PanelCentral {
         botonNuevo.addActionListener(evento);
     }
 
-    public void cargarSalarios(List<Double> salarios) {
-        salariosCargados = new ArrayList<>(salarios);
+    public void cargarEmpleados(List<Empleado> empleados) {
+        this.empleadosCargados = new ArrayList<>(empleados);
         cargarTabla();
     }
-
     private void cargarTabla() {
         limpiarTabla();
-
         int total = 0;
 
-        for (Double salarioEmpleado : salariosCargados) {
+        for (Empleado empleado : empleadosCargados) {
+           
             Object[] fila = {
-                    formatearMoneda(salarioEmpleado)
+                    empleado.getCargoEmpleado(),             
+                    formatearMoneda(empleado.getSalarioEmpleado())
             };
 
             modeloTabla.addRow(fila);
             total++;
         }
-
         actualizarTextoTotal(TEXTO_TOTAL, total);
     }
 

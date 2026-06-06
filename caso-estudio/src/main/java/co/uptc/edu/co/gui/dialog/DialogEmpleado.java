@@ -22,7 +22,8 @@ public class DialogEmpleado extends JDialog {
 	private JTextField campoSalario;
 	private JButton botonGuardar;
 	private JButton botonCancelar;
-
+	private JTextField campoCargo; // <-- FALTA ESTE ATRIBUTO
+	
 	public DialogEmpleado(Frame propietario, Evento evento) {
 		super(propietario, "Registrar Salario Empleado", true);
 		inicializarComponentes();
@@ -33,7 +34,7 @@ public class DialogEmpleado extends JDialog {
 
 	private void inicializarComponentes() {
 		campoSalario = new JTextField(25);
-
+		campoCargo = new JTextField(25);
 		botonGuardar = new JButton("Guardar");
 		botonCancelar = new JButton("Cancelar");
 
@@ -67,6 +68,9 @@ public class DialogEmpleado extends JDialog {
 
 		gbc.gridy++;
 		panelPrincipal.add(campoSalario, gbc);
+		panelPrincipal.add(new JLabel("Cargo:"), gbc);
+	    gbc.gridy++;
+	    panelPrincipal.add(campoCargo, gbc);
 
 		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		panelBotones.add(botonGuardar);
@@ -89,21 +93,14 @@ public class DialogEmpleado extends JDialog {
 	}
 
 	public Empleado obtenerEmpleado() throws Exception {
-		String textoSalario = campoSalario.getText().trim();
-
-		if (textoSalario.isEmpty()) {
-			throw new Exception("El salario del empleado es obligatorio.");
-		}
-
-		double salarioEmpleado;
-		try {
-			salarioEmpleado = Double.parseDouble(textoSalario);
-		} catch (NumberFormatException e) {
-			throw new Exception("El salario del empleado debe ser numerico.");
-		}
-
-		Empleado empleado = new Empleado();
-		empleado.setSalarioEmpleado(salarioEmpleado);
-		return empleado;
+		String cargo = campoCargo.getText().trim();
+	    double salario = 0;
+	    try {
+	        salario = Double.parseDouble(campoSalario.getText().trim());
+	    } catch (NumberFormatException e) {
+	       
+	    }
+	  
+	    return new Empleado(cargo, salario); 
 	}
 }
