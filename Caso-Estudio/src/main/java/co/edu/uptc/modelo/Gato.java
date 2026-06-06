@@ -9,9 +9,19 @@ public class Gato {
 	
 	
 	public Gato(String Color, String Raza, String Ojos) {
-		
-		this.Raza = Raza;
+		this.Color = Color;	
 	}
+	
+	public String getColor(){
+		return Color;
+	}
+	
+	public void setColor(String Color) {
+		this.Color = Color;
+	}
+	
+	
+	
 
 	public String getRaza() {return Raza;}
 	public void setRaza(String Raza) {this.Raza = Raza;}
