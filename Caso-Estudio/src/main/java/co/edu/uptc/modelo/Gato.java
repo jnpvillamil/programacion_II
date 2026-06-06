@@ -15,7 +15,6 @@ public class Gato {
 		this.Raza = Raza;
 		this.activo = true;
 		
-		
 	
 	}
 	
@@ -42,9 +41,6 @@ public class Gato {
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
     
-    
-    
-    	
 }
 
 
