@@ -39,15 +39,4 @@ public class Telefono {
 	public void setPrecio(double precio) {
 		this.precio = precio;
 	}
-<<<<<<< HEAD
-
-	public void setMarca(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 }
-=======
-}
->>>>>>> 649fcfcd8e48f315c0286147eda4788fec31a280
