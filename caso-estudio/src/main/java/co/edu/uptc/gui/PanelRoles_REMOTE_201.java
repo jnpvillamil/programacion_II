@@ -13,11 +13,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PanelRoles extends PanelBase {
-<<<<<<< HEAD
-public void initComponents() {
-}
-}
-=======
 
     
 private JComboBox<RolUsuario> cbRol;
@@ -30,4 +25,3 @@ private JButton btnRegistrar;
     
 }
 
->>>>>>> ee324d791a02330bc48b53bbddfe8ef3cbfe1413
