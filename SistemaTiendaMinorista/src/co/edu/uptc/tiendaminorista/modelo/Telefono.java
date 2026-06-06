@@ -35,5 +35,10 @@ public class Telefono {
 		this.precio = precio;
 	}
 
+	public void setMarca(String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
