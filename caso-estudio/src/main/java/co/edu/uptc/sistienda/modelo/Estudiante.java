@@ -28,5 +28,17 @@ public class Estudiante {
 	    public void setNombre(String nombre) {
 	        this.nombre = nombre;
 	    }
+	
+	public int telefono;
+
+	public int getTelefono() {
+		return telefono;
 	}
+
+	public void setTelefono(int telefono) {
+		this.telefono = telefono;
+	}
+
+}
+
 
