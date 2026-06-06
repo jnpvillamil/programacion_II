@@ -6,12 +6,8 @@ import java.util.List;
 public interface IGestionGato {
 		void crear(Gato gato);
 		List<Gato> listarTodos();
-		
 	}
 
-
- 
-	
 
 
 
