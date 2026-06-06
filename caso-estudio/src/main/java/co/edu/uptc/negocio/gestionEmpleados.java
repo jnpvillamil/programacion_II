@@ -1,39 +1,40 @@
 package co.edu.uptc.negocio;
 
 import java.util.List;
+
 import co.edu.uptc.interfaces.IGestionEmpleado;
 import co.edu.uptc.negocio.dto.empleadoDto;
-import co.edu.uptc.persistencia.local.LocalEmpleado;
+import co.edu.uptc.persistencia.database.DatabaseEmpleado;
 
 public class gestionEmpleados {
 
-    private IGestionEmpleado iEmpleado;
+	private IGestionEmpleado iEmpleado;
 
-    public gestionEmpleados() {
-        this.iEmpleado = new LocalEmpleado();
-    }
+	public gestionEmpleados() {
+		this.iEmpleado = new DatabaseEmpleado();
+	}
 
-    public void registrar(empleadoDto empleado) throws Exception {
-        if (empleado == null || empleado.getNombre().isBlank())
-            throw new Exception("El nombre del empleado es requerido");
-        iEmpleado.guardar(empleado);
-    }
+	public void registrar(empleadoDto empleado) throws Exception {
+		if (empleado == null)
+			throw new Exception("No se tiene información del empleado");
+		iEmpleado.guardar(empleado);
+	}
 
-    public void modificar(String nombreAntiguo, empleadoDto empleado) throws Exception {
-        if (empleado == null)
-            throw new Exception("No se tiene información del empleado");
-        iEmpleado.actualizar(nombreAntiguo, empleado);
-    }
+	public void modificar(empleadoDto empleado) throws Exception {
+		if (empleado == null)
+			throw new Exception("No se tiene información del empleado");
+		iEmpleado.actualizar(empleado);
+	}
 
-    public void inactivar(String nombre) throws Exception {
-        iEmpleado.eliminar(nombre);
-    }
+	public void inactivar(int codigo) throws Exception {
+		iEmpleado.eliminar(codigo);
+	}
 
-    public empleadoDto buscar(String nombre) {
-        return iEmpleado.buscar(nombre);
-    }
+	public empleadoDto buscar(int codigo) {
+		return iEmpleado.buscar(codigo);
+	}
 
-    public List<empleadoDto> listar() {
-        return iEmpleado.listar();
-    }
+	public List<empleadoDto> listar() {
+		return iEmpleado.listar();
+	}
 }
