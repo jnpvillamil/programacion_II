@@ -11,4 +11,6 @@ public interface IGestionEmpleado {
 	void actualizar(Empleado empleado) throws Exception;
 	
 	List<Empleado> listar() throws Exception;
+	
+	boolean guardarCargo(Empleado empleado) throws Exception;
 }

@@ -63,4 +63,15 @@ public class GestionEmpleado {
 			throw new Exception("El salario del empleado debe ser mayor que 0.");
 		}
 	}
+
+    public boolean registrarCargo(Empleado empleado) throws Exception {
+       
+        if (empleado == null || empleado.getCargoEmpleado() == null || empleado.getCargoEmpleado().trim().isEmpty()) {
+            System.out.println(" Error: El cargo no es válido.");
+            return false;
+        }
+        
+       
+        return gestionEmpleado.guardarCargo(empleado);
+    }
 }
