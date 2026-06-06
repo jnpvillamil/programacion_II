@@ -21,8 +21,11 @@ import co.edu.uptc.sistienda.clientes.gui.PanelClientes;
 import co.edu.uptc.sistienda.compras.gui.PanelRegistrarCompra;
 import co.edu.uptc.sistienda.compras.modelo.Compra;
 import co.edu.uptc.sistienda.contabilidad.gui.PanelContabilidad;
+import co.edu.uptc.sistienda.estudiante.gui.DialogoEstudiante;
+import co.edu.uptc.sistienda.estudiante.gui.PanelEstudiante;
 import co.edu.uptc.sistienda.modelo.Cliente;
 import co.edu.uptc.sistienda.modelo.DetalleVenta;
+import co.edu.uptc.sistienda.modelo.Estudiante;
 import co.edu.uptc.sistienda.modelo.Producto;
 import co.edu.uptc.sistienda.modelo.Proveedor;
 import co.edu.uptc.sistienda.modelo.Venta;
@@ -67,6 +70,7 @@ public class VentanaPrincipal extends JFrame {
 	private PanelContabilidad panelContabilidadAdministrador;
 	private PanelRegistrarCompra panelRegistrarCompra;
 	private PanelRegistrarCompra panelComprasEncargado;
+	private PanelEstudiante panelEstudiantes;
 
 	// Botones del menú (para control de permisos)
 	private JButton btnProductos;
@@ -74,11 +78,13 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btnProveedores;
 	private JButton btnContabilidad;
 	private JButton btnCompras;
+	private JButton btnEstudiantes;
 
 	// Diálogos activos
 	private DialogoProducto dialogoProducto;
 	private DialogoCliente dialogoCliente;
 	private DialogoProveedor dialogoProveedor;
+	private DialogoEstudiante dialogoEstudiante;
 
 	// Layout principal
 	private CardLayout layoutPrincipal;
@@ -184,6 +190,7 @@ public class VentanaPrincipal extends JFrame {
 		panelProveedores = new PanelProveedores(evento);
 		panelRegistrarCompra = new PanelRegistrarCompra(evento);
 		panelContabilidadAdministrador = new PanelContabilidad();
+		panelEstudiantes = new PanelEstudiante(evento); 
 
 		panelContenidoCentral.add(panelDashboard, Evento.MENU_DASHBOARD);
 		panelContenidoCentral.add(panelProductos, Evento.MENU_PRODUCTOS);
@@ -191,6 +198,7 @@ public class VentanaPrincipal extends JFrame {
 		panelContenidoCentral.add(panelProveedores, Evento.MENU_PROVEEDORES);
 		panelContenidoCentral.add(panelRegistrarCompra, Evento.MENU_COMPRAS);
 		panelContenidoCentral.add(panelContabilidadAdministrador, Evento.MENU_CONTABILIDAD);
+		panelContenidoCentral.add(panelEstudiantes, Evento.MENU_ESTUDIANTES);
 
 		raiz.add(panelContenidoCentral, BorderLayout.CENTER);
 		return raiz;
@@ -219,9 +227,11 @@ public class VentanaPrincipal extends JFrame {
 		btnProductos = crearBotonMenu("Productos", Evento.MENU_PRODUCTOS);
 		btnClientes = crearBotonMenu("Clientes", Evento.MENU_CLIENTES);
 		btnProveedores = crearBotonMenu("Proveedores", Evento.MENU_PROVEEDORES);
+		btnEstudiantes = crearBotonMenu("Estudiantes", Evento.MENU_ESTUDIANTES);
 		menu.add(btnProductos);
 		menu.add(btnClientes);
 		menu.add(btnProveedores);
+		menu.add(btnEstudiantes);
 
 		return menu;
 	}
@@ -853,6 +863,92 @@ public class VentanaPrincipal extends JFrame {
 			dialogoProveedor.setVisible(false);
 			dialogoProveedor = null;
 		}
+	}
+	
+	//Estudiantes
+	public void mostrarPanelEstudiantes() {
+	    panelEstudiantes.poblarTabla(configuracion.getGestionEstudiante().obtenerListaEstudiantes());
+	    layoutContenido.show(panelContenidoCentral, Evento.MENU_ESTUDIANTES);
+	}
+	 
+	public void abrirDialogoNuevoEstudiante() {
+	    dialogoEstudiante = new DialogoEstudiante(evento, true);
+	    dialogoEstudiante.setVisible(true);
+	}
+	 
+	public void abrirDialogoEditarEstudiante() {
+	    String cedula = panelEstudiantes.obtenerCodigoFilaSeleccionada();
+	    if (cedula == null) {
+	        JOptionPane.showMessageDialog(this, "Seleccione un estudiante de la tabla.", "Aviso", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+	    Estudiante estudiante = configuracion.getGestionEstudiante().consultarEstudiantePorCedula(cedula);
+	    dialogoEstudiante = new DialogoEstudiante(evento, false);
+	    dialogoEstudiante.cargarDatosEnFormulario(estudiante);
+	    dialogoEstudiante.setVisible(true);
+	}
+	 
+	public void guardarNuevoEstudiante() {
+	    try {
+	        Estudiante nuevo = dialogoEstudiante.capturarDatosFormulario();
+	        configuracion.getGestionEstudiante().registrarNuevoEstudiante(nuevo);
+	        cerrarDialogoEstudiante();
+	        panelEstudiantes.poblarTabla(configuracion.getGestionEstudiante().obtenerListaEstudiantes());
+	    } catch (Exception ex) {
+	        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al guardar", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+	 
+	public void guardarEdicionEstudiante() {
+	    try {
+	        Estudiante editado = dialogoEstudiante.capturarDatosFormulario();
+	        configuracion.getGestionEstudiante().modificarEstudiante(editado);
+	        cerrarDialogoEstudiante();
+	        panelEstudiantes.poblarTabla(configuracion.getGestionEstudiante().obtenerListaEstudiantes());
+	    } catch (Exception ex) {
+	        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al actualizar", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+	 
+	public void eliminarEstudianteSeleccionado() {
+	    String cedula = panelEstudiantes.obtenerCodigoFilaSeleccionada();
+	    if (cedula == null) {
+	        JOptionPane.showMessageDialog(this, "Seleccione un estudiante de la tabla.", "Aviso", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+	    int ok = JOptionPane.showConfirmDialog(this,
+	        "¿Eliminar al estudiante con cédula: " + cedula + "?",
+	        "Confirmar", JOptionPane.YES_NO_OPTION);
+	    if (ok == JOptionPane.YES_OPTION) {
+	        try {
+	            configuracion.getGestionEstudiante().eliminarEstudiante(cedula);
+	            panelEstudiantes.poblarTabla(configuracion.getGestionEstudiante().obtenerListaEstudiantes());
+	        } catch (Exception ex) {
+	            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+	}
+	 
+	public void buscarEstudiante() {
+	    String texto = panelEstudiantes.obtenerTextoBusqueda().toLowerCase();
+	    List<Estudiante> filtrado = configuracion.getGestionEstudiante()
+	        .obtenerListaEstudiantes().stream()
+	        .filter(e -> e.getNombre().toLowerCase().contains(texto)
+	                  || e.getCedula().toLowerCase().contains(texto))
+	        .collect(java.util.stream.Collectors.toList());
+	    panelEstudiantes.poblarTabla(filtrado);
+	}
+	 
+	public void limpiarBusquedaEstudiantes() {
+	    panelEstudiantes.limpiarCampoBusqueda();
+	    panelEstudiantes.poblarTabla(configuracion.getGestionEstudiante().obtenerListaEstudiantes());
+	}
+	 
+	public void cerrarDialogoEstudiante() {
+	    if (dialogoEstudiante != null) {
+	        dialogoEstudiante.setVisible(false);
+	        dialogoEstudiante = null;
+	    }
 	}
 
 	// Cerrar sesión

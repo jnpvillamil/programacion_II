@@ -8,3 +8,5 @@
 2026-06-01 14:47:47 | cajero | LOGIN | Rol: Cajero
 2026-06-01 14:48:04 | cajero | REGISTRAR_VENTA | Factura: FV-00006
 2026-06-01 14:51:23 | encargado de compras | LOGIN | Rol: Encargado de compras
+2026-06-06 11:42:06 | admin | LOGIN | Rol: Administrador
+2026-06-06 11:47:17 | admin | LOGIN | Rol: Administrador

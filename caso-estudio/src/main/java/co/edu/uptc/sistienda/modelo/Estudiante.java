@@ -2,7 +2,8 @@ package co.edu.uptc.sistienda.modelo;
 
 public class Estudiante {
 
-
+	public Estudiante() {
+    }
 	private String cedula;
 
 	public String getCedula() {
@@ -29,13 +30,13 @@ public class Estudiante {
 	        this.nombre = nombre;
 	    }
 	
-	public int telefono;
+	public String telefono;
 
-	public int getTelefono() {
+	public String getTelefono() {
 		return telefono;
 	}
 
-	public void setTelefono(int telefono) {
+	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
 

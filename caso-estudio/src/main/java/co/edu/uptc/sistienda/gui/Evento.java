@@ -71,6 +71,18 @@ public class Evento implements ActionListener {
 	public static final String MENU_REPORTES = "MENU_REPORTES";
 	public static final String MENU_CONSULTAS = "MENU_CONSULTAS";
 	
+	// Estudiantes
+	public static final String MENU_ESTUDIANTES      = "MENU_ESTUDIANTES";
+	public static final String NUEVO_ESTUDIANTE      = "NUEVO_ESTUDIANTE";
+	public static final String EDITAR_ESTUDIANTE     = "EDITAR_ESTUDIANTE";
+	public static final String ELIMINAR_ESTUDIANTE   = "ELIMINAR_ESTUDIANTE";
+	public static final String ACTIVAR_ESTUDIANTE    = "ACTIVAR_ESTUDIANTE";
+	public static final String BUSCAR_ESTUDIANTE     = "BUSCAR_ESTUDIANTE";
+	public static final String LIMPIAR_ESTUDIANTE    = "LIMPIAR_ESTUDIANTE";
+	public static final String GUARDAR_ESTUDIANTE    = "GUARDAR_ESTUDIANTE";
+	public static final String ACTUALIZAR_ESTUDIANTE = "ACTUALIZAR_ESTUDIANTE";
+	public static final String CANCELAR_ESTUDIANTE   = "CANCELAR_ESTUDIANTE";
+	
 	private VentanaPrincipal ventana;
 
 	public Evento(VentanaPrincipal ventana) {
@@ -239,6 +251,34 @@ public class Evento implements ActionListener {
 		case REGISTRAR_COMPRA:
 			ventana.registrarCompra();
 			break;
+		//Estudiante
+		case MENU_ESTUDIANTES:
+		    ventana.mostrarPanelEstudiantes();
+		    break;
+		case NUEVO_ESTUDIANTE:
+		    ventana.abrirDialogoNuevoEstudiante();
+		    break;
+		case EDITAR_ESTUDIANTE:
+		    ventana.abrirDialogoEditarEstudiante();
+		    break;
+		case ELIMINAR_ESTUDIANTE:
+		    ventana.eliminarEstudianteSeleccionado();
+		    break;
+		case BUSCAR_ESTUDIANTE:
+		    ventana.buscarEstudiante();
+		    break;
+		case LIMPIAR_ESTUDIANTE:
+		    ventana.limpiarBusquedaEstudiantes();
+		    break;
+		case GUARDAR_ESTUDIANTE:
+		    ventana.guardarNuevoEstudiante();
+		    break;
+		case ACTUALIZAR_ESTUDIANTE:
+		    ventana.guardarEdicionEstudiante();
+		    break;
+		case CANCELAR_ESTUDIANTE:
+		    ventana.cerrarDialogoEstudiante();
+		    break;
 		
 		}
 	}

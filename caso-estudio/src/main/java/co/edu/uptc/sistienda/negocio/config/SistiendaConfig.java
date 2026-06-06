@@ -4,6 +4,7 @@ import co.edu.uptc.sistienda.negocio.GestionCliente;
 import co.edu.uptc.sistienda.negocio.GestionCompra;
 import co.edu.uptc.sistienda.negocio.GestionContabilidad;
 import co.edu.uptc.sistienda.negocio.GestionDeSeguridad;
+import co.edu.uptc.sistienda.negocio.GestionEstudiante;
 import co.edu.uptc.sistienda.negocio.GestionProducto;
 import co.edu.uptc.sistienda.negocio.GestionProveedor;
 import co.edu.uptc.sistienda.negocio.GestionReportes;
@@ -11,6 +12,7 @@ import co.edu.uptc.sistienda.negocio.GestionVenta;
 import co.edu.uptc.sistienda.persistencia.ClienteBD;
 import co.edu.uptc.sistienda.persistencia.ComprasBD;
 import co.edu.uptc.sistienda.persistencia.ContabilidadDAO;
+import co.edu.uptc.sistienda.persistencia.EstudianteBD;
 import co.edu.uptc.sistienda.persistencia.ProductoBD;
 import co.edu.uptc.sistienda.persistencia.ProveedorBD;
 import co.edu.uptc.sistienda.persistencia.VentaBD;
@@ -25,6 +27,7 @@ public class SistiendaConfig {
 	private GestionCompra gestionCompra;
 	private GestionContabilidad gestionContabilidad;
 	private GestionReportes gestionReportes;
+	private GestionEstudiante gestionEstudiante;
 
 	public SistiendaConfig() {
 		gestionProducto = new GestionProducto(new ProductoBD());
@@ -35,6 +38,7 @@ public class SistiendaConfig {
 		gestionReportes = new GestionReportes();
 		gestionVenta = new GestionVenta(new VentaBD(), gestionProducto, gestionContabilidad);
 		gestionCompra = new GestionCompra(new ComprasBD(), gestionProducto, gestionContabilidad);
+		gestionEstudiante = new GestionEstudiante(new EstudianteBD());
 	}
 
 	public GestionProducto getGestionProducto() {
@@ -67,5 +71,8 @@ public class SistiendaConfig {
 
 	public GestionReportes getGestionReportes() {
 		return gestionReportes;
+	}
+	public GestionEstudiante getGestionEstudiante() {
+		return gestionEstudiante;
 	}
 }
