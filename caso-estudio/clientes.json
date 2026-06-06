@@ -1,0 +1,62 @@
+[
+  {
+    "idCliente": 100,
+    "direccionC": "CALLE 50",
+    "tipoCliente": "Minorista",
+    "telefonoC": 3121214144,
+    "estado": "ACTIVO",
+    "nombreCompleto": "DIANA SUAREZ",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 1000432123
+  },
+  {
+    "idCliente": 101,
+    "direccionC": "CASA",
+    "tipoCliente": "Minorista",
+    "telefonoC": 22,
+    "estado": "ACTIVO",
+    "nombreCompleto": "ANDREA",
+    "tipoDocumento": "RC",
+    "numeroDocumento": 1
+  },
+  {
+    "idCliente": 102,
+    "direccionC": "callft",
+    "tipoCliente": "Minorista",
+    "telefonoC": 65,
+    "estado": "INACTIVO",
+    "nombreCompleto": "56",
+    "tipoDocumento": "RC",
+    "numeroDocumento": 5555
+  },
+  {
+    "idCliente": 103,
+    "direccionC": "CARRERA 56#87-09",
+    "tipoCliente": "Minorista",
+    "telefonoC": 3112445678,
+    "estado": "ACTIVO",
+    "nombreCompleto": "JUAN PABLO",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 1010334466
+  },
+  {
+    "idCliente": 104,
+    "direccionC": "CALLE 32",
+    "tipoCliente": "Minorista",
+    "telefonoC": 3124563245,
+    "estado": "ACTIVO",
+    "nombreCompleto": "SEBASTIAN",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 1000432543
+  },
+  {
+    "idCliente": 105,
+    "direccionC": "carrera 23",
+    "tipoCliente": "Minorista",
+    "telefonoC": 32145678,
+    "estado": "ACTIVO",
+    "nombreCompleto": "pepito",
+    "tipoDocumento": "CC",
+    "numeroDocumento": 345678
+  }
+]

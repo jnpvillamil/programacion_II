@@ -1,0 +1,98 @@
+[
+  {
+    "codigoProducto": 100,
+    "nombreProducto": "arroz",
+    "categoria": "vivere",
+    "precioCompra": 2600.0,
+    "precioVenta": 2900.0,
+    "stockActual": 15,
+    "stockMinimo": 10,
+    "stockMaximo": 70,
+    "activo": true,
+    "porcentajeIva": 0.05
+  },
+  {
+    "codigoProducto": 101,
+    "nombreProducto": "panela",
+    "categoria": "vivere",
+    "precioCompra": 2200.0,
+    "precioVenta": 2500.0,
+    "stockActual": 75,
+    "stockMinimo": 10,
+    "stockMaximo": 120,
+    "activo": true,
+    "porcentajeIva": 0.0
+  },
+  {
+    "codigoProducto": 102,
+    "nombreProducto": "Pasta",
+    "categoria": "viveres",
+    "precioCompra": 5000.0,
+    "precioVenta": 8000.0,
+    "stockActual": 105,
+    "stockMinimo": 22,
+    "stockMaximo": 300,
+    "activo": true,
+    "porcentajeIva": 0.0
+  },
+  {
+    "codigoProducto": 103,
+    "nombreProducto": "Azucar",
+    "categoria": "viveres",
+    "precioCompra": 8000.0,
+    "precioVenta": 12000.0,
+    "stockActual": 72,
+    "stockMinimo": 20,
+    "stockMaximo": 300,
+    "activo": true,
+    "porcentajeIva": 0.0
+  },
+  {
+    "codigoProducto": 104,
+    "nombreProducto": "Frijol",
+    "categoria": "viveres",
+    "precioCompra": 7000.0,
+    "precioVenta": 10000.0,
+    "stockActual": 94,
+    "stockMinimo": 20,
+    "stockMaximo": 200,
+    "activo": true,
+    "porcentajeIva": 0.0
+  },
+  {
+    "codigoProducto": 105,
+    "nombreProducto": "garbanzos",
+    "categoria": "viveres",
+    "precioCompra": 6000.0,
+    "precioVenta": 7000.0,
+    "stockActual": 20,
+    "stockMinimo": 5,
+    "stockMaximo": 100,
+    "activo": true,
+    "porcentajeIva": 0.19
+  },
+  {
+    "codigoProducto": 106,
+    "nombreProducto": "pan",
+    "categoria": "viveres",
+    "precioCompra": 2000.0,
+    "precioVenta": 3000.0,
+    "stockActual": 20,
+    "stockMinimo": 10,
+    "stockMaximo": 2000,
+    "activo": true,
+    "porcentajeIva": 0.0
+  },
+  {
+    "codigoProducto": 107,
+    "nombreProducto": "sal",
+    "categoria": "viveres",
+    "precioCompra": 3000.0,
+    "precioVenta": 5000.0,
+    "stockActual": 60,
+    "stockMinimo": 10,
+    "stockMaximo": 2000,
+    "activo": true,
+    "porcentajeIva": 0.19
+  }
+]

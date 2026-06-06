@@ -1,0 +1,2 @@
+CONT-4FBDDEF3|2026-05-27|ENTRADA|Caja/Bancos|50000.0|Venta factura: FACT-8
+CONT-A0596CC6|2026-05-27|ENTRADA|Ingresos por Ventas|50000.0|Ingreso venta: FACT-8

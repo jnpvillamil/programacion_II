@@ -1,0 +1,50 @@
+{
+  "fechaInicio": "2026-05-29",
+  "fechaFin": "2026-05-29",
+  "totalVentas": 362035.0,
+  "totalCompras": 59800.0,
+  "utilidadBruta": 302235.0,
+  "ventasPorFormaPago": [
+    {
+      "tipo": "EFECTIVO",
+      "valor": 362035.0
+    }
+  ],
+  "productosMasVendidos": [
+    {
+      "codigo": 100,
+      "nombre": "arroz",
+      "cantidadVendida": 23
+    },
+    {
+      "codigo": 103,
+      "nombre": "Azucar",
+      "cantidadVendida": 23
+    },
+    {
+      "codigo": 102,
+      "nombre": "Pasta",
+      "cantidadVendida": 2
+    }
+  ],
+  "clientesMayorVolumen": [
+    {
+      "codigo": 101,
+      "nombre": "ANDREA",
+      "totalComprado": 292000.0
+    },
+    {
+      "codigo": 100,
+      "nombre": "DIANA SUAREZ",
+      "totalComprado": 70035.0
+    }
+  ],
+  "inventarioValorizado": 1971200.0,
+  "resumenContable": {
+    "ingresos": 362035.0,
+    "egresos": 59800.0,
+    "utilidad": 302235.0,
+    "ivaGenerado": 3335.0,
+    "ivaDescontable": 0.0
+  }
+}

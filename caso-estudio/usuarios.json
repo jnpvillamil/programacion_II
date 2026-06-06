@@ -1,0 +1,26 @@
+[
+  {
+    "idUsuario": 1,
+    "correo": "admin@correo.com",
+    "password": "123456",
+    "rol": "ADMIN"
+  },
+  {
+    "idUsuario": 2,
+    "correo": "cajero@correo.com",
+    "password": "234567",
+    "rol": "CAJERO"
+  },
+  {
+    "idUsuario": 3,
+    "correo": "almacen@correo.com",
+    "password": "345678",
+    "rol": "ALMACENISTA"
+  },
+  {
+    "idUsuario": 4,
+    "correo": "contador@correo.com",
+    "password": "456789",
+    "rol": "CONTADOR"
+  }
+]
