@@ -1,22 +1,8 @@
 package co.edu.uptc.persistencia;
 
-<<<<<<< HEAD
-import co.edu.uptc.dto.UsuarioDTO;
-import co.edu.uptc.modelo.Usuario;
-import co.edu.uptc.utilidades.ConexionBD;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-public class PersistenciaSupervisor {
-=======
 import co.edu.uptc.interfaces.Repositorio;
 import co.edu.uptc.modelo.Supervisor;
 import co.edu.uptc.utilidades.ConexionBD;
->>>>>>> d477bf940f1eea00c38484c317713f01db11137e
 
 import java.sql.*;
 import java.util.ArrayList;
