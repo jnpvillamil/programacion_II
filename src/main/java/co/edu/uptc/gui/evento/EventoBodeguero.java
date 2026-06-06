@@ -5,8 +5,10 @@ import co.edu.uptc.negocio.GestionBodeguero;
 
 public class EventoBodeguero implements ManejadorEventoBodeguero {
 
-    private GestionBodeguero gestionBodeguero;
+    private final GestionBodeguero gestionBodeguero;
+    
 
-    public EventoBodeguero() {
+    public EventoBodeguero(AppConfig appConfig) {
+    	this.gestionBodeguero = appConfig.getGestionBodeguero(); 
     }
 }
