@@ -5,6 +5,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
+
 public class PanelEmpleado extends PanelCentral {
 
     private static final String TITULO_PANEL = "Gestión de Empleados";
@@ -18,10 +20,14 @@ public class PanelEmpleado extends PanelCentral {
     };
 
     private List<Double> salariosCargados;
+    private JButton botonNuevo;
 
     public PanelEmpleado() {
         super();
         salariosCargados = new ArrayList<>();
+        inicializarComponentesEmpleado();
+        configurarPanelEmpleado();
+        agregarComponentesEmpleado();
     }
 
     @Override
@@ -37,6 +43,23 @@ public class PanelEmpleado extends PanelCentral {
     @Override
     protected Object[] obtenerColumnas() {
         return COLUMNAS;
+    }
+
+    private void inicializarComponentesEmpleado() {
+        botonNuevo = new JButton("Nuevo");
+    }
+
+    private void configurarPanelEmpleado() {
+        configurarBotonBase(botonNuevo);
+    }
+
+    private void agregarComponentesEmpleado() {
+        panelBotones.add(botonNuevo);
+    }
+
+    public void inicializarEventos(Evento evento) {
+        botonNuevo.setActionCommand(Evento.CMD_NUEVO_EMPLEADO);
+        botonNuevo.addActionListener(evento);
     }
 
     public void cargarSalarios(List<Double> salarios) {

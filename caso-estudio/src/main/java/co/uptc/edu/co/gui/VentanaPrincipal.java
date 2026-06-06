@@ -161,6 +161,7 @@ public class VentanaPrincipal extends JFrame {
 		panelContabilidad.inicializarEventos(evento);
 		panelReportes.inicializarEventos(evento);
 		panelConsultas.inicializarEventos(evento);
+		panelEmpleado.inicializarEventos(evento);
 
 	}
 

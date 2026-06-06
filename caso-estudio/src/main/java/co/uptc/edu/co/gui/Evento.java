@@ -22,6 +22,7 @@ import co.uptc.edu.co.gui.dialog.DialogDetalleCompra;
 import co.uptc.edu.co.gui.dialog.DialogDetalleContable;
 import co.uptc.edu.co.gui.dialog.DialogDetalleVenta;
 import co.uptc.edu.co.gui.dialog.DialogDevolucionVenta;
+import co.uptc.edu.co.gui.dialog.DialogEmpleado;
 import co.uptc.edu.co.gui.dialog.DialogHistorialCliente;
 import co.uptc.edu.co.gui.dialog.DialogMovimientoInventario;
 import co.uptc.edu.co.gui.dialog.DialogProducto;
@@ -30,6 +31,7 @@ import co.uptc.edu.co.gui.dialog.DialogVenta;
 import co.uptc.edu.co.modelo.Cliente;
 import co.uptc.edu.co.modelo.Compra;
 import co.uptc.edu.co.modelo.DetalleCompra;
+import co.uptc.edu.co.modelo.Empleado;
 import co.uptc.edu.co.modelo.MovimientoContable;
 import co.uptc.edu.co.modelo.Producto;
 import co.uptc.edu.co.modelo.Proveedor;
@@ -127,6 +129,7 @@ public class Evento implements ActionListener {
 	// CONSTANTES DE COMANDOS - EMPLEADOS
 	public static final String CMD_NUEVO_EMPLEADO = "NuevoEmpleado";
 	public static final String CMD_EDITAR_EMPLEADO = "EditarEmpleado";
+	public static final String CMD_CONFIRMAR_EMPLEADO = "ConfirmarEmpleado";
 	public static final String EMPLEADOS = "Empleados";
 
 	// ATRIBUTOS
@@ -184,6 +187,10 @@ public class Evento implements ActionListener {
 		}
 
 		if (manejarEventosProveedor(comando, e)) {
+			return;
+		}
+
+		if (manejarEventosEmpleado(comando, e)) {
 			return;
 		}
 
@@ -751,6 +758,42 @@ public class Evento implements ActionListener {
 	private void refrescarTablaEmpleados() {
 		PanelEmpleado panelEmpleado = ventana.getPanelEmpleado();
 		panelEmpleado.cargarSalarios(gestionEmpleado.obtenerSalarios());
+	}
+
+	// EVENTOS DE EMPLEADO
+	private boolean manejarEventosEmpleado(String comando, ActionEvent e) {
+		switch (comando) {
+		case CMD_NUEVO_EMPLEADO:
+			abrirDialogoNuevoEmpleado();
+			return true;
+
+		case CMD_CONFIRMAR_EMPLEADO:
+			registrarEmpleado(e);
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
+	private void abrirDialogoNuevoEmpleado() {
+		DialogEmpleado dialog = new DialogEmpleado(ventana, this);
+		dialog.setVisible(true);
+	}
+
+	private void registrarEmpleado(ActionEvent e) {
+		try {
+			DialogEmpleado dialog = obtenerDialogEmpleado(e);
+			Empleado empleado = dialog.obtenerEmpleado();
+
+			gestionEmpleado.registrarEmpleado(empleado);
+			refrescarTablaEmpleados();
+			mostrarInformacion("Salario de empleado registrado exitosamente.");
+			dialog.dispose();
+
+		} catch (Exception ex) {
+			mostrarError(ex.getMessage());
+		}
 	}
 
 	// EVENTOS DE VENTA
@@ -1454,6 +1497,16 @@ public class Evento implements ActionListener {
 		}
 
 		return (DialogProveedor) ventanaPadre;
+	}
+
+	private DialogEmpleado obtenerDialogEmpleado(ActionEvent e) throws Exception {
+		Window ventanaPadre = obtenerVentanaPadre(e);
+
+		if (!(ventanaPadre instanceof DialogEmpleado)) {
+			throw new Exception("Error interno: no se pudo identificar el formulario de empleado.");
+		}
+
+		return (DialogEmpleado) ventanaPadre;
 	}
 
 	private DialogMovimientoInventario obtenerDialogMovimientoInventario(ActionEvent e) throws Exception {
