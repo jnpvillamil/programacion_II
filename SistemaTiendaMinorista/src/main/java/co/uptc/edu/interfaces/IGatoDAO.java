@@ -9,3 +9,5 @@ public interface IGatoDAO {
     boolean guardarGato(Gato gato);
 
     List<Gato> obtenerGatos();
+    
+}
