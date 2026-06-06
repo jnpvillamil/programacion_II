@@ -1040,3 +1040,75 @@
 [2026-06-06 09:20:07] [INFO] Inicializando componentes de PanelConsultas
 [2026-06-06 09:20:07] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
 [2026-06-06 09:20:07] [INFO] Inicializando eventos en PanelConsultas
+[2026-06-06 10:05:02] [INFO] Entrando a listar productos
+[2026-06-06 10:05:03] [INFO] Entrando a listarClientes
+[2026-06-06 10:05:03] [INFO] Listado de proveedores exitoso.
+[2026-06-06 10:05:03] [INFO] Entrando a listarMovimientos
+[2026-06-06 10:05:03] [INFO] Entrando a listarVentas
+[2026-06-06 10:05:03] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000003
+[2026-06-06 10:05:03] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000002
+[2026-06-06 10:05:03] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
+[2026-06-06 10:05:03] [INFO] Entrando a listar
+[2026-06-06 10:05:04] [INFO] Inicializando componentes de PanelConsultas
+[2026-06-06 10:05:04] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
+[2026-06-06 10:05:04] [INFO] Inicializando eventos en PanelConsultas
+[2026-06-06 10:06:41] [INFO] Entrando a listar productos
+[2026-06-06 10:06:42] [INFO] Entrando a listarClientes
+[2026-06-06 10:06:43] [INFO] Listado de proveedores exitoso.
+[2026-06-06 10:06:43] [INFO] Entrando a listarMovimientos
+[2026-06-06 10:06:43] [INFO] Entrando a listarVentas
+[2026-06-06 10:06:43] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000003
+[2026-06-06 10:06:43] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000002
+[2026-06-06 10:06:43] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
+[2026-06-06 10:06:43] [INFO] Entrando a listar
+[2026-06-06 10:06:43] [INFO] Inicializando componentes de PanelConsultas
+[2026-06-06 10:06:43] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
+[2026-06-06 10:06:43] [INFO] Inicializando eventos en PanelConsultas
+[2026-06-06 10:07:21] [INFO] Entrando a listar productos
+[2026-06-06 10:07:22] [INFO] Entrando a listarClientes
+[2026-06-06 10:07:22] [INFO] Listado de proveedores exitoso.
+[2026-06-06 10:07:22] [INFO] Entrando a listarMovimientos
+[2026-06-06 10:07:22] [INFO] Entrando a listarVentas
+[2026-06-06 10:07:22] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000003
+[2026-06-06 10:07:22] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000002
+[2026-06-06 10:07:22] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
+[2026-06-06 10:07:22] [INFO] Entrando a listar
+[2026-06-06 10:07:23] [INFO] Inicializando componentes de PanelConsultas
+[2026-06-06 10:07:23] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
+[2026-06-06 10:07:23] [INFO] Inicializando eventos en PanelConsultas
+[2026-06-06 10:09:13] [INFO] Entrando a listar productos
+[2026-06-06 10:09:14] [INFO] Entrando a listarClientes
+[2026-06-06 10:09:14] [INFO] Listado de proveedores exitoso.
+[2026-06-06 10:09:14] [INFO] Entrando a listarMovimientos
+[2026-06-06 10:09:14] [INFO] Entrando a listarVentas
+[2026-06-06 10:09:14] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000003
+[2026-06-06 10:09:14] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000002
+[2026-06-06 10:09:14] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
+[2026-06-06 10:09:14] [INFO] Entrando a listar
+[2026-06-06 10:09:14] [INFO] Inicializando componentes de PanelConsultas
+[2026-06-06 10:09:15] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
+[2026-06-06 10:09:15] [INFO] Inicializando eventos en PanelConsultas
+[2026-06-06 10:10:07] [INFO] Entrando a listar productos
+[2026-06-06 10:10:09] [INFO] Entrando a listarClientes
+[2026-06-06 10:10:09] [INFO] Listado de proveedores exitoso.
+[2026-06-06 10:10:09] [INFO] Entrando a listarMovimientos
+[2026-06-06 10:10:09] [INFO] Entrando a listarVentas
+[2026-06-06 10:10:09] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000003
+[2026-06-06 10:10:09] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000002
+[2026-06-06 10:10:09] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
+[2026-06-06 10:10:09] [INFO] Entrando a listar
+[2026-06-06 10:10:09] [INFO] Inicializando componentes de PanelConsultas
+[2026-06-06 10:10:09] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
+[2026-06-06 10:10:09] [INFO] Inicializando eventos en PanelConsultas
+[2026-06-06 10:10:48] [INFO] Entrando a listar productos
+[2026-06-06 10:10:49] [INFO] Entrando a listarClientes
+[2026-06-06 10:10:49] [INFO] Listado de proveedores exitoso.
+[2026-06-06 10:10:49] [INFO] Entrando a listarMovimientos
+[2026-06-06 10:10:49] [INFO] Entrando a listarVentas
+[2026-06-06 10:10:49] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000003
+[2026-06-06 10:10:49] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000002
+[2026-06-06 10:10:49] [INFO] Entrando a listarDetallesVenta. numeroFactura=FV-000001
+[2026-06-06 10:10:49] [INFO] Entrando a listar
+[2026-06-06 10:10:50] [INFO] Inicializando componentes de PanelConsultas
+[2026-06-06 10:10:50] [INFO] Actualizando filtros en PanelConsultas. Tipo=Ventas por fecha
+[2026-06-06 10:10:50] [INFO] Inicializando eventos en PanelConsultas

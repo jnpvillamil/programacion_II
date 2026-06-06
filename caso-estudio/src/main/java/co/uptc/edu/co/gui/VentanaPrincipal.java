@@ -18,6 +18,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton botonContabilidad;
 	private JButton botonReportes;
 	private JButton botonConsultas;
+	private JButton botonEmpleado;
 
 	private Evento evento;
 	private TiendaConfig config;
@@ -30,7 +31,9 @@ public class VentanaPrincipal extends JFrame {
 	private PanelContabilidad panelContabilidad;
 	private PanelReportes panelReportes;
 	private PanelConsultas panelConsultas;
+	private PanelEmpleado panelEmpleado;
 	private PanelInicio panelInicio;
+	
 
 	public VentanaPrincipal() {
 		config = new TiendaConfig();
@@ -53,6 +56,7 @@ public class VentanaPrincipal extends JFrame {
 		botonContabilidad = new JButton("Contabilidad");
 		botonReportes = new JButton("Reportes");
 		botonConsultas = new JButton("Consultas del Sistema");
+		botonEmpleado = new JButton("Empleados");
 
 		panelProducto = new PanelProducto();
 		panelCliente = new PanelCliente();
@@ -62,6 +66,7 @@ public class VentanaPrincipal extends JFrame {
 		panelContabilidad = new PanelContabilidad();
 		panelReportes = new PanelReportes();
 		panelConsultas = new PanelConsultas();
+		panelEmpleado = new PanelEmpleado();
 		panelInicio = new PanelInicio();
 	}
 
@@ -109,6 +114,10 @@ public class VentanaPrincipal extends JFrame {
 		panelEncabezado.add(botonConsultas);
 		panelContenido.setBackground(Color.WHITE);
 		panelContenido.setLayout(new BorderLayout());
+		
+		botonEmpleado.setForeground(Color.WHITE);
+		botonEmpleado.setBackground(new Color(30, 60, 100));
+		panelEncabezado.add(botonEmpleado);
 
 		add(panelEncabezado, BorderLayout.NORTH);
 		add(panelContenido, BorderLayout.CENTER);
@@ -140,6 +149,9 @@ public class VentanaPrincipal extends JFrame {
 
 		botonConsultas.setActionCommand(Evento.CONSULTAS);
 		botonConsultas.addActionListener(evento);
+		
+		botonEmpleado.setActionCommand(Evento.EMPLEADOS);
+		botonEmpleado.addActionListener(evento);
 
 		panelProducto.inicializarEventos(evento);
 		panelCliente.inicializarEventos(evento);
@@ -191,6 +203,10 @@ public class VentanaPrincipal extends JFrame {
 		mostrarPanel(panelConsultas);
 	}
 
+	public void irEmpleados() {
+		mostrarPanel(panelEmpleado);
+	}
+
 	public PanelProducto getPanelProducto() {
 		return panelProducto;
 	}
@@ -221,6 +237,10 @@ public class VentanaPrincipal extends JFrame {
 
 	public PanelReportes getPanelReportes() {
 		return panelReportes;
+	}
+	
+	public PanelEmpleado getPanelEmpleado() {
+		return panelEmpleado;
 	}
 
 	public static void main(String[] args) {

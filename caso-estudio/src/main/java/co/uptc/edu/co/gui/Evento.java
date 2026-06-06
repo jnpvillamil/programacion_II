@@ -123,6 +123,10 @@ public class Evento implements ActionListener {
 
 	// CONSTANTES DE COMANDOS - CONSULTAS
 	public static final String CMD_CONSULTAR_SISTEMA = "ConsultarSistema";
+	// CONSTANTES DE COMANDOS - EMPLEADOS
+	public static final String CMD_NUEVO_EMPLEADO = "NuevoEmpleado";
+	public static final String CMD_EDITAR_EMPLEADO = "EditarEmpleado";
+	public static final String EMPLEADOS = "Empleados";
 
 	// ATRIBUTOS
 	private VentanaPrincipal ventana;
@@ -241,6 +245,9 @@ public class Evento implements ActionListener {
 		case CONSULTAS:
 			ventana.irConsultas();
 			refrescarDatosConsultas();
+			return true;
+		case EMPLEADOS:
+			ventana.irEmpleados();
 			return true;
 
 		default:
@@ -784,7 +791,7 @@ public class Evento implements ActionListener {
 		dialog.cargarProductos(gestionProducto.obtenerProductos());
 		dialog.setVisible(true);
 	}
-	
+
 	private void registrarVenta(ActionEvent e) {
 		try {
 			System.out.println("1. Entrando a registrarVenta evento");
@@ -814,7 +821,6 @@ public class Evento implements ActionListener {
 		}
 	}
 
-	
 	private void abrirDialogoAnularVenta() {
 		try {
 			Venta venta = obtenerVentaSeleccionada();
