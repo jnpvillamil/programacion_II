@@ -7,8 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PersistenciaBodeguero {
 
+public class PersistenciaBodeguero {
+	
+	
     private static final String SQL_INSERT = """
             INSERT INTO usuario (
                 usuario_login, clave, rol, zona_bodega, nombres, apellidos, activo
