@@ -11,6 +11,7 @@ import co.edu.uptc.tiendaminorista.modelo.Proveedor;
 import co.edu.uptc.tiendaminorista.negocio.GestionCliente;
 import co.edu.uptc.tiendaminorista.negocio.GestionProducto;
 import co.edu.uptc.tiendaminorista.negocio.GestionProveedor;
+import co.edu.uptc.tiendaminorista.negocio.GestionPractica; 
 
 public class PanelInicial extends JPanel {
 
@@ -32,18 +33,22 @@ public class PanelInicial extends JPanel {
     private GestionCliente gestionCliente;
     private GestionProveedor gestionProveedor;
     private GestionProducto gestionProducto; 
+    private GestionPractica gestionPractica; 
     private PanelGestionContable panelGestionContable;
     private PanelReportes panelReportes;
-    
+    private InterfazPractica practica;
     private PanelConsultas panelConsultas;
 
-    public PanelInicial(Evento e, GestionProducto gestionProducto, GestionCliente gestionCliente, GestionProveedor gestionProveedor, PanelRegistrosEmpleados Empleados) {
+    
+    public PanelInicial(Evento e, GestionProducto gestionProducto, GestionCliente gestionCliente, GestionProveedor gestionProveedor, PanelRegistrosEmpleados Empleados, GestionPractica gestionPractica) {
         setLayout(new BorderLayout());
         this.gestionCliente = gestionCliente;
         this.gestionProveedor = gestionProveedor;
         this.gestionProducto = gestionProducto; 
         this.Empleados = Empleados; 
+        this.gestionPractica = gestionPractica; 
         this.panelHistorialCliente = new PanelHistorialCliente(e);
+        this.practica = new InterfazPractica(e);
 
         panelesCliente(e);
         panelesProveedores(e);
@@ -53,6 +58,7 @@ public class PanelInicial extends JPanel {
         pestanas.addTab("Producto", new PanelProductos(e));
         pestanas.addTab("Proveedores", proveedorCards);
         pestanas.addTab("Empleados", this.Empleados); 
+        pestanas.addTab("practica", practica);
 
         panelGestionContable = new PanelGestionContable();
         pestanas.addTab("Contabilidad", panelGestionContable);
@@ -62,6 +68,15 @@ public class PanelInicial extends JPanel {
         
         this.panelConsultas = new PanelConsultas(e);
         pestanas.addTab("Consultas", this.panelConsultas);
+
+      
+        pestanas.addChangeListener(event -> {
+          
+            if (pestanas.getSelectedIndex() == 4) {
+               
+                practica.actualizarTabla(this.gestionPractica.obtenerTodasLasPersonas());
+            }
+        });
 
         add(pestanas, BorderLayout.CENTER);
     }
@@ -229,6 +244,10 @@ public class PanelInicial extends JPanel {
             this.compracliente.cargarProductosEnCombo(this.gestionProducto.listarProductos());
             this.compracliente.actualizarTablaCompras(this.gestionCliente.listarTodasLasCompras());
         }
+    }
+
+    public InterfazPractica getInterfazPractica() {
+        return practica;
     }
 
     public PanelCompraCliente getPanelCompraCliente() {

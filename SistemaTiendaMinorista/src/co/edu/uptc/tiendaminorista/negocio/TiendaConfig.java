@@ -13,6 +13,7 @@ public class TiendaConfig {
     private final GestionProducto gestionProducto;
     private final GestionContable gestionContable;
     private final GestionEmpleado gestionEmpleado; 
+    private final GestionPractica gestionpractica;
 
     public TiendaConfig() {
         this.gestionCliente   = new GestionCliente(new LocalCliente());
@@ -20,6 +21,7 @@ public class TiendaConfig {
         this.gestionProducto  = new GestionProducto(new LocalProducto());
         this.gestionContable  = new GestionContable(new LocalContable());
         this.gestionEmpleado  = new GestionEmpleado(new LocalEmpleado()); 
+        this.gestionpractica  = new GestionPractica(new LocalPractica());
     }
 
     public GestionCliente getGestionCliente()     { return gestionCliente; }
@@ -27,4 +29,5 @@ public class TiendaConfig {
     public GestionProducto getGestionProducto()   { return gestionProducto; }
     public GestionContable getGestionContable()   { return gestionContable; }
     public GestionEmpleado getGestionEmpleado()   { return gestionEmpleado; } 
+    public GestionPractica getGestionPractica()    {return gestionpractica;}
 }

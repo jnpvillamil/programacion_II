@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import co.edu.uptc.tiendaminorista.gui.administrador.InterfazPractica;
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelCompraCliente;
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelHistorialCliente;
 import co.edu.uptc.tiendaminorista.gui.administrador.PanelInicial;
@@ -27,9 +28,11 @@ import co.edu.uptc.tiendaminorista.negocio.GestionProducto;
 import co.edu.uptc.tiendaminorista.negocio.GestionProveedor;
 import co.edu.uptc.tiendaminorista.negocio.SistemaSeguridad;
 import co.edu.uptc.tiendaminorista.negocio.GestionEmpleado;
+import co.edu.uptc.tiendaminorista.negocio.GestionPractica;
 import co.edu.uptc.tiendaminorista.negocio.GestionCompasCliente; 
 import co.edu.uptc.tiendaminorista.negocio.TiendaConfig;
 import co.edu.uptc.tiendaminorista.modelo.MovimientoContable;
+import co.edu.uptc.tiendaminorista.modelo.PersonaPractica;
 
 public class PanelPrincipal extends JFrame {
 
@@ -43,10 +46,10 @@ public class PanelPrincipal extends JFrame {
     private GestionProducto gestionProducto;
     private GestionCompasCliente gestionCompasCliente; 
     private PanelRegistrosEmpleados empleados; 
-
+    private InterfazPractica practica;
     private SistemaSeguridad seguridad;
     private TiendaConfig tiendaConfig;
-
+    private GestionPractica gestionPractica;
     private PanelCompraCliente compracliente;
 
     public PanelPrincipal() {
@@ -58,7 +61,8 @@ public class PanelPrincipal extends JFrame {
         this.gestionProveedor = tiendaConfig.getGestionProveedor();
         this.gestionProducto = tiendaConfig.getGestionProducto();
         this.gestionCompasCliente = new GestionCompasCliente(); 
-        
+        this.gestionPractica = tiendaConfig.getGestionPractica();
+       
         evento = new Evento(this); 
         empleados = new PanelRegistrosEmpleados(evento);
         
@@ -79,7 +83,7 @@ public class PanelPrincipal extends JFrame {
 
     private void iniciarPaneles() {
         panelLogin = new PanelLogin(evento);
-        panelInicial = new PanelInicial(evento, gestionProducto, gestionCliente, gestionProveedor, empleados);
+        panelInicial = new PanelInicial(evento, gestionProducto, gestionCliente, gestionProveedor, empleados, gestionPractica);
     }
 
     public void cambiarPanel(JPanel panel) {
@@ -552,6 +556,64 @@ public class PanelPrincipal extends JFrame {
             panelInicial.getPanelConsultas().actualizarTablaMovimientosContables(movimientos);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: Verifique el formato de fecha (dd/MM/yyyy) y los datos.", "Consulta", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    public void ejecutarGuardarPractica() {
+        InterfazPractica panelPractica = panelInicial.getInterfazPractica();
+        if (panelPractica == null) return;
+        
+        try {
+            String t1 = panelPractica.getTxtTexto1().getText().trim();
+            String t2 = panelPractica.getTxtTexto2().getText().trim();
+
+            if (t1.isEmpty() || t2.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Por favor, complete ambos campos de práctica.", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            PersonaPractica persona = new PersonaPractica();
+            persona.setTexto1(t1);
+            persona.setTexto2(t2);
+
+            gestionPractica.guardar(persona);
+
+            JOptionPane.showMessageDialog(this, "Datos guardados en la tabla 'practica' con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            
+      
+            panelPractica.actualizarTabla(gestionPractica.obtenerTodasLasPersonas());
+            
+            panelPractica.getTxtTexto1().setText("");
+            panelPractica.getTxtTexto2().setText("");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al guardar en la práctica: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void ejecutarEliminarPractica() {
+        InterfazPractica panelPractica = panelInicial.getInterfazPractica();
+        if (panelPractica == null) return;
+
+        
+        String texto1Buscado = panelPractica.getTexto1Seleccionado();
+
+        if (texto1Buscado == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione una fila de la tabla para poder eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirmar = JOptionPane.showConfirmDialog(this, 
+            "¿Está seguro de eliminar el registro con Texto 1: '" + texto1Buscado + "'?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+
+        if (confirmar == JOptionPane.YES_OPTION) {
+            boolean eliminado = gestionPractica.eliminarpersona(texto1Buscado);
+            
+            if (eliminado) {
+                JOptionPane.showMessageDialog(this, "Registro eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    
+                panelPractica.actualizarTabla(gestionPractica.obtenerTodasLasPersonas());
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar el registro de la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

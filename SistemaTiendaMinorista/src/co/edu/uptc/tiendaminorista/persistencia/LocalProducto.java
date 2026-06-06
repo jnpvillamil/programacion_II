@@ -19,7 +19,7 @@ public class LocalProducto implements IGestionProducto {
     public LocalProducto() {
     }
 
-    // INSERT - guardar nuevo producto en la base de datos
+    
     @Override
     public void guardar(Producto producto) {
         String sql = "INSERT INTO productos (codigo, nombre, categoria, precio_compra, precio_venta, stock_actual, stock_minimo, activo) "
