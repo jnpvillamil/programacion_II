@@ -5,11 +5,9 @@ import java.util.List;
 
 public interface IGestionGato {
 		void crear(Gato gato);
-		void actualizar(Gato gato);
-		void eliminar(Gato Color);
-		void buscar(Gato Raza);
+		List<Gato> listarTodos();
+		
 	}
-
 
 
  
