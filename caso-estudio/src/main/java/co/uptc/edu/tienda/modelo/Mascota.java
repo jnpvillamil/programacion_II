@@ -2,10 +2,16 @@ package co.uptc.edu.tienda.modelo;
 
 public class Mascota {
 	private String nombre;
+    private int edad;
+    
+    public Mascota() {
+    	
+    }
 	
-	public Mascota() {
+	public Mascota(String nombre,int edad) {
 		this.nombre = nombre;
-	}
+		this.edad = edad;
+		}
 	
 
 	public String getNombre() {
@@ -16,23 +22,13 @@ public class Mascota {
 		this.nombre = nombre;
 	}
 	
-	
 
 
-	    private int edad;
-
-	    public Mascota() {
-	    }
-
-	    public Mascota(int edad) {
-	        this.edad = edad;
-	    }
-
-	    public int getEdad() {
+	public int getEdad() {
 	        return edad;
 	    }
 
-	    public void setEdad(int edad) {
+	public void setEdad(int edad) {
 	        this.edad = edad;
 	    }
 	}
