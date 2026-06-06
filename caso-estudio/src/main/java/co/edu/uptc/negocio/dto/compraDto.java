@@ -18,7 +18,7 @@ public class compraDto {
 		this.detalles = new ArrayList<>();
 	}
 
-	// --- MÉTODOS DE ACCESO ESTÁNDAR (La única API oficial) ---
+	// MÉTODOS DE ACCESO ESTÁNDAR 
 
 	// Acceso a Totales
 	public double getTotalCompra() {
