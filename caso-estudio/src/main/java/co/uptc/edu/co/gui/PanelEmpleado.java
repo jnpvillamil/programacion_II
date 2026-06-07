@@ -18,7 +18,7 @@ public class PanelEmpleado extends PanelCentral {
     private static final DecimalFormat FORMATO_MONEDA = crearFormatoMoneda();
 
     private static final Object[] COLUMNAS = {
-    		"Cargo",  "Salario"
+    		 "Cargo",  "Salario"
     };
 
     private List<Empleado> empleadosCargados;
@@ -27,6 +27,9 @@ public class PanelEmpleado extends PanelCentral {
     public PanelEmpleado() {
     	super();
         empleadosCargados = new ArrayList<>();
+        inicializarComponentesEmpleado();
+        configurarPanelEmpleado();
+        agregarComponentesEmpleado();
     }
 
     @Override
@@ -72,8 +75,9 @@ public class PanelEmpleado extends PanelCentral {
         for (Empleado empleado : empleadosCargados) {
            
             Object[] fila = {
-                    empleado.getCargoEmpleado(),             
-                    formatearMoneda(empleado.getSalarioEmpleado())
+                
+                empleado.getCargoEmpleado(),             
+                formatearMoneda(empleado.getSalarioEmpleado())
             };
 
             modeloTabla.addRow(fila);

@@ -22,7 +22,8 @@ public class DialogEmpleado extends JDialog {
 	private JTextField campoSalario;
 	private JButton botonGuardar;
 	private JButton botonCancelar;
-	private JTextField campoCargo; // <-- FALTA ESTE ATRIBUTO
+	private JTextField campoCargo;
+	private JTextField campoNombre;
 	
 	public DialogEmpleado(Frame propietario, Evento evento) {
 		super(propietario, "Registrar Salario Empleado", true);
@@ -35,6 +36,7 @@ public class DialogEmpleado extends JDialog {
 	private void inicializarComponentes() {
 		campoSalario = new JTextField(25);
 		campoCargo = new JTextField(25);
+		campoNombre = new JTextField(25);
 		botonGuardar = new JButton("Guardar");
 		botonCancelar = new JButton("Cancelar");
 
@@ -64,13 +66,22 @@ public class DialogEmpleado extends JDialog {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(8, 0, 4, 0);
 
+		//panelPrincipal.add(new JLabel("Nombre:"), gbc);
+
+		//gbc.gridy++;
+	//	panelPrincipal.add(campoNombre, gbc);
+
+		gbc.gridy++;
 		panelPrincipal.add(new JLabel("Salario:"), gbc);
 
 		gbc.gridy++;
 		panelPrincipal.add(campoSalario, gbc);
+
+		gbc.gridy++;
 		panelPrincipal.add(new JLabel("Cargo:"), gbc);
-	    gbc.gridy++;
-	    panelPrincipal.add(campoCargo, gbc);
+
+		gbc.gridy++;
+		panelPrincipal.add(campoCargo, gbc);
 
 		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		panelBotones.add(botonGuardar);
@@ -93,14 +104,26 @@ public class DialogEmpleado extends JDialog {
 	}
 
 	public Empleado obtenerEmpleado() throws Exception {
+		;
 		String cargo = campoCargo.getText().trim();
-	    double salario = 0;
-	    try {
-	        salario = Double.parseDouble(campoSalario.getText().trim());
-	    } catch (NumberFormatException e) {
-	       
-	    }
-	  
-	    return new Empleado(cargo, salario); 
+		String salarioTexto = campoSalario.getText().trim();
+
+
+		if (cargo.isEmpty()) {
+			throw new Exception("El cargo del empleado es obligatorio.");
+		}
+
+		if (salarioTexto.isEmpty()) {
+			throw new Exception("El salario del empleado es obligatorio.");
+		}
+
+		double salario;
+		try {
+			salario = Double.parseDouble(salarioTexto);
+		} catch (NumberFormatException e) {
+			throw new Exception("El salario debe ser un número válido.");
+		}
+
+		return new Empleado( cargo, salario);
 	}
 }

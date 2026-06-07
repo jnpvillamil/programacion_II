@@ -12,6 +12,7 @@ public class Empleado {
 		this.salarioEmpleado = salarioEmpleado;
 	}
 
+
 	public String getCargoEmpleado() {
 		return cargoEmpleado;
 	}
@@ -30,7 +31,6 @@ public class Empleado {
 
 	@Override
 	public String toString() {
-		return "Empleado [salarioEmpleado=" + salarioEmpleado + "]";
+		return "Empleado [cargoEmpleado=" + cargoEmpleado + ", salarioEmpleado=" + salarioEmpleado + "]";
 	}
-
 }
