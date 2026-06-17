@@ -1,0 +1,82 @@
+[
+  {
+    "numeroCompra": "FC-00001",
+    "fechaCompra": "2026-05-31",
+    "proveedor": {
+      "codigoProveedor": "PR001",
+      "razonSocial": "Alimentos del Valle S.A.S",
+      "nit": "800234567-2",
+      "direccion": "Zona Industrial Calle 80 # 30-10",
+      "ciudad": "Bogotá, D.C.",
+      "telefono": "6014567890",
+      "correoElectronico": "ventas@alimentosdelvalle.com",
+      "activo": true,
+      "responsabilidadFiscal": "R-99-PN",
+      "responsabilidadTributaria": "No aplica",
+      "actividadEconomica": "4761"
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoInterno": "P001",
+          "nombreProducto": "Arroz 1kg",
+          "categoria": "VIVERES",
+          "precioCompra": 8500.0,
+          "precioVenta": 3200.0,
+          "stockActual": 5,
+          "stockMinimo": 10,
+          "stockMaximo": 0,
+          "activo": true,
+          "tipoImpuesto": "EXLUIDO"
+        },
+        "cantidad": 2,
+        "precioCompra": 8500.0,
+        "subtotal": 17000.0
+      }
+    ],
+    "totalCompra": 17000.0,
+    "medioPago": "Contado",
+    "valorRetencion": 0.0,
+    "anulada": false
+  },
+  {
+    "numeroCompra": "FC-00002",
+    "fechaCompra": "2026-05-31",
+    "proveedor": {
+      "codigoProveedor": "PR001",
+      "razonSocial": "Alimentos del Valle S.A.S",
+      "nit": "800234567-2",
+      "direccion": "Zona Industrial Calle 80 # 30-10",
+      "ciudad": "Bogotá, D.C.",
+      "telefono": "6014567890",
+      "correoElectronico": "ventas@alimentosdelvalle.com",
+      "activo": true,
+      "responsabilidadFiscal": "R-99-PN",
+      "responsabilidadTributaria": "No aplica",
+      "actividadEconomica": "4761"
+    },
+    "detalles": [
+      {
+        "producto": {
+          "codigoInterno": "P004",
+          "nombreProducto": "Jabón de baño",
+          "categoria": "ASEO",
+          "precioCompra": 3000.0,
+          "precioVenta": 2500.0,
+          "stockActual": 23,
+          "stockMinimo": 5,
+          "stockMaximo": 0,
+          "activo": true,
+          "tipoImpuesto": "IVA"
+        },
+        "cantidad": 3,
+        "precioCompra": 3000.0,
+        "subtotal": 9000.0
+      }
+    ],
+    "totalCompra": 9000.0,
+    "medioPago": "Contado",
+    "valorRetencion": 0.0,
+    "anulada": false
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "codigoMovimiento": "MC-00001",
+    "fechaMovimiento": "2026-05-31",
+    "tipoOperacion": "COMPRA",
+    "documentoOrigen": "FC-00001",
+    "tercero": "Alimentos del Valle S.A.S",
+    "descripcion": "Registro contable por compra",
+    "anulado": false,
+    "lineas": [
+      {
+        "tipoMovimiento": "DEBITO",
+        "cuentaContable": "Inventario de mercancias",
+        "valor": 17000.0
+      },
+      {
+        "tipoMovimiento": "CREDITO",
+        "cuentaContable": "Caja / Bancos",
+        "valor": 17000.0
+      }
+    ]
+  },
+  {
+    "codigoMovimiento": "MC-00002",
+    "fechaMovimiento": "2026-05-31",
+    "tipoOperacion": "COMPRA",
+    "documentoOrigen": "FC-00002",
+    "tercero": "Alimentos del Valle S.A.S",
+    "descripcion": "Registro contable por compra",
+    "anulado": false,
+    "lineas": [
+      {
+        "tipoMovimiento": "DEBITO",
+        "cuentaContable": "Inventario de mercancias",
+        "valor": 9000.0
+      },
+      {
+        "tipoMovimiento": "CREDITO",
+        "cuentaContable": "Caja / Bancos",
+        "valor": 9000.0
+      }
+    ]
+  },
+  {
+    "codigoMovimiento": "MC-00003",
+    "fechaMovimiento": "2026-06-01",
+    "tipoOperacion": "VENTA",
+    "documentoOrigen": "FV-00006",
+    "tercero": "Juan Pérez García",
+    "descripcion": "Registro contable por venta",
+    "anulado": false,
+    "lineas": [
+      {
+        "tipoMovimiento": "DEBITO",
+        "cuentaContable": "Caja / Bancos",
+        "valor": 14875.0
+      },
+      {
+        "tipoMovimiento": "CREDITO",
+        "cuentaContable": "Ingresos por ventas",
+        "valor": 12500.0
+      },
+      {
+        "tipoMovimiento": "CREDITO",
+        "cuentaContable": "IVA generado",
+        "valor": 2375.0
+      }
+    ]
+  }
+]

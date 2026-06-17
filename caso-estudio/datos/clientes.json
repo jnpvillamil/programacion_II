@@ -1,0 +1,32 @@
+[
+  {
+    "codigoCliente": "C001",
+    "nombreCompletoORazonSocial": "Juan Pérez García",
+    "tipoIdentificacion": "CC",
+    "numeroIdentificacion": "1012345678",
+    "direccion": "Calle 10 # 5-20, Bogotá",
+    "ciudad": "Bogotá, D.C.",
+    "telefono": "3101234567",
+    "correoElectronico": "juan.perez@correo.com",
+    "tipoCliente": "MINORISTA",
+    "activo": true,
+    "tipoPersona": "NATURAL",
+    "responsabilidadFiscal": "R-99-PN",
+    "responsabilidadTributaria": "No aplica"
+  },
+  {
+    "codigoCliente": "C002",
+    "nombreCompletoORazonSocial": "Distribuidora El Sol S.A.S",
+    "tipoIdentificacion": "NIT",
+    "numeroIdentificacion": "900123456-1",
+    "direccion": "Av. 30 # 45-60, Bogotá",
+    "ciudad": "Bogotá, D.C.",
+    "telefono": "3209876543",
+    "correoElectronico": "eldorado@correo.com",
+    "tipoCliente": "MAYORISTA",
+    "activo": true,
+    "tipoPersona": "JURIDICA",
+    "responsabilidadFiscal": "R-99-PN",
+    "responsabilidadTributaria": "IVA"
+  }
+]
